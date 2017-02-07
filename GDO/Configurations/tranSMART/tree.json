@@ -1,0 +1,28 @@
+﻿{
+    "label": "Ubiopred",
+    "id": 1,
+    "children": [
+        {
+            "label": "Severe asthmatic",
+            "id": 2,
+            "children": [
+                {
+                    "label": "resistant",
+                    "id": 5
+                },
+                {
+                    "label": "non resistant",
+                    "id": 6
+                }
+            ]
+        },
+        {
+            "label": "asthmatic",
+            "id": 3
+        },
+        {
+            "label": "Normal",
+            "id": 4
+        }
+    ]
+}

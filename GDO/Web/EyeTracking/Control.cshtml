@@ -1,0 +1,464 @@
+﻿@using System.IO
+@using System.Web.Helpers
+@using GDO.Core
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Bootstrap Core CSS -->
+    <link href="../../Bootstrap/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- MetisMenu CSS -->
+    <link href="../../Bootstrap/bower_components/metisMenu/dist/metisMenu.css" rel="stylesheet">
+    <!-- Timeline CSS -->
+    <link href="../../Bootstrap/dist/css/timeline.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../../Bootstrap/dist/css/sb-admin-2.css" rel="stylesheet">
+    <!-- Morris Charts CSS -->
+    <link href="../../Bootstrap/bower_components/morrisjs/morris.css" rel="stylesheet">
+    <!-- Custom Fonts -->
+    <link href="../../Bootstrap/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <style>
+        body {
+            color: #FFF;
+        }
+
+        .unselectable {
+            -moz-user-select: -moz-none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -o-user-select: none;
+            user-select: none;
+        }
+
+        .btn-file {
+            position: relative;
+            overflow: hidden;
+        }
+
+            .btn-file input[type=file] {
+                position: absolute;
+                top: 0;
+                right: 0;
+                min-width: 100%;
+                min-height: 100%;
+                font-size: 100px;
+                text-align: right;
+                filter: alpha(opacity=0);
+                opacity: 0;
+                cursor: inherit;
+                display: block;
+            }
+
+        input[readonly] {
+            background-color: #555 !important;
+            cursor: text !important;
+        }
+
+        .file_upload input.upload {
+            position: absolute;
+            top: 0;
+            right: 0;
+            margin: 0;
+            padding: 0;
+            cursor: pointer;
+            opacity: 0;
+            filter: alpha(opacity=0);
+        }
+
+        .input_field_div {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        .input_field {
+            width: 100%;
+            height: 32px;
+            border: 1px solid #333;
+            background: #333;
+            color: #FFF;
+            padding: 0px;
+            display: inline-block;
+            position: relative;
+            text-align: center;
+        }
+
+        .circleDiv {
+            border-radius: 100%;
+            padding: 0;
+            margin: 0;
+            float: left;
+        }
+    </style>
+</head>
+<body unselectable="on" class="unselectable">
+    <script src="../../Scripts/jquery-2.1.4.min.js"></script>
+    <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script src="../../Scripts/jquery.csv-0.71.min.js"></script>
+    <script src="../../Bootstrap/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="../../Bootstrap/dist/js/sb-admin-2.js"></script>
+    <script src="../../Bootstrap/bower_components/metisMenu/dist/metisMenu.min.js"></script>
+
+    <script>
+        $(function () {
+            var gdo = parent.gdo;
+            gdo.net.module["EyeTracking"].initControl();
+        });
+    </script>
+    <div class="wrapper" style="width: 97%">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-lg-10">
+                                <h6><i class='fa  fa-sliders  fa-fw'></i>&nbsp;Controls</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="col-lg-12">
+                            <button type="button" id="cursorButton" class="btn btn-outline btn-primary"><i class='fa  fa-crosshairs fa-fw'></i>&nbsp;<font color="#fff">Cursors</font></button>
+                            <button type="button" id="markerButton" class="btn btn-outline btn-primary"><i class='fa  fa-qrcode fa-fw'></i>&nbsp;<font color="#fff">Markers</font></button>
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            <h7>Size:&nbsp;&nbsp;</h7>
+                            <button type="button" id="markerSizeDecreaseButton" class="btn btn-outline btn-default"><i class='fa  fa-minus  fa-fw'></i></button>
+                            <button type="button" id="markerSizeIncreaseButton" class="btn btn-outline btn-default"><i class='fa  fa-plus  fa-fw'></i></button>
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            <h7>Contrast:&nbsp;&nbsp;</h7>
+                            <button type="button" id="markerContrast1Button" class="btn" style="background: #333"><font color="#fff">1</font></button>
+                            <button type="button" id="markerContrast2Button" class="btn" style="background: #444"><font color="#ccc">2</font></button>
+                            <button type="button" id="markerContrast3Button" class="btn" style="background: #666"><font color="#aaa">3</font></button>
+                            <button type="button" id="markerContrast4Button" class="btn" style="background: #888"><font color="#444">4</font></button>
+                            <button type="button" id="markerContrast5Button" class="btn" style="background: #aaa"><font color="#333">5</font></button>
+                            <button type="button" id="markerContrast6Button" class="btn" style="background: #ccc"><font color="#222">6</font></button>
+                            <button type="button" id="markerContrast7Button" class="btn" style="background: #fff"><font color="#000">7</font></button>
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            <h7>Heatmap: &nbsp;&nbsp;</h7>
+                            <button type="button" id="heatmapButton" class="btn btn-outline btn-info"><i class='fa  fa-users fa-fw'></i>&nbsp;<font color="#fff">All</font></button>
+                            <button type="button" id="heatmapUser1Button" userId="1" class="btn btn-outline btn-primary"><i class='fa  fa-user fa-fw'></i>&nbsp;<font color="#fff">User 1</font></button>
+                            <button type="button" id="heatmapUser2Button" userId="2" class="btn btn-outline btn-success"><i class='fa  fa-user fa-fw'></i>&nbsp;<font color="#fff">User 2</font></button>
+                            <button type="button" id="heatmapUser3Button" userId="3" class="btn btn-outline btn-warning"><i class='fa  fa-user fa-fw'></i>&nbsp;<font color="#fff">User 3</font></button>
+                            <button type="button" id="heatmapUser4Button" userId="4" class="btn btn-outline btn-danger"><i class='fa  fa-user fa-fw'></i>&nbsp;<font color="#fff">User 4</font></button>
+                            <button type="button" id="clearSessionButton" class="btn btn-danger"><i class='fa  fa-times fa-fw'></i>&nbsp;<font color="#fff">Clear</font></button>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="panel panel-primary disabled">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-lg-10">
+                                <h6><i class='fa  fa-user  fa-fw'></i>&nbsp;User 1</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="col-lg-8">
+                            <div>
+                                Map
+                                <table id="user_1_coordinates" unselectable="on" class="unselectable" style=""></table>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    X
+                                    <div class="flot-chart" style="width: 100%; height: 10vh">
+                                        <div class="flot-chart-content" id="user_1_chart_x" style="width: 100%; height: 100%;"></div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    Y
+                                    <div class="flot-chart" style="width: 100%; height: 10vh">
+                                        <div class="flot-chart-content" id="user_1_chart_y" style="width: 100%; height: 100%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        Location
+                        <div class="col-lg-4" style="padding: 0; margin: 0">
+                            <div id="user_1_marker" unselectable="on" class="unselectable circleDiv" style="position: absolute; top: 90px; left: 90px; width: 20px; height: 20px; background: #2A9FD6;"></div>
+                            <div id="user_1_location" unselectable="on" class="unselectable circleDiv" style="width: 200px; height: 200px; background: #171717; border: 1px solid grey"></div>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <table style="border-collapse: separate; border-spacing: 3px; background-color: transparent;">
+                                    <tr>
+                                        <td style="width: 49%">
+                                            <div id="user_1_status" style="background-color: transparent">Not Connected</div>
+                                        </td>
+                                        <td>
+                                            <div style="background-color: transparent">IP:</div>
+                                        </td>
+                                        <td>
+                                            <div class="input_field_div">
+                                                <input type="text" class="input_field" id="user_1_ip" maxlength="15" size="15">
+                                            </div>
+                                        </td>
+                                        <td style="width: 1%"></td>
+                                        <td>
+                                            <div style="background-color: transparent">Port:</div>
+                                        </td>
+                                        <td>
+                                            <div class="input_field_div">
+                                                <input type="text" class="input_field" pattern="[0-9]" id="user_1_port" maxlength="5" size="5">
+                                            </div>
+                                        </td>
+                                        <td style="width: 3%"></td>
+                                        <td>
+                                            <button type='button' id="user_1_socket" style="align-content: flex-start" userId="1" class='btn btn-primary btn-outline center-block  btn-sm'><i id="user_1_socket_icon" align="center" class='fa  fa-arrow-right  fa-fw'></i>&nbsp;Connect</button>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="panel panel-success">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-lg-10">
+                                <h6><i class='fa  fa-user  fa-fw'></i>&nbsp;User 2</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="col-lg-8">
+                            Map
+                            <div>
+                                <table id="user_2_coordinates" unselectable="on" class="unselectable" style=""></table>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    X
+                                    <div class="flot-chart" style="width: 100%; height: 10vh">
+                                        <div class="flot-chart-content" id="user_2_chart_x" style="width: 100%; height: 100%;"></div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    Y
+                                    <div class="flot-chart" style="width: 100%; height: 10vh">
+                                        <div class="flot-chart-content" id="user_2_chart_y" style="width: 100%; height: 100%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        Location
+                        <div class="col-lg-4" style="padding: 0; margin: 0">
+                            <div id="user_2_marker" unselectable="on" class="unselectable circleDiv" style="position: absolute; top: 90px; left: 90px; width: 20px; height: 20px; background: #77B300;"></div>
+                            <div id="user_2_location" unselectable="on" class="unselectable circleDiv" style="width: 200px; height: 200px; background: #171717; border: 1px solid grey"></div>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <table style="border-collapse: separate; border-spacing: 3px; background-color: transparent;">
+                                    <tr>
+                                        <td style="width: 49%">
+                                            <div id="user_2_status" style="background-color: transparent">Not Connected</div>
+                                        </td>
+                                        <td>
+                                            <div style="background-color: transparent">IP:</div>
+                                        </td>
+                                        <td>
+                                            <div class="input_field_div">
+                                                <input type="text" class="input_field" id="user_2_ip" maxlength="15" size="15">
+                                            </div>
+                                        </td>
+                                        <td style="width: 1%"></td>
+                                        <td>
+                                            <div style="background-color: transparent">Port:</div>
+                                        </td>
+                                        <td>
+                                            <div class="input_field_div">
+                                                <input type="text" class="input_field" pattern="[0-9]" id="user_2_port" maxlength="5" size="5">
+                                            </div>
+                                        </td>
+                                        <td style="width: 3%"></td>
+                                        <td>
+                                            <button type='button' id="user_2_socket" style="align-content: flex-start" userId="2" class='btn btn-success btn-outline center-block  btn-sm'><i id="user_2_socket_icon" align="center" class='fa  fa-arrow-right  fa-fw'></i>&nbsp;Connect</button>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="panel panel-warning">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-lg-10">
+                                <h6><i class='fa  fa-user  fa-fw'></i>&nbsp;User 3</h6>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="col-lg-8">
+                            Map
+                            <div>
+                                <table id="user_3_coordinates" unselectable="on" class="unselectable" style=""></table>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    X
+                                    <div class="flot-chart" style="width: 100%; height: 10vh">
+                                        <div class="flot-chart-content" id="user_3_chart_x" style="width: 100%; height: 100%;"></div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    Y
+                                    <div class="flot-chart" style="width: 100%; height: 10vh">
+                                        <div class="flot-chart-content" id="user_3_chart_y" style="width: 100%; height: 100%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        Location
+                        <div class="col-lg-4" style="padding: 0; margin: 0">
+                            <div id="user_3_marker" unselectable="on" class="unselectable circleDiv" style="position: absolute; top: 90px; left: 90px; width: 20px; height: 20px; background: #FF8800;"></div>
+                            <div id="user_3_location" unselectable="on" class="unselectable circleDiv" style="width: 200px; height: 200px; background: #171717; border: 1px solid grey"></div>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <table style="border-collapse: separate; border-spacing: 3px; background-color: transparent;">
+                                    <tr>
+                                        <td style="width: 49%">
+                                            <div id="user_3_status" style="background-color: transparent">Not Connected</div>
+                                        </td>
+                                        <td>
+                                            <div style="background-color: transparent">IP:</div>
+                                        </td>
+                                        <td>
+                                            <div class="input_field_div">
+                                                <input type="text" class="input_field" id="user_3_ip" maxlength="15" size="15">
+                                            </div>
+                                        </td>
+                                        <td style="width: 1%"></td>
+                                        <td>
+                                            <div style="background-color: transparent">Port:</div>
+                                        </td>
+                                        <td>
+                                            <div class="input_field_div">
+                                                <input type="text" class="input_field" pattern="[0-9]" id="user_3_port" maxlength="5" size="5">
+                                            </div>
+                                        </td>
+                                        <td style="width: 3%"></td>
+                                        <td>
+                                            <button type='button' id="user_3_socket" style="align-content: flex-start" userId="3" class='btn btn-warning btn-outline center-block  btn-sm'><i id="user_3_socket_icon" align="center" class='fa  fa-arrow-right  fa-fw'></i>&nbsp;Connect</button>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="panel panel-danger">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-lg-10">
+                                <h6><i class='fa  fa-user  fa-fw'></i>&nbsp;User 4</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="col-lg-8">
+                            Map
+                            <div>
+                                <table id="user_4_coordinates" unselectable="on" class="unselectable" style=""></table>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    X
+                                    <div class="flot-chart" style="width: 100%; height: 10vh">
+                                        <div class="flot-chart-content" id="user_4_chart_x" style="width: 100%; height: 100%;"></div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    Y
+                                    <div class="flot-chart" style="width: 100%; height: 10vh">
+                                        <div class="flot-chart-content" id="user_4_chart_y" style="width: 100%; height: 100%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        Location
+                        <div class="col-lg-4" style="padding: 0; margin: 0">
+                            <div id="user_4_marker" unselectable="on" class="unselectable circleDiv" style="position: absolute; top: 90px; left: 90px; width: 20px; height: 20px; background: #CC0000;"></div>
+                            <div id="user_4_location" unselectable="on" class="unselectable circleDiv" style="width: 200px; height: 200px; background: #171717; border: 1px solid grey"></div>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <table style="border-collapse: separate; border-spacing: 3px; background-color: transparent;">
+                                    <tr>
+                                        <td style="width: 49%">
+                                            <div id="user_4_status" style="background-color: transparent">Not Connected</div>
+                                        </td>
+                                        <td>
+                                            <div style="background-color: transparent">IP:</div>
+                                        </td>
+                                        <td>
+                                            <div class="input_field_div">
+                                                <input type="text" class="input_field" id="user_4_ip" maxlength="15" size="15">
+                                            </div>
+                                        </td>
+                                        <td style="width: 1%"></td>
+                                        <td>
+                                            <div style="background-color: transparent">Port:</div>
+                                        </td>
+                                        <td>
+                                            <div class="input_field_div">
+                                                <input type="text" class="input_field" pattern="[0-9]" id="user_4_port" maxlength="5" size="5">
+                                            </div>
+                                        </td>
+                                        <td style="width: 3%"></td>
+                                        <td>
+                                            <button type='button' id="user_4_socket" style="align-content: flex-start" userId="4" class='btn btn-danger btn-outline center-block  btn-sm'><i id="user_4_socket_icon" align="center" class='fa  fa-arrow-right  fa-fw'></i>&nbsp;Connect</button>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Flot Charts JavaScript -->
+    <script src="../../Bootstrap/bower_components/flot/excanvas.min.js"></script>
+    <script src="../../Bootstrap/bower_components/flot/jquery.flot.js"></script>
+    <script src="../../Bootstrap/bower_components/flot/jquery.flot.pie.js"></script>
+    <script src="../../Bootstrap/bower_components/flot/jquery.flot.resize.js"></script>
+    <script src="../../Bootstrap/bower_components/flot/jquery.flot.time.js"></script>
+    <script src="../../Bootstrap/bower_components/flot.tooltip/js/jquery.flot.tooltip.min.js"></script>
+</body>
+</html>
