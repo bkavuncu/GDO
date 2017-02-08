@@ -324,12 +324,18 @@ var initDD3App = function () {
     //{ host: "localhost", port: 55555 };
 
     //dd3 object containing the core fo DD3 functions
+    //BAI: TODO : dd3 object also contains lot of initilize operations. The definition of api functions and initialization should be seperate.
+    //BAI: inside the dd3 function, the returned value is "_dd3", so "_dd3" is equal to "dd3"
     var dd3 = (function () {
         "use strict";//In strict mode, the JS engine is more regarding
+
+        //BAI: DD3Q: if "_dd3" has all the same functions defined in the original d3 library. 
         var _dd3 = Object.create(d3);
 
         var options = {
             //use request to signalr instead of api simulation
+            //if we set this value as true. We will use the functions in the above api object to simulate the backend operation.
+            //if we set this value as false. We will the the singalR as the backend operation.
             useApi: false,
             //uses clientid in url to definne position. If false, use row and colmun in url
             positionByClientId: true,
@@ -346,6 +352,7 @@ var initDD3App = function () {
         if (options.useApi) api = api();
 
         //State of the library
+        //this function will be called in the following "initializer" function.
         var state = (function () {
             var _state = 'loading';
             return function (newState) {
@@ -428,6 +435,7 @@ var initDD3App = function () {
         var syncTime;
 
         //Initializer function for dd3 library
+        //BAI: initializer function is called when it is defined.
         var initializer = (function () {
             /*
                 Connect to peer server => Get peerId
@@ -477,6 +485,7 @@ var initDD3App = function () {
             };
 
             //define the row and clomun of the browser. NO information from the server is used. It merely uses the the url
+            //BAI: the browser info is get from URL.
             init.setBrowserConfiguration = function () {
                 if (options.positionByClientId) {
                     browser.number = +utils.getUrlVar('clientId');
@@ -491,6 +500,7 @@ var initDD3App = function () {
             };
 
             //connect to the peer server (and actually call the signalr connection initialisation)
+            //Bai: after the peer connection is set up, it will call the next function to inilize signalr connection. 
             init.connectToPeerServer = function () {
 
                 var p = peer.peer = new Peer(peerObject);
@@ -546,7 +556,7 @@ var initDD3App = function () {
             };
 
             //Connect to the signalR server and send the info
-
+            //Bai: this function is called in the above "connectToPeerServer" function.
             init.connectToSignalRServer = function () {
                 //dd3Server contains the connection to AppHub
                 signalR.server = dd3Server.server;
@@ -575,6 +585,7 @@ var initDD3App = function () {
             };
 
             //Receive the configuration of the whole cave from the backend
+            //Bai: this function is called when it is defined. At last, it will define all the DD3 function via calling the function "defineDD3Functions" which is defined below.
             init.getCaveConfiguration = function (obj) {
                 utils.log("Receiving connected browsers' ids from signalR server", 1);
 
@@ -639,6 +650,7 @@ var initDD3App = function () {
         })();
 
         // Create all dd3 functions	
+        //BAI: this function is called when initialize the getCaveConfiguration function above.
         var defineDD3Functions = function () {
 
             /**
@@ -2822,6 +2834,7 @@ var initDD3App = function () {
          */
 
         utils.log('Starting dd3 initialisation', 1);
+        //BAI: DD3Q: "initializer function has been called when it is defined, why it needs to be called again here"
         initializer();
         utils.log('Returning _dd3', 1);
         return _dd3;
@@ -2887,6 +2900,8 @@ dd3Server.client.updateController = function (obj) {
 gdo.net.app.DD3.displayMode = 0;//TODO: email david about it
 
 //Initialize the application node, set the orderController, the instance id, the main callback and call initDD3App;
+//BAI: this function is called in App.cshtml to initialize initDD3App(). "initDD3App" functions has a returned value "dd3".
+//BAI: When we call this function in App.cshtml, the "dd3" value defined in the html file is equal to the "dd3" object defined in "gdo.apps.dd3.js" file.
 gdo.net.app.DD3.initClient = function (launcher, orderController) {
     gdo.consoleOut('.DD3', 1, 'Initializing DD3 App Client at Node ' + gdo.clientId);
     dd3Server.instanceId = gdo.net.node[gdo.clientId].appInstanceId;
@@ -2896,6 +2911,7 @@ gdo.net.app.DD3.initClient = function (launcher, orderController) {
 };
 
 //Initialize the controller node.
+//BAI: this function is called in Control.cshtml to get the "instanceId" value. "instanceID" represent the application set up in the GDO environment.
 gdo.net.app.DD3.initControl = function (callback) {
     gdo.consoleOut('.DD3', 1, 'Initializing DD3 App Control at Instance ' + gdo.clientId);
     main_callback = callback;
