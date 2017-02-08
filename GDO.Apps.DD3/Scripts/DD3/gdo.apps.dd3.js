@@ -16,6 +16,9 @@ var temporary_store;//TODO v4: delete
 var initDD3App = function () {
 
     //Retrieve the d3 library element
+    //BAI: each test_bench (control.cshtml) will be regarded as an iframe and will be embedded into "Instances.cshtml" file which is defiend in the root GOD solution (GDO/Web/Instances.cshtml).
+    //BAI: only the test_bench which is running will not be set "display:none" and it will be shown in the GDO environment (Instance panel in the GDO management website). 
+    //BAI: each test_bench (client.cshtml) will also be regarded as an iframe and will be embeded into "Node.cshtml" file (a div called "wrapper") which is defined in the root GOD solution (GDO/Web/Node.cshtml).
     d3 = document.getElementById('app_frame_content').contentWindow.d3;
 
     /**
