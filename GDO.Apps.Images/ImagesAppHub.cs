@@ -13,10 +13,10 @@ using log4net;
 namespace GDO.Apps.Images
 {
     [Export(typeof(IAppHub))]
-    public class ImagesAppHub : Hub, IBaseAppHub
+    public class ImagesAppHub : Hub, IBaseAppHub, IHubLog
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof(ImagesAppHub));
 
+        public ILog Log { get; set; } = LogManager.GetLogger(typeof(ImagesAppHub));
         public string Name { get; set; } = "Images";
         public int P2PMode { get; set; } = (int) Cave.P2PModes.None;
         public Type InstanceType { get; set; } = new ImagesApp().GetType();
