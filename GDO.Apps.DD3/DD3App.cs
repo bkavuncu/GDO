@@ -130,6 +130,7 @@ namespace GDO.Apps.DD3
 
         // Code for Connection and Control
         //Initialise a new application node
+        //BAI: "updateInformation" defined in DD3AppHub.cs file will call the following function "newClient"
         public void newClient(string cid, BrowserInfo b)
         {
             lock (_locker)
@@ -158,6 +159,8 @@ namespace GDO.Apps.DD3
         }
 
         //Broadcast configurations to all the Browser nodes
+        //BAI: this function will call the broadcastConfiguration function defined in the DD3AppHub.cs file (the same name.)
+        //BAI: this function will be called by "newClient" function also defined in this file.
         private void broadcastConfiguration () {
             BrowserBroadcastInfo[] browserInfos = new BrowserBroadcastInfo[browserList.Count];
             int i = 0;
