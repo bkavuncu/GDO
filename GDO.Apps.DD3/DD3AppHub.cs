@@ -92,8 +92,10 @@ namespace GDO.Apps.DD3
         }
 
         //Broadcast configuration about the browser to the browsers
+        //BAI: this function will called by another "broadcastConfiguration" function defined in the DD3App.cs file. (the same name)
         public void broadcastConfiguration(string browserInfoJson, int confId, int Id)
         {
+            //BAI: the following code will call the function "init.getCaveConfiguration" which is defined in the gdo.apps.dd3.js file.
             Clients.Group("" + Id).dd3Receive("receiveConfiguration", browserInfoJson);
             Clients.Group("" + Id).receiveGDOConfiguration(confId);
         }
@@ -196,7 +198,9 @@ namespace GDO.Apps.DD3
             else
             {
                 //Maybe should we make more checks to ensure we always send order to the same node...
+                //BAI: TODO: a strange comments above.
                 instances = Cave.Apps["DD3"].Instances;
+                //BAI: I guess, this command only send to order to the first connnected screen.
                 var cid = ((DD3App)instances[instanceId]).getFirstNode();
                 if (cid != null)
                     sendControllerOrder(cid, order);
@@ -204,6 +208,7 @@ namespace GDO.Apps.DD3
         }
 
         //Send a message to the controller
+        //BAI: this function is called in the "DD3App.cs" file.
         public void updateController(string controllerId, string message)
         {
             Clients.Client(controllerId).updateController(message);
