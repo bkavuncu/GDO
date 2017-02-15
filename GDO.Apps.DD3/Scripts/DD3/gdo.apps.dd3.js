@@ -323,6 +323,7 @@ var initDD3App = function () {
     //var peerObject = { key: 'q35ylav1jljo47vi', debug: 0 };
     //  var peerObject = { host: "dsigdoprod.doc.ic.ac.uk", port: 55555 };
     // var peerObject = { host: "146.169.32.109", port: 55555 };
+    //BAI: This is a peer server in DSI.
     var peerObject = { host: "146.169.32.109", port: 55555 };
     //{ host: "localhost", port: 55555 };
 
@@ -396,6 +397,8 @@ var initDD3App = function () {
             }
         };
         //Represent peerjs connection
+        //BAI: this peer object will also include another property called "peer" which is added in the function "connectToPeerServer".
+        //BAI: peer.peer reprents the connection between one peer and the peer server.
         var peer = {
             id: null,
             peers: [],
@@ -410,6 +413,7 @@ var initDD3App = function () {
         };
 
         //Represents Cave
+        //BAI: I guess the cave reprents how many screens which you are using to visualize this application.
         var cave = {
             width: 0,
             height: 0,
@@ -438,7 +442,7 @@ var initDD3App = function () {
         var syncTime;
 
         //Initializer function for dd3 library
-        //BAI: initializer function is called when it is defined.
+        //BAI: initializer function is called when it is defined. Also initializer is included in the dd3 object which is also be called when defined.
         var initializer = (function () {
             /*
                 Connect to peer server => Get peerId
@@ -458,6 +462,7 @@ var initDD3App = function () {
             };
 
             //Check peerjs, d3, jquery, and signalr are loaded
+            //BAI: this function is called at the beginning of the above "init" function in the "if" condition.
             init.checkLibraries = function () {
                 var toCheck = ['d3', 'Peer', 'jQuery', ['jQuery', 'signalR']];
 
@@ -487,14 +492,17 @@ var initDD3App = function () {
                 return true;
             };
 
-            //define the row and clomun of the browser. NO information from the server is used. It merely uses the the url
+            //BAI: define the row and clomun of the browser. No other information from the server is used. It only uses the the url
             //BAI: the browser info is get from URL.
             init.setBrowserConfiguration = function () {
+                //BAI: here options.postionByClientID is true. the clientID is the number shown on the screen when GDO is in the maintanance mode.
                 if (options.positionByClientId) {
                     browser.number = +utils.getUrlVar('clientId');
+                    //BAI: the reason of divided by 16 is because we have 16 screens in GOD.
                     browser.initColumn = (browser.number - 1) % 16;
                     browser.initRow = 3 - ~~((browser.number - 1) / 16);
                 } else {
+                    //BAI: we will get the browser position by the url via "column" and "row"
                     browser.initColumn = +utils.getUrlVar('column');
                     browser.initRow = +utils.getUrlVar('row');
                     browser.number = (3 - browser.initRow) * 16 + (browser.initColumn + 1);
@@ -515,7 +523,7 @@ var initDD3App = function () {
                     p.on('connection', function (conn) {
                         // Previous loss of data : the buffering in peer.js seems not to work,
                         // and data have to be sent only when connection is opened (connection != open)
-                        //Row and columun form the browser which connects to this one
+                        // Row and columun form the browser which connects to this one
                         var r = +conn.metadata.initiator[0],
                             c = +conn.metadata.initiator[1];
 
@@ -573,22 +581,25 @@ var initDD3App = function () {
 
                 utils.log("Connected to signalR server", 1);
                 utils.log("Waiting for everyone to connect", 1);
-
+                //BAI: TODO: currently, the browserinfo is obtained from the url. And the url is a specific setting in the GOD device. Therefore, we should set these value from signalR server.
                 var thisInfo = {
                     browserNum: browser.number,
                     peerId: peer.id,
                     row: browser.initRow,
                     col: browser.initColumn,
+                    //height and width is obtained by the client itself by calling "$(window).height()" when the "browser" object is defined.
                     height: browser.height,
                     width: browser.width
                 };
 
+                //BAI: this function will call "init.getCaveConfiguration" finally. The whole procedure is quite complex. The detailed logic can be obtained by looking through DD3App.cs and DD3AppHub.cs.
                 signalR.server.updateInformation(signalR.sid, thisInfo);
                 utils.log("Connection to SignalR server established", 1);
             };
 
             //Receive the configuration of the whole cave from the backend
-            //Bai: this function is called when it is defined. At last, it will define all the DD3 function via calling the function "defineDD3Functions" which is defined below.
+            //Bai: this function is c. At last, it will define all the DD3 function via calling the function "defineDD3Functions" which is defined below.
+            //BAI: the argument "obj" in the following function is the "thisInfo" argument in the above function "init.connectToSignalServer" 
             init.getCaveConfiguration = function (obj) {
                 utils.log("Receiving connected browsers' ids from signalR server", 1);
 
@@ -608,6 +619,7 @@ var initDD3App = function () {
                 cave.columns = maxCol - minCol + 1;
 
                 //Offset the column,row coordinate of this browser with minimal row and column
+                //BAI: TODO: dynamically set the column and rom as the properties in browser object. Should be got from signalR server. 
                 browser.column = browser.initColumn - minCol;
                 browser.row = browser.initRow - minRow;
 
@@ -621,6 +633,8 @@ var initDD3App = function () {
 
                 peer.peers = peersInfo;
                 //peer.connections are the peerjs connections matained between this node and others
+                //BAI: "d3.range(0, cave.rows)" return arrays which has the same number as the value of "cave.rows"
+                //BAI: the following code make peer.connections as lots of blank arrays which have the same name as the value of "cave.rows"
                 peer.connections = d3.range(0, cave.rows).map(function () { return []; });
                 //peer.buffers is the buffer of the data sent from this node to another one
                 peer.buffers = d3.range(0, cave.rows).map(function () { return []; });
@@ -661,6 +675,7 @@ var initDD3App = function () {
              */
 
             //this returns a function which offsets any input by a given value in a given direction
+            //BAI: DD3Q: what does the argument x mean
             function sumWith(s, sign) {
                 return function (x) { return x + sign * s; };
             }
@@ -718,6 +733,7 @@ var initDD3App = function () {
 
             /**
              * DATA REQUEST AND RECEPTION FROM SERVER
+             * BAI: We should make the data reception as a separate module.
              */
 
             //Prefix a string with dd3_ 
@@ -725,7 +741,7 @@ var initDD3App = function () {
             var pr = function (s) {
                 return "dd3_" + s;
             };
-
+            //BAI: data and dd3_data are both arguments defined as the beginning.
             dd3_data.data = data;
 
 
@@ -792,9 +808,10 @@ var initDD3App = function () {
                 return limit;
             };
 
-            // Data Request
+            // Data Request　
             //get Dimensions of the dataset
-
+            //BAI: this function will be called via "dd3.getDimensions" in the App.cshtml. Because "dd3_data.getDimensions" will be export as "dd3.getDimensions"
+            //BAI: here, it still uses "signalR.server.getDimensions" to implement this function.
             dd3_data.getDimensions = function (dataId, callback) {
                 utils.log("Data dimensions requested for " + dataId, 1);
                 data[pr(dataId)] = {};
@@ -812,6 +829,7 @@ var initDD3App = function () {
                         * keys: array of the attributes that you want to retrieve
                         * No return as data will be passed to callback
                         */
+            //BAI: here, it still uses "signalR.server.getData" to implement this function.
             dd3_data.getData = function (dataName, dataId, callback, keys) {
                 data[pr(dataId)] = data[pr(dataId)] || {};
                 data[pr(dataId)][pr(dataName)] = data[pr(dataId)][pr(dataName)] || {};
@@ -1036,6 +1054,7 @@ var initDD3App = function () {
             };
 
             //Callback upon data reception => store it and call the next callback
+            //BAI: this function will be called when any this kind of data retrieval function "signalR.server.getPointData(signalR.sid, request);" get the data.
             dd3_data.receiveData = function (dataName, dataId, dataPoints) {
                 utils.log("Data received : " + dataName + " (" + dataId + ")", 1);
                 dataPoints = JSON.parse(dataPoints);
@@ -1058,6 +1077,7 @@ var initDD3App = function () {
             };
 
             //Link this callback with signalr
+            //BAI: all these callback functions all only for data reception.
             signalR_callback.receiveDimensions = dd3_data.receiveDimensions;
             signalR_callback.receiveData = dd3_data.receiveData;
             signalR_callback.receiveRemoteDataReady = dd3_data.receiveRemoteDataReady;
@@ -1069,6 +1089,7 @@ var initDD3App = function () {
 
             //Methods of the peer object: callback when a peer is created and opened
             //Will log the connection, link to the behaviour upon data reception and call peer.flush
+            //BAI: this function will be called once the peer has connected to the peer Server.
             peer.init = function (conn, r, c) {
                 utils.log("Connection established with Peer (" + [r, c] + "): " + conn.peer, 0);
                 conn.on("data", peer.receive);
@@ -1110,6 +1131,7 @@ var initDD3App = function () {
                 if (!peer.connections[r][c].open || buffer) {
                     peer.buffers[r][c].push(data);
                 } else {
+                    //BAI:.send is the peer api
                     peer.connections[r][c].send(data);
                 }
 
@@ -1186,6 +1208,7 @@ var initDD3App = function () {
             // g: Current element in the ordered group.
             // order: current 'position' of in the ordered group
             //TODO v4: the selector can't find the order. Is that a problem?
+            //BAI: this function is only used in the function "_dd3_shapeHandler" below
             var getOrderFollower = function (g, order) {
                 var s = order.split("_");
                 var elems = g.selectAll_("#" + g.node().id + " > [order^='" + s[0] + "']"),//TODO document this CSS selector query
@@ -1232,6 +1255,8 @@ var initDD3App = function () {
                 return follower;
             };
 
+
+            //BAI: all the following handler functions are called in the above "peer.receive" function.
             //Handler to be called upon the reception of a shape from peerjs.
             // Create the element from the data received (data.sendId), add it to the group (data.containers) in the proper ordering.
             var _dd3_shapeHandler = function (data) {
@@ -1305,8 +1330,6 @@ var initDD3App = function () {
                         .attr_("id", data.sendId);
                 }
             };
-
-
             
             //Handler to be called upon the reception of a transition from peerjs.
             //TODO: v4: d3.ease implementation changed radically
@@ -1480,6 +1503,7 @@ var initDD3App = function () {
 
             // Send a message to server to synchronize after the optionnal timeout,
             // the callback is then triggered by the server on every browsers approximately simultaneously
+            // BAI: One peer send an order to the server, and the server will tell the other browsers to do the synchronization.
             _dd3.synchronize = (function () {
                 var nop = function () { };
 
@@ -1502,6 +1526,7 @@ var initDD3App = function () {
 
 
             /*APIDOC: see d3.selection */
+            //BAI: DD3Q: dd3.selection is the same as the d3.selection.
             _dd3.selection = d3.selection;
 
 
@@ -1511,6 +1536,8 @@ var initDD3App = function () {
             var _dd3_factory = function (path) {
                 //append the original function with functionName suffixed with a _ to the input prototype.
                 // and then call watcher with arguments as its first argument.
+                //BAI: add the watcher functions as the prototype in _dd3.selection or we can say d3.selection (_dd3.selection is the same like d3.selection).
+                //BAI: all the wathcer functions ends with a new symbol "_"
                 return function (watcher, original, funcName) {
                     //add a function to the prototype specified in the second arguments.
                     path[funcName + '_'] = original;
@@ -1596,7 +1623,7 @@ var initDD3App = function () {
 
             //watchFactory since D3 functions under d3.selection.prototype
             //first arg is the watcher, second is the d3 function to watch for, third is the name of the new function and fourth is the number of expected arguments for this function.
-
+            //BAI: For example: dd3.selection.attr('cx','10'). Therefore, there are two arguments in this function.
             _dd3.selection.prototype.attr = _dd3_watchFactory(_dd3_watchChange, d3.selection.prototype.attr, 'attr', 2);
 
             _dd3.selection.prototype.style = _dd3_watchFactory(_dd3_watchChange, d3.selection.prototype.style, 'style', 2);
@@ -1643,6 +1670,7 @@ var initDD3App = function () {
             *  oldSelection are the former recipients
             *  Returns which elements enter, update or exit the new selection 
             */
+            //BAI: this function is called in the function "_dd3_sendGroup" and "_dd3_sendElement"
             var _dd3_getSelections = function (newSelection, oldSelection) {
                 var ns = newSelection.slice(),
                     os = oldSelection.slice();
@@ -1682,6 +1710,7 @@ var initDD3App = function () {
             };
 
             /**  Find all browsers which MAY need to receive the element */
+            //BAI: as we need to send data to peer, so we need to find all the browsers which need to receive the data.(Not sure if it is the right comments, need to be updated later)
             var _dd3_findRecipients = function (el) {
 
                 if (!el)
@@ -1847,6 +1876,7 @@ var initDD3App = function () {
                     obj.type = 'shape';
                     obj.attr = utils.getAttr(elem);
                     obj.name = elem.nodeName;
+                    //BAI: send the HTML dom
                     obj.html = elem.innerHTML;
                     // Remember the container to keep the drawing order (superposition)
                     obj.containers = groups;
@@ -1861,7 +1891,7 @@ var initDD3App = function () {
                     }
                     return array;
                 };
-
+                //BAI: this function will be called by the above function "createPropertiesObject"
                 var createPropertyObject = function (obj, elem, f, p) {
                     if (f !== "remove") {
                         obj.type = 'property';
@@ -1884,7 +1914,7 @@ var initDD3App = function () {
                     // Needed for integration into GDO framework as it seems that constructor are different !
                     // And peer.js test equality with constructors to send data !
                 };
-
+                //BAI: this function will be called by the above function "createTransitionsObject"
                 var createTransitionObject = function (obj, args, onSend) {
                     obj.type = 'transition';
 
@@ -1928,7 +1958,7 @@ var initDD3App = function () {
                     // Needed for integration into GDO framework as it seems that constructor are different !
                     // And peer.js test equality with constructors to send data !
                 };
-
+                //BAI: this function will be called by the above function "createEndTransitionsObject"
                 var createEndTransitionObject = function (obj, name, remove) {
                     obj.type = 'endTransition';
                     obj.name = name;
@@ -2065,6 +2095,7 @@ var initDD3App = function () {
 
             })();
 
+            //BAI: this function use the peer to send data.
             var _dd3_dataSender = function (objs, selections) {
                 // Allow to do something special for each selection (enter, update, exit) of recipients
                 if (!(selections instanceof Array)) utils.log("V4 Error: selections  is a Map and handled as an array",4);
@@ -2078,6 +2109,7 @@ var initDD3App = function () {
                                 obj = utils.clone(obj);
                                 delete obj.onSend;
                             }
+                            //BAI: use peer to end data.
                             peer.sendTo(d[0], d[1], obj, true); // true for buffering 
                         });
                     }
@@ -2740,6 +2772,7 @@ var initDD3App = function () {
             };
 
             //TODO v4: will probably fail -> should be good
+            //BAI: maybe we should change defineEase function if we refer to dd3.v4
             _dd3.defineEase = function (name, func) {
                 if (arguments.length < 2) return _dd3_eases['dd3_' + name];
                 if (!func) delete _dd3_eases['dd3_' + name];
@@ -2837,7 +2870,7 @@ var initDD3App = function () {
          */
 
         utils.log('Starting dd3 initialisation', 1);
-        //BAI: DD3Q: "initializer function has been called when it is defined, why it needs to be called again here"
+        //BAI: this code is to run the "init" function defined at the beginning of "initializer" function
         initializer();
         utils.log('Returning _dd3', 1);
         return _dd3;
@@ -2851,12 +2884,25 @@ var initDD3App = function () {
 // These functions need to be defined before signalR is started, so we need to use a callback system:
 // signalR_callback is defined later in dd3 when it is initiated.
 
+//BAI: "dd3Server" represents a object of the class "DD3AppHub" in "DD3AppHub.cs" file.
 var dd3Server = $.connection.dD3AppHub;//Contains all methods of AppHub
+
+//BAI: signalR_callback.receiveConfiguration = init.getCaveConfiguration;
+//BAI: signalR_callback.receiveSynchronize = signalR.receiveSynchronize;
+//BAI: signalR_callback.receiveDimensions = dd3_data.receiveDimensions;
+//BAI: signalR_callback.receiveData = dd3_data.receiveData;
+//BAI: signalR_callback.receiveRemoteDataReady = dd3_data.receiveRemoteDataReady;
 var signalR_callback = {};//Contains server interaction functions
+//BAI: this argument will be set the value in the function "gdo.net.app.DD3.initClient". Therefore, the main_callback is the function "launcher" in "App.cshtml" file.
+//BAI "main_callback" is the "launcher" function.
 var main_callback; // Callback inside the html file called when the configuration of GDO is received for application node or when the controller is updated for a controller
 var orderTransmitter; // Callback inside the html file when the client is initialized
 
 // Function used for dd3 callback
+// BAI: all the following function starting with dd3Server are called in the C# code in the DD3AppHub.cs file.
+// BAI: DD3Q: if dd3Server.client has no relationship with the functions defined in the DD3AppHub.cs file. 
+// BAI: the following code is to define a function called "dd3Receive" in the front end which can be called by backend. (Here, it will be called by DD3AppHub.cs and some part in this file.)
+// BAI: DD3Q: why the arguments in the definition is only one, but when we call this function in the above code in this file, several arguments are passed into this function.
 dd3Server.client.dd3Receive = function (f) {
     signalR_callback[f].apply(null, [].slice.call(arguments, 1));
 };
@@ -2864,6 +2910,8 @@ dd3Server.client.dd3Receive = function (f) {
 // Non-dd3 functions
 
 // called by AppHub when the configuration is broadcasted. Execute main_callback as defined in HTML file
+// BAI: TODO: this part should be replaced by a separated singalr server not the gdo server
+// BAI: this function only decides which test_bench will be called. 
 dd3Server.client.receiveGDOConfiguration = function (id) {
     // To get configId from server
     if (main_callback) {
@@ -2887,6 +2935,7 @@ dd3Server.client.receiveControllerOrder = function (orders) {
 };
 
 // ==== IF THIS NODE IS A CONTROLLER ====
+//BAI: I dont think the following code is for the contoller node.
 
 //What to do when the controller is updated by the server => execute main_callback on  the received object.
 dd3Server.client.updateController = function (obj) {
@@ -2917,7 +2966,10 @@ gdo.net.app.DD3.initClient = function (launcher, orderController) {
 //BAI: this function is called in Control.cshtml to get the "instanceId" value. "instanceID" represent the application set up in the GDO environment.
 gdo.net.app.DD3.initControl = function (callback) {
     gdo.consoleOut('.DD3', 1, 'Initializing DD3 App Control at Instance ' + gdo.clientId);
+    //BAI: here main_callback is defined in the the "Control.cshtml" file. The name is just callback with an argument "message".
+    //After this initControl is called, the above function "dd3Server.client.updateController" is also called by the function "updateController" defined in DD3AppHub.cs file.
     main_callback = callback;
+    //BAI: the following code means it will call the function "defineController" which is defiend in the backend (DD3AppHub.cs).
     dd3Server.server.defineController(gdo.net.instance[gdo.controlId].id);
     return gdo.net.instance[gdo.controlId].id;
 };
