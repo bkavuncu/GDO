@@ -1,4 +1,6 @@
-﻿namespace GDO.Core.Apps
+﻿using log4net;
+
+namespace GDO.Core.Apps
 {
     //[InheritedExport]
     /// <summary>

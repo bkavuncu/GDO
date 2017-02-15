@@ -13,7 +13,7 @@ namespace GDO.Core
 {
     public class CaveHub : Hub
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof(CaveHub));
+        protected static readonly ILog Log = LogManager.GetLogger(typeof(CaveHub));
 
         public void LogCall(string message) {
             Log.Info("CAVE HUB CAlled"+message);
