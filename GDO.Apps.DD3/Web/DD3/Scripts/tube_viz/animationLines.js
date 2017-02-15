@@ -185,8 +185,8 @@ var animationLines = function (arg) {
 	                polygonPosition.set(name, []);
 
 	                line.forEach(function (partLine) {
-
-	                    var pLine = map.getPointsAt(l.stations.getStationsCoordinates(partLine));
+                        //BAI: change the following code from "map.getPointsAt" to "a.map.getPointsAt"
+	                    var pLine = a.map.getPointsAt(l.stations.getStationsCoordinates(partLine));
 	                    var ptPrec;
 
 	                    var posVect = pLine.map(function (d, i) {
