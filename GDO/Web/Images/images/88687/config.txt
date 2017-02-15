@@ -1,0 +1,9 @@
+//ImageName ImageNameDigit ImageNaturalWidth ImageNaturalHeight TileWidth TileHeight TileCols TileRows
+images.jpg
+88687
+300
+168
+50
+29
+6
+6

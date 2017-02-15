@@ -87,13 +87,16 @@
     <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
     <script src="../../Scripts/d3.js"></script>
     <script src="../../Scripts/peer.js"></script>
+    <script src="~/Scripts/DD3/gdo.apps.dd3.js"></script>
 
     <!-- JS FOR TUBE VIZ-->
+    <!--
     <script src="~/Web/DD3/Scripts/map.js"></script>
     <script src="~/Web/DD3/Scripts/stations.js"></script>
     <script src="~/Web/DD3/Scripts/lines.js"></script>
     <script src="~/Web/DD3/Scripts/animation.js"></script>
     <script src="~/Web/DD3/Scripts/animationLines.js"></script>
+    -->
 
     <script>
         d3.selection.prototype.moveToFront = function () {
@@ -797,6 +800,108 @@
                         svg.selectAll("g").remove();
                     };
 
+                };
+
+                // dd3 dev environment 
+                test_bench['16'] = function () {
+                    orderController.orders['initWorldConfig'] = function (data) {
+                        console.log(JSON.stringify(data));
+
+                        var worldConfig = data;
+                        //console.log(worldConfig.peerServerIp);
+                        //console.log(worldConfig.peerServerPort);
+                        console.log("INFO: world config received");
+
+                        // get peerjs info
+                        var peerSvrIp = worldConfig.peerServerIp, peerSvrPort = worldConfig.peerServerPort;
+                        var peerObject = { host: peerSvrIp, port: peerSvrPort };
+
+                        // set peerjs connection 
+                        var peerConn = new Peer(peerObject);
+                        peerConn.on('open', function (id) {
+                            console.log('INFO: connected to peer server - id : ' + id);
+                        });
+
+                        // get browser information
+                        caveWidth = dd3.cave.svgWidth,
+	                    caveHeight = dd3.cave.svgHeight,
+	                    browserWidth = dd3.browser.svgWidth,
+	                    browserHeight = dd3.browser.svgHeight,
+                        col = dd3.browser.column,
+                        row = dd3.browser.row;
+
+                        //console.log('DEBUG: ' + caveWidth, browserWidth, col, row);
+                        
+                        // TODO: ? design how to send world config around nodes
+
+                    };
+                };
+
+                // deep learning app 
+                test_bench['13'] = function () {
+                    var svg = dd3.svgCanvas,
+                        cwidth = dd3.cave.svgWidth,
+                        cheight = dd3.cave.svgHeight,
+                        bwidth = dd3.cave.svgWidth,
+                        bheight = dd3.cave.svgHeight;
+
+                    /*
+                    var url1 = "http://i-cdn.phonearena.com/images/article/73244-image/Google-reveals-new-logo-and-icons.jpg";
+                    var url2 = "https://upload.wikimedia.org/wikipedia/commons/6/65/Kochsim.gif";
+                    var ig = svg.append('g').attr('id', '0');
+                    ig.append('image').attr('xlink:href', url1)
+                                      .attr('x', 0).attr('y', 0)
+                                      .attr('width', 600).attr('height', 400);
+                    */
+
+                    /*
+                    orderController.orders['addImage'] = function (id, image) {
+                        console.log("trying to add image ..");
+
+                        var imgGroup = svg.append('g').attr('id', 'r' + id);
+                        imgGroup.append('image').attr('xlink:href', image)
+                                      .attr('x', 0).attr('y', 0)
+                                      .attr('width', 600).attr('height', 400);
+                    };
+                    */
+
+                    // TODO function name to be changed
+                    orderController.orders['testFunction'] = function (url3) {
+                        console.log("test function received.");
+
+                        /*
+                        var imgInfo = "http://155.198.188.12:25555/img/info";
+                        $.getJSON(imgInfo, function (data) {
+                            console.log("JSON " + data);
+                            $.each(data, function (key, val) {
+                                console.log("j " + val);
+                            });
+
+                        });
+                        */
+
+                        var imgInfo = "http://155.198.188.12:25555/img/info";
+                        $.get(imgInfo, function (data) {
+                            console.log("GET " + data);
+
+                            var xCounter = -1; // start from 0 
+                            $.each(data, function(i, d){
+                                var url = "http://155.198.188.12:25555/img/" + d;
+
+                                var xOffset = 200 + 50;
+                                var yOffset = 200 + 50;
+                                
+                                if (i % 6 == 0) xCounter++;
+
+                                    var img = svg.append('g').attr('id', '1');
+                                    img.append('image').attr('xlink:href', url)
+                                                    .attr('x', xCounter * 250).attr('y', (i % 6) * yOffset)
+                                                    .attr('width', 200).attr('height', 200)
+                                
+                                // console.log("# " + i + ": " + url);
+                            });
+                        });
+                    };
                 };
 
                 // VIZ London METRO

@@ -174,105 +174,105 @@
                 }
             
 
-            var order = function(name, args) {
-                return JSON.stringify({ name: name, args: args });
-            };
+                var order = function(name, args) {
+                    return JSON.stringify({ name: name, args: args });
+                };
 
 
-                    // == FPS ==
-                    var peerObject = { host: "146.169.32.109", port: 55555 };
-                    //{ host: "localhost", port: 55555 };
-                    //{ host: "146.169.32.109", port: 55555 }
-                    var con_peer= new Peer("idofthecontrollerfordd3", peerObject);
-                    con_peer.on('open', function (conn) {
-                        gdo.consoleOut(".DD3", 4, "The peer client of the controller is opened");
+                // == FPS ==
+                var peerObject = { host: "146.169.32.109", port: 55555 };
+                //{ host: "localhost", port: 55555 };
+                //{ host: "146.169.32.109", port: 55555 }
+                var con_peer= new Peer("idofthecontrollerfordd3", peerObject);
+                con_peer.on('open', function (conn) {
+                    gdo.consoleOut(".DD3", 4, "The peer client of the controller is opened");
+                });
+                var dataset = [];
+                var eventLog = [];
+
+                con_peer.on('connection', function (conn) {
+                    eventLog.push([new Date().getTime(), "Connecting with  "+ conn.label]);
+                    conn.on('data', function (data) {
+                        var raw = data.split(';');
+                        var row = raw[0];
+                        var col = raw[1];
+                        var nbr = raw[2];
+                        var nbc = raw[3];
+                        var nbdc = raw[4];
+                        var ts = raw[5];
+                        var fps = raw[6];
+                        var std = raw[7];
+                        dataset.push([row, col, nbr, nbc, nbdc, ts, fps, std]);
+                        //gdo.consoleOut(".DD3", 4, dataset);
+                        //updateFPSChart();
                     });
-                    var dataset = [];
-                    var eventLog = [];
-
-                    con_peer.on('connection', function (conn) {
-                        eventLog.push([new Date().getTime(), "Connecting with  "+ conn.label]);
-                        conn.on('data', function (data) {
-                            var raw = data.split(';');
-                            var row = raw[0];
-                            var col = raw[1];
-                            var nbr = raw[2];
-                            var nbc = raw[3];
-                            var nbdc = raw[4];
-                            var ts = raw[5];
-                            var fps = raw[6];
-                            var std = raw[7];
-                            dataset.push([row, col, nbr, nbc, nbdc, ts, fps, std]);
-                            //gdo.consoleOut(".DD3", 4, dataset);
-                            //updateFPSChart();
-                        });
-                    });
+                });
                     
                     
 
-            if (!gdo.net.app["DD3"].initControl) {
-                $("#wait").css("display", "none");
-                $("#error").css("display", "");
-                return;
-            }
+                if (!gdo.net.app["DD3"].initControl) {
+                    $("#wait").css("display", "none");
+                    $("#error").css("display", "");
+                    return;
+                }
 
-            instanceId = gdo.net.app["DD3"].initControl(callback);
+                instanceId = gdo.net.app["DD3"].initControl(callback);
 
-            test_bench[0] = function() {
-                var rect = false, circles = 0, dcircles = 0, polygon = false;
+                test_bench[0] = function() {
+                    var rect = false, circles = 0, dcircles = 0, polygon = false;
 
-                // == Basic Moves ==
+                    // == Basic Moves ==
 
-                $('#createRect').click(function () {
-                    if (!rect) {
-                        server.sendOrder(instanceId, order("createRect", []), false);
-                        $(".basic_moves .red").removeClass("red").addClass("green");
-                        $(this).removeClass("green").addClass("red");
-                        rect = true;
-                        eventLog.push([new Date().getTime(), "Creating Rectangles"]);
-                    }
-                });
+                    $('#createRect').click(function () {
+                        if (!rect) {
+                            server.sendOrder(instanceId, order("createRect", []), false);
+                            $(".basic_moves .red").removeClass("red").addClass("green");
+                            $(this).removeClass("green").addClass("red");
+                            rect = true;
+                            eventLog.push([new Date().getTime(), "Creating Rectangles"]);
+                        }
+                    });
 
-                $('#removeRect').click(function () {
-                    if (rect) {
-                        server.sendOrder(instanceId, order("removeRect", []), false);
-                        $(".basic_moves .green").removeClass("green").addClass("red");
-                        $('#createRect').removeClass("red").addClass("green");
-                        rect = false;
-                        eventLog.push([new Date().getTime(), "Removing Rectangles"]);
-                    }
-                });
+                    $('#removeRect').click(function () {
+                        if (rect) {
+                            server.sendOrder(instanceId, order("removeRect", []), false);
+                            $(".basic_moves .green").removeClass("green").addClass("red");
+                            $('#createRect').removeClass("red").addClass("green");
+                            rect = false;
+                            eventLog.push([new Date().getTime(), "Removing Rectangles"]);
+                        }
+                    });
 
-                $('#translationX').click(function () {
-                    if (rect) {
-                        server.sendOrder(instanceId, order("startXTranslation", ['X']), false);
-                        eventLog.push([new Date().getTime(), "Starting X Translation"]);
-                    }
-                });
+                    $('#translationX').click(function () {
+                        if (rect) {
+                            server.sendOrder(instanceId, order("startXTranslation", ['X']), false);
+                            eventLog.push([new Date().getTime(), "Starting X Translation"]);
+                        }
+                    });
 
-                $('#translationY').click(function () {
-                    if (rect) {
-                        server.sendOrder(instanceId, order("startYTranslation", ['Y']), false);
-                        eventLog.push([new Date().getTime(), "Starting Y Translation"]);
-                    }
+                    $('#translationY').click(function () {
+                        if (rect) {
+                            server.sendOrder(instanceId, order("startYTranslation", ['Y']), false);
+                            eventLog.push([new Date().getTime(), "Starting Y Translation"]);
+                        }
                         
-                });
+                    });
 
-                $('#rotation').click(function () {
-                    if (rect) {
-                        server.sendOrder(instanceId, order("startRotation", ['R']), false);
-                        eventLog.push([new Date().getTime(), "Starting Rotation"]);
-                    }
-                });
+                    $('#rotation').click(function () {
+                        if (rect) {
+                            server.sendOrder(instanceId, order("startRotation", ['R']), false);
+                            eventLog.push([new Date().getTime(), "Starting Rotation"]);
+                        }
+                    });
 
-                $('#allMoves').click(function () {
-                    if (rect) {
-                        server.sendOrder(instanceId, order("startXTranslation", ["X"]), false);
-                        server.sendOrder(instanceId, order("startYTranslation", ["Y"]), false);
-                        server.sendOrder(instanceId, order("startRotation", ["R"]), false);
-                        eventLog.push([new Date().getTime(), "Starting All moves"]);
-                    }
-                });
+                    $('#allMoves').click(function () {
+                        if (rect) {
+                            server.sendOrder(instanceId, order("startXTranslation", ["X"]), false);
+                            server.sendOrder(instanceId, order("startYTranslation", ["Y"]), false);
+                            server.sendOrder(instanceId, order("startRotation", ["R"]), false);
+                            eventLog.push([new Date().getTime(), "Starting All moves"]);
+                        }
+                    });
                     $('#createCircles').click(function () {
                         if (!circles) {
                             circles = 100;
@@ -318,7 +318,7 @@
                     });
 
 
-                $("#nbAddCircles").click(function(e) { e.stopPropagation(); });
+                    $("#nbAddCircles").click(function(e) { e.stopPropagation(); });
 
                     $('#addCircles').click(function () {
                         var n = +$("#nbAddCircles").val();
@@ -329,7 +329,7 @@
                         }
                     });
 
-                $("#nbAddDistributedCircles").click(function(e) { e.stopPropagation(); });
+                    $("#nbAddDistributedCircles").click(function(e) { e.stopPropagation(); });
 
                     $('#addDistributedCircles').click(function () {
                         var n = +$("#nbAddDistributedCircles").val();
@@ -354,7 +354,7 @@
                         }
                     });
 
-                // == Group Transition ==
+                    // == Group Transition ==
 
                     $('#createPolygon').click(function () {
                         if (!polygon) {
@@ -411,127 +411,161 @@
                     });
 
 
-            };
-
-            test_bench[1] = function() {
-                var dataIds = ["scatterplot33", "scatterplot100", "scatterplot500", "scatterplot1000", "scatterplot4000", "scatterplot20000"];
-
-                var table = $("#control_1 table");
-                var send = function(value) {
-                    server.sendOrder(instanceId, order("plot", [value]), true);
                 };
 
-                dataIds.forEach(function(d) {
-                    table.append('<tr><td>' + d + '</td></tr>');
-                    table.find("tr:last td").addClass('green').click(send.bind(null, d));
-                });
-            };
+                test_bench[1] = function() {
+                    var dataIds = ["scatterplot33", "scatterplot100", "scatterplot500", "scatterplot1000", "scatterplot4000", "scatterplot20000"];
 
-            test_bench[2] = function() {
-                $("#changeValues").click(function() {
-                    var n = +$("#timeTr").val();
-                    server.sendOrder(instanceId, order("changeValues", [n]), true);
-                });
-            };
+                    var table = $("#control_1 table");
+                    var send = function(value) {
+                        server.sendOrder(instanceId, order("plot", [value]), true);
+                    };
 
-            test_bench[3] = function() {
-                var id = 0;
-                var previous;
-                var timeout = -1;
-                var sensibility = 100;
-                var pos = {};
-                var posC = {};
-                var wr = 1400, hr = 600;
-                var selected = "";
+                    dataIds.forEach(function(d) {
+                        table.append('<tr><td>' + d + '</td></tr>');
+                        table.find("tr:last td").addClass('green').click(send.bind(null, d));
+                    });
+                };
 
-                d3.select("#control_3").selectAll("svg").remove();
-                var svg = d3.select("#control_3").append("svg").attr("width", wr + "px").attr("height", hr + "px");
+                test_bench[2] = function() {
+                    $("#changeValues").click(function() {
+                        var n = +$("#timeTr").val();
+                        server.sendOrder(instanceId, order("changeValues", [n]), true);
+                    });
+                };
 
-                svg.append("rect").attr("x", 0)
-                    .attr("y", 0)
-                    .attr("width", wr + "px")
-                    .attr("height", hr + "px")
-                    .attr("stroke", "black")
-                    .style("fill", "#EEE")
-                    .on("click", function() {
-                        selected !== "" ? d3.select("#" + selected + " rect").style("fill", "#EEE") : false;
-                        selected = "";
+                test_bench[3] = function() {
+                    var id = 0;
+                    var previous;
+                    var timeout = -1;
+                    var sensibility = 100;
+                    var pos = {};
+                    var posC = {};
+                    var wr = 1400, hr = 600;
+                    var selected = "";
+
+                    d3.select("#control_3").selectAll("svg").remove();
+                    var svg = d3.select("#control_3").append("svg").attr("width", wr + "px").attr("height", hr + "px");
+
+                    svg.append("rect").attr("x", 0)
+                        .attr("y", 0)
+                        .attr("width", wr + "px")
+                        .attr("height", hr + "px")
+                        .attr("stroke", "black")
+                        .style("fill", "#EEE")
+                        .on("click", function() {
+                            selected !== "" ? d3.select("#" + selected + " rect").style("fill", "#EEE") : false;
+                            selected = "";
+                        });
+
+                    var g = svg.append("g");
+
+                    var moveRect = function() {
+                        var o = order("moveRect", [this.parentElement.id, (d3.mouse(g.node())[0] + pos.x) / wr, (d3.mouse(g.node())[1] + pos.y) / hr]),
+                            tr = [d3.mouse(g.node())[0] + pos.x, d3.mouse(g.node())[1] + pos.y];
+
+                        var move = function() {
+                            server.sendOrder(instanceId, o, false);
+                            previous = Date.now();
+                        };
+
+                        d3.select(this.parentElement).attr("transform", "translate(" + tr + ")");
+                        clearTimeout(timeout);
+                        timeout = setTimeout(move, Math.max(0, sensibility - (Date.now() - previous)));
+                    };
+
+                    var resizeRect = function() {
+                        var x = Math.max(d3.mouse(this)[0], 0),
+                            y = Math.max(0, d3.mouse(this)[1]),
+                            o = order("resizeRect", [this.parentElement.id, x / wr, y / hr]);
+
+                        var resize = function() {
+                            server.sendOrder(instanceId, o, false);
+                            previous = Date.now();
+                        };
+
+                        d3.select(this.parentElement).select('rect').attr("width", x).attr("height", y);
+                        d3.select(this).attr("cx", x).attr("cy", y);
+                        clearTimeout(timeout);
+                        timeout = setTimeout(resize, Math.max(0, sensibility - (Date.now() - previous)));
+                    };
+
+
+                    var delRect = function() {
+                        server.sendOrder(instanceId, order("delRect", [this.id]), false);
+                        d3.select(this).remove();
+                    };
+
+                    var drag = d3.behavior.drag();
+                    var dragC = d3.behavior.drag();
+                    drag.on("drag", function() {
+                        moveRect.call(this);
+                    });
+                    drag.on("dragstart", function() {
+                        console.log('move');
+                        console.log(this);
+                        d3.select(this.parentElement).moveToFront();
+                        var t = d3.transform(d3.select(this.parentElement).attr("transform")).translate;
+                        previous = Date.now();
+                        pos.x = t[0] - d3.mouse(g.node())[0];
+                        pos.y = t[1] - d3.mouse(g.node())[1];
+                    });
+                    dragC.on("drag", function() {
+                        resizeRect.call(this);
+                    });
+                    dragC.on("dragstart", function() {
+                        console.log('resize');
+                        console.log(this);
+                        d3.select(this.parentElement).moveToFront();
+                        var t = d3.transform(d3.select(this.parentElement).attr("transform")).translate;
+                        previous = Date.now();
+                        posC.x = t[0] - d3.mouse(g.node())[0];
+                        posC.y = t[1] - d3.mouse(g.node())[1];
                     });
 
-                var g = svg.append("g");
+                    var createHostedRect = function(url) {
 
-                var moveRect = function() {
-                    var o = order("moveRect", [this.parentElement.id, (d3.mouse(g.node())[0] + pos.x) / wr, (d3.mouse(g.node())[1] + pos.y) / hr]),
-                        tr = [d3.mouse(g.node())[0] + pos.x, d3.mouse(g.node())[1] + pos.y];
+                        var that = this;
+                        var img = new Image();
+                        img.onload = function () {
+                            console.log(this.width + 'x' + this.height);
 
-                    var move = function() {
-                        server.sendOrder(instanceId, o, false);
-                        previous = Date.now();
+                            id++;
+                            server.sendOrder(instanceId, order("createRect", ['d' + id, url, this.width, this.height]), false);
+                            //Custom offset that stays in bounds and translate image on x&y according to ID
+                            var col = (id - 1) % 5, row = Math.floor((id - 1) / 5);
+                            var offx = (((2 * wr / 10) * col) % wr) + col;
+                            var offy = (((2 * hr / 10) * row) % hr) + row;
+                            var rg = g.append("g").attr("id", "d" + id).classed("r", true).attr("transform", "translate(" + [offx, offy] + ")");
+                            var r = rg.append("rect").attr("x", 0)
+                                .attr("y", 0)
+                                .attr("width", (2 * wr / 10) - 2)
+                                .attr("height", (2 * hr / 10) - 2)
+                                .attr("stroke", "black")
+                                .attr("fill", "#EEE")
+                                .call(drag, this)
+                                .on("click", function () {
+                                    selected !== "" ? d3.select("#" + selected + " rect").style("fill", "#EEE") : false;
+                                    selected = this.parentElement.id;
+                                    d3.select(this).style("fill", "#FDD1FD");
+                                });
+
+                            rg.append("circle").attr("cx", wr * 2 / 10)
+                                .attr("cy", hr * 2 / 10)
+                                .attr("r", 20)
+                                .attr("stroke", "transparent")
+                                .attr("fill", "rgba(252,231,31,0.5)")
+                                .call(dragC, that);
+                        }
+                        img.src = url;
+
+                    
                     };
 
-                    d3.select(this.parentElement).attr("transform", "translate(" + tr + ")");
-                    clearTimeout(timeout);
-                    timeout = setTimeout(move, Math.max(0, sensibility - (Date.now() - previous)));
-                };
-
-                var resizeRect = function() {
-                    var x = Math.max(d3.mouse(this)[0], 0),
-                        y = Math.max(0, d3.mouse(this)[1]),
-                        o = order("resizeRect", [this.parentElement.id, x / wr, y / hr]);
-
-                    var resize = function() {
-                        server.sendOrder(instanceId, o, false);
-                        previous = Date.now();
-                    };
-
-                    d3.select(this.parentElement).select('rect').attr("width", x).attr("height", y);
-                    d3.select(this).attr("cx", x).attr("cy", y);
-                    clearTimeout(timeout);
-                    timeout = setTimeout(resize, Math.max(0, sensibility - (Date.now() - previous)));
-                };
-
-
-                var delRect = function() {
-                    server.sendOrder(instanceId, order("delRect", [this.id]), false);
-                    d3.select(this).remove();
-                };
-
-                var drag = d3.behavior.drag();
-                var dragC = d3.behavior.drag();
-                drag.on("drag", function() {
-                    moveRect.call(this);
-                });
-                drag.on("dragstart", function() {
-                    console.log('move');
-                    console.log(this);
-                    d3.select(this.parentElement).moveToFront();
-                    var t = d3.transform(d3.select(this.parentElement).attr("transform")).translate;
-                    previous = Date.now();
-                    pos.x = t[0] - d3.mouse(g.node())[0];
-                    pos.y = t[1] - d3.mouse(g.node())[1];
-                });
-                dragC.on("drag", function() {
-                    resizeRect.call(this);
-                });
-                dragC.on("dragstart", function() {
-                    console.log('resize');
-                    console.log(this);
-                    d3.select(this.parentElement).moveToFront();
-                    var t = d3.transform(d3.select(this.parentElement).attr("transform")).translate;
-                    previous = Date.now();
-                    posC.x = t[0] - d3.mouse(g.node())[0];
-                    posC.y = t[1] - d3.mouse(g.node())[1];
-                });
-
-                var createHostedRect = function(url) {
-
-                    var that = this;
-                    var img = new Image();
-                    img.onload = function () {
-                        console.log(this.width + 'x' + this.height);
-
+                    var createLocalRect = function(name, fileobj) {
                         id++;
-                        server.sendOrder(instanceId, order("createRect", ['d' + id, url, this.width, this.height]), false);
+                        server.sendOrder(instanceId, order("createRect", ['d' + id, "\\Web\\Images\\images\\" + name]), false);
+
                         //Custom offset that stays in bounds and translate image on x&y according to ID
                         var col = (id - 1) % 5, row = Math.floor((id - 1) / 5);
                         var offx = (((2 * wr / 10) * col) % wr) + col;
@@ -544,7 +578,7 @@
                             .attr("stroke", "black")
                             .attr("fill", "#EEE")
                             .call(drag, this)
-                            .on("click", function () {
+                            .on("click", function() {
                                 selected !== "" ? d3.select("#" + selected + " rect").style("fill", "#EEE") : false;
                                 selected = this.parentElement.id;
                                 d3.select(this).style("fill", "#FDD1FD");
@@ -555,81 +589,81 @@
                             .attr("r", 20)
                             .attr("stroke", "transparent")
                             .attr("fill", "rgba(252,231,31,0.5)")
-                            .call(dragC, that);
-                    }
-                    img.src = url;
+                            .call(dragC, this);
+                    };
 
-                    
-                };
+                    $('#fileSelectButton').on('click', function (event) {
+                        event.preventDefault();
+                        var urlval = $('#fileSelect').val();
+                        createHostedRect(urlval);
+                    }); //End handler onclick input
 
-                var createLocalRect = function(name, fileobj) {
-                    id++;
-                    server.sendOrder(instanceId, order("createRect", ['d' + id, "\\Web\\Images\\images\\" + name]), false);
-
-                    //Custom offset that stays in bounds and translate image on x&y according to ID
-                    var col = (id - 1) % 5, row = Math.floor((id - 1) / 5);
-                    var offx = (((2 * wr / 10) * col) % wr) + col;
-                    var offy = (((2 * hr / 10) * row) % hr) + row;
-                    var rg = g.append("g").attr("id", "d" + id).classed("r", true).attr("transform", "translate(" + [offx, offy] + ")");
-                    var r = rg.append("rect").attr("x", 0)
-                        .attr("y", 0)
-                        .attr("width", (2 * wr / 10) - 2)
-                        .attr("height", (2 * hr / 10) - 2)
-                        .attr("stroke", "black")
-                        .attr("fill", "#EEE")
-                        .call(drag, this)
-                        .on("click", function() {
-                            selected !== "" ? d3.select("#" + selected + " rect").style("fill", "#EEE") : false;
-                            selected = this.parentElement.id;
-                            d3.select(this).style("fill", "#FDD1FD");
+                    $('#allFileSelectButton').on('click', function (event) {
+                        event.preventDefault();
+                        $('#fileSelect > option').each(function() {
+                            createHostedRect(this.value);
                         });
+                    }); //End handler onclick input
 
-                    rg.append("circle").attr("cx", wr * 2 / 10)
-                        .attr("cy", hr * 2 / 10)
-                        .attr("r", 20)
-                        .attr("stroke", "transparent")
-                        .attr("fill", "rgba(252,231,31,0.5)")
-                        .call(dragC, this);
+                    $('#addUrl').click(function() {
+                        var urlval = $('#inputUrl').val();
+                        if (urlval === "") {
+                            $('#inputUrl').val('https://upload.wikimedia.org/wikipedia/commons/6/65/Kochsim.gif');
+                            return;
+                        }
+                        createHostedRect(urlval);
+                    });
+
+                    $("#addRect").click(function() {
+                        createHostedRect('illustration.png');
+                    });
+
+                    $("#sens").change(function() {
+                        sensibility = +this.value;
+                    });
+
+
+                    $("#removeAllRect").click(function() {
+                        server.sendOrder(instanceId, order("delAllRect", []), true);
+                        d3.selectAll('g.r').remove();
+                        id = 0;
+                    });
+
+                    server.sendOrdwoer(instanceId, order("delAllRect", []), true);
                 };
 
-                $('#fileSelectButton').on('click', function (event) {
-                    event.preventDefault();
-                    var urlval = $('#fileSelect').val();
-                    createHostedRect(urlval);
-                }); //End handler onclick input
-
-                $('#allFileSelectButton').on('click', function (event) {
-                    event.preventDefault();
-                    $('#fileSelect > option').each(function() {
-                        createHostedRect(this.value);
+                // dd3 dev environment
+                test_bench[16] = function () {
+                    $("#start-dd3").click(function () {
+                        // TODO: might allow the world config to be set in Control
+                        var worldConfigObj = {
+                            "configId": 10,       // diff config for testing ?
+                            "nodeId": 15,         // current node id ? 
+                            "configSize": [100, 100],   // overall browser size 
+                            "nodeSize": [10, 10],       // this node browser size 
+                            "peerServerIp": "146.169.32.109",  // for peerjs 
+                            "peerServerPort": "55555",
+                            "peerGroupId": null,
+                            "column": null,       // this node's col
+                            "row": null,          // this node's row 
+                            "master": true        // this node as master 
+                        };
+                        server.sendOrder(instanceId, order("initWorldConfig", [worldConfigObj]), true);
                     });
-                }); //End handler onclick input
+                };
 
-                $('#addUrl').click(function() {
-                    var urlval = $('#inputUrl').val();
-                    if (urlval === "") {
-                        $('#inputUrl').val('https://upload.wikimedia.org/wikipedia/commons/6/65/Kochsim.gif');
-                        return;
-                    }
-                    createHostedRect(urlval);
+            // deep learning app
+            test_bench[13] = function() {
+                $('#start-button').click(function() {
+
+                    var url = "http://www.margaretheath.co.uk/Images/L%20Images/LBeside-the-seaside.jpg";
+                    server.sendOrder(instanceId, order("testFunction", [url]), true);
+
+                    var id = 1;
+                    var url1 = "https://upload.wikimedia.org/wikipedia/commons/6/65/Kochsim.gif";
+
+                    server.sendOrder(instanceId, order("addImage", ['d' + id, url1], true));
                 });
-
-                $("#addRect").click(function() {
-                    createHostedRect('illustration.png');
-                });
-
-                $("#sens").change(function() {
-                    sensibility = +this.value;
-                });
-
-
-                $("#removeAllRect").click(function() {
-                    server.sendOrder(instanceId, order("delAllRect", []), true);
-                    d3.selectAll('g.r').remove();
-                    id = 0;
-                });
-
-                server.sendOrder(instanceId, order("delAllRect", []), true);
             };
 
             test_bench[4] = function() {
@@ -667,7 +701,7 @@
                 $('#createAnimationShanghai').click(function () {
                     server.sendOrder(instanceId, order("createAnimation", []), true);
                 });
-                //*/
+                */
 
                 $('#launchExitAnimationShanghai').click(function() {
                     server.sendOrder(instanceId, order("launchAnimation", [1]), true);
@@ -925,6 +959,24 @@
                 </tr>
             </table>
         </form>
+    </div>
+
+    <div id="control_16" style="display:none">
+        <table class="table_control">
+            <tr>
+                <td class="green" id="start-dd3">Start DD3</td>
+                <td class="green" id="refresh-dd3">Refresh DD3</td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="control_13" style="display:none">
+        <table class="table_control">
+            <tr>
+                <td class="green" id="start-button">Start</td>
+                <td class="green" id="refresh-button">Refresh</td>
+            </tr>
+        </table>
     </div>
 
     <div id="control_4" style="display:none">

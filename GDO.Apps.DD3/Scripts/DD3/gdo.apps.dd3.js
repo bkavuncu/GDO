@@ -757,6 +757,8 @@ var initDD3App = function () {
                     limit.ymin = domainY[0] + (rangeY[1] - maxY) / (rangeY[1] - rangeY[0]) * (domainY[1] - domainY[0]);
                     limit.ymax = domainY[0] + (rangeY[1] - minY) / (rangeY[1] - rangeY[0]) * (domainY[1] - domainY[0]);
                 }
+                
+
 
                 return limit;
             };
@@ -840,19 +842,30 @@ var initDD3App = function () {
 
                 console.log("## REQUST: " + JSON.stringify(request));
 
-                // TODO: 
-                // 1. odata interface @
-                // 2. add logic for point, path 
-                // 3. handle responses 
-
-                // "x ge limit.xmin and x lt limit.xmax and y ge limit.ymin and y lt limit.ymax"
-
-                // odata query function (can be invoked)
-
-                var query = "http://localhost:48100/MongoDataService.svc/scatterplot33?$select=x,y&$filter=x ge " + limits.xmin + " and x lt " + limits.xmax + " and y ge " + limits.ymin + " and y lt " + limits.ymax + "&$format=json";
+                // TODO:
+                // add odata interface
+                
+                var query = "http://localhost:48100/MongoDataService.svc/" + dataId + "?$select=x,y&$filter=x ge " + limits.xmin + " and x lt " + limits.xmax + " and y ge " + limits.ymin + " and y lt " + limits.ymax + "&$format=json&$orderby=x";
                 var oHandler = o(query);
-                oHandler.get(function (data) {
-                    console.log("## NEW RECV: " + JSON.stringify(data));
+                oHandler.get(function (d) {
+                    console.log("## NEW RECV POINT: " + JSON.stringify(d));
+
+                    // test code 
+                    var dataPoints = d;
+                    if (dataPoints.error) {
+                        utils.log("Error requesting data : " + dataPoints.error, 3);
+                    }
+                    // console.log("### step 1");
+                    
+                    
+                    // data object problem 
+                    dd3_data.data[pr(dataId)][pr(dataName)].dataPoints = dataPoints;
+                    if (dd3_data.data[pr(dataId)][pr(dataName)].callback_data) {
+                        dd3_data.data[pr(dataId)][pr(dataName)].callback_data(dataPoints);
+                    }
+                    // console.log("### step 2");                    
+                    
+
                 });
 
                 utils.log("Data requested : " + dataName + " (" + dataId + ")", 1);
@@ -880,7 +893,43 @@ var initDD3App = function () {
                 xKey = xKey || ['x'];
                 yKey = yKey || ['y'];
                 var limits = limit || dd3_data.getBounds(dataId, scaleX, scaleY, xKey, yKey);
+
+                console.log("!!! LIMITS: " + JSON.stringify(limits));
+                
                 if (!limits) return;
+                else {
+                   
+                    var xdiff = (limits.xmax - limits.xmin);
+                    var ydiff = (limits.ymax - limits.ymin);
+
+                    limits.xmax += xdiff;
+                    limits.xmin -= xdiff;
+                    limits.ymax += ydiff;
+                    limits.ymin -= ydiff;
+
+                    /*                    
+                    limits.xmin > 0 ? limits.xmin *= 0.1 : limits.xmin *= 1.9;
+                    limits.xmax > 0 ? limits.xmax *= 1.9 : limits.xmax *= 0.1;
+                    limits.ymin > 0 ? limits.ymin *= 0.1 : limits.ymin *= 1.9;
+                    limits.ymax > 0 ? limits.ymax *= 1.9 : limits.ymax *= 0.1;
+                    */
+
+                    /*
+                    limits.xmin = -99;
+                    limits.xmax = 99;
+                    limits.ymin = -99;
+                    limits.ymax = 99;
+                    */
+
+                    /*
+                    limits.xmin *= 0.2;
+                    limits.xmax *= 1.8;
+                    limits.ymin *= 0.2;
+                    limits.ymax *= 1.8;
+                    */
+                };
+
+                console.log("!!! NEW LIMITS: " + JSON.stringify(limits));
 
                 var request = {
                     dataId: dataId,
@@ -897,9 +946,28 @@ var initDD3App = function () {
                 else
                     signalR.server.getPathData(signalR.sid, request);
 
+                var query = "http://localhost:48100/MongoDataService.svc/" + dataId + "?$select=x,y&$filter=x ge " + limits.xmin + " and x lt " + limits.xmax + " and y ge " + limits.ymin + " and y lt " + limits.ymax + "&$format=json&$orderby=x";
+                var oHandler = o(query);
+                oHandler.get(function (d) {
+                    console.log("## NEW RECV PATH: " + JSON.stringify(d));
+         
+                    // test code 
+                    var dataPoints = d;
+                    if (dataPoints.error) {
+                        utils.log("Error requesting data : " + dataPoints.error, 3);
+                    }
+                    // console.log("### path step 1");
 
+                    
+                    // data object problem 
+                    dd3_data.data[pr(dataId)][pr(dataName)].dataPoints = dataPoints;
+                    if (dd3_data.data[pr(dataId)][pr(dataName)].callback_data) {
+                        dd3_data.data[pr(dataId)][pr(dataName)].callback_data(dataPoints);
+                    }
+                    // console.log("### path step 2");
+                    
 
-
+                });
 
                 utils.log("Data requested : " + dataName + " (" + dataId + ")", 1);
             };
@@ -1012,6 +1080,7 @@ var initDD3App = function () {
             dd3_data.receiveDimensions = function (dataId, dimensions) {
                 utils.log("Data dimensions received for " + dataId, 1);
                 dimensions = JSON.parse(dimensions);
+                console.log("## DATA DIMEN: " + JSON.stringify(dimensions));
                 if (dimensions.error) {
                     utils.log("Error requesting dimensions : " + dimensions.error, 3);
                 }
@@ -1028,7 +1097,8 @@ var initDD3App = function () {
 
                 console.log("## OLD RECV: " + dataPoints);
 
-
+                // after receiving the data .. 
+                /*
                 dataPoints = JSON.parse(dataPoints);
                 if (dataPoints.error) {
                     utils.log("Error requesting data : " + dataPoints.error, 3);
@@ -1037,6 +1107,8 @@ var initDD3App = function () {
                 if (data[pr(dataId)][pr(dataName)].callback_data) {
                     data[pr(dataId)][pr(dataName)].callback_data(dataPoints);
                 }
+                */
+                
             };
 
             //Callback upon remote data readiness reception

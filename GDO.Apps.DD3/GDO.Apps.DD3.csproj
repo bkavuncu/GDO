@@ -160,6 +160,8 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Configurations\DD3\TestButton.json" />
+    <Content Include="Configurations\DD3\DD3Dev.json" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

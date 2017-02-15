@@ -17,6 +17,7 @@ $(function () {
     /// </summary>
     /// <returns></returns>
 });
+
 gdo.initGDO = function (clientMode) {
     /// <summary>
     /// Initializes the gdo.

@@ -44,6 +44,7 @@ namespace GDO.Apps.DD3
         // == APP ==
 
         //add the instance to the group
+        //S: 
         public void JoinGroup(int instanceId)
         { 
             Groups.Add(Context.ConnectionId, "" + instanceId);
@@ -86,6 +87,7 @@ namespace GDO.Apps.DD3
         }
 
         //Send synchronize order to an instance. See DD3App synchronize.
+        //S: send sync to a certian instance
         public void synchronize(int instanceId)
         {
             ((DD3App) instances[instanceId]).synchronize(Context.ConnectionId);
@@ -99,12 +101,14 @@ namespace GDO.Apps.DD3
         }
 
         //broadcast synchronize order to the browser node
+        //S: broadcast to all instances within a group 
         public void broadcastSynchronize(int Id)
         {
             Clients.Group("" + Id).dd3Receive("receiveSynchronize");
         }
 
         //Remove client from the instance
+        //S: remove an instance from a group 
         public void removeClient(int instanceId)
         {
             ExitGroup(instanceId);

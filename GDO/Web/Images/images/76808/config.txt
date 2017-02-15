@@ -1,0 +1,9 @@
+//ImageName ImageNameDigit ImageNaturalWidth ImageNaturalHeight TileWidth TileHeight TileCols TileRows
+boat.jpg
+76808
+4256
+2820
+710
+400
+6
+8
