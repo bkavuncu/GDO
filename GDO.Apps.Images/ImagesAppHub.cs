@@ -8,12 +8,15 @@ using Microsoft.AspNet.SignalR;
 using GDO.Core;
 using GDO.Core.Apps;
 using Newtonsoft.Json;
+using log4net;
 
 namespace GDO.Apps.Images
 {
     [Export(typeof(IAppHub))]
-    public class ImagesAppHub : Hub, IBaseAppHub
+    public class ImagesAppHub : Hub, IBaseAppHub, IHubLog
     {
+
+        public ILog Log { get; set; } = LogManager.GetLogger(typeof(ImagesAppHub));
         public string Name { get; set; } = "Images";
         public int P2PMode { get; set; } = (int) Cave.P2PModes.None;
         public Type InstanceType { get; set; } = new ImagesApp().GetType();
@@ -53,6 +56,7 @@ namespace GDO.Apps.Images
                     Image img1 = Image.FromFile(path1);
                     img1.Save(path2, ImageFormat.Png);
                     img1.Dispose();
+                    Log.Info("Generated random id " + ia.ImageNameDigit + " for a new uploaded image");
                     //File.Move(path1, path2);
 
                     // log to index file  
@@ -218,11 +222,13 @@ namespace GDO.Apps.Images
                     Clients.Caller.setMessage("Sending results...");
                     SendImageNames(instanceId, ia.ImageName, ia.ImageNameDigit);
                     Clients.Caller.setMessage("Success!");
+                    Log.Info("Image processing successful!");
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
                     Clients.Caller.setMessage(e.GetType().ToString());
+                    Log.Error(e.GetType().ToString());
                 }
             }
         }
@@ -249,10 +255,12 @@ namespace GDO.Apps.Images
                 try
                 {
                     Clients.Caller.setMessage("Finding image digits " + digits);
+                    Log.Info("Finding image digits " + digits);
                     String basePath = HttpContext.Current.Server.MapPath("~/Web/Images/images/");
                     if (digits == "" || !Directory.Exists(basePath + digits))
                     {
                         Clients.Caller.setMessage("Digits not found! Please upload a new image!");
+                        Log.Error("Digits not found! Please upload a new image!");
                         return;
                     }
                     ImagesApp ia = (ImagesApp) Cave.Apps["Images"].Instances[instanceId];
@@ -262,6 +270,7 @@ namespace GDO.Apps.Images
                     if (lines.Length != 9)
                     {
                         Clients.Caller.setMessage("Configuration file damaged! Please upload a new image!");
+                        Log.Error("Configuration file damaged! Please upload a new image!");
                         return;
                     }
                     ia.ImageName = lines[1];
@@ -289,11 +298,13 @@ namespace GDO.Apps.Images
                     Clients.Caller.setDigitText(instanceId, ia.ImageNameDigit);
                     SendImageNames(instanceId, ia.ImageName, ia.ImageNameDigit);
                     Clients.Caller.setMessage("Initialized image Successfully!");
+                    Log.Info("Initialized image Successfully!");
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
                     Clients.Caller.setMessage(e.GetType().ToString());
+                    Log.Error(e.GetType().ToString());
                 }
             }
         }

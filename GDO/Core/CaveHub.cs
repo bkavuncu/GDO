@@ -11,9 +11,9 @@ using Newtonsoft.Json;
 
 namespace GDO.Core
 {
-    public class CaveHub : Hub
+    public class CaveHub : Hub, IHubLog
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof(CaveHub));
+        public ILog Log { get; set; } = LogManager.GetLogger(typeof(CaveHub));
 
         public void LogCall(string message) {
             Log.Info("CAVE HUB CAlled"+message);
