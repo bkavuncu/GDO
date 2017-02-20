@@ -6,9 +6,10 @@ using System.Linq;
 using System.Web;
 using GDO.Core;
 using GDO.Core.Apps;
-using GDO.Core.Psedo;
+using GDO.Core.CaveState;
 using log4net;
 using Newtonsoft.Json;
+using GDO.Apps.Twitter.Core;
 
 namespace GDO.Apps.Twitter
 {
@@ -27,8 +28,9 @@ namespace GDO.Apps.Twitter
         public string Name { get; set; }
 
         public RestController RestController { get; set; }
-        public PseudoCave PseudoCave { get; set;}
+        public CaveState CaveState { get; set;}
 
+        // for difference app configuration
         public string GraphAppBasePath { get; set; }
         public string StaticHtmlBasePath { get; set; }
         public string ImageAppBasePath { get; set; }
@@ -71,20 +73,20 @@ namespace GDO.Apps.Twitter
             RestController = new RestController(new Uri(apiAddress));
 
             Debug.WriteLine("Using the following address a root api: " + apiAddress);
-            PseudoCave = new PseudoCave(Cave.Nodes, Cave.Sections, Section.Id);
+            CaveState = new CaveState(Cave.Nodes, Cave.Sections, Section.Id);
         }
 
         #region CaveManagement
 
-        public string GetPseudoCaveStatus()
+        public string GetCaveStateStatus()
         {
             Debug.WriteLine("Getting Twitter App Cave Status");
-            return PseudoCave.CloneCaveState(Cave.Nodes, Cave.Sections, Section.Id).SerializeJSON();
+            return CaveState.CloneCaveState(Cave.Nodes, Cave.Sections, Section.Id).SerializeJSON();
         }
 
         public void CreateSection(int colStart, int rowStart, int colEnd, int rowEnd)
         {
-            PseudoCave.CreateSection(colStart, rowStart, colEnd, rowEnd);
+            CaveState.CreateSection(colStart, rowStart, colEnd, rowEnd);
         }
 
         public void CreateSections(List<SectionRequest> sectionRequests)
@@ -102,33 +104,33 @@ namespace GDO.Apps.Twitter
                 Debug.WriteLine("Loading visualisation " + sectionRequest.AnalyticsId + " " + sectionRequest.DataSetId);
                 sectionRequest.TwitterVis = GetVisualisation(sectionRequest.AnalyticsId, sectionRequest.DataSetId);
             }
-            PseudoCave.QueueApps(sectionRequests);
+            CaveState.QueueApps(sectionRequests);
         }
 
 
         public void CloseSections(List<int> sectionIds)
         {
-            PseudoCave.CloseSections(sectionIds);
+            CaveState.CloseSections(sectionIds);
         }
         
         public void DeployApps(List<int> sectionIds)
         {
-            PseudoCave.DeployApps(sectionIds);
+            CaveState.DeployApps(sectionIds);
         }
 
         public void CloseApps(List<int> sectionIds)
         {
-            PseudoCave.CloseApps(sectionIds);
+            CaveState.CloseApps(sectionIds);
         }
 
         public void ConfirmLaunch(List<int> sectionIds)
         {
-            PseudoCave.ConfirmLaunch(sectionIds);
+            CaveState.ConfirmLaunch(sectionIds);
         } 
 
         public void ClearCave()
         {
-            PseudoCave.ClearCave();
+            CaveState.ClearCave();
         }
 
         #endregion
@@ -137,13 +139,13 @@ namespace GDO.Apps.Twitter
 
         public void UnLoadVisualisation(int sectionId)
         {
-            PseudoCave.Sections[sectionId].TwitterVis = new TwitterVis();
+            CaveState.Sections[sectionId].TwitterVis = new TwitterVis();
         }
 
         public void LoadVisualisation(int sectionId, string analyticsId, string dataSetId)
         {
-            PseudoCave.LoadVisualisation(sectionId);
-            PseudoCave.Sections[sectionId].TwitterVis = GetVisualisation(analyticsId, dataSetId);
+            CaveState.LoadVisualisation(sectionId);
+            CaveState.Sections[sectionId].TwitterVis = GetVisualisation(analyticsId, dataSetId);
 
         }
 
@@ -163,6 +165,7 @@ namespace GDO.Apps.Twitter
             AnalyticsData analyticsData = RestController.GetAnalyticsData(analytics.UriData);
             string url = analyticsData.Urls[analyticsData.PreferedUrl];
 
+            // how twittervis used
             TwitterVis twitterVis = new TwitterVis(analyticsData.PreferedApp);
 //            string fileName;
             switch (twitterVis.AppType) {

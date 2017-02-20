@@ -4,9 +4,10 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using GDO.Core;
 using GDO.Core.Apps;
-using GDO.Core.Psedo;
+using GDO.Core.CaveState;
 using Microsoft.AspNet.SignalR;
 using Newtonsoft.Json;
+using GDO.Apps.Twitter.Core;
 
 namespace GDO.Apps.Twitter
 {
@@ -54,7 +55,7 @@ namespace GDO.Apps.Twitter
         private void BroadcastState(int instanceId, int refresh = 0)
         {
             var ta = (TwitterApp) Cave.Apps["Twitter"].Instances[instanceId];
-            Clients.Caller.receiveCaveStatus(instanceId, ta.GetPseudoCaveStatus(), refresh);
+            Clients.Caller.receiveCaveStatus(instanceId, ta.GetCaveStateStatus(), refresh);
         }
 
         /* Set files to redownload rather than using existing file.

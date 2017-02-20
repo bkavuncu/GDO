@@ -162,6 +162,8 @@
     <Content Include="Web\Twitter\Control.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\APIObjects.cs" />
+    <Compile Include="Core\RestController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TwitterApp.cs" />
     <Compile Include="TwitterAppHub.cs" />
