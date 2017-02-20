@@ -1,7 +1,4 @@
-﻿//$(function () {
-//    $.getScript('gdo.apps.dd3.db.js', callback);
-//});
-
+﻿//template for xiaoping
 
 var db = {
     config: {
@@ -12,9 +9,15 @@ var db = {
         password: aaa,
         options: {}
     },
-
-    find: function () { },
-    connection: function() {}
+    //Add data to database
+    insert: function (collection, data) { },
+    //Delete data in the database
+    delete: function (collection, data) { },
+    //Update new data to the database
+    update: function (collection, query, data) { },
+    // find a data from database.
+    find: function (collection, query) { }
+    
 
 };
 

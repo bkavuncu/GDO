@@ -14,6 +14,34 @@
     //BAI: "orderController" variable is needed in this test_bench.
     //BAI: "d3" variable is needed in this test_bench.
     test_bench: {
+
+        // dd3 dev environment
+        '11': function() {
+            orderController.orders['initWorldConfig'] = function (data) {
+                  console.log(JSON.stringify(data));
+
+                  init.worldConfig = data;
+                  console.log("INFO: world config object data received");
+
+                  var peerSvrAddr = init.worldConfig.peerServerAddress, peerSvrPort = init.worldConfig.peerServerPort;
+                  var peerObject = { host: peerSvrAddr, port: peerSvrPort };
+
+                  var peerConn = new Peer(peerObject);
+                  peerConn.on('open', function (id) {
+                      console.log('INFO: connected to peer server - id : ' + id);
+                  });
+
+                  // INFO: get browser information
+                  init.worldConfig.nodeId = [dd3.cave.svgWidth, dd3.cave.svgHeight];
+                  init.worldConfig.nodeSize = [dd3.browser.svgWidth, dd3.browser.svgHeight];
+                  init.worldConfig.nodeCol = dd3.browser.column;
+                  init.worldConfig.nodeRow = dd3.browser.row;
+
+                  //console.log('DEBUG: ' + JSON.stringify(init.worldConfig));
+
+              };
+        },
+
         //transitions
         '0': function () {
             //BAI: window.requestAnimFrame is not Window.requestAnimationFrame
@@ -69,7 +97,7 @@
                 counter++;
                 if (counter % 1000 === 0) {
                     console.log("(" + r + "," + c + "):" + fpss.join(","));
-    
+
                     conn_to_controller.send(fpss.join(","));
                     //send order with arguments  to control
                     fpss = [r, c];
@@ -625,7 +653,7 @@
                 var h = h2;
 
 
-                if (last_row !== row) { // Just changed of row ? 
+                if (last_row !== row) { // Just changed of row ?
                     current_y = max_y; //set the offset to lower Y
                     max_y = 0;
                     last_row = row;
@@ -705,7 +733,7 @@
 
             clockDiv.style("display", "").style("left", ((dd3.cave.width * 0.70) - dd3.position.html.left) + "px").style("top", dd3.position.html.top + "px");
             titleDiv.text("London Tube").style("display", "").style("left", dd3.position.html.left + "px").style("top", dd3.position.html.top + "px");
-  
+
             appTestBench.loadMap = function () {
                 var projection = d3.geoMercator()
                     .translate([cwidth / 2, cheight / 2]);
@@ -947,15 +975,15 @@
                     anim.start();
                 });
             };
-    
+
             orderController.orders['pauseAnimation'] = function () {
                 anim.stop();
             };
-    
+
             orderController.orders['cleanupAnimation'] = function () {
                 anim.cleanup();
             };
-    
+
             orderController.orders['createAnimation'] = function () {
                 var args = {
                     timeStep: 2000,
@@ -964,10 +992,10 @@
                     clock: clockDiv,
                     entry: 1
                 };
-    
+
                 anim = animation(args);
             };
-    
+
             orderController.orders['initAnimation'] = function () {
                 anim.loadData(function () {
                     anim.init();
@@ -1021,7 +1049,7 @@
                         dragging = {},
                         svg = dd3.svgCanvas;
 
-            //Way to make a white background, because the main body is unselectable                    
+            //Way to make a white background, because the main body is unselectable
             svg.append("rect")
                 .attr("width", "100%")
                 .attr("height", "100%")
@@ -1314,7 +1342,7 @@
         //console.log(appTestBench.orderController);
         //console.log(appTestBench.orderController);
         //console.log(orderController);
-        
+
         appTestBench.orderController
             .orders['launchAnimation'] = appTestBench.launchAnimation =
             function(dis, outter, widthChanging, widthWithLinkLoad) {

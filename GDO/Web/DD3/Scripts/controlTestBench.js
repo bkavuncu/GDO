@@ -14,6 +14,26 @@
         this.test_bench['9'] = this.test_bench['6'];
     },
     test_bench: {
+
+        // dd3 dev environment
+        '11': function() {
+            $("#start-dd3").click(function () {
+
+                init.worldConfig.configId = 11;
+                // init.worldConfig.nodeId = 1;
+                init.worldConfig.configSize = [3000, 4000];
+                // init.worldConfig.nodeSize = [100, 100];
+                init.worldConfig.peerServerAddress = "146.169.32.109";
+                init.worldConfig.peerServerPort = "55555";
+                init.worldConfig.peerGroupId = "G1";
+                // init.worldConfig.nodeCol = 0;
+                // init.worldConfig.nodeRow = 0;
+                // init.worldConfig.isMaster = true;
+
+                server.sendOrder(instanceId, order("initWorldConfig", [init.worldConfig]), true);
+            });
+        },
+
         //BAI: "server" variable is needed in this test_bench
         //BAI: "eventLog" variable is needed in this test_bench
         '0': function() {
@@ -56,7 +76,7 @@
                     controlTestBench.server.sendOrder(instanceId, controlTestBench.order("startYTranslation", ['Y']), false);
                     controlTestBench.eventLog.push([new Date().getTime(), "Starting Y Translation"]);
                 }
-                        
+
             });
 
             $('#rotation').click(function () {
