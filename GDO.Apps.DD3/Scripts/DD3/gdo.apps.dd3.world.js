@@ -3,15 +3,15 @@
 *   Summary: the initialisation of world config
 **/
 
-var init = {
+var world = {
 
-    worldConfig: {
+    config: {
       "configId": null,
       "nodeId": null,
       "configSize": null,
       "nodeSize": null,
-      "peerServerAddress": "146.169.32.109",
-      "peerServerPort": "55555",
+      "peerServerAddress": null,
+      "peerServerPort": null,
       "peerGroupId": null,
       "nodeCol": null,
       "nodeRow": null,

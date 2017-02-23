@@ -15,24 +15,6 @@
     },
     test_bench: {
 
-        // dd3 dev environment
-        '11': function() {
-            $("#start-dd3").click(function () {
-
-                init.worldConfig.configId = 11;
-                // init.worldConfig.nodeId = 1;
-                init.worldConfig.configSize = [3000, 4000];
-                // init.worldConfig.nodeSize = [100, 100];
-                init.worldConfig.peerServerAddress = "146.169.32.109";
-                init.worldConfig.peerServerPort = "55555";
-                init.worldConfig.peerGroupId = "G1";
-                // init.worldConfig.nodeCol = 0;
-                // init.worldConfig.nodeRow = 0;
-                // init.worldConfig.isMaster = true;
-
-                server.sendOrder(instanceId, order("initWorldConfig", [init.worldConfig]), true);
-            });
-        },
 
         //BAI: "server" variable is needed in this test_bench
         //BAI: "eventLog" variable is needed in this test_bench
@@ -233,7 +215,7 @@
             });
         },
         //BAI: "server" variable is needed in this test_bench
-        '1': function() {
+        '1': function () {
             var dataIds = ["scatterplot33", "scatterplot100", "scatterplot500", "scatterplot1000", "scatterplot4000", "scatterplot20000"];
 
             var table = $("#control_1 table");
@@ -550,7 +532,29 @@
             });
 
 
-        }
+        },
+
+        // Shor. dd3 dev environment
+        '11': function () {
+
+            $("#dd3-start").click(function () {
+
+                world.config.configId = 11;
+                // world.config.nodeId = 1;
+                world.config.configSize = [3000, 4000];
+                // world.config.nodeSize = [100, 100];
+                world.config.peerServerAddress = "146.169.32.109";
+                world.config.peerServerPort = "55555";
+                world.config.peerGroupId = "G1";
+                // world.config.nodeCol = 0;
+                // world.config.nodeRow = 0;
+                // world.config.isMaster = true;
+
+                controlTestBench.server.sendOrder(instanceId, controlTestBench.order("initWorldConfig", [world.config]), true);
+            });
+
+        },
+
     },
     order: function (name, args) {
         return JSON.stringify({ name: name, args: args });

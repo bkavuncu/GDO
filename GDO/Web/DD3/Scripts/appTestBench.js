@@ -15,32 +15,7 @@
     //BAI: "d3" variable is needed in this test_bench.
     test_bench: {
 
-        // dd3 dev environment
-        '11': function() {
-            orderController.orders['initWorldConfig'] = function (data) {
-                  console.log(JSON.stringify(data));
-
-                  init.worldConfig = data;
-                  console.log("INFO: world config object data received");
-
-                  var peerSvrAddr = init.worldConfig.peerServerAddress, peerSvrPort = init.worldConfig.peerServerPort;
-                  var peerObject = { host: peerSvrAddr, port: peerSvrPort };
-
-                  var peerConn = new Peer(peerObject);
-                  peerConn.on('open', function (id) {
-                      console.log('INFO: connected to peer server - id : ' + id);
-                  });
-
-                  // INFO: get browser information
-                  init.worldConfig.nodeId = [dd3.cave.svgWidth, dd3.cave.svgHeight];
-                  init.worldConfig.nodeSize = [dd3.browser.svgWidth, dd3.browser.svgHeight];
-                  init.worldConfig.nodeCol = dd3.browser.column;
-                  init.worldConfig.nodeRow = dd3.browser.row;
-
-                  //console.log('DEBUG: ' + JSON.stringify(init.worldConfig));
-
-              };
-        },
+      
 
         //transitions
         '0': function () {
@@ -1037,17 +1012,17 @@
         //parallelCoordinatesGraph
         '10': function () {
             var dim,
-                        init_dim,
-                        xScale = dd3.scale.ordinal().rangePoints([0, dd3.cave.svgWidth], 1),
-                        line = d3.svg.line(),
-                        xAxis = d3.svg.axis().orient("left"),
-                        background,
-                        foreground,
-                        dimensions,
-                        g,
-                        yScale = {},
-                        dragging = {},
-                        svg = dd3.svgCanvas;
+                init_dim,
+                xScale = dd3.scale.ordinal().rangePoints([0, dd3.cave.svgWidth], 1),
+                line = d3.svg.line(),
+                xAxis = d3.svg.axis().orient("left"),
+                background,
+                foreground,
+                dimensions,
+                g,
+                yScale = {},
+                dragging = {},
+                svg = dd3.svgCanvas;
 
             //Way to make a white background, because the main body is unselectable
             svg.append("rect")
@@ -1234,7 +1209,38 @@
             appTestBench.orderController.orders['updateFilter'] = updateFilter;
             appTestBench.orderController.orders['resetVisualization'] = resetVisualization;
 
-        }
+        },
+
+        // dd3 dev environment
+        '11': function () {
+
+            appTestBench.orderController.orders['initWorldConfig'] = function (data) {
+                console.log("RECV!");
+
+                console.log(JSON.stringify(data));
+
+                world.config = data;
+                console.log("INFO: world config object data received");
+
+                var peerSvrAddr = world.config.peerServerAddress, peerSvrPort = world.config.peerServerPort;
+                var peerObject = { host: peerSvrAddr, port: peerSvrPort };
+
+                var peerConn = new Peer(peerObject);
+                peerConn.on('open', function (id) {
+                    console.log('INFO: connected to peer server - id : ' + id);
+                });
+
+                world.config.nodeId = dd3.browser.number;
+                world.config.nodeSize = [dd3.browser.svgWidth, dd3.browser.svgHeight];
+                world.config.nodeCol = dd3.browser.column;
+                world.config.nodeRow = dd3.browser.row;
+
+                //console.log('OUTPUT: ' + JSON.stringify(dd3.browser));
+
+                console.log('DEBUG: ' + JSON.stringify(world.config));
+            };
+
+        },
 
     },
 
