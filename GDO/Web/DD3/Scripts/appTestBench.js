@@ -1211,20 +1211,18 @@
 
         },
 
-        // dd3 dev environment
+        // Shor. dd3 dev environment
         '11': function () {
 
             appTestBench.orderController.orders['initWorldConfig'] = function (data) {
-                console.log("RECV!");
 
-                console.log(JSON.stringify(data));
+                console.log('DEBUG: ' + JSON.stringify(data));
 
                 world.config = data;
                 console.log("INFO: world config object data received");
 
                 var peerSvrAddr = world.config.peerServerAddress, peerSvrPort = world.config.peerServerPort;
                 var peerObject = { host: peerSvrAddr, port: peerSvrPort };
-
                 var peerConn = new Peer(peerObject);
                 peerConn.on('open', function (id) {
                     console.log('INFO: connected to peer server - id : ' + id);
@@ -1234,8 +1232,6 @@
                 world.config.nodeSize = [dd3.browser.svgWidth, dd3.browser.svgHeight];
                 world.config.nodeCol = dd3.browser.column;
                 world.config.nodeRow = dd3.browser.row;
-
-                //console.log('OUTPUT: ' + JSON.stringify(dd3.browser));
 
                 console.log('DEBUG: ' + JSON.stringify(world.config));
             };

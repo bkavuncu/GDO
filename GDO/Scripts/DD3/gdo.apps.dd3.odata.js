@@ -1,6 +1,6 @@
 ﻿/**
 *   Version: 0.0.1
-*   Summary: an interface of odata service
+*   Summary: odata service client module 
 **/
 
 var odata = {
@@ -11,14 +11,14 @@ var odata = {
         svcName: "MongoDataService.svc",
         dataName: "scatterplot33",
         select: ["x", "y"],
-        orderby: "x",
-        options: {}
+        orderby: "x"
     },
 
     query: function (filter) {
         var queryStr = "http://" + odata.config.host + ":" + odata.config.port + "/" + odata.config.svcName + "/";
         queryStr += odata.config.dataName + "?";
         queryStr += "$select=";
+
         var selectLen = odata.config.select.length;
         $.each(odata.config.select, function(i, val){
           if(i == selectLen - 1){
@@ -27,6 +27,7 @@ var odata = {
             queryStr += val + ",";
           }
         })
+
         queryStr += "&$orderby=" + odata.config.orderby;
         queryStr += "&$filter=" + filter;
         console.log(queryStr);
@@ -36,10 +37,6 @@ var odata = {
            console.log(JSON.stringify(data));
         });
 
-        return true;
     },
-
-    // TODO: a generic query function
-    // query: function (dataName, select, filter) {}
 
 };

@@ -534,8 +534,7 @@
 
         },
 
-        
-        // dd3 dev environment
+        // Shor. dd3 dev environment
         '11': function () {
 
             $("#dd3-start").click(function () {
