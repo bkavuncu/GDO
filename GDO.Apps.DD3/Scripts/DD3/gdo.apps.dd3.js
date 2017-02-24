@@ -32,6 +32,18 @@ var initDD3App = function () {
     var utils = (function () {
         return {
             /**
+             * Shor. check if it is a valid JSON
+             */
+            isJSON: function (str) {
+                try {
+                    JSON.parse(str);
+                } catch (e) {
+                    return false;
+                }
+                return true;
+            },
+
+            /**
              *get the value of an url variable if it exist, false else
              */
             getUrlVar: function (variable) {
@@ -894,7 +906,8 @@ var initDD3App = function () {
 
                 // Shor. odata interface 
                 var queryFilter = "x ge " + limits.xmin + " and x lt " + limits.xmax + " and y ge " + limits.ymin + " and y lt " + limits.ymax;
-                odata.query(dataId, queryFilter);
+                var dataType = dataName;
+                odata.query(dataType, dataId, queryFilter, dd3_data.receiveData);
 
                 utils.log("Data requested : " + dataName + " (" + dataId + ")", 1);
             };
@@ -951,7 +964,9 @@ var initDD3App = function () {
 
                 // Shor. odata interface
                 var queryFilter = "x ge " + limits.xmin + " and x lt " + limits.xmax + " and y ge " + limits.ymin + " and y lt " + limits.ymax;
-                odata.query(dataId, queryFilter);
+                var dataType = dataName;
+                odata.query(dataType, dataId, queryFilter, dd3_data.receiveData);
+
 
                 utils.log("Data requested : " + dataName + " (" + dataId + ")", 1);
             };
@@ -1082,7 +1097,9 @@ var initDD3App = function () {
             //BAI: this function will be called when any this kind of data retrieval function "signalR.server.getPointData(signalR.sid, request);" get the data.
             dd3_data.receiveData = function (dataName, dataId, dataPoints) {
                 utils.log("Data received : " + dataName + " (" + dataId + ")", 1);
-                dataPoints = JSON.parse(dataPoints);
+                
+                if(utils.isJSON(dataPoints)) dataPoints = JSON.parse(dataPoints);
+
                 if (dataPoints.error) {
                     utils.log("Error requesting data : " + dataPoints.error, 3);
                 }
