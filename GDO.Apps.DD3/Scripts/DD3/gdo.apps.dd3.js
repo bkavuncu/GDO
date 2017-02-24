@@ -13,6 +13,11 @@ var d3;
 
 var temporary_store;//TODO v4: delete
 
+// Shor. load dd3 module scripts 
+$.getScript("../../Scripts/DD3/odata/o.js", function () { console.log("INFO: Odata module - o.js was loaded."); });
+$.getScript("../../Scripts/DD3/gdo.apps.dd3.odata.js", function () { console.log("INFO: Odata module - odata.js was loaded."); });
+
+
 var initDD3App = function () {
 
     //Retrieve the d3 library element
@@ -887,6 +892,10 @@ var initDD3App = function () {
                 else
                     signalR.server.getPointData(signalR.sid, request);
 
+                // Shor. odata interface 
+                var queryFilter = "x ge " + limits.xmin + " and x lt " + limits.xmax + " and y ge " + limits.ymin + " and y lt " + limits.ymax;
+                odata.query(dataId, queryFilter);
+
                 utils.log("Data requested : " + dataName + " (" + dataId + ")", 1);
             };
 
@@ -913,6 +922,17 @@ var initDD3App = function () {
                 yKey = yKey || ['y'];
                 var limits = limit || dd3_data.getBounds(dataId, scaleX, scaleY, xKey, yKey);
                 if (!limits) return;
+                else {
+                    // Shor. extend the limits for path data
+                    var xdiff = (limits.xmax - limits.xmin);
+                    var ydiff = (limits.ymax - limits.ymin);
+
+                    limits.xmax += xdiff;
+                    limits.xmin -= xdiff;
+                    limits.ymax += ydiff;
+                    limits.ymin -= ydiff;
+
+                };
 
                 var request = {
                     dataId: dataId,
@@ -928,6 +948,10 @@ var initDD3App = function () {
                     api.getPathData(request);
                 else
                     signalR.server.getPathData(signalR.sid, request);
+
+                // Shor. odata interface
+                var queryFilter = "x ge " + limits.xmin + " and x lt " + limits.xmax + " and y ge " + limits.ymin + " and y lt " + limits.ymax;
+                odata.query(dataId, queryFilter);
 
                 utils.log("Data requested : " + dataName + " (" + dataId + ")", 1);
             };
@@ -982,6 +1006,7 @@ var initDD3App = function () {
                         api.getBarData(request);
                     else
                         signalR.server.getBarData(signalR.sid, request);
+                        // Shor. odata interface 
                 } else {
                     dd3_data.receiveData(dataName, dataId, "[]");
                 }
