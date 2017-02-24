@@ -11,26 +11,73 @@ var odata = {
         svcName: "MongoDataService.svc",
         dataName: "scatterplot33",
         select: ["x", "y"],
-        orderby: "x"
+        orderby: ["x"]
     },
 
-    query: function (dataType, dataName, queryFilter, callback) {
+    query: function (dataType, dataName, select, orderby, dataFilter, callback) {
         var queryStr = "http://" + odata.config.host + ":" + odata.config.port + "/" + odata.config.svcName + "/";
 
         queryStr += dataName + "?";
+
         queryStr += "$select=";
+        var selectLen = select.length;
+        $.each(select, function (i, val) {
+            if (i == selectLen - 1) {
+                queryStr += val;
+            } else {
+                queryStr += val + ",";
+            }
+        });
 
-        var selectLen = odata.config.select.length;
-        $.each(odata.config.select, function(i, val){
-          if(i == selectLen - 1){
-            queryStr += val;
-          }else{
-            queryStr += val + ",";
-          }
-        })
+        queryStr += "&$orderby=";
+        var orderLen = orderby.length;
+        $.each(orderby, function (i, val) {
+            if (i == orderLen - 1) {
+                queryStr += val;
+            } else {
+                queryStr += val + ",";
+            }
+        });
 
-        queryStr += "&$orderby=" + odata.config.orderby;
+        queryStr += "&$filter=" + dataFilter;
+        console.log(queryStr);
+
+        var oHandler = o(queryStr);
+        oHandler.get(function (data) {
+            console.log(JSON.stringify(data));
+            callback(dataType, dataName, data);
+        });
+
+    },
+
+    queryWith: function (dataType, dataName, select, orderby, queryFilter, top, skip, callback) {
+        var queryStr = "http://" + odata.config.host + ":" + odata.config.port + "/" + odata.config.svcName + "/";
+
+        queryStr += dataName + "?";
+
+        queryStr += "$select=";
+        var selectLen = select.length;
+        $.each(select, function (i, val) {
+            if (i == selectLen - 1) {
+                queryStr += val;
+            } else {
+                queryStr += val + ",";
+            }
+        });
+
+        queryStr += "&$orderby=";
+        var orderLen = orderby.length;
+        $.each(orderby, function (i, val) {
+            if (i == orderLen - 1) {
+                queryStr += val;
+            } else {
+                queryStr += val + ",";
+            }
+        });
+        
         queryStr += "&$filter=" + queryFilter;
+        queryStr += "&$top=" + top;
+        queryStr += "&$skip=" + skip;
         console.log(queryStr);
 
         var oHandler = o(queryStr);

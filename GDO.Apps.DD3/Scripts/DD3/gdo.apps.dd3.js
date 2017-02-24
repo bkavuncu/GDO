@@ -904,10 +904,14 @@ var initDD3App = function () {
                 else
                     signalR.server.getPointData(signalR.sid, request);
 
-                // Shor. odata interface 
-                var queryFilter = "x ge " + limits.xmin + " and x lt " + limits.xmax + " and y ge " + limits.ymin + " and y lt " + limits.ymax;
+                //console.log(JSON.stringify(request));
+
+                // Shor. odata interface - point data 
+                var dataFilter = "x ge " + limits.xmin + " and x lt " + limits.xmax + " and y ge " + limits.ymin + " and y lt " + limits.ymax;
                 var dataType = dataName;
-                odata.query(dataType, dataId, queryFilter, dd3_data.receiveData);
+                var select = xKey.concat(yKey);
+                var orderby = xKey;
+                odata.query(dataType, dataId, select, orderby, dataFilter, dd3_data.receiveData);
 
                 utils.log("Data requested : " + dataName + " (" + dataId + ")", 1);
             };
@@ -962,11 +966,14 @@ var initDD3App = function () {
                 else
                     signalR.server.getPathData(signalR.sid, request);
 
-                // Shor. odata interface
-                var queryFilter = "x ge " + limits.xmin + " and x lt " + limits.xmax + " and y ge " + limits.ymin + " and y lt " + limits.ymax;
-                var dataType = dataName;
-                odata.query(dataType, dataId, queryFilter, dd3_data.receiveData);
+                //console.log(JSON.stringify(request));
 
+                // Shor. odata interface - path data
+                var dataFilter = "x ge " + limits.xmin + " and x lt " + limits.xmax + " and y ge " + limits.ymin + " and y lt " + limits.ymax;
+                var dataType = dataName;
+                var select = xKey.concat(yKey);
+                var orderby = xKey;
+                odata.query(dataType, dataId, select, orderby, dataFilter, dd3_data.receiveData);
 
                 utils.log("Data requested : " + dataName + " (" + dataId + ")", 1);
             };
@@ -1021,7 +1028,18 @@ var initDD3App = function () {
                         api.getBarData(request);
                     else
                         signalR.server.getBarData(signalR.sid, request);
-                        // Shor. odata interface 
+
+                    console.log(JSON.stringify(request));
+
+                    // Shor. odata interface - bar data
+                    var dataType = dataName;
+                    var select = [];    // select all
+                    var orderby = orderingKey;
+                    var dataFilter = "";
+                    var dataTop = limits.max - limits.min;
+                    var dataSkip = limits.min;      // if count from 0
+                    odata.queryWith(dataType, dataId, select, orderby, dataFilter, dataTop, dataSkip, dd3_data.receiveData);
+
                 } else {
                     dd3_data.receiveData(dataName, dataId, "[]");
                 }
@@ -1097,6 +1115,8 @@ var initDD3App = function () {
             //BAI: this function will be called when any this kind of data retrieval function "signalR.server.getPointData(signalR.sid, request);" get the data.
             dd3_data.receiveData = function (dataName, dataId, dataPoints) {
                 utils.log("Data received : " + dataName + " (" + dataId + ")", 1);
+
+                console.log("Shor. " + JSON.stringify(dataPoints));
                 
                 if(utils.isJSON(dataPoints)) dataPoints = JSON.parse(dataPoints);
 
