@@ -14,7 +14,7 @@ var odata = {
         orderby: ["x"]
     },
 
-    query: function (dataType, dataName, select, orderby, dataFilter, callback) {
+    query: function (dataType, dataName, select, orderby, queryFilter, callback) {
         var queryStr = "http://" + odata.config.host + ":" + odata.config.port + "/" + odata.config.svcName + "/";
 
         queryStr += dataName + "?";
@@ -39,7 +39,7 @@ var odata = {
             }
         });
 
-        queryStr += "&$filter=" + dataFilter;
+        queryStr += "&$filter=" + queryFilter;
         console.log(queryStr);
 
         var oHandler = o(queryStr);

@@ -904,7 +904,7 @@ var initDD3App = function () {
                 else
                     signalR.server.getPointData(signalR.sid, request);
 
-                //console.log(JSON.stringify(request));
+                console.log(JSON.stringify(request));
 
                 // Shor. odata interface - point data 
                 var dataFilter = "x ge " + limits.xmin + " and x lt " + limits.xmax + " and y ge " + limits.ymin + " and y lt " + limits.ymax;
@@ -966,7 +966,7 @@ var initDD3App = function () {
                 else
                     signalR.server.getPathData(signalR.sid, request);
 
-                //console.log(JSON.stringify(request));
+                console.log(JSON.stringify(request));
 
                 // Shor. odata interface - path data
                 var dataFilter = "x ge " + limits.xmin + " and x lt " + limits.xmax + " and y ge " + limits.ymin + " and y lt " + limits.ymax;
@@ -1029,7 +1029,7 @@ var initDD3App = function () {
                     else
                         signalR.server.getBarData(signalR.sid, request);
 
-                    //console.log(JSON.stringify(request));
+                    console.log(JSON.stringify(request));
 
                     // Shor. odata interface - bar data
                     var dataType = dataName;
