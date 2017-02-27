@@ -136,12 +136,12 @@ namespace GDO.Apps.DD3
             lock (_locker)
             {
                 browserList.TryAdd(cid, new BrowserInfo(cid, b.browserNum, b.peerId, b.col, b.row, b.height, b.width));
-                if (browserList.Count == Section.NumNodes)
+                if (browserList.Count == Section.NumNodes) // Shor. check if all nodes are connected
                 {
-                    broadcastConfiguration();
+                    broadcastConfiguration(); // Shor. if so, broadcast the config to all nodes
                     if (controllerId != "")
                     {
-                        DD3AppHub.self.updateController(controllerId, new ControllerMessage(ConfigurationId, 1, Section.NumNodes).toString());
+                        DD3AppHub.self.updateController(controllerId, new ControllerMessage(ConfigurationId, 1, Section.NumNodes).toString()); // Shor. ? this might be where to start control node
                     }
                 }
             }
@@ -162,7 +162,7 @@ namespace GDO.Apps.DD3
         //BAI: this function will call the broadcastConfiguration function defined in the DD3AppHub.cs file (the same name.)
         //BAI: this function will be called by "newClient" function also defined in this file.
         private void broadcastConfiguration () {
-            BrowserBroadcastInfo[] browserInfos = new BrowserBroadcastInfo[browserList.Count];
+            BrowserBroadcastInfo[] browserInfos = new BrowserBroadcastInfo[browserList.Count]; // Shor. array of browser infos
             int i = 0;
 
             foreach (var item in browserList.Values)
@@ -171,8 +171,8 @@ namespace GDO.Apps.DD3
                 i++;
             }
 
-            String browserInfoJson = Newtonsoft.Json.JsonConvert.SerializeObject(browserInfos);
-            DD3AppHub.self.broadcastConfiguration(browserInfoJson, ConfigurationId, Id);
+            String browserInfoJson = Newtonsoft.Json.JsonConvert.SerializeObject(browserInfos); // Shor. convert the array to JSON 
+            DD3AppHub.self.broadcastConfiguration(browserInfoJson, ConfigurationId, Id); // Shor. ask hub to do the broadcast
         }
 
         // Request the App hub to send a synchronize order to the browser nodes (this will synchronize the signalR connection)
