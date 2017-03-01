@@ -10,8 +10,11 @@
 
 // ==== IF THIS NODE IS AN APP ====
 var d3;
-
+var dd3Net;
 var temporary_store;//TODO v4: delete
+
+//BAI: load gdo.apps.dd3.net.js and it should be after d3 value;
+$.getScript("../../Scripts/DD3/gdo.apps.dd3.net.js", function () { console.log("INFO: dd3Net module - gdo.apps.dd3.net.js was loaded."); });
 
 var initDD3App = function () {
 
@@ -21,6 +24,7 @@ var initDD3App = function () {
     //BAI: each test_bench (client.cshtml) will also be regarded as an iframe and will be embeded into "Node.cshtml" file (a div called "wrapper") which is defined in the root GOD solution (GDO/Web/Node.cshtml).
     d3 = document.getElementById('app_frame_content').contentWindow.d3;
 
+   
     /**
      * Common JS utility function. 
      */
@@ -324,8 +328,11 @@ var initDD3App = function () {
     //  var peerObject = { host: "dsigdoprod.doc.ic.ac.uk", port: 55555 };
     // var peerObject = { host: "146.169.32.109", port: 55555 };
     //BAI: This is a peer server in DSI.
-    var peerObject = { host: "146.169.32.109", port: 55555 };
+    //var peerObject = { host: "146.169.32.109", port: 55555 };
     //{ host: "localhost", port: 55555 };
+
+
+    
 
     //dd3 object containing the core fo DD3 functions
     //BAI: TODO : dd3 object also contains lot of initilize operations. The definition of api functions and initialization should be seperate.
@@ -384,6 +391,7 @@ var initDD3App = function () {
             ready: [],
             fatal: []
         };
+   
 
         var dd3_data = {}, // Storing functions
             data = {}; // Storing data
@@ -399,6 +407,7 @@ var initDD3App = function () {
         //Represent peerjs connection
         //BAI: this peer object will also include another property called "peer" which is added in the function "connectToPeerServer".
         //BAI: peer.peer reprents the connection between one peer and the peer server.
+        //BAI: the peer object is moved into the dd3Net module
         var peer = {
             id: null,
             peers: [],
@@ -514,11 +523,16 @@ var initDD3App = function () {
             //Bai: after the peer connection is set up, it will call the next function to inilize signalr connection. 
             init.connectToPeerServer = function () {
 
-                var p = peer.peer = new Peer(peerObject);
+                dd3Net = new DD3Net('peerjs');
+                var p = dd3Net.peer;
+                //console.log(dd3Net);
+
+                //var p = peer.peer = new Peer(peerObject);
 
                 p.on('open', function (id) {
+                    //console.log('id is' + id );
                     utils.log('Connected to peer server - id : ' + id, 1);
-                    peer.id = id;
+                    dd3Net.id = id;
 
                     p.on('connection', function (conn) {
                         // Previous loss of data : the buffering in peer.js seems not to work,
@@ -529,7 +543,7 @@ var initDD3App = function () {
 
                         // If there is already a connection, we allow only one connection to remain active
                         // The priority is given to higher row browsers, and if equal then higher colmun
-                        if (peer.connections[r][c]) {
+                        if (dd3Net.connections[r][c]) {
                             var priority = r > browser.row || (r === browser.row && c > browser.column);
 
                             if (!priority) {
@@ -538,16 +552,16 @@ var initDD3App = function () {
                             }
 
 
-                            if (peer.connections[r][c].open) {
-                                peer.connections[r][c].close();
+                            if (dd3Net.connections[r][c].open) {
+                                dd3Net.connections[r][c].close();
                             } else {
-                                peer.connections[r][c].removeAllListeners().on("open", peer.connections[r][c].close);
+                                dd3Net.connections[r][c].removeAllListeners().on("open", dd3Net.connections[r][c].close);
                             }
                         }
 
-                        peer.connections[r][c] = conn;
-                        peer.buffers[r][c] = peer.buffers[r][c] || [];
-                        conn.on("open", peer.init.bind(null, conn, r, c));
+                        dd3Net.connections[r][c] = conn;
+                        dd3Net.buffers[r][c] = dd3Net.buffers[r][c] || [];
+                        conn.on("open", dd3Net.init.bind(null, conn, r, c));
                     });
 
                     init.connectToSignalRServer();
@@ -558,8 +572,8 @@ var initDD3App = function () {
                 });
                 //Destroy the connection as soon as the window has changed or is destroyed
                 window.onunload = window.onbeforeunload = function (e) {
-                    if (!!peer.peer && !peer.peer.destroyed) {
-                        peer.peer.destroy();
+                    if (!!dd3Net.peer && !dd3Net.peer.destroyed) {
+                        dd3Net.peer.destroy();
                     }
                     //signalR && signalR.connection && (signalR.connection.state === 1) && signalR.server && signalR.server.removeClient(signalR.sid);
                 };
@@ -584,7 +598,7 @@ var initDD3App = function () {
                 //BAI: TODO: currently, the browserinfo is obtained from the url. And the url is a specific setting in the GOD device. Therefore, we should set these value from signalR server.
                 var thisInfo = {
                     browserNum: browser.number,
-                    peerId: peer.id,
+                    peerId: dd3Net.id,
                     row: browser.initRow,
                     col: browser.initColumn,
                     //height and width is obtained by the client itself by calling "$(window).height()" when the "browser" object is defined.
@@ -631,13 +645,17 @@ var initDD3App = function () {
                     p.row = p.initRow - minRow;
                 });
 
-                peer.peers = peersInfo;
+                dd3Net.peers = peersInfo;
                 //peer.connections are the peerjs connections matained between this node and others
                 //BAI: "d3.range(0, cave.rows)" return arrays which has the same number as the value of "cave.rows"
                 //BAI: the following code make peer.connections as lots of blank arrays which have the same name as the value of "cave.rows"
-                peer.connections = d3.range(0, cave.rows).map(function () { return []; });
+                dd3Net.setConnection(d3.range(0, cave.rows).map(function() { return []; }));
+                //dd3Net.connections = d3.range(0, cave.rows).map(function () { return []; });
+                
+                //console.log(dd3Net.connections);
                 //peer.buffers is the buffer of the data sent from this node to another one
-                peer.buffers = d3.range(0, cave.rows).map(function () { return []; });
+                dd3Net.setBuffer(d3.range(0, cave.rows).map(function () { return []; }));
+                //dd3Net.buffers = d3.range(0, cave.rows).map(function () { return []; });
 
                 //Initialize cave property
                 cave.margin = options.margin;
@@ -1090,15 +1108,22 @@ var initDD3App = function () {
             //Methods of the peer object: callback when a peer is created and opened
             //Will log the connection, link to the behaviour upon data reception and call peer.flush
             //BAI: this function will be called once the peer has connected to the peer Server.
+            //BAI: comments peer.init function and move it to the dd3Net Modul
+            /*
             peer.init = function (conn, r, c) {
                 utils.log("Connection established with Peer (" + [r, c] + "): " + conn.peer, 0);
                 conn.on("data", peer.receive);
                 peer.flush(r, c);
             };
+            */
+
+
 
             //Open the connection to row, column peer
             //Empty the buffers for the connection to ths peer
             //TODO: unobfuscate the code 
+            //BAI: comments peer.connect function and move it to the dd3Net Modul
+            /*
             peer.connect = function (r, c) {
                 r = +r;
                 c = +c;
@@ -1116,11 +1141,13 @@ var initDD3App = function () {
                     return true;
                 });
             };
-
+            */
 
             //If buffer is set to true, Put data in the buffer of the connection to the node at row r and column c
             //If buffer is set to false, send the data directly
             //returns false if no connection exists 
+            //BAI: comments peer.sendTo function and move it to the dd3Net Modul
+            /*
             peer.sendTo = function (r, c, data, buffer) {
                 if (typeof peer.connections[r][c] === "undefined" && !peer.connect(r, c)) {
                     // If there is no such peer
@@ -1137,8 +1164,12 @@ var initDD3App = function () {
 
                 return true;
             };
+            */
 
+
+            //BAI: comments peer.flush function and move it to the dd3Net Modul
             //flush the peer: i.e. SEND the data in the buffer of the connection the node (r,c) AND EMPTY the buffer
+            /*
             peer.flush = function (r, c) {
 
                 var buff = peer.buffers[r][c],
@@ -1153,10 +1184,14 @@ var initDD3App = function () {
 
                 return false;
             };
+            */
+
 
             //Callback when data is received from another peer. Will call different functions depending on the nature of the data (shape, property, remove, transition, endTransition)
             //Return false if the data.type is unrecognised.
             //If data is an array: peer.reveive will be called recursively on each elements of the array.
+            //BAI: comments peer.flush function and move it to the dd3Net Modul
+            /*
             peer.receive = function (data) {
                 if (data instanceof Array) {
                     data.forEach(peer.receive);
@@ -1196,7 +1231,7 @@ var initDD3App = function () {
                 }
 
             };
-
+            */
             /* Functions handling data reception  */
             //INFO: d3.map() is an implementation of Map according to ES6 specification. Nothing to do with d3 data visualization function.
             //TODEL: Never used...
@@ -1286,7 +1321,8 @@ var initDD3App = function () {
                     if (!g1) utils.log('Warning!!! attr_ in _dd3_shapeHandler has failed', 4);
 
                     if (o.transition)
-                        peer.receive(o.transition);
+                        //BAI: change from peer.receive to dd3Net.receive
+                        dd3Net.receive(o.transition);
                 });
 
                 // Here we create an absolute ordering in one group
@@ -1802,7 +1838,7 @@ var initDD3App = function () {
                 });
 
                 // We buffered so we need to flush buffer of recipients !
-                rcpts.forEach(function (d) { peer.flush(d[0], d[1]); });
+                rcpts.forEach(function (d) { dd3Net.flush(d[0], d[1]); });
 
 
                 if (counter > 0)
@@ -2110,7 +2146,9 @@ var initDD3App = function () {
                                 delete obj.onSend;
                             }
                             //BAI: use peer to end data.
-                            peer.sendTo(d[0], d[1], obj, true); // true for buffering 
+                            //BAI: change from peer.sendTo to dd3Net.sendTo
+                            console.log(dd3Net);
+                            dd3Net.sendTo(d[0], d[1], obj, true); // true for buffering 
                         });
                     }
                 });
@@ -2816,7 +2854,9 @@ var initDD3App = function () {
              *  Allow outside access to dd3 methods
              */
 
-            _dd3.peers = peer;
+            //BAI: Not sure if it is correct, anway _dd3.peers is not used.
+            //_dd3.peers = peer;
+            _dd3.peers = dd3Net;
 
             _dd3.cave = cave;
 
