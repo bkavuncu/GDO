@@ -44,7 +44,7 @@ var odata = {
 
         var oHandler = o(queryStr);
         oHandler.get(function (data) {
-            console.log(JSON.stringify(data));
+            //console.log(JSON.stringify(data));
             callback(dataType, dataName, data);
         });
 
@@ -82,7 +82,7 @@ var odata = {
 
         var oHandler = o(queryStr);
         oHandler.get(function (data) {
-            console.log(JSON.stringify(data));
+            //console.log(JSON.stringify(data));
             callback(dataType, dataName, data);
         });
 
