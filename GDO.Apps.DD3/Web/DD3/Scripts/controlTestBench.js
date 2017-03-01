@@ -1,13 +1,16 @@
 ﻿var controlTestBench = {
     server: null,
-    dataset: null,
+    dataset: [],
     numClients: null,
-    eventLog:null,
-    init: function (server, dataset, numClients, eventLog) {
+    eventLog:[],
+    init: function (server, numClients) {
         this.server = server;
-        this.dataset = dataset;
+        //this.dataset = dataset;
         this.numClients = numClients;
-        this.eventLog = eventLog;
+        //console.log(numClients);
+        //console.log(this.numClients);
+        //console.log(controlTestBench.numClients);
+        //this.eventLog = eventLog;
         //console.log(eventLog);
         this.test_bench['7'] = this.test_bench['6'];
         this.test_bench['8'] = this.test_bench['6'];
@@ -92,6 +95,7 @@
                     controlTestBench.server.sendOrder(instanceId, controlTestBench.order("createDistributedCircles", [dcircles, 0.9]), true);
                     $(".superposition.distributed .red").removeClass("red").addClass("green");
                     $(this).removeClass("green").addClass("red");
+                    console.log(dcircles, controlTestBench.numClients);
                     $("#spandc").text(dcircles * controlTestBench.numClients);
                     controlTestBench.eventLog.push([new Date().getTime(), "Creating Distributed Circles"]);
                 }
@@ -137,6 +141,7 @@
                 var n = +$("#nbAddDistributedCircles").val();
                 if(dcircles){
                     controlTestBench.server.sendOrder(instanceId, controlTestBench.order("createDistributedCircles", [n, 0.9]), true);
+                    console.log(dcircles, controlTestBench.numClients);
                     $("#spandc").text((dcircles += n) * controlTestBench.numClients);
                     controlTestBench.eventLog.push([new Date().getTime(), "Adding "+n+" Distributed Circles"]);
                 }

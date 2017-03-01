@@ -22,7 +22,7 @@ var control = {
     gdo: parent.gdo,
     gdoApp: parent.gdo.net.app["DD3"].initControl,
     server: parent.gdo.net.app.DD3.server,
-    dataset:null,
+    //dataset:null,
     eventLog:[],
     confId:null,
     numClients:null,
@@ -61,6 +61,10 @@ var control = {
         //BAI: change num to string
         control.confId = message.configurationId+'';
         control.numClients = message.numClient;
+        //BAI: we need to init controlTestBench, because we need to get the numClients in this callback function. After we get the numClients, we can pass this value into controlTestBench obj.
+        controlTestBench.init(control.server, control.numClients);
+        control.test_bench = controlTestBench.test_bench;
+
         if (message.state == 1) {
             control.test_bench[control.confId] && control.test_bench[control.confId]();
             control.test_bench[control.confId] = null;
@@ -99,7 +103,7 @@ var peer = {
                 var ts = raw[5];
                 var fps = raw[6];
                 var std = raw[7];
-                control.dataset.push([row, col, nbr, nbc, nbdc, ts, fps, std]);
+                controlTestBench.dataset.push([row, col, nbr, nbc, nbdc, ts, fps, std]);
                 //gdo.consoleOut(".DD3", 4, dataset);
                 //updateFPSChart();
             });  
@@ -108,9 +112,11 @@ var peer = {
 }
 
 
-$(document).ready(function() {
-    controlTestBench.init(control.server, control.dataset, control.numClients, control.eventLog);
-    control.test_bench = controlTestBench.test_bench;
+$(document).ready(function () {
+    //BAI: controlTestBench init is put in the "callback" in the above control object. The reason is the callback is asynchronous.
+    //controlTestBench.init(control.server, control.dataset, control.numClients, control.eventLog);
+    //control.test_bench = controlTestBench.test_bench;
+    
 
     if (!control.gdoApp) {
         $("#wait").css("display", "none");
