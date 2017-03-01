@@ -168,6 +168,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Configurations\DD3\DD3Test.json" />
+    <Content Include="Configurations\DD3\PieChart.json" />
+    <Content Include="Configurations\DD3\Data\FilePieChart.txt" />
     <None Include="Properties\PublishProfiles\dd3_only.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

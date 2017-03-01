@@ -1238,6 +1238,79 @@
 
         },
 
+        // Shor. simple pie chart 
+        '12': function () {
+
+            var svg = dd3.svgCanvas;
+            var width = dd3.cave.svgWidth,
+                height = dd3.cave.svgHeight,
+                radius = Math.min(width, height) / 2;
+            
+            var draw = function (pieData) {
+                var color = d3.scaleOrdinal(d3.schemeCategory20c);
+                var arc = d3.arc()
+                        .outerRadius(radius - 10)
+                        .innerRadius(10);
+                var pie = d3.pie()
+                        .sort(null)
+                        .padAngle(.05)
+                        .value(function (d) { return +d.gdp; });
+
+                svg = svg.append("g")
+                    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+                var g = svg.append("g")
+                    .attr("id", "paths").selectAll(".arc")
+                    .data(pie(pieData))
+                    .enter().append("g")
+                    .attr("class", "arc");
+                g.append("path")
+                    .attr("d", arc)
+                    .style("fill", function (d) { return color(d.country); })
+                    .send();
+                svg.append("g")
+                    .attr("id", "texts").selectAll("text")
+                    .data(pie(pieData))
+                    .enter()
+                    .append("text")
+                    .attr("transform", function (d) {
+                        var angle = (d.startAngle + d.endAngle) * 90 / Math.PI; return "translate(" + arc.centroid(d) + ")rotate(" + (-(90 - angle) + (angle > 180 ? 180 : 0)) + ")";
+                    })
+                    .attr("dy", ".35em")
+                    .attr("font-size", "1.5em")
+                    .style("text-anchor", "middle")
+                    .text(function (d) { return d.country; })
+                    .send();
+            }; 
+
+            dd3.getPieData('pie', 'pieData', draw , width / 2, height / 2);
+
+
+            // Shor. CONTROL TEMPLATE 
+
+            //appTestBench.orderController.orders['initWorldConfig'] = function (data) {
+
+            //    console.log('DEBUG: ' + JSON.stringify(data));
+
+            //    world.config = data;
+            //    console.log("INFO: world config object data received");
+
+            //    var peerSvrAddr = world.config.peerServerAddress, peerSvrPort = world.config.peerServerPort;
+            //    var peerObject = { host: peerSvrAddr, port: peerSvrPort };
+            //    var peerConn = new Peer(peerObject);
+            //    peerConn.on('open', function (id) {
+            //        console.log('INFO: connected to peer server - id : ' + id);
+            //    });
+
+            //    world.config.nodeId = dd3.browser.number;
+            //    world.config.nodeSize = [dd3.browser.svgWidth, dd3.browser.svgHeight];
+            //    world.config.nodeCol = dd3.browser.column;
+            //    world.config.nodeRow = dd3.browser.row;
+
+            //    console.log('DEBUG: ' + JSON.stringify(world.config));
+            //};
+
+        },
+
     },
 
     shanghaiViz : function(timeInterval, agg) {

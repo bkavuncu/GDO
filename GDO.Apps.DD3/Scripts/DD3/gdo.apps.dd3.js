@@ -1029,7 +1029,7 @@ var initDD3App = function () {
                     else
                         signalR.server.getBarData(signalR.sid, request);
 
-                    console.log(JSON.stringify(request));
+                    //console.log(JSON.stringify(request));
 
                     // Shor. odata interface - bar data
                     var dataType = dataName;
@@ -1060,10 +1060,33 @@ var initDD3App = function () {
                 data[pr(dataId)][pr(dataName)].callback_data = callback;
 
                 var sgsl = _dd3.position('svg', 'global', 'svg', 'local');
-                if (sgsl.left(centerX) >= 0 && sgsl.left(centerX) < browser.width)
-                    if (sgsl.top(centerY) >= 0 && sgsl.top(centerY) < browser.height)
-                        return api.getData(dataName, dataId);
-                return dd3_data.receiveData(dataName, dataId, "[]");
+                if (sgsl.left(centerX) >= 0 && sgsl.left(centerX) < browser.width)  // Shor. check if the pie center is inside the browser 
+                    if (sgsl.top(centerY) >= 0 && sgsl.top(centerY) < browser.height) {
+
+                        var request = {
+                            dataId: dataId,
+                            dataName: dataName,
+                            limits: [],
+                        };
+
+                        if (options.useApi)
+                            api.getData(request); // api.getData(dataName, dataId);
+                        else
+                            //signalR.server.getData(signalR.sid, request);
+
+                        console.log("Shor. PIE: " + JSON.stringify(request));
+
+                        // Shor. odata interface - pie data
+                        var dataType = dataName;
+                        var select = [];
+                        var orderby = [];
+                        var dataFilter = [];
+                        odata.query(dataType, dataId, select, orderby, dataFilter, dd3_data.receiveData);
+
+                    } else {
+                        dd3_data.receiveData(dataName, dataId, "[]");
+                    }
+
             };
 
             /*APIDOC:get data from a remote source
@@ -1116,7 +1139,7 @@ var initDD3App = function () {
             dd3_data.receiveData = function (dataName, dataId, dataPoints) {
                 utils.log("Data received : " + dataName + " (" + dataId + ")", 1);
 
-                console.log("Shor. " + JSON.stringify(dataPoints));
+                console.log("Shor. RECV" + JSON.stringify(dataPoints));
                 
                 if(utils.isJSON(dataPoints)) dataPoints = JSON.parse(dataPoints);
 
