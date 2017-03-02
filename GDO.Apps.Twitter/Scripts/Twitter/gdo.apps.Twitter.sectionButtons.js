@@ -36,12 +36,12 @@ gdo.net.app["Twitter"].drawUnLoadVisB = function (instanceId) {
         .unbind()
         .click(function () {
             if (gdo.net.instance[instanceId].caveStatus.sections[gdo.net.instance[instanceId].control.selectedSection] != null &&
-                gdo.net.instance[instanceId].caveStatus.sections[gdo.net.instance[instanceId].control.selectedSection].twitterVis.id !== null) {
+                gdo.net.instance[instanceId].caveStatus.sections[gdo.net.instance[instanceId].control.selectedSection].appInfo.id !== null) {
                 gdo.net.app["Twitter"].requestUnLoadVisualisation(instanceId, gdo.net.instance[instanceId].control.selectedSection);
             }
         });
     if (gdo.net.instance[gdo.controlId].control.selectedSection > -1) {
-        if (gdo.net.instance[instanceId].caveStatus.sections[gdo.net.instance[instanceId].control.selectedSection].twitterVis.id !== null &&
+        if (gdo.net.instance[instanceId].caveStatus.sections[gdo.net.instance[instanceId].control.selectedSection].appInfo.id !== null &&
             gdo.net.instance[instanceId].caveStatus.sections[gdo.net.instance[instanceId].control.selectedSection].appInstanceId < 0) {
             $("iframe")
                 .contents()
@@ -86,7 +86,7 @@ gdo.net.app["Twitter"].drawLoadVisB = function (instanceId) {
         .unbind()
         .click(function () {
             if (gdo.net.instance[instanceId].caveStatus.sections[gdo.net.instance[instanceId].control.selectedSection] != null &&
-                gdo.net.instance[instanceId].caveStatus.sections[gdo.net.instance[instanceId].control.selectedSection].twitterVis.id === null &&
+                gdo.net.instance[instanceId].caveStatus.sections[gdo.net.instance[instanceId].control.selectedSection].appInfo.id === null &&
                 gdo.net.instance[instanceId].caveStatus.sections[gdo.net.instance[instanceId].control.selectedSection].appInstanceId < 0 &&
                 gdo.net.instance[instanceId].control.selectedAnalytics !== null
                 ) {
@@ -96,7 +96,7 @@ gdo.net.app["Twitter"].drawLoadVisB = function (instanceId) {
             }
         });
     if (gdo.net.instance[gdo.controlId].control.selectedSection > -1) {
-        if (gdo.net.instance[instanceId].caveStatus.sections[gdo.net.instance[instanceId].control.selectedSection].twitterVis.id === null &&
+        if (gdo.net.instance[instanceId].caveStatus.sections[gdo.net.instance[instanceId].control.selectedSection].appInfo.id === null &&
             gdo.net.instance[instanceId].caveStatus.sections[gdo.net.instance[instanceId].control.selectedSection].appInstanceId < 0 &&
             gdo.net.instance[instanceId].control.selectedAnalytics !== null) {
             $("iframe")
@@ -144,13 +144,13 @@ gdo.net.app["Twitter"].drawDeployAppB = function (instanceId) {
         .click(function () {
             if (gdo.net.instance[instanceId].control.selectedSection > -1 &&
                 gdo.net.instance[instanceId].caveStatus.sections[gdo.net.instance[instanceId].control.selectedSection].appInstanceId === -1 &&
-                gdo.net.instance[instanceId].caveStatus.sections[gdo.net.instance[instanceId].control.selectedSection].twitterVis.id !== null) {
+                gdo.net.instance[instanceId].caveStatus.sections[gdo.net.instance[instanceId].control.selectedSection].appInfo.id !== null) {
                 gdo.net.app["Twitter"].requestDeployApp(instanceId, gdo.net.instance[instanceId].control.selectedSection);
             }
         });
     if (gdo.net.instance[instanceId].control.selectedSection > -1 &&
         gdo.net.instance[instanceId].caveStatus.sections[gdo.net.instance[instanceId].control.selectedSection].appInstanceId === -1 &&
-        gdo.net.instance[instanceId].caveStatus.sections[gdo.net.instance[instanceId].control.selectedSection].twitterVis.id !== null) {
+        gdo.net.instance[instanceId].caveStatus.sections[gdo.net.instance[instanceId].control.selectedSection].appInfo.id !== null) {
         $("iframe")
             .contents()
             .find(".deploy_app_button")
@@ -218,7 +218,7 @@ gdo.net.app["Twitter"].atLeastOneVis = function (instanceId) {
 
     for (var sId in gdo.net.instance[instanceId].caveStatus.sections) {
         if (gdo.net.instance[instanceId].caveStatus.sections.hasOwnProperty(sId) &&
-            gdo.net.instance[instanceId].caveStatus.sections[sId].twitterVis.id !== null &&
+            gdo.net.instance[instanceId].caveStatus.sections[sId].appInfo.id !== null &&
             gdo.net.instance[instanceId].caveStatus.sections[sId].appInstanceId < 0) {
             return true;
         }
