@@ -235,40 +235,43 @@ gdo.net.app["Twitter"].deployApps = function (sections) {
     });
 }
 gdo.net.app["Twitter"].deployApp = function (section) {
-    gdo.consoleOut('.Twitter', 1, "Deploying app " + section.twitterVis.appType + " to section " + section.id + " with config " + section.twitterVis.config);
-    gdo.net.server.deployBaseApp(section.id, section.twitterVis.appType, section.twitterVis.config);
+    gdo.consoleOut('.Twitter', 1, "Deploying app " + section.appInfo.appType + " to section " + section.id + " with config " + section.appInfo.config);
+    gdo.net.server.deployBaseApp(section.id, section.appInfo.appType, section.appInfo.config);
 }
 
 gdo.net.app["Twitter"].launchApps = function(instanceId, sections) {
     sections.forEach(function (section) {
-        gdo.consoleOut('.Twitter', 1, "Launching app with url " + section.twitterVis.filePath + " to section " + section.id + " at instance" + section.appInstanceId);
+        // Launch app
+        gdo.consoleOut('.Twitter', 1, "Launching app with url " + section.appInfo.filePath + " to section " + section.id + " at instance" + section.appInstanceId);
         gdo.net.app["Twitter"].launchApp(section);
     });
     if (sections.length > 0) {
+        // Update AppToLaunch in Hub side
+        // Actually remove all apps that have been launched in the list AppToLaunch
         gdo.net.app["Twitter"].server.confirmLaunch(instanceId, sections.map(function (section) { return section.id; }));
     }
 }
 
+// Call specific functions to launch apps based on app type
 gdo.net.app["Twitter"].launchApp = function (section) {
-
-gdo.consoleOut('.Twitter', 1, 'Starting app at section ' + section.id);
-    switch (section.twitterVis.appType) {
+    gdo.consoleOut('.Twitter', 1, 'Starting app at section ' + section.id);
+    switch (section.appInfo.appType) {
         case "Graph":
-            gdo.consoleOut('.Twitter', 1, 'Requesting server start Graph app with path  = ' + section.twitterVis.filePath + "' at instance " + section.appInstanceId);
-            gdo.net.app["Graph"].server.initiateProcessing(section.appInstanceId, section.twitterVis.filePath);
+            gdo.consoleOut('.Twitter', 1, 'Requesting server start Graph app with path  = ' + section.appInfo.filePath + "' at instance " + section.appInstanceId);
+            gdo.net.app["Graph"].server.initiateProcessing(section.appInstanceId, section.appInfo.filePath);
             break;
         case "Images":
             gdo.consoleOut('.Twitter', 1, "Requesting server start Image app at instance " + section.appInstanceId);
-            gdo.net.app["Images"].server.displayImage(section.appInstanceId, section.twitterVis.filePath, 2);
-//            gdo.net.app["Images"].server.processAndLaunch(section.appInstanceId, section.twitterVis.filePath);
+            gdo.net.app["Images"].server.displayImage(section.appInstanceId, section.appInfo.filePath, 2);
+//          gdo.net.app["Images"].server.processAndLaunch(section.appInstanceId, section.appInfo.filePath);
             break;
         case "StaticHTML":
-            gdo.consoleOut('.Twitter', 1, 'Requesting server start StaticHTML app with url = "' + section.twitterVis.filePath + "' at instance " + section.appInstanceId);
-            gdo.net.app["StaticHTML"].server.setURL(section.appInstanceId, section.twitterVis.filePath);
+            gdo.consoleOut('.Twitter', 1, 'Requesting server start StaticHTML app with url = "' + section.appInfo.filePath + "' at instance " + section.appInstanceId);
+            gdo.net.app["StaticHTML"].server.setURL(section.appInstanceId, section.appInfo.filePath);
             break;
         case "FusionChart":
-            gdo.consoleOut('.Twitter', 1, 'Requesting server start FusionChart app with path = "' + section.twitterVis.filePath + "' at instance " + section.appInstanceId);
-            gdo.net.app["FusionChart"].server.processFile(section.appInstanceId, section.twitterVis.filePath);
+            gdo.consoleOut('.Twitter', 1, 'Requesting server start FusionChart app with path = "' + section.appInfo.filePath + "' at instance " + section.appInstanceId);
+            gdo.net.app["FusionChart"].server.processFile(section.appInstanceId, section.appInfo.filePath);
             break;
         default:
             gdo.consoleOut('.Twitter', 2, 'App is an unknown type could not be deployed');

@@ -171,19 +171,19 @@ namespace GDO.Core.CaveState
             
             for (var i = 0; i < QueuedApps.Count; ++i)
             {
-                var availableSection = Sections.Where(s=> s.Value.TwitterVis.Id == null && s.Value.Col == QueuedApps[i].ColStart && s.Value.Row == QueuedApps[i].RowStart).Select(e=>e.Value).FirstOrDefault();
+                var availableSection = Sections.Where(s=> s.Value.AppInfo.Id == null && s.Value.Col == QueuedApps[i].ColStart && s.Value.Row == QueuedApps[i].RowStart).Select(e=>e.Value).FirstOrDefault();
                 if (availableSection != null)
                 {
-                    availableSection.TwitterVis = QueuedApps[i].TwitterVis;
-                    Debug.WriteLine("Found a section that can be autodeployed to: " + availableSection.Id + " deploying" + QueuedApps[i].TwitterVis.FilePath);
+                    availableSection.AppInfo = QueuedApps[i].AppInfo;
+                    Debug.WriteLine("Found a section that can be autodeployed to: " + availableSection.Id + " deploying" + QueuedApps[i].AppInfo.FilePath);
                     QueuedApps.RemoveAt(i);
                     AppsToDeploy.Add(availableSection);
                     --i;
                 }
                 //                if (availableSections.Count > 0)
                 //                {
-                //                    availableSections[0].TwitterVis = QueuedApps[i].TwitterVis;
-                //                    Debug.WriteLine("Found a section that can be autodeployed to: " + availableSections[0].Id + " deploying" + QueuedApps[i].TwitterVis.FilePath);
+                //                    availableSections[0].AppInfo = QueuedApps[i].AppInfo;
+                //                    Debug.WriteLine("Found a section that can be autodeployed to: " + availableSections[0].Id + " deploying" + QueuedApps[i].AppInfo.FilePath);
                 //                    QueuedApps.RemoveAt(i);
                 //                    AppsToDeploy.Add(availableSections[0]);
                 //                    --i;
@@ -343,9 +343,8 @@ namespace GDO.Core.CaveState
         }
     }
 
-    // related to twitter app
-    // make this general?
-    public class TwitterVis
+    // app info
+    public class AppInfo
     {
 
         [JsonProperty(PropertyName = "id")]
@@ -357,7 +356,7 @@ namespace GDO.Core.CaveState
         [JsonProperty(PropertyName = "config")]
         public string Config { get; set; }
 
-        [JsonProperty(PropertyName = "twitterVisSubType")]
+        [JsonProperty(PropertyName = "appSubType")]
         public string  SubType { get; set; }
 
         [JsonProperty(PropertyName = "appType")]
@@ -366,7 +365,7 @@ namespace GDO.Core.CaveState
         [JsonProperty(PropertyName = "filePath")]
         public string FilePath { get; set; }
         
-        public TwitterVis(string appType = null)
+        public AppInfo(string appType = null)
         {
             Id = null;
             DataSetId = null;
@@ -384,7 +383,7 @@ namespace GDO.Core.CaveState
         public int RowEnd { get; set; }
         public string DataSetId { get; set; }
         public string AnalyticsId { get; set; }
-        public TwitterVis TwitterVis { get; set; }
+        public AppInfo AppInfo { get; set; }
     }
 
     public class Section
@@ -400,8 +399,8 @@ namespace GDO.Core.CaveState
         public int Cols { get; set; }
         [JsonProperty(PropertyName = "rows")]
         public int Rows { get; set; }
-        [JsonProperty(PropertyName = "twitterVis")]
-        public TwitterVis TwitterVis { get; set; }
+        [JsonProperty(PropertyName = "appInfo")]
+        public AppInfo AppInfo { get; set; }
         [JsonProperty(PropertyName = "appInstanceId")]
         public int AppInstanceId { get; set; }
 
@@ -413,7 +412,7 @@ namespace GDO.Core.CaveState
             Rows = rows;
             Id = 0;//TODO
             AppInstanceId = -1;
-            TwitterVis = new TwitterVis();
+            AppInfo = new AppInfo();
         }
       
         public bool IsDeployed()
@@ -423,7 +422,7 @@ namespace GDO.Core.CaveState
 
         public bool CanDeploy()
         {
-            return TwitterVis.FilePath != null && TwitterVis.AppType != null && AppInstanceId < 0;
+            return AppInfo.FilePath != null && AppInfo.AppType != null && AppInstanceId < 0;
         }
 
         public bool Contains(Node node)

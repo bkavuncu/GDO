@@ -102,7 +102,7 @@ namespace GDO.Apps.Twitter
             foreach (var sectionRequest in sectionRequests)
             {
                 Debug.WriteLine("Loading visualisation " + sectionRequest.AnalyticsId + " " + sectionRequest.DataSetId);
-                sectionRequest.TwitterVis = GetVisualisation(sectionRequest.AnalyticsId, sectionRequest.DataSetId);
+                sectionRequest.AppInfo = GetVisualisation(sectionRequest.AnalyticsId, sectionRequest.DataSetId);
             }
             CaveState.QueueApps(sectionRequests);
         }
@@ -139,17 +139,17 @@ namespace GDO.Apps.Twitter
 
         public void UnLoadVisualisation(int sectionId)
         {
-            CaveState.Sections[sectionId].TwitterVis = new TwitterVis();
+            CaveState.Sections[sectionId].AppInfo = new AppInfo();
         }
 
         public void LoadVisualisation(int sectionId, string analyticsId, string dataSetId)
         {
             CaveState.LoadVisualisation(sectionId);
-            CaveState.Sections[sectionId].TwitterVis = GetVisualisation(analyticsId, dataSetId);
+            CaveState.Sections[sectionId].AppInfo = GetVisualisation(analyticsId, dataSetId);
 
         }
 
-        public TwitterVis GetVisualisation(string analyticsId, string dataSetId)
+        public AppInfo GetVisualisation(string analyticsId, string dataSetId)
         {
             Analytics analytics;
             if (RestController.Analytics != null && RestController.Analytics.ContainsKey(dataSetId) && RestController.Analytics[dataSetId].ContainsKey(analyticsId))
@@ -165,32 +165,32 @@ namespace GDO.Apps.Twitter
             AnalyticsData analyticsData = RestController.GetAnalyticsData(analytics.UriData);
             string url = analyticsData.Urls[analyticsData.PreferedUrl];
 
-            // how twittervis used
-            TwitterVis twitterVis = new TwitterVis(analyticsData.PreferedApp);
+            // how AppInfo used
+            AppInfo appInfo = new AppInfo(analyticsData.PreferedApp);
 //            string fileName;
-            switch (twitterVis.AppType) {
+            switch (appInfo.AppType) {
                 case "Graph":
-                    twitterVis.Config = "Default";
-                    twitterVis.FilePath = Download(url, GraphAppBasePath);
+                    appInfo.Config = "Default";
+                    appInfo.FilePath = Download(url, GraphAppBasePath);
                     break;
                 case "FusionChart":
-                    twitterVis.Config = "Default";
-                    twitterVis.FilePath = Download(url, FusionChartAppBasePath);
+                    appInfo.Config = "Default";
+                    appInfo.FilePath = Download(url, FusionChartAppBasePath);
                     break;
                 case "Images":
-                    twitterVis.Config = "Default";
-                    twitterVis.FilePath = Download(url, ImageAppBasePath);
+                    appInfo.Config = "Default";
+                    appInfo.FilePath = Download(url, ImageAppBasePath);
                     break;
                 default:
-                    twitterVis.Config = "ResponsiveBlack";
-                    twitterVis.FilePath = Path.Combine(TwitterRelativePath, Download(url, TwitterBasePath));
+                    appInfo.Config = "ResponsiveBlack";
+                    appInfo.FilePath = Path.Combine(TwitterRelativePath, Download(url, TwitterBasePath));
                     break;
             }
 
-            twitterVis.Id = analyticsId;
-            twitterVis.DataSetId = dataSetId;
-            twitterVis.SubType = analytics.Type;
-            return twitterVis;
+            appInfo.Id = analyticsId;
+            appInfo.DataSetId = dataSetId;
+            appInfo.SubType = analytics.Type;
+            return appInfo;
         }
 
         private string Download(string url, string path)
