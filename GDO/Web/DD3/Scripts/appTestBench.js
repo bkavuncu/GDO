@@ -113,6 +113,8 @@
                 c = dd3.browser.column,
                 r = dd3.browser.row;
 
+            //console.log('cave svg width is ' + width);
+
             svg.append('rect')
                 .attr("x", p.left(0))
                 .attr("y", p.top(0))
@@ -179,7 +181,7 @@
                     .style("fill", "#EEE")
                     .text("None");
 
-                connectToController()
+                connectToController();
             };
 
             appTestBench.orderController.orders['removeRect'] = function () {
@@ -213,7 +215,10 @@
             };
 
             appTestBench.orderController.orders['createDistributedCircles'] = function (number, opacity) {
+                //console.log('I will create ' + nbdc+' circles.');
                 nbdc += number || 10;
+                //console.log('I will create ' + nbdc + ' circles.');
+                //console.log('number is ' + number);
                 circleGroupDistributed.selectAll(".new").data(d3.range(number || 10)).enter()//.append('g')
                     .append('circle')
                     .attr("class", "c new");

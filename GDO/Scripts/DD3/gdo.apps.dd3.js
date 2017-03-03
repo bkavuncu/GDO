@@ -522,8 +522,10 @@ var initDD3App = function () {
             //connect to the peer server (and actually call the signalr connection initialisation)
             //Bai: after the peer connection is set up, it will call the next function to inilize signalr connection. 
             init.connectToPeerServer = function () {
-
+               
                 dd3Net = new DD3Net('peerjs');
+                //console.log('new peer server',dd3Net);
+
                 var p = dd3Net.peer;
                 //console.log(dd3Net);
 
@@ -558,8 +560,9 @@ var initDD3App = function () {
                                 dd3Net.connections[r][c].removeAllListeners().on("open", dd3Net.connections[r][c].close);
                             }
                         }
-
+                        //dd3Net.setConnection();
                         dd3Net.connections[r][c] = conn;
+                        console.log('connect to peer server',dd3Net.connections);
                         dd3Net.buffers[r][c] = dd3Net.buffers[r][c] || [];
                         conn.on("open", dd3Net.init.bind(null, conn, r, c));
                     });
@@ -645,17 +648,20 @@ var initDD3App = function () {
                     p.row = p.initRow - minRow;
                 });
 
+                //dd3Net.setPeers(peersInfo);
                 dd3Net.peers = peersInfo;
                 //peer.connections are the peerjs connections matained between this node and others
                 //BAI: "d3.range(0, cave.rows)" return arrays which has the same number as the value of "cave.rows"
                 //BAI: the following code make peer.connections as lots of blank arrays which have the same name as the value of "cave.rows"
-                dd3Net.setConnection(d3.range(0, cave.rows).map(function() { return []; }));
-                //dd3Net.connections = d3.range(0, cave.rows).map(function () { return []; });
+                //var x_array = d3.range(0, cave.rows).map(function () { return []; });
+                //console.log('x_array', x_array);
+                //dd3Net.setConnection(d3.range(0, cave.rows).map(function() { return []; }));
+                dd3Net.connections = d3.range(0, cave.rows).map(function () { return []; });
                 
                 //console.log(dd3Net.connections);
                 //peer.buffers is the buffer of the data sent from this node to another one
-                dd3Net.setBuffer(d3.range(0, cave.rows).map(function () { return []; }));
-                //dd3Net.buffers = d3.range(0, cave.rows).map(function () { return []; });
+                //dd3Net.setBuffer(d3.range(0, cave.rows).map(function () { return []; }));
+                dd3Net.buffers = d3.range(0, cave.rows).map(function () { return []; });
 
                 //Initialize cave property
                 cave.margin = options.margin;
@@ -675,6 +681,11 @@ var initDD3App = function () {
                 //Size of the svg element in the browser
                 browser.svgWidth = Math.max(browser.width - browser.margin.left - browser.margin.right, 0);
                 browser.svgHeight = Math.max(browser.height - browser.margin.top - browser.margin.bottom, 0);
+
+
+                dd3Net.setBrowser(browser);
+
+                dd3Net.setUtils(utils);
 
                 defineDD3Functions();
             };
@@ -2145,10 +2156,12 @@ var initDD3App = function () {
                                 obj = utils.clone(obj);
                                 delete obj.onSend;
                             }
-                            //BAI: use peer to end data.
+                            //BAI: use peer to send data.
                             //BAI: change from peer.sendTo to dd3Net.sendTo
-                            console.log(dd3Net);
+                            //console.log(dd3Net);
+                            //console.log('before send property');
                             dd3Net.sendTo(d[0], d[1], obj, true); // true for buffering 
+                            //console.log('after send property');
                         });
                     }
                 });

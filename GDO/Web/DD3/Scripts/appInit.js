@@ -38,8 +38,11 @@ var app = {
     gdo: parent.gdo,
     gdoApp: parent.gdo.net.app["DD3"].initClient,
     test_bench: {},
-    init : function(launcher, orderController) {
-        return this.gdoApp(launcher, orderController);
+    init: function (launcher, orderController) {
+        var dd3 = this.gdoApp(launcher, orderController);
+        appTestBench.init(app.orderController);
+        app.test_bench = appTestBench.test_bench;
+        return dd3;
     },
     //Launch the data viz if dd3 is ready, else wait before launching
     //BAI: this launcher function will be defined as "main callback" function in gdo.apps.dd3.js
@@ -70,9 +73,8 @@ var app = {
 
 $(document).ready(function () {
  
-    appTestBench.init(app.orderController);
-    app.test_bench = appTestBench.test_bench;
-    console.log();
+   
+  
     if (!app.gdoApp) {
         $("#error").css("display", "");
         //BAI: parent reprents the instance.cshtml file. Because this app.cshtml will be embeded into instance.cshtml as an iframe item.
@@ -83,6 +85,9 @@ $(document).ready(function () {
     //BAI: this function is defined in gdo.apps.dd3.js file which is called "gdo.net.app.DD3.initClient".
     //BAI: orderController means the controller to receive order
     dd3 = app.init(app.launcher, app.orderController);
+
+
+   
 
     //BAI: the following code is before the code organization
     /*

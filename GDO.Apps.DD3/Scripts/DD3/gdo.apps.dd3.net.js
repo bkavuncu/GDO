@@ -1,8 +1,8 @@
 ﻿function DD3Net(protocol, config) {
-    var _self = this;
     this.protocol = protocol;
     this.config = config || {};
-    
+    this.browser = {};
+    this.utils = {};
     this.peerObj  = {
         id: null,
         peers: [],
@@ -10,8 +10,8 @@
         buffers: [],
         peer: null,
         init: function (conn, r, c) {
-            console.log('peerjs init');
-            utils.log("Connection established with Peer (" + [r, c] + "): " + conn.peer, 0);
+            //console.log('peerjs init');
+            _self.utils.log("Connection established with Peer (" + [r, c] + "): " + conn.peer, 0);
             conn.on("data", _self.peerObj.receive);
             _self.peerObj.flush(r, c);
         },
@@ -19,17 +19,21 @@
         connect: function (r, c) {
             r = +r;
             c = +c;
-
+            //console.log(_self.peerObj);
             // Try to find peer with r and c as row and column - use Array.some to stop when found
             // if the row, column pair is not the same as those of the connections, return false
-
+            
             return _self.peerObj.peers.some(function (p) {
+                //console.log('p is', p);
                 if (+p.row !== r || +p.col !== c)
                     return false;
 
-                var conn = _self.peerObj.peer.connect(p.peerId, { reliable: true, metadata: { initiator: [browser.row, browser.column] } });
+                var conn = _self.peerObj.peer.connect(p.peerId, { reliable: true, metadata: { initiator: [_self.browser.row, _self.browser.column] } });
+                //BAI: init of peerObj is firsted called here.
+                //console.log('_self.peerObj.init is ', _self.peerObj.init);
+                
                 conn.on("open", _self.peerObj.init.bind(null, conn, r, c));
-                _self.peerObj.connections[r][c] = conn;
+                _self.connections = _self.peerObj.connections[r][c] = conn;
                 _self.peerObj.buffers[r][c] = [];
                 return true;
             });
@@ -37,6 +41,7 @@
 
         receive: function (data) {
             console.log('peerReceive');
+            console.log(data);
             if (data instanceof Array) {
                 data.forEach(_self.peerObj.receive);
                 return;
@@ -44,43 +49,45 @@
 
             switch (data.type) {
                 case 'shape':
-                    utils.log("Receiving a new shape...");
+                    _self.utils.log("Receiving a new shape...");
                     receiveDataHandler._dd3_shapeHandler(data);
                     break;
 
                 case 'property':
-                    utils.log("Receiving a property [" + data.function + (data.property ? (":" + data.property) : "") + "] update...");
+                    _self.utils.log("Receiving a property [" + data.function + (data.property ? (":" + data.property) : "") + "] update...");
                     receiveDataHandler._dd3_propertyHandler(data);
                     break;
 
                 case 'remove':
-                    utils.log("Receiving an exiting shape...");
+                    _self.utils.log("Receiving an exiting shape...");
                     receiveDataHandler._dd3_removeHandler(data);
                     break;
 
                 case 'transition':
-                    utils.log("Receiving a transition... ");
+                    _self.utils.log("Receiving a transition... ");
                     receiveDataHandler. _dd3_transitionHandler(data);
                     break;
 
                 case 'endTransition':
-                    utils.log("Receiving a end transition event...");
+                    _self.utils.log("Receiving a end transition event...");
                     receiveDataHandler._dd3_endTransitionHandler(data);
                     break;
 
                 default:
-                    utils.log("Receiving an unsupported data : Aborting !", 2);
-                    utils.log(data, 2);
+                    _self.utils.log("Receiving an unsupported data : Aborting !", 2);
+                    _self.utils.log(data, 2);
                     return false;
             }
         },
 
         sendTo: function (r, c, data, buffer) {
+            //console.log(data);
             //console.log('123');
-          
+            console.log('r is ' + r, 'c is ' + c);
             console.log(_self.peerObj.connections);
-            console.log(_self.connections);
-
+            console.log(_self.peerObj.connections[r][c]);
+            console.log(_self.peerObj.connect(r,c));
+            //BAI: this is the first time to call _self.peerObj.connect(r, c);
             if (typeof _self.peerObj.connections[r][c] === "undefined" && !_self.peerObj.connect(r, c)) {
                 console.log('If there is no such peer');
                 // If there is no such peer
@@ -88,8 +95,9 @@
             }
             
             // If connection is being established or we asked to buffer, we buffer - else we send
+            //BAI: 这个地方应该是实例的connections
             if (!_self.peerObj.connections[r][c].open || buffer) {
-                console.log('data buffer');
+               console.log('data buffer');
                 _self.peerObj.buffers[r][c].push(data);
             } else {
                 //BAI:.send is the peer api
@@ -101,7 +109,7 @@
         },
 
         flush: function (r, c) {
-            console.log('peerFlush');
+            //console.log('peerFlush');
             var buff = _self.peerObj.buffers[r][c],
                 conn = _self.peerObj.connections[r][c];
             if (buff && buff.length > 0 && conn && conn.open) {
@@ -112,29 +120,13 @@
             return false;
         }
     };
-
-    var signalr = {
-        synchronize: function () {
-           
-            return function (p) {
-
-                signalr.connect(p.destid)
-            }
-
-        }
-    }
-
-   // this.peerObj = peerObj;
-    this.signalr = signalr;
-
     switch (protocol) {
         case 'peerjs':
-            this.id = this.config.id || this.peerObj.id || '';
+            this.id = this.config.id || '';
             //this.id = peerObj.id;
-            this.peers = this.peerObj.peers;
-            this.connections = this.peerObj.connections;
-            this.buffers = this.peerObj.buffers;
-
+            this.peers = [];
+            this.connections = [];
+            this.buffers = [];
             this.peerOption = {
                 //There is no response from the peerJS server if adding the whole arguments below. Maybe we should check the peerjs set-up
                 //key: this.config.key || '',
@@ -145,7 +137,7 @@
                 //config: this.config.config || { 'iceServers': [{ 'url': 'stun:stun.l.google.com:19302' }] },
                 //debug: this.config.debug || 0
             };
-            this.peer = this.peerObj.peer = new Peer(this.id, this.peerOption);
+            this.peer = new Peer(this.id, this.peerOption);
             break;
         case 'socketio':
 
@@ -160,9 +152,15 @@
     }
 }
 
+/*
+DD3Net.prototype.setPeers = function (peersInfo) {
+  
+    this.peers = this.peerObj.peers = peersInfo;
 
+}
 
 DD3Net.prototype.setConnection = function (con_array) {
+    //console.log(con_array);
     this.connections = this.peerObj.connections = con_array;
 
 }
@@ -171,30 +169,107 @@ DD3Net.prototype.setBuffer = function (con_array) {
     this.buffers = this.peerObj.buffers = con_array;
 
 }
+*/
+DD3Net.prototype.setBrowser = function (browser) {
+
+    this.browser = browser;
+
+}
+
+DD3Net.prototype.setUtils = function (utils) {
+
+    this.utils = utils;
+
+}
 
 DD3Net.prototype.init = function (conn, r, c) {
+    //console.log('peer init');
+    console.log(this);
     if ('peerjs' === this.protocol) {
-        return this.peerObj.init(conn, r, c);
+            console.log('peerjs init');
+            this.utils.log("Connection established with Peer (" + [r, c] + "): " + conn.peer, 0);
+            console.log(this.receive);
+            conn.on("data", this.receive);
+            this.flush(r, c);
+     
     }
     else if ('signalr' === this.protocol) {
         //return this.signalrObj.init();
         return null;
     }
+    //console.log('peer over');
 }
 
 DD3Net.prototype.connect = function (r, c) {
     if ('peerjs' === this.protocol) {
-        return this.peerObj.connect(r, c);
+        r = +r;
+        c = +c;
+        //console.log(_self.peerObj);
+        // Try to find peer with r and c as row and column - use Array.some to stop when found
+        // if the row, column pair is not the same as those of the connections, return false
+        var _self = this;
+        return _self.peers.some(function (p) {
+            //console.log('p is', p);
+            if (+p.row !== r || +p.col !== c)
+                return false;
+
+            var conn = _self.peer.connect(p.peerId, { reliable: true, metadata: { initiator: [_self.browser.row, _self.browser.column] } });
+            //BAI: init of peerObj is firsted called here.
+            console.log('call this init',conn);
+            console.log(_self.init);
+            conn.on("open", _self.init.bind(null, conn, r, c));
+           
+            _self.connections[r][c] = conn;
+            _self.buffers[r][c] = [];
+            return true;
+        });
     }
     else if ('signalr' === this.protocol) {
+
     }
 
 }
 
-
 DD3Net.prototype.receive = function (data) {
     if ('peerjs' === this.protocol) {
-        return this.peerObj.receive(data);
+        console.log('peerReceive');
+        //console.log(data);
+        if (data instanceof Array) {
+            data.forEach(this.receive);
+            return;
+        }
+
+        switch (data.type) {
+            case 'shape':
+                this.utils.log("Receiving a new shape...");
+                receiveDataHandler._dd3_shapeHandler(data);
+                break;
+
+            case 'property':
+                this.utils.log("Receiving a property [" + data.function + (data.property ? (":" + data.property) : "") + "] update...");
+                receiveDataHandler._dd3_propertyHandler(data);
+                break;
+
+            case 'remove':
+                this.utils.log("Receiving an exiting shape...");
+                receiveDataHandler._dd3_removeHandler(data);
+                break;
+
+            case 'transition':
+                this.utils.log("Receiving a transition... ");
+                receiveDataHandler._dd3_transitionHandler(data);
+                break;
+
+            case 'endTransition':
+                this.utils.log("Receiving a end transition event...");
+                receiveDataHandler._dd3_endTransitionHandler(data);
+                break;
+
+            default:
+                this.utils.log("Receiving an unsupported data : Aborting !", 2);
+                this.utils.log(data, 2);
+                return false;
+        }
     }
     else if ('signalr' === this.protocol) {
     }
@@ -202,7 +277,30 @@ DD3Net.prototype.receive = function (data) {
 
 DD3Net.prototype.sendTo = function (r, c, data, buffer) {
     if ('peerjs' === this.protocol) {
-        return this.peerObj.sendTo(r, c, data, buffer);
+        //console.log(data);
+        //console.log('123');
+        //console.log('r is ' + r, 'c is ' + c);
+        console.log('first print connections',this.connections[r][c]);
+        //BAI: this is the first time to call _self.peerObj.connect(r, c);
+        if (typeof this.connections[r][c] === "undefined" && !this.connect(r, c)) {
+            console.log('If there is no such peer');
+            // If there is no such peer
+            return false;
+        }
+
+        // If connection is being established or we asked to buffer, we buffer - else we send
+        //BAI: 这个地方应该是实例的connections
+        if (!this.connections[r][c].open || buffer) {
+            console.log(this.connections[r][c]);
+            console.log('buffer', buffer);
+            console.log('data buffer');
+            this.buffers[r][c].push(data);
+        } else {
+            //BAI:.send is the peer api
+            console.log('data send');
+            this.connections[r][c].send(data);
+        }
+        return true;
     }
     else if ('signalr' === this.protocol) {
     }
@@ -210,7 +308,15 @@ DD3Net.prototype.sendTo = function (r, c, data, buffer) {
 
 DD3Net.prototype.flush = function (r, c) {
     if ('peerjs' === this.protocol) {
-        return this.peerObj.flush(r, c);
+        //console.log('peerFlush');
+        var buff = this.buffers[r][c],
+            conn = this.connections[r][c];
+        if (buff && buff.length > 0 && conn && conn.open) {
+            conn.send(buff);
+            this.buffers[r][c] = [];
+            return true;
+        }
+        return false;
     }
     else if ('signalr' === this.protocol) {
     }
@@ -221,8 +327,10 @@ DD3Net.prototype.synchronize = function (r, c) {
         null;
     }
     else if ('signalr' === this.protocol) {
-        //signalR.server.synchronize
-        //= typeof signalR != 'undefined' ? signalR.server.synchronize : null;
+        return function (p) {
+
+            signalr.connect(p.destid);
+        }
     }
 }
 
@@ -293,11 +401,11 @@ var receiveDataHandler = (function() {
 
 
                 if (g1.empty()) {
-                    utils.log("The group with id '" + mainId + "' received doesn't exist in the dom - A group with an id must exist in every browsers !", 2);
+                    dd3Net.utils.log("The group with id '" + mainId + "' received doesn't exist in the dom - A group with an id must exist in every browsers !", 2);
                     return;
                 }
 
-                if (!(data.containers instanceof Array)) utils.log("V4 Error: data.containers is a Map and handled as an array", 4);
+                if (!(data.containers instanceof Array)) dd3Net.utils.log("V4 Error: data.containers is a Map and handled as an array", 4);
                 data.containers.forEach(function (o) {
                     g2 = g1.select_("#" + o.id);
                     if (g2.empty()) {
@@ -309,7 +417,7 @@ var receiveDataHandler = (function() {
                     }
                     //g1 = g2.empty() ? (c = true, g1.insert_('g', function () { return getOrderFollower(g1, o.order); })) : g2;
                     g1.attr_(o);//TODO v4: does this actually work
-                    if (!g1) utils.log('Warning!!! attr_ in _dd3_shapeHandler has failed', 4);
+                    if (!g1) dd3Net.utils.log('Warning!!! attr_ in _dd3_shapeHandler has failed', 4);
 
                     if (o.transition)
                         //BAI: change from peer.receive to dd3Net.receive
@@ -372,7 +480,7 @@ var receiveDataHandler = (function() {
                     var trst = _dd3_hook_selection_transition.call(obj, data.name);
 
                     //utils.log("Delay taken: " + (data.delay + (syncTime + data.elapsed - Date.now())), 0);
-                    utils.log("Transition on " + data.sendId + ". To be plot between " + data.min + " and " + data.max + ". (" + (data.max - data.min) / 1000 + "s)");
+                    dd3Net.utils.log("Transition on " + data.sendId + ". To be plot between " + data.min + " and " + data.max + ". (" + (data.max - data.min) / 1000 + "s)");
 
                     for (var a in data.start.attr) {
                         if (data.start.attr[a]) obj.attr_(a, data.start.attr[a]);
@@ -445,10 +553,10 @@ var receiveDataHandler = (function() {
                             trst.ease(_dd3_eases["dd3_" + data.ease]);
                         } else if (typeof data.ease === "string" && d3[data.ease]) {
                             trst.ease(d3[data.ease]);
-                        } else if (typeof data.ease === "function" && _dd3_eases[utils.getFnName(data.ease)]) {//v4
-                            trst.ease(_dd3_eases[utils.getFnName(data.ease)]);//v4
+                        } else if (typeof data.ease === "function" && _dd3_eases[dd3Net.utils.getFnName(data.ease)]) {//v4
+                            trst.ease(_dd3_eases[dd3Net.utils.getFnName(data.ease)]);//v4
                         } else {
-                            utils.log("Warning! ease not found", 4);
+                            dd3Net.utils.log("Warning! ease not found", 4);
                             trst.ease(d3.easeLinear);//TODO v4: change the parsing of the easing
                         }
                     }
