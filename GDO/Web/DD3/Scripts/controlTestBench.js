@@ -563,21 +563,23 @@
         // Shor. simple pie chart 
         '12': function () {
 
-            $("#dd3-start").click(function () {
+            // Shor. CONTROL TEMPLATE 
 
-                world.config.configId = 11;
-                // world.config.nodeId = 1;
-                world.config.configSize = [3000, 4000];
-                // world.config.nodeSize = [100, 100];
-                world.config.peerServerAddress = "146.169.32.109";
-                world.config.peerServerPort = "55555";
-                world.config.peerGroupId = "G1";
-                // world.config.nodeCol = 0;
-                // world.config.nodeRow = 0;
-                // world.config.isMaster = true;
+            //$("#dd3-start").click(function () {
 
-                controlTestBench.server.sendOrder(instanceId, controlTestBench.order("initWorldConfig", [world.config]), true);
-            });
+            //    world.config.configId = 11;
+            //    // world.config.nodeId = 1;
+            //    world.config.configSize = [3000, 4000];
+            //    // world.config.nodeSize = [100, 100];
+            //    world.config.peerServerAddress = "146.169.32.109";
+            //    world.config.peerServerPort = "55555";
+            //    world.config.peerGroupId = "G1";
+            //    // world.config.nodeCol = 0;
+            //    // world.config.nodeRow = 0;
+            //    // world.config.isMaster = true;
+
+            //    controlTestBench.server.sendOrder(instanceId, controlTestBench.order("initWorldConfig", [world.config]), true);
+            //});
 
         },
 
