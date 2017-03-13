@@ -30,6 +30,7 @@
             this.sid = this.dd3Server.instanceId;
             this.server = this.dd3Server.server;
             this.client = this.dd3Server.client;
+            this.signalR_callback = {};
             this.syncCallback= function () { };
             this.receiveSynchronize= function () {
                 this.syncCallback();
@@ -168,6 +169,25 @@ DD3Net.prototype.synchronize = function (r, c) {
 }
 
 DD3Net.prototype.updateInformation = function () {
+    
+}
+
+DD3Net.prototype.setCallBack = function (caveConfiguration, dd3_data) {
+  
+    if ('peerjs' === this.protocol) {
+        null;
+    }
+    else if ('signalr' === this.protocol) {
+        this.signalR_callback.receiveSynchronize = this.receiveSynchronize;
+        if (caveConfiguration)
+            this.signalR_callback.receiveConfiguration = caveConfiguration;
+        if (dd3_data)
+        {
+            this.signalR_callback.receiveDimensions = dd3_data.receiveDimensions;
+            this.signalR_callback.receiveData = dd3_data.receiveData;
+            this.signalR_callback.receiveRemoteDataReady = dd3_data.receiveRemoteDataReady;
+        }
+    }
     
 }
 

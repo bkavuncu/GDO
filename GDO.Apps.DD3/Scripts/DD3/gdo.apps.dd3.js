@@ -416,6 +416,8 @@ var initDD3App = function () {
         var dd3_data = {}, // Storing functions
             data = {}; // Storing data
         //Represent signalr connection
+
+        /*
         var signalR = {
             server: null,
             client: null,
@@ -424,6 +426,8 @@ var initDD3App = function () {
                 signalR.syncCallback();
             }
         };
+        */
+
         //Represent peerjs connection
         //BAI: this peer object will also include another property called "peer" which is added in the function "connectToPeerServer".
         //BAI: peer.peer reprents the connection between one peer and the peer server.
@@ -596,7 +600,7 @@ var initDD3App = function () {
                     if (!!dd3Net.peer && !dd3Net.peer.destroyed) {
                         dd3Net.peer.destroy();
                     }
-                    //signalR && signalR.connection && (signalR.connection.state === 1) && dd3NetS.server && dd3NetS.server.removeClient(signalR.sid);
+                    //signalR && signalR.connection && (signalR.connection.state === 1) && dd3NetS.server && dd3NetS.server.removeClient(dd3NetS.sid);
                 };
                 utils.log("Connection to peer server established", 1);
             };
@@ -608,12 +612,15 @@ var initDD3App = function () {
                 //dd3Server contains the connection to AppHub
                 //signalR.server = dd3Server.server;
                 //signalR.client = dd3Server.client;
-                signalR.sid = dd3Server.instanceId;
+                //signalR.sid = dd3Server.instanceId;
                 
 
                 // Define server interaction functions
-                signalR_callback.receiveConfiguration = init.getCaveConfiguration;
-                signalR_callback.receiveSynchronize = signalR.receiveSynchronize;
+                //signalR_callback.receiveConfiguration = init.getCaveConfiguration;
+                //signalR_callback.receiveSynchronize = dd3NetS.receiveSynchronize;
+
+                //BAI: only for signalR protocol, second parameter is null now and will be set when dd3_data has value.
+                dd3NetS.setCallBack(init.getCaveConfiguration, {});
 
                 utils.log("Connected to signalR server", 1);
                 utils.log("Waiting for everyone to connect", 1);
@@ -629,7 +636,7 @@ var initDD3App = function () {
                 };
 
                 //BAI: this function will call "init.getCaveConfiguration" finally. The whole procedure is quite complex. The detailed logic can be obtained by looking through DD3App.cs and DD3AppHub.cs.
-                dd3NetS.server.updateInformation(signalR.sid, thisInfo);
+                dd3NetS.server.updateInformation(dd3NetS.sid, thisInfo);
                 utils.log("Connection to SignalR server established", 1);
             };
 
@@ -867,7 +874,7 @@ var initDD3App = function () {
                 if (options.useApi)
                     api.getDataDimensions(dataId);
                 else
-                    dd3NetS.server.getDimensions(signalR.sid, dataId);
+                    dd3NetS.server.getDimensions(dd3NetS.sid, dataId);
             };
 
             /*APIDOC:get the raw data of the data set according to its name or id. You can filter by key if needed.
@@ -893,7 +900,7 @@ var initDD3App = function () {
                 if (options.useApi)
                     api.getData(request);
                 else
-                    dd3NetS.server.getData(signalR.sid, request);
+                    dd3NetS.server.getData(dd3NetS.sid, request);
 
                 utils.log("Data requested : " + dataName + " (" + dataId + ")", 1);
             };
@@ -933,7 +940,7 @@ var initDD3App = function () {
                 if (options.useApi)
                     api.getPointData(request);
                 else
-                    dd3NetS.server.getPointData(signalR.sid, request);
+                    dd3NetS.server.getPointData(dd3NetS.sid, request);
 
                 //console.log(JSON.stringify(request));
 
@@ -995,7 +1002,7 @@ var initDD3App = function () {
                 if (options.useApi)
                     api.getPathData(request);
                 else
-                    dd3NetS.server.getPathData(signalR.sid, request);
+                    dd3NetS.server.getPathData(dd3NetS.sid, request);
 
                 //console.log(JSON.stringify(request));
 
@@ -1058,7 +1065,7 @@ var initDD3App = function () {
                     if (options.useApi)
                         api.getBarData(request);
                     else
-                        dd3NetS.server.getBarData(signalR.sid, request);
+                        dd3NetS.server.getBarData(dd3NetS.sid, request);
 
                         
 
@@ -1105,7 +1112,7 @@ var initDD3App = function () {
                         if (options.useApi)
                             api.getData(request); // api.getData(dataName, dataId);
                         else
-                            //dd3NetS.server.getData(signalR.sid, request);
+                            //dd3NetS.server.getData(dd3NetS.sid, request);
 
                         console.log("Shor. PIE: " + JSON.stringify(request));
 
@@ -1149,7 +1156,7 @@ var initDD3App = function () {
                     useNames: useNames
                 };
 
-                dd3NetS.server.requestFromRemote(signalR.sid, request);
+                dd3NetS.server.requestFromRemote(dd3NetS.sid, request);
             };
 
             // Data Reception
@@ -1168,7 +1175,7 @@ var initDD3App = function () {
             };
 
             //Callback upon data reception => store it and call the next callback
-            //BAI: this function will be called when any this kind of data retrieval function "dd3NetS.server.getPointData(signalR.sid, request);" get the data.
+            //BAI: this function will be called when any this kind of data retrieval function "dd3NetS.server.getPointData(dd3NetS.sid, request);" get the data.
             dd3_data.receiveData = function (dataName, dataId, dataPoints) {
                 utils.log("Data received : " + dataName + " (" + dataId + ")", 1);
 
@@ -1196,9 +1203,13 @@ var initDD3App = function () {
 
             //Link this callback with signalr
             //BAI: all these callback functions all only for data reception.
-            signalR_callback.receiveDimensions = dd3_data.receiveDimensions;
-            signalR_callback.receiveData = dd3_data.receiveData;
-            signalR_callback.receiveRemoteDataReady = dd3_data.receiveRemoteDataReady;
+            //signalR_callback.receiveDimensions = dd3_data.receiveDimensions;
+            //signalR_callback.receiveData = dd3_data.receiveData;
+            //signalR_callback.receiveRemoteDataReady = dd3_data.receiveRemoteDataReady;
+
+            //BAI: only used for signalR, the first parameter has been set when init caveconfiguration.
+            dd3NetS.setCallBack({}, dd3_data);
+            
 
             /**
              * PEER FUNCTIONS
@@ -1585,13 +1596,20 @@ var initDD3App = function () {
 
                 return function (_, t) {
                     _ = typeof _ === "function" ? _ : nop;
+                    dd3NetS.syncCallback = function () {
+                        syncTime = Date.now();
+                        utils.log("Synchronized !", 0);
+                        _();
+                    };
+                    /*
                     signalR.syncCallback = function () {
                         syncTime = Date.now();
                         utils.log("Synchronized !", 0);
                         _();
                     };
+                    */
                     setTimeout(function () {
-                        dd3NetS.server.synchronize(signalR.sid);
+                        dd3NetS.server.synchronize(dd3NetS.sid);
                     }, t || 0);
                 };
             })();
@@ -2972,7 +2990,7 @@ var dd3Server = $.connection.dD3AppHub;//Contains all methods of AppHub
 //BAI: signalR_callback.receiveDimensions = dd3_data.receiveDimensions;
 //BAI: signalR_callback.receiveData = dd3_data.receiveData;
 //BAI: signalR_callback.receiveRemoteDataReady = dd3_data.receiveRemoteDataReady;
-var signalR_callback = {};//Contains server interaction functions
+//var signalR_callback = {};//Contains server interaction functions
 //BAI: this argument will be set the value in the function "gdo.net.app.DD3.initClient". Therefore, the main_callback is the function "launcher" in "App.cshtml" file.
 //BAI "main_callback" is the "launcher" function.
 var main_callback; // Callback inside the html file called when the configuration of GDO is received for application node or when the controller is updated for a controller
@@ -2984,7 +3002,7 @@ var orderTransmitter; // Callback inside the html file when the client is initia
 // BAI: the following code is to define a function called "dd3Receive" in the front end which can be called by backend. (Here, it will be called by DD3AppHub.cs and some part in this file.)
 // BAI: DD3Q: why the arguments in the definition is only one, but when we call this function in the above code in this file, several arguments are passed into this function.
 dd3Server.client.dd3Receive = function (f) {
-    signalR_callback[f].apply(null, [].slice.call(arguments, 1));
+    dd3NetS.signalR_callback[f].apply(null, [].slice.call(arguments, 1));
 };
 
 // Non-dd3 functions
