@@ -11,6 +11,7 @@
 // ==== IF THIS NODE IS AN APP ====
 var d3;
 var dd3Net;
+var dd3NetS;
 var temporary_store;//TODO v4: delete
 
 //BAI: load gdo.apps.dd3.net.js and it should be after d3 value;
@@ -325,8 +326,8 @@ var initDD3App = function () {
     };
 
     //var peerObject = { key: 'q35ylav1jljo47vi', debug: 0 };
-    //  var peerObject = { host: "dsigdoprod.doc.ic.ac.uk", port: 55555 };
-    // var peerObject = { host: "146.169.32.109", port: 55555 };
+    //var peerObject = { host: "dsigdoprod.doc.ic.ac.uk", port: 55555 };
+    //var peerObject = { host: "146.169.32.109", port: 55555 };
     //BAI: This is a peer server in DSI.
     //var peerObject = { host: "146.169.32.109", port: 55555 };
     //{ host: "localhost", port: 55555 };
@@ -408,6 +409,7 @@ var initDD3App = function () {
         //BAI: this peer object will also include another property called "peer" which is added in the function "connectToPeerServer".
         //BAI: peer.peer reprents the connection between one peer and the peer server.
         //BAI: the peer object is moved into the dd3Net module
+        /*
         var peer = {
             id: null,
             peers: [],
@@ -419,7 +421,7 @@ var initDD3App = function () {
             receive: function () { },
             sendTo: function () { },
             flush: function () { }
-        };
+        };*/
 
         //Represents Cave
         //BAI: I guess the cave reprents how many screens which you are using to visualize this application.
@@ -522,15 +524,12 @@ var initDD3App = function () {
             //connect to the peer server (and actually call the signalr connection initialisation)
             //Bai: after the peer connection is set up, it will call the next function to inilize signalr connection. 
             init.connectToPeerServer = function () {
-               
                 dd3Net = new DD3Net('peerjs');
                 //console.log('new peer server',dd3Net);
-
+               
                 var p = dd3Net.peer;
                 //console.log(dd3Net);
-
-                //var p = peer.peer = new Peer(peerObject);
-
+                
                 p.on('open', function (id) {
                     //console.log('id is' + id );
                     utils.log('Connected to peer server - id : ' + id, 1);
@@ -562,9 +561,9 @@ var initDD3App = function () {
                         }
                         //dd3Net.setConnection();
                         dd3Net.connections[r][c] = conn;
-                        console.log('connect to peer server',dd3Net.connections);
+                        //console.log('connect to peer server',dd3Net.connections);
                         dd3Net.buffers[r][c] = dd3Net.buffers[r][c] || [];
-                        conn.on("open", dd3Net.init.bind(null, conn, r, c));
+                        conn.on("open", dd3Net.init.bind(dd3Net, conn, r, c));
                     });
 
                     init.connectToSignalRServer();
@@ -578,7 +577,7 @@ var initDD3App = function () {
                     if (!!dd3Net.peer && !dd3Net.peer.destroyed) {
                         dd3Net.peer.destroy();
                     }
-                    //signalR && signalR.connection && (signalR.connection.state === 1) && signalR.server && signalR.server.removeClient(signalR.sid);
+                    //signalR && signalR.connection && (signalR.connection.state === 1) && dd3NetS.server && dd3NetS.server.removeClient(signalR.sid);
                 };
                 utils.log("Connection to peer server established", 1);
             };
@@ -586,11 +585,12 @@ var initDD3App = function () {
             //Connect to the signalR server and send the info
             //Bai: this function is called in the above "connectToPeerServer" function.
             init.connectToSignalRServer = function () {
+                dd3NetS = new DD3Net('signalr');
                 //dd3Server contains the connection to AppHub
-                signalR.server = dd3Server.server;
-                signalR.client = dd3Server.client;
+                //signalR.server = dd3Server.server;
+                //signalR.client = dd3Server.client;
                 signalR.sid = dd3Server.instanceId;
-
+                
 
                 // Define server interaction functions
                 signalR_callback.receiveConfiguration = init.getCaveConfiguration;
@@ -610,7 +610,7 @@ var initDD3App = function () {
                 };
 
                 //BAI: this function will call "init.getCaveConfiguration" finally. The whole procedure is quite complex. The detailed logic can be obtained by looking through DD3App.cs and DD3AppHub.cs.
-                signalR.server.updateInformation(signalR.sid, thisInfo);
+                dd3NetS.server.updateInformation(signalR.sid, thisInfo);
                 utils.log("Connection to SignalR server established", 1);
             };
 
@@ -690,7 +690,6 @@ var initDD3App = function () {
                 defineDD3Functions();
             };
 
-
             return init;
 
         })();
@@ -699,6 +698,7 @@ var initDD3App = function () {
         //BAI: this function is called when initialize the getCaveConfiguration function above.
         var defineDD3Functions = function () {
 
+            //var p = peer.peer = new Peer(peerObject);
             /**
              * dd3.position
              */
@@ -840,7 +840,7 @@ var initDD3App = function () {
             // Data Request　
             //get Dimensions of the dataset
             //BAI: this function will be called via "dd3.getDimensions" in the App.cshtml. Because "dd3_data.getDimensions" will be export as "dd3.getDimensions"
-            //BAI: here, it still uses "signalR.server.getDimensions" to implement this function.
+            //BAI: here, it still uses "dd3NetS.server.getDimensions" to implement this function.
             dd3_data.getDimensions = function (dataId, callback) {
                 utils.log("Data dimensions requested for " + dataId, 1);
                 data[pr(dataId)] = {};
@@ -848,7 +848,7 @@ var initDD3App = function () {
                 if (options.useApi)
                     api.getDataDimensions(dataId);
                 else
-                    signalR.server.getDimensions(signalR.sid, dataId);
+                    dd3NetS.server.getDimensions(signalR.sid, dataId);
             };
 
             /*APIDOC:get the raw data of the data set according to its name or id. You can filter by key if needed.
@@ -858,7 +858,7 @@ var initDD3App = function () {
                         * keys: array of the attributes that you want to retrieve
                         * No return as data will be passed to callback
                         */
-            //BAI: here, it still uses "signalR.server.getData" to implement this function.
+            //BAI: here, it still uses "dd3NetS.server.getData" to implement this function.
             dd3_data.getData = function (dataName, dataId, callback, keys) {
                 data[pr(dataId)] = data[pr(dataId)] || {};
                 data[pr(dataId)][pr(dataName)] = data[pr(dataId)][pr(dataName)] || {};
@@ -874,7 +874,7 @@ var initDD3App = function () {
                 if (options.useApi)
                     api.getData(request);
                 else
-                    signalR.server.getData(signalR.sid, request);
+                    dd3NetS.server.getData(signalR.sid, request);
 
                 utils.log("Data requested : " + dataName + " (" + dataId + ")", 1);
             };
@@ -914,7 +914,7 @@ var initDD3App = function () {
                 if (options.useApi)
                     api.getPointData(request);
                 else
-                    signalR.server.getPointData(signalR.sid, request);
+                    dd3NetS.server.getPointData(signalR.sid, request);
 
                 utils.log("Data requested : " + dataName + " (" + dataId + ")", 1);
             };
@@ -956,7 +956,7 @@ var initDD3App = function () {
                 if (options.useApi)
                     api.getPathData(request);
                 else
-                    signalR.server.getPathData(signalR.sid, request);
+                    dd3NetS.server.getPathData(signalR.sid, request);
 
                 utils.log("Data requested : " + dataName + " (" + dataId + ")", 1);
             };
@@ -1010,7 +1010,7 @@ var initDD3App = function () {
                     if (options.useApi)
                         api.getBarData(request);
                     else
-                        signalR.server.getBarData(signalR.sid, request);
+                        dd3NetS.server.getBarData(signalR.sid, request);
                 } else {
                     dd3_data.receiveData(dataName, dataId, "[]");
                 }
@@ -1064,7 +1064,7 @@ var initDD3App = function () {
                     useNames: useNames
                 };
 
-                signalR.server.requestFromRemote(signalR.sid, request);
+                dd3NetS.server.requestFromRemote(signalR.sid, request);
             };
 
             // Data Reception
@@ -1083,7 +1083,7 @@ var initDD3App = function () {
             };
 
             //Callback upon data reception => store it and call the next callback
-            //BAI: this function will be called when any this kind of data retrieval function "signalR.server.getPointData(signalR.sid, request);" get the data.
+            //BAI: this function will be called when any this kind of data retrieval function "dd3NetS.server.getPointData(signalR.sid, request);" get the data.
             dd3_data.receiveData = function (dataName, dataId, dataPoints) {
                 utils.log("Data received : " + dataName + " (" + dataId + ")", 1);
                 dataPoints = JSON.parse(dataPoints);
@@ -1114,390 +1114,330 @@ var initDD3App = function () {
             /**
              * PEER FUNCTIONS
              * Data reception handling
+             * 
              */
-
-            //Methods of the peer object: callback when a peer is created and opened
-            //Will log the connection, link to the behaviour upon data reception and call peer.flush
-            //BAI: this function will be called once the peer has connected to the peer Server.
-            //BAI: comments peer.init function and move it to the dd3Net Modul
-            /*
-            peer.init = function (conn, r, c) {
-                utils.log("Connection established with Peer (" + [r, c] + "): " + conn.peer, 0);
-                conn.on("data", peer.receive);
-                peer.flush(r, c);
-            };
-            */
-
-
-
-            //Open the connection to row, column peer
-            //Empty the buffers for the connection to ths peer
-            //TODO: unobfuscate the code 
-            //BAI: comments peer.connect function and move it to the dd3Net Modul
-            /*
-            peer.connect = function (r, c) {
-                r = +r;
-                c = +c;
-
-                // Try to find peer with r and c as row and column - use Array.some to stop when found
-                // if the row, column pair is not the same as those of the connections, return false
-                return peer.peers.some(function (p) {
-                    if (+p.row !== r || +p.col !== c)
-                        return false;
-
-                    var conn = peer.peer.connect(p.peerId, { reliable: true, metadata: { initiator: [browser.row, browser.column] } });
-                    conn.on("open", peer.init.bind(null, conn, r, c));
-                    peer.connections[r][c] = conn;
-                    peer.buffers[r][c] = [];
-                    return true;
-                });
-            };
-            */
-
-            //If buffer is set to true, Put data in the buffer of the connection to the node at row r and column c
-            //If buffer is set to false, send the data directly
-            //returns false if no connection exists 
-            //BAI: comments peer.sendTo function and move it to the dd3Net Modul
-            /*
-            peer.sendTo = function (r, c, data, buffer) {
-                if (typeof peer.connections[r][c] === "undefined" && !peer.connect(r, c)) {
-                    // If there is no such peer
-                    return false;
-                }
-
-                // If connection is being established or we asked to buffer, we buffer - else we send
-                if (!peer.connections[r][c].open || buffer) {
-                    peer.buffers[r][c].push(data);
-                } else {
-                    //BAI:.send is the peer api
-                    peer.connections[r][c].send(data);
-                }
-
-                return true;
-            };
-            */
-
-
-            //BAI: comments peer.flush function and move it to the dd3Net Modul
-            //flush the peer: i.e. SEND the data in the buffer of the connection the node (r,c) AND EMPTY the buffer
-            /*
-            peer.flush = function (r, c) {
-
-                var buff = peer.buffers[r][c],
-                    conn = peer.connections[r][c];
-                if (buff && buff.length > 0 && conn && conn.open) {
-
-                    conn.send(buff);
-
-                    peer.buffers[r][c] = [];
-                    return true;
-                }
-
-                return false;
-            };
-            */
-
-
+            dd3Net.on('data', function (data) {
+                //console.log('dd3NET on', data);
+                receiveDataHandler.dataPreProcess(data);
+            });
+            /* Functions handling data reception  */
             //Callback when data is received from another peer. Will call different functions depending on the nature of the data (shape, property, remove, transition, endTransition)
             //Return false if the data.type is unrecognised.
             //If data is an array: peer.reveive will be called recursively on each elements of the array.
             //BAI: comments peer.flush function and move it to the dd3Net Modul
-            /*
-            peer.receive = function (data) {
-                if (data instanceof Array) {
-                    data.forEach(peer.receive);
-                    return;
-                }
+            var receiveDataHandler = {
+                    //BAI: all the following handler functions are called in the above "peer.receive" function.
+                    //Handler to be called upon the reception of a shape from peerjs.
+                    // Create the element from the data received (data.sendId), add it to the group (data.containers) in the proper ordering.
+                    dataPreProcess: function (data) {
+                        //var _self = this;
+                            if (data instanceof Array) {
+                                data.forEach(receiveDataHandler.dataPreProcess);
+                                return;
+                            }
+                     
+                        switch (data.type) {
+                            
+                            case 'shape':
+                                utils.log("Receiving a new shape...");
+                                receiveDataHandler._dd3_shapeHandler(data);
+                                break;
 
-                switch (data.type) {
-                    case 'shape':
-                        utils.log("Receiving a new shape...");
-                        _dd3_shapeHandler(data);
-                        break;
+                            case 'property':
+                                utils.log("Receiving a property [" +
+                                    data.function +
+                                    (data.property ? (":" + data.property) : "") +
+                                    "] update...");
+                                receiveDataHandler._dd3_propertyHandler(data);
+                                break;
 
-                    case 'property':
-                        utils.log("Receiving a property [" + data.function + (data.property ? (":" + data.property) : "") + "] update...");
-                        _dd3_propertyHandler(data);
-                        break;
+                            case 'remove':
+                                utils.log("Receiving an exiting shape...");
+                                receiveDataHandler._dd3_removeHandler(data);
+                                break;
 
-                    case 'remove':
-                        utils.log("Receiving an exiting shape...");
-                        _dd3_removeHandler(data);
-                        break;
+                            case 'transition':
+                                utils.log("Receiving a transition... ");
+                                receiveDataHandler._dd3_transitionHandler(data);
+                                break;
 
-                    case 'transition':
-                        utils.log("Receiving a transition... ");
-                        _dd3_transitionHandler(data);
-                        break;
+                            case 'endTransition':
+                                utils.log("Receiving a end transition event...");
+                                receiveDataHandler._dd3_endTransitionHandler(data);
+                                break;
 
-                    case 'endTransition':
-                        utils.log("Receiving a end transition event...");
-                        _dd3_endTransitionHandler(data);
-                        break;
-
-                    default:
-                        utils.log("Receiving an unsupported data : Aborting !", 2);
-                        utils.log(data, 2);
-                        return false;
-                }
-
-            };
-            */
-            /* Functions handling data reception  */
-            //INFO: d3.map() is an implementation of Map according to ES6 specification. Nothing to do with d3 data visualization function.
-            //TODEL: Never used...
-            var _dd3_timeoutStartReceivedTransition = d3.map();
-            //TODEL: Never used...
-            var _dd3_timeoutEndReceivedTransition = d3.map();
-
-            // Returun the next HTML element in an ordered group. Used solely for shape handling
-            // g: Current element in the ordered group.
-            // order: current 'position' of in the ordered group
-            //TODO v4: the selector can't find the order. Is that a problem?
-            //BAI: this function is only used in the function "_dd3_shapeHandler" below
-            var getOrderFollower = function (g, order) {
-                var s = order.split("_");
-                var elems = g.selectAll_("#" + g.node().id + " > [order^='" + s[0] + "']"),//TODO document this CSS selector query
-                    follower,
-                    o;
-
-                if (!elems.empty()) {
-                    s[1] = +s[1];
-                    //TODO v4: use selection.nodes() to return an array
-                    
-                    elems = elems.nodes();
-                    
-
-                    elems.some(function (a) {
-                        o = +a.getAttribute('order').split("_")[1];
-                        if (o > s[1]) {
-                            follower = a;
-                            return true;
+                            default:
+                                utils.log("Receiving an unsupported data : Aborting !", 2);
+                                utils.log(data, 2);
+                                return false;
                         }
-                        return false;
-                    });
 
-                    if (!follower) {
+                    },
 
-                        follower = elems[elems.length - 1].nextElementSibling;
-                    }
+                    // Returun the next HTML element in an ordered group. Used solely for shape handling
+                    // g: Current element in the ordered group.
+                    // order: current 'position' of in the ordered group
+                    //TODO v4: the selector can't find the order. Is that a problem?
+                    //BAI: this function is only used in the function "_dd3_shapeHandler" in receiveDataHandler Obj.
+                    getOrderFollower : function (g, order) {
+                        var s = order.split("_");
+                        var elems = g.selectAll_("#" + g.node().id + " > [order^='" + s[0] + "']"),//TODO document this CSS selector query
+                            follower,
+                            o;
 
-                } else {
-                    elems = g.selectAll_("#" + g.node().id + " > [order]");
+                        if (!elems.empty()) {
+                            s[1] = +s[1];
+                            //TODO v4: use selection.nodes() to return an array
                     
-                    elems = elems.nodes();
+                            elems = elems.nodes();
                     
 
-                    elems.some(function (a) {
-                        var o = a.getAttribute('order');
-                        if (o > order) {//TODO: What if order is NaN as suggested by the first line of the function
-                            follower = a;
-                            return true;
-                        }
-                        return false;
-                    });
-                }
+                            elems.some(function (a) {
+                                o = +a.getAttribute('order').split("_")[1];
+                                if (o > s[1]) {
+                                    follower = a;
+                                    return true;
+                                }
+                                return false;
+                            });
 
-                return follower;
-            };
+                            if (!follower) {
 
-
-            //BAI: all the following handler functions are called in the above "peer.receive" function.
-            //Handler to be called upon the reception of a shape from peerjs.
-            // Create the element from the data received (data.sendId), add it to the group (data.containers) in the proper ordering.
-            var _dd3_shapeHandler = function (data) {
-                var mainId = data.containers.shift(),
-                    obj = d3.select("#" + data.sendId),
-                    g1 = d3.select("#" + mainId), g2,
-                    c = false; // Whether the object was changed of group since last time
-                
-
-                if (g1.empty()) {
-                    utils.log("The group with id '" + mainId + "' received doesn't exist in the dom - A group with an id must exist in every browsers !", 2);
-                    return;
-                }
-
-                if (!(data.containers instanceof Array)) utils.log("V4 Error: data.containers is a Map and handled as an array",4);
-                data.containers.forEach(function (o) {
-                    g2 = g1.select_("#" + o.id);
-                    if (g2.empty()) {
-                        c = true;
-
-                        g1.insert_('g', function () { return getOrderFollower(g1, o.order); });
-                    } else {
-                        g1 = g2;
-                    }
-                    //g1 = g2.empty() ? (c = true, g1.insert_('g', function () { return getOrderFollower(g1, o.order); })) : g2;
-                    g1.attr_(o);//TODO v4: does this actually work
-                    if (!g1) utils.log('Warning!!! attr_ in _dd3_shapeHandler has failed', 4);
-
-                    if (o.transition)
-                        //BAI: change from peer.receive to dd3Net.receive
-                        dd3Net.receive(o.transition);
-                });
-
-                // Here we create an absolute ordering in one group
-                if (obj.empty() || c) {
-                    obj.remove_();
-                    obj = g1.insert_(data.name, function () { return getOrderFollower(g1, data.attr.order); });
-                }
-
-                if (data.name === "image") {
-                    obj.attr_("xlink:href", data.attr.href); 
-                    delete data.attr.href;
-                }
-
-                for (var a in data.attr) {
-                    if (data.attr[a]) obj.attr_(a, data.attr[a]);
-                }
-
-                obj.html_(data.html)
-                    .classed_('dd3_received', true)
-                    .attr_("id", data.sendId); // Here because attr can contain id
-
-            };
-
-            //Handler to be called upon the reception of a remove request from peerjs.
-            // removes the corresponding element (data.sendId) and all its children from the DOM
-            var _dd3_removeHandler = function (data) {
-                var el = d3.select('#' + data.sendId).node();
-                while (el && _dd3_isReceived(el.parentElement) && el.parentElement.childElementCount == 1)
-                    el = el.parentElement;
-                d3.select(el).remove();
-            };
-
-            //Handler to be called upon the reception of a property from peerjs.
-            //find the object and set the properties to their values
-            var _dd3_propertyHandler = function (data) {
-                var obj = d3.select("#" + data.sendId);
-                if (!obj.empty()) {
-                    var args = typeof data.property !== "undefined" ? [data.property, data.value] : [data.value];
-                    obj[data.function].apply(obj, args)
-                        .classed_('dd3_received', true)
-                        .attr_("id", data.sendId);
-                }
-            };
-            
-            //Handler to be called upon the reception of a transition from peerjs.
-            //TODO: v4: d3.ease implementation changed radically
-            var _dd3_transitionHandler = function (data) {
-                
-                //TODO v4: reread to handle all edge cases
-                var launchTransition = function (data) {
-
-                    var obj = d3.select("#" + data.sendId);
-                    //interrupt any ongoing animation
-                    obj.interrupt(data.name);
-                    var trst = _dd3_hook_selection_transition.call(obj, data.name);
-                    
-                    //utils.log("Delay taken: " + (data.delay + (syncTime + data.elapsed - Date.now())), 0);
-                    utils.log("Transition on " + data.sendId + ". To be plot between " + data.min + " and " + data.max + ". (" + (data.max - data.min) / 1000 + "s)");
-                    
-                    for (var a in data.start.attr) {
-                        if (data.start.attr[a]) obj.attr_(a, data.start.attr[a]);
-                    }
-                    
-                    for (var a in data.start.style) {
-                        if (data.start.style[a]) obj.style_(a, data.start.style[a]);
-                    }
-
-                    
-                     for (var a in data.end.attr) {
-                        if (data.end.attr[a]) trst.attr(a, data.end.attr[a]);
-                    }
-                    
-                    for (var a in data.end.style) {
-                        if (data.end.style[a]) trst.style(b, data.end.style[a]);
-                    }   
-
-                    trst.duration(data.duration);
-                                        
-                    if (data.tweens) {
-                        data.tweens.forEach(function (o) {//v4
-                            if (_dd3_tweens[o.value]) {
-                                trst.tween(o.key, _dd3_tweens[o.value]);
+                                follower = elems[elems.length - 1].nextElementSibling;
                             }
-                        });
-                    }
 
-                    //TODO v4: should be fixed to ignore attr
-                    
-                    /*
-                    if (data.attrTweens) {
-                        data.attrTweens.forEach(function (o) {
-                            if(_dd3_tweens["dd3_"+o.key+"_std_value"]){
-                                trst.attr(o.key, _dd3_tweens["dd3_"+o.key+"_std_value"]);
-                            } else if(_dd3_tweens["dd3_"+o.key+"_std_function"]){
-                                trst.attr(o.key, _dd3_tweens["dd3_"+o.key+"_std_function"]);
-                            }else if (_dd3_tweens[o.value]) {
-                                trst.attrTween(o.key, _dd3_tweens[o.value]);
-                            }
-                        });
-                    }
-                    */
-                    
-                    
-                    if (data.styleTweens) {
-                        data.styleTweens.forEach(function (o) {
-                            var args = typeof o.value[1] !== "undefined" ? [o.key, _dd3_tweens[o.value[0]], o.value[1]] : [o.key, _dd3_tweens[o.value[0]]];
-                            if (_dd3_tweens[o.value[0]]) {
-                                trst.styleTween.apply(trst, args);
-                            }
-                        });
-                    }
-                    
-                    
-                    
-                    if (_dd3_timeTransitionRelative) {
-                        trst.delay(data.delay + (syncTime + data.elapsed - Date.now()));
-                    } else {
-                        var tmp = data.delay + (data.elapsed - Date.now());
-                        
-                        trst.delay((tmp <= 0) ? 0 : tmp);
-                        //trst.delay(-tmp);
-                    }
-                    
-                    if (data.ease) {
-                        if (typeof data.ease === "string" && _dd3_eases[data.ease]) {
-                            trst.ease(_dd3_eases[data.ease]);
-                        } else if (typeof data.ease === "string" && _dd3_eases["dd3_" + data.ease]) {
-                            trst.ease(_dd3_eases["dd3_" + data.ease]);
-                        } else if (typeof data.ease === "string" && d3[data.ease]) {
-                            trst.ease(d3[data.ease]);
-                        } else if (typeof data.ease === "function" && _dd3_eases[utils.getFnName(data.ease)]) {//v4
-                            trst.ease(_dd3_eases[utils.getFnName(data.ease)]);//v4
                         } else {
-                            utils.log("Warning! ease not found",4);
-                            trst.ease(d3.easeLinear);//TODO v4: change the parsing of the easing
-                        }
-                    }
-
+                            elems = g.selectAll_("#" + g.node().id + " > [order]");
                     
-                };
+                            elems = elems.nodes();
+                    
+
+                            elems.some(function (a) {
+                                var o = a.getAttribute('order');
+                                if (o > order) {//TODO: What if order is NaN as suggested by the first line of the function
+                                    follower = a;
+                                    return true;
+                                }
+                                return false;
+                            });
+                        }
+
+                        return follower;
+                    },
+
+                    //BAI: all the following handler functions are called in the above "peer.receive" function.
+                    //Handler to be called upon the reception of a shape from peerjs.
+                    //Create the element from the data received (data.sendId), add it to the group (data.containers) in the proper ordering.
+                    _dd3_shapeHandler: function (data) {
+                        var mainId = data.containers.shift(),
+                            obj = d3.select("#" + data.sendId),
+                            g1 = d3.select("#" + mainId),
+                            g2,
+                            c = false; // Whether the object was changed of group since last time
 
 
-                launchTransition(data);
+                        if (g1.empty()) {
+                            utils.log("The group with id '" +
+                                mainId +
+                                "' received doesn't exist in the dom - A group with an id must exist in every browsers !",
+                                2);
+                            return;
+                        }
 
-                /*
-                if (data.min < Date.now())
-                    launchTransition(data);
-                else if (data.max > Date.now()) {
-                    clearTimeout(_dd3_timeoutStartReceivedTransition.get(data.sendId + data.name));
-                    _dd3_timeoutStartReceivedTransition.set(data.sendId + data.name, setTimeout(launchTransition.bind(null, data), data.min - Date.now()));
+                        if (!(data.containers instanceof Array))
+                            utils.log("V4 Error: data.containers is a Map and handled as an array", 4);
+                        data.containers.forEach(function (o) {
+                            g2 = g1.select_("#" + o.id);
+                            if (g2.empty()) {
+                                c = true;
+
+                                g1.insert_('g', function () { return receiveDataHandler.getOrderFollower(g1, o.order); });
+                            } else {
+                                g1 = g2;
+                            }
+                            //g1 = g2.empty() ? (c = true, g1.insert_('g', function () { return receiveDataHandler.getOrderFollower(g1, o.order); })) : g2;
+                            g1.attr_(o); //TODO v4: does this actually work
+                            if (!g1) utils.log('Warning!!! attr_ in _dd3_shapeHandler has failed', 4);
+
+                            if (o.transition)
+                                //BAI: change from peer.receive to dd3Net.receive
+                                dd3Net.receive(o.transition);
+                        });
+
+                        // Here we create an absolute ordering in one group
+                        if (obj.empty() || c) {
+                            obj.remove_();
+                            obj = g1.insert_(data.name, function () { return receiveDataHandler.getOrderFollower(g1, data.attr.order); });
+                        }
+
+                        if (data.name === "image") {
+                            obj.attr_("xlink:href", data.attr.href);
+                            delete data.attr.href;
+                        }
+
+                        for (var a in data.attr) {
+                            if (data.attr[a]) obj.attr_(a, data.attr[a]);
+                        }
+
+                        obj.html_(data.html)
+                            .classed_('dd3_received', true)
+                            .attr_("id", data.sendId); // Here because attr can contain id
+
+                    },
+
+                    //Handler to be called upon the reception of a remove request from peerjs.
+                    // removes the corresponding element (data.sendId) and all its children from the DOM
+                    _dd3_removeHandler: function (data) {
+                        var el = d3.select('#' + data.sendId).node();
+                        while (el && _dd3_isReceived(el.parentElement) && el.parentElement.childElementCount == 1)
+                            el = el.parentElement;
+                        d3.select(el).remove();
+                    },
+
+
+                    //Handler to be called upon the reception of a property from peerjs.
+                    //find the object and set the properties to their values
+                    _dd3_propertyHandler: function (data) {
+                        var obj = d3.select("#" + data.sendId);
+                        if (!obj.empty()) {
+                            var args = typeof data.property !== "undefined" ? [data.property, data.value] : [data.value];
+                            obj[data.function].apply(obj, args)
+                                .classed_('dd3_received', true)
+                                .attr_("id", data.sendId);
+                        }
+                    },
+
+                    //Handler to be called upon the reception of a transition from peerjs.
+                    //TODO: v4: d3.ease implementation changed radically
+                    _dd3_transitionHandler: function (data) {
+
+                        //TODO v4: reread to handle all edge cases
+                        var launchTransition = function (data) {
+
+                            var obj = d3.select("#" + data.sendId);
+                            //interrupt any ongoing animation
+                            obj.interrupt(data.name);
+                            var trst = _dd3_hook_selection_transition.call(obj, data.name);
+
+                            //utils.log("Delay taken: " + (data.delay + (syncTime + data.elapsed - Date.now())), 0);
+                            utils.log("Transition on " +
+                                data.sendId +
+                                ". To be plot between " +
+                                data.min +
+                                " and " +
+                                data.max +
+                                ". (" +
+                                (data.max - data.min) / 1000 +
+                                "s)");
+
+                            for (var a in data.start.attr) {
+                                if (data.start.attr[a]) obj.attr_(a, data.start.attr[a]);
+                            }
+
+                            for (var a in data.start.style) {
+                                if (data.start.style[a]) obj.style_(a, data.start.style[a]);
+                            }
+
+
+                            for (var a in data.end.attr) {
+                                if (data.end.attr[a]) trst.attr(a, data.end.attr[a]);
+                            }
+
+                            for (var a in data.end.style) {
+                                if (data.end.style[a]) trst.style(b, data.end.style[a]);
+                            }
+
+                            trst.duration(data.duration);
+
+                            if (data.tweens) {
+                                data.tweens.forEach(function (o) { //v4
+                                    if (_dd3_tweens[o.value]) {
+                                        trst.tween(o.key, _dd3_tweens[o.value]);
+                                    }
+                                });
+                            }
+
+                            //TODO v4: should be fixed to ignore attr
+
+                            /*
+                            if (data.attrTweens) {
+                                data.attrTweens.forEach(function (o) {
+                                    if(_dd3_tweens["dd3_"+o.key+"_std_value"]){
+                                        trst.attr(o.key, _dd3_tweens["dd3_"+o.key+"_std_value"]);
+                                    } else if(_dd3_tweens["dd3_"+o.key+"_std_function"]){
+                                        trst.attr(o.key, _dd3_tweens["dd3_"+o.key+"_std_function"]);
+                                    }else if (_dd3_tweens[o.value]) {
+                                        trst.attrTween(o.key, _dd3_tweens[o.value]);
+                                    }
+                                });
+                            }
+                            */
+
+
+                            if (data.styleTweens) {
+                                data.styleTweens.forEach(function (o) {
+                                    var args = typeof o.value[1] !== "undefined"
+                                        ? [o.key, _dd3_tweens[o.value[0]], o.value[1]]
+                                        : [o.key, _dd3_tweens[o.value[0]]];
+                                    if (_dd3_tweens[o.value[0]]) {
+                                        trst.styleTween.apply(trst, args);
+                                    }
+                                });
+                            }
+
+
+                            if (_dd3_timeTransitionRelative) {
+                                trst.delay(data.delay + (syncTime + data.elapsed - Date.now()));
+                            } else {
+                                var tmp = data.delay + (data.elapsed - Date.now());
+
+                                trst.delay((tmp <= 0) ? 0 : tmp);
+                                //trst.delay(-tmp);
+                            }
+
+                            if (data.ease) {
+                                if (typeof data.ease === "string" && _dd3_eases[data.ease]) {
+                                    trst.ease(_dd3_eases[data.ease]);
+                                } else if (typeof data.ease === "string" && _dd3_eases["dd3_" + data.ease]) {
+                                    trst.ease(_dd3_eases["dd3_" + data.ease]);
+                                } else if (typeof data.ease === "string" && d3[data.ease]) {
+                                    trst.ease(d3[data.ease]);
+                                } else if (typeof data.ease === "function" && _dd3_eases[utils.getFnName(data.ease)]) { //v4
+                                    trst.ease(_dd3_eases[utils.getFnName(data.ease)]); //v4
+                                } else {
+                                    utils.log("Warning! ease not found", 4);
+                                    trst.ease(d3.easeLinear); //TODO v4: change the parsing of the easing
+                                }
+                            }
+
+
+                        };
+
+
+                        launchTransition(data);
+
+                        /*
+                        if (data.min < Date.now())
+                            launchTransition(data);
+                        else if (data.max > Date.now()) {
+                            clearTimeout(_dd3_timeoutStartReceivedTransition.get(data.sendId + data.name));
+                            _dd3_timeoutStartReceivedTransition.set(data.sendId + data.name, setTimeout(launchTransition.bind(null, data), data.min - Date.now()));
+                        }
+                        clearTimeout(_dd3_timeoutEndReceivedTransition.get(data.sendId + data.name));
+                        _dd3_timeoutEndReceivedTransition.set(data.sendId + data.name, setTimeout(_dd3_endTransitionHandler.bind(null, {sendId : data.sendId, name: data.name, remove : false}), data.max - Date.now()));
+                        */
+                    },
+
+
+                    //Handler to be called upon the reception of an end transition from peerjs.
+                    //Interrupt the transition and remove element if data.remove is true.
+                    _dd3_endTransitionHandler: function (data) {
+                        var obj = d3.select("#" + data.sendId);
+                        obj.interrupt(data.name);
+                        if (data.remove)
+                            receiveDataHandler._dd3_removeHandler(data);
+                    }
                 }
-                clearTimeout(_dd3_timeoutEndReceivedTransition.get(data.sendId + data.name));
-                _dd3_timeoutEndReceivedTransition.set(data.sendId + data.name, setTimeout(_dd3_endTransitionHandler.bind(null, {sendId : data.sendId, name: data.name, remove : false}), data.max - Date.now()));
-                */
-            };
-
-            //Handler to be called upon the reception of an end transition from peerjs.
-            //Interrupt the transition and remove element if data.remove is true.
-            var _dd3_endTransitionHandler = function (data) {
-                var obj = d3.select("#" + data.sendId);
-                obj.interrupt(data.name);
-                if (data.remove)
-                    _dd3_removeHandler(data);
-            };
 
             /**
              *  Hook helper functions for d3
@@ -1562,7 +1502,7 @@ var initDD3App = function () {
                         _();
                     };
                     setTimeout(function () {
-                        signalR.server.synchronize(signalR.sid);
+                        dd3NetS.server.synchronize(signalR.sid);
                     }, t || 0);
                 };
             })();
@@ -1570,7 +1510,6 @@ var initDD3App = function () {
             /**
             *  dd3.selection
             */
-
 
             /*APIDOC: see d3.selection */
             //BAI: DD3Q: dd3.selection is the same as the d3.selection.
@@ -2168,7 +2107,6 @@ var initDD3App = function () {
 
                 return d3.merge(selections);
             };
-
 
             /**
             *  Watch methods    
@@ -2989,7 +2927,6 @@ dd3Server.client.receiveControllerOrder = function (orders) {
 
 // ==== IF THIS NODE IS A CONTROLLER ====
 //BAI: I dont think the following code is for the contoller node.
-
 //What to do when the controller is updated by the server => execute main_callback on  the received object.
 dd3Server.client.updateController = function (obj) {
     gdo.consoleOut('.DD3', 1, 'Controller : Receiving update from server');
