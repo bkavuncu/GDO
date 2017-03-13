@@ -14,15 +14,15 @@ var dd3Net;
 var dd3NetS;
 var temporary_store;//TODO v4: delete
 
-<<<<<<< HEAD
+
 //BAI: load gdo.apps.dd3.net.js and it should be after d3 value;
 $.getScript("../../Scripts/DD3/gdo.apps.dd3.net.js", function () { console.log("INFO: dd3Net module - gdo.apps.dd3.net.js was loaded."); });
-=======
+
 // Shor. load dd3 module scripts 
 $.getScript("../../Scripts/DD3/odata/o.js", function () { console.log("INFO: Odata module - o.js was loaded."); });
 $.getScript("../../Scripts/DD3/gdo.apps.dd3.odata.js", function () { console.log("INFO: Odata module - odata.js was loaded."); });
 
->>>>>>> 14f653d4cadde86b6ec89ff9adab7b32cd87ec16
+
 
 var initDD3App = function () {
 
@@ -1058,10 +1058,9 @@ var initDD3App = function () {
                     if (options.useApi)
                         api.getBarData(request);
                     else
-<<<<<<< HEAD
                         dd3NetS.server.getBarData(signalR.sid, request);
-=======
-                        signalR.server.getBarData(signalR.sid, request);
+
+                        
 
                     //console.log(JSON.stringify(request));
 
