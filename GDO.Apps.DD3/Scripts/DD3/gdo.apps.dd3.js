@@ -1073,7 +1073,6 @@ var initDD3App = function () {
                     var dataSkip = limits.min;      // if count from 0
                     odata.queryWith(dataType, dataId, select, orderby, dataFilter, dataTop, dataSkip, dd3_data.receiveData);
 
->>>>>>> 14f653d4cadde86b6ec89ff9adab7b32cd87ec16
                 } else {
                     dd3_data.receiveData(dataName, dataId, "[]");
                 }
@@ -1106,7 +1105,7 @@ var initDD3App = function () {
                         if (options.useApi)
                             api.getData(request); // api.getData(dataName, dataId);
                         else
-                            //signalR.server.getData(signalR.sid, request);
+                            //dd3NetS.server.getData(signalR.sid, request);
 
                         console.log("Shor. PIE: " + JSON.stringify(request));
 
