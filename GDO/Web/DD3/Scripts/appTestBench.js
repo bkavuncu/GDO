@@ -14,6 +14,9 @@
     //BAI: "orderController" variable is needed in this test_bench.
     //BAI: "d3" variable is needed in this test_bench.
     test_bench: {
+
+      
+
         //transitions
         '0': function () {
             //BAI: window.requestAnimFrame is not Window.requestAnimationFrame
@@ -69,7 +72,7 @@
                 counter++;
                 if (counter % 1000 === 0) {
                     console.log("(" + r + "," + c + "):" + fpss.join(","));
-    
+
                     conn_to_controller.send(fpss.join(","));
                     //send order with arguments  to control
                     fpss = [r, c];
@@ -630,7 +633,7 @@
                 var h = h2;
 
 
-                if (last_row !== row) { // Just changed of row ? 
+                if (last_row !== row) { // Just changed of row ?
                     current_y = max_y; //set the offset to lower Y
                     max_y = 0;
                     last_row = row;
@@ -710,7 +713,7 @@
 
             clockDiv.style("display", "").style("left", ((dd3.cave.width * 0.70) - dd3.position.html.left) + "px").style("top", dd3.position.html.top + "px");
             titleDiv.text("London Tube").style("display", "").style("left", dd3.position.html.left + "px").style("top", dd3.position.html.top + "px");
-  
+
             appTestBench.loadMap = function () {
                 var projection = d3.geoMercator()
                     .translate([cwidth / 2, cheight / 2]);
@@ -952,15 +955,15 @@
                     anim.start();
                 });
             };
-    
+
             orderController.orders['pauseAnimation'] = function () {
                 anim.stop();
             };
-    
+
             orderController.orders['cleanupAnimation'] = function () {
                 anim.cleanup();
             };
-    
+
             orderController.orders['createAnimation'] = function () {
                 var args = {
                     timeStep: 2000,
@@ -969,10 +972,10 @@
                     clock: clockDiv,
                     entry: 1
                 };
-    
+
                 anim = animation(args);
             };
-    
+
             orderController.orders['initAnimation'] = function () {
                 anim.loadData(function () {
                     anim.init();
@@ -1014,19 +1017,19 @@
         //parallelCoordinatesGraph
         '10': function () {
             var dim,
-                        init_dim,
-                        xScale = dd3.scale.ordinal().rangePoints([0, dd3.cave.svgWidth], 1),
-                        line = d3.svg.line(),
-                        xAxis = d3.svg.axis().orient("left"),
-                        background,
-                        foreground,
-                        dimensions,
-                        g,
-                        yScale = {},
-                        dragging = {},
-                        svg = dd3.svgCanvas;
+                init_dim,
+                xScale = dd3.scale.ordinal().rangePoints([0, dd3.cave.svgWidth], 1),
+                line = d3.svg.line(),
+                xAxis = d3.svg.axis().orient("left"),
+                background,
+                foreground,
+                dimensions,
+                g,
+                yScale = {},
+                dragging = {},
+                svg = dd3.svgCanvas;
 
-            //Way to make a white background, because the main body is unselectable                    
+            //Way to make a white background, because the main body is unselectable
             svg.append("rect")
                 .attr("width", "100%")
                 .attr("height", "100%")
@@ -1211,7 +1214,111 @@
             appTestBench.orderController.orders['updateFilter'] = updateFilter;
             appTestBench.orderController.orders['resetVisualization'] = resetVisualization;
 
-        }
+        },
+
+        // Shor. dd3 dev environment
+        '11': function () {
+
+            appTestBench.orderController.orders['initWorldConfig'] = function (data) {
+
+                console.log('DEBUG: ' + JSON.stringify(data));
+
+                world.config = data;
+                console.log("INFO: world config object data received");
+
+                var peerSvrAddr = world.config.peerServerAddress, peerSvrPort = world.config.peerServerPort;
+                var peerObject = { host: peerSvrAddr, port: peerSvrPort };
+                var peerConn = new Peer(peerObject);
+                peerConn.on('open', function (id) {
+                    console.log('INFO: connected to peer server - id : ' + id);
+                });
+
+                world.config.nodeId = dd3.browser.number;
+                world.config.nodeSize = [dd3.browser.svgWidth, dd3.browser.svgHeight];
+                world.config.nodeCol = dd3.browser.column;
+                world.config.nodeRow = dd3.browser.row;
+
+                console.log('DEBUG: ' + JSON.stringify(world.config));
+            };
+
+        },
+
+        // Shor. simple pie chart 
+        '12': function () {
+
+            var svg = dd3.svgCanvas;
+            var width = dd3.cave.svgWidth,
+                height = dd3.cave.svgHeight,
+                radius = Math.min(width, height) / 2;
+            
+            var draw = function (pieData) {
+                //console.log(JSON.stringify(pieData));
+                var color = d3.scaleOrdinal(d3.schemeCategory20c);
+                var arc = d3.arc()
+                        .outerRadius(radius - 10)
+                        .innerRadius(10);
+                var pie = d3.pie()
+                        .sort(null)
+                        .padAngle(.05)
+                        .value(function (d) { return +d.gdp; });
+
+                svg = svg.append("g")
+                    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+                var g = svg.append("g")
+                    .attr("id", "paths").selectAll(".arc")
+                    .data(pie(pieData))
+                    .enter().append("g")
+                    .attr("class", "arc");
+                g.append("path")
+                    .attr("d", arc)
+                    .style("fill", function (d) { return color(d.country); })
+                    .send();
+                svg.append("g")
+                    .attr("id", "texts").selectAll("text")
+                    .data(pie(pieData))
+                    .enter()
+                    .append("text")
+                    .attr("transform", function (d) {
+                        var angle = (d.startAngle + d.endAngle) * 90 / Math.PI; return "translate(" + arc.centroid(d) + ")rotate(" + (-(90 - angle) + (angle > 180 ? 180 : 0)) + ")";
+                    })
+                    .attr("dy", ".35em")
+                    .attr("font-size", "1.5em")
+                    .style("text-anchor", "middle")
+                    .text(function (d) { return d.country; })
+                    .send();
+            }; 
+
+            dd3.getPieData('pie', 'pieData', draw , width / 2, height / 2);
+
+
+
+            // *** 
+
+
+
+            appTestBench.orderController.orders['initWorldConfig'] = function (data) {
+
+                console.log('DEBUG: ' + JSON.stringify(data));
+
+                world.config = data;
+                console.log("INFO: world config object data received");
+
+                var peerSvrAddr = world.config.peerServerAddress, peerSvrPort = world.config.peerServerPort;
+                var peerObject = { host: peerSvrAddr, port: peerSvrPort };
+                var peerConn = new Peer(peerObject);
+                peerConn.on('open', function (id) {
+                    console.log('INFO: connected to peer server - id : ' + id);
+                });
+
+                world.config.nodeId = dd3.browser.number;
+                world.config.nodeSize = [dd3.browser.svgWidth, dd3.browser.svgHeight];
+                world.config.nodeCol = dd3.browser.column;
+                world.config.nodeRow = dd3.browser.row;
+
+                console.log('DEBUG: ' + JSON.stringify(world.config));
+            };
+
+        },
 
     },
 
@@ -1319,7 +1426,7 @@
         //console.log(appTestBench.orderController);
         //console.log(appTestBench.orderController);
         //console.log(orderController);
-        
+
         appTestBench.orderController
             .orders['launchAnimation'] = appTestBench.launchAnimation =
             function(dis, outter, widthChanging, widthWithLinkLoad) {

@@ -14,8 +14,15 @@ var dd3Net;
 var dd3NetS;
 var temporary_store;//TODO v4: delete
 
+<<<<<<< HEAD
 //BAI: load gdo.apps.dd3.net.js and it should be after d3 value;
 $.getScript("../../Scripts/DD3/gdo.apps.dd3.net.js", function () { console.log("INFO: dd3Net module - gdo.apps.dd3.net.js was loaded."); });
+=======
+// Shor. load dd3 module scripts 
+$.getScript("../../Scripts/DD3/odata/o.js", function () { console.log("INFO: Odata module - o.js was loaded."); });
+$.getScript("../../Scripts/DD3/gdo.apps.dd3.odata.js", function () { console.log("INFO: Odata module - odata.js was loaded."); });
+
+>>>>>>> 14f653d4cadde86b6ec89ff9adab7b32cd87ec16
 
 var initDD3App = function () {
 
@@ -31,6 +38,18 @@ var initDD3App = function () {
      */
     var utils = (function () {
         return {
+            /**
+             * Shor. check if it is a valid JSON
+             */
+            isJSON: function (str) {
+                try {
+                    JSON.parse(str);
+                } catch (e) {
+                    return false;
+                }
+                return true;
+            },
+
             /**
              *get the value of an url variable if it exist, false else
              */
@@ -916,6 +935,15 @@ var initDD3App = function () {
                 else
                     dd3NetS.server.getPointData(signalR.sid, request);
 
+                //console.log(JSON.stringify(request));
+
+                // Shor. odata interface - point data 
+                var dataFilter = "x ge " + limits.xmin + " and x lt " + limits.xmax + " and y ge " + limits.ymin + " and y lt " + limits.ymax;
+                var dataType = dataName;
+                var select = xKey.concat(yKey);
+                var orderby = xKey;
+                odata.query(dataType, dataId, select, orderby, dataFilter, dd3_data.receiveData);
+
                 utils.log("Data requested : " + dataName + " (" + dataId + ")", 1);
             };
 
@@ -942,6 +970,17 @@ var initDD3App = function () {
                 yKey = yKey || ['y'];
                 var limits = limit || dd3_data.getBounds(dataId, scaleX, scaleY, xKey, yKey);
                 if (!limits) return;
+                else {
+                    // Shor. extend the limits for path data
+                    var xdiff = (limits.xmax - limits.xmin);
+                    var ydiff = (limits.ymax - limits.ymin);
+
+                    limits.xmax += xdiff;
+                    limits.xmin -= xdiff;
+                    limits.ymax += ydiff;
+                    limits.ymin -= ydiff;
+
+                };
 
                 var request = {
                     dataId: dataId,
@@ -957,6 +996,15 @@ var initDD3App = function () {
                     api.getPathData(request);
                 else
                     dd3NetS.server.getPathData(signalR.sid, request);
+
+                //console.log(JSON.stringify(request));
+
+                // Shor. odata interface - path data
+                var dataFilter = "x ge " + limits.xmin + " and x lt " + limits.xmax + " and y ge " + limits.ymin + " and y lt " + limits.ymax;
+                var dataType = dataName;
+                var select = xKey.concat(yKey);
+                var orderby = xKey;
+                odata.query(dataType, dataId, select, orderby, dataFilter, dd3_data.receiveData);
 
                 utils.log("Data requested : " + dataName + " (" + dataId + ")", 1);
             };
@@ -1010,7 +1058,23 @@ var initDD3App = function () {
                     if (options.useApi)
                         api.getBarData(request);
                     else
+<<<<<<< HEAD
                         dd3NetS.server.getBarData(signalR.sid, request);
+=======
+                        signalR.server.getBarData(signalR.sid, request);
+
+                    //console.log(JSON.stringify(request));
+
+                    // Shor. odata interface - bar data
+                    var dataType = dataName;
+                    var select = [];    // select all
+                    var orderby = orderingKey;
+                    var dataFilter = "";
+                    var dataTop = limits.max - limits.min;
+                    var dataSkip = limits.min;      // if count from 0
+                    odata.queryWith(dataType, dataId, select, orderby, dataFilter, dataTop, dataSkip, dd3_data.receiveData);
+
+>>>>>>> 14f653d4cadde86b6ec89ff9adab7b32cd87ec16
                 } else {
                     dd3_data.receiveData(dataName, dataId, "[]");
                 }
@@ -1031,10 +1095,33 @@ var initDD3App = function () {
                 data[pr(dataId)][pr(dataName)].callback_data = callback;
 
                 var sgsl = _dd3.position('svg', 'global', 'svg', 'local');
-                if (sgsl.left(centerX) >= 0 && sgsl.left(centerX) < browser.width)
-                    if (sgsl.top(centerY) >= 0 && sgsl.top(centerY) < browser.height)
-                        return api.getData(dataName, dataId);
-                return dd3_data.receiveData(dataName, dataId, "[]");
+                if (sgsl.left(centerX) >= 0 && sgsl.left(centerX) < browser.width)  // Shor. check if the pie center is inside the browser 
+                    if (sgsl.top(centerY) >= 0 && sgsl.top(centerY) < browser.height) {
+
+                        var request = {
+                            dataId: dataId,
+                            dataName: dataName,
+                            limits: [],
+                        };
+
+                        if (options.useApi)
+                            api.getData(request); // api.getData(dataName, dataId);
+                        else
+                            //signalR.server.getData(signalR.sid, request);
+
+                        console.log("Shor. PIE: " + JSON.stringify(request));
+
+                        // Shor. odata interface - pie data
+                        var dataType = dataName;
+                        var select = [];
+                        var orderby = [];
+                        var dataFilter = [];
+                        odata.query(dataType, dataId, select, orderby, dataFilter, dd3_data.receiveData);
+
+                    } else {
+                        dd3_data.receiveData(dataName, dataId, "[]");
+                    }
+
             };
 
             /*APIDOC:get data from a remote source
@@ -1086,7 +1173,11 @@ var initDD3App = function () {
             //BAI: this function will be called when any this kind of data retrieval function "dd3NetS.server.getPointData(signalR.sid, request);" get the data.
             dd3_data.receiveData = function (dataName, dataId, dataPoints) {
                 utils.log("Data received : " + dataName + " (" + dataId + ")", 1);
-                dataPoints = JSON.parse(dataPoints);
+
+                console.log("Shor. RECV" + JSON.stringify(dataPoints));
+                
+                if(utils.isJSON(dataPoints)) dataPoints = JSON.parse(dataPoints);
+
                 if (dataPoints.error) {
                     utils.log("Error requesting data : " + dataPoints.error, 3);
                 }

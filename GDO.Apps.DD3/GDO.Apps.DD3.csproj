@@ -137,6 +137,7 @@
     <Content Include="Configurations\DD3\Data\FileScatterplot.txt" />
     <Content Include="Configurations\DD3\Data\FileGraphs.txt" />
     <Content Include="Configurations\DD3\Data\FileParallelCoordinates.txt" />
+<<<<<<< HEAD
     <Content Include="packages.config">
       <SubType>Designer</SubType>
     </Content>
@@ -144,10 +145,19 @@
     <Content Include="Scripts\DD3\gdo.apps.dd3.net.js" />
     <Content Include="Web\DD3\CSS\app.css" />
     <Content Include="Web\DD3\CSS\control.css" />
+=======
+    <Content Include="packages.config" />
+    <Content Include="Scripts\DD3\gdo.apps.dd3.world.js" />
+    <Content Include="Scripts\DD3\gdo.apps.dd3.odata.js" />
+>>>>>>> 14f653d4cadde86b6ec89ff9adab7b32cd87ec16
     <Content Include="Web\DD3\Scripts\appInit.js" />
     <Content Include="Web\DD3\Scripts\appTestBench.js" />
     <Content Include="Web\DD3\Scripts\controlInit.js" />
     <Content Include="Web\DD3\Scripts\controlTestBench.js" />
+<<<<<<< HEAD
+=======
+    <Content Include="Web\DD3\Scripts\d3.v4.js" />
+>>>>>>> 14f653d4cadde86b6ec89ff9adab7b32cd87ec16
     <Content Include="Web\DD3\Scripts\tube_viz\animation.js" />
     <Content Include="Web\DD3\Scripts\tube_viz\animationLines.js" />
     <Content Include="Web\DD3\Scripts\tube_viz\lines.js" />
@@ -170,6 +180,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Configurations\DD3\DD3Test.json" />
+    <Content Include="Configurations\DD3\PieChart.json" />
+    <Content Include="Configurations\DD3\Data\FilePieChart.txt" />
     <None Include="Properties\PublishProfiles\dd3_only.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
