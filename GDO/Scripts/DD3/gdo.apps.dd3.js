@@ -1111,7 +1111,7 @@ var initDD3App = function () {
 
                         console.log("Shor. PIE: " + JSON.stringify(request));
 
-                        // Shor. odata interface - pie data (UNTESTED)
+                        // Shor. odata interface - pie data
                         var dataType = dataName;
                         var select = [];
                         var orderby = [];
@@ -3030,7 +3030,7 @@ dd3Server.client.updateController = function (obj) {
 // ===============================
 
 
-gdo.net.app.DD3.displayMode = 0;//TODO: email david about it
+gdo.net.app.DD3.displayMode = 0;    //TODO: email david about it
 
 //Initialize the application node, set the orderController, the instance id, the main callback and call initDD3App;
 //BAI: this function is called in App.cshtml to initialize initDD3App(). "initDD3App" functions has a returned value "dd3".

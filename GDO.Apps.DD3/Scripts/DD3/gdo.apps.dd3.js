@@ -3030,7 +3030,7 @@ dd3Server.client.updateController = function (obj) {
 // ===============================
 
 
-gdo.net.app.DD3.displayMode = 0;//TODO: email david about it
+gdo.net.app.DD3.displayMode = 0;    //TODO: email david about it
 
 //Initialize the application node, set the orderController, the instance id, the main callback and call initDD3App;
 //BAI: this function is called in App.cshtml to initialize initDD3App(). "initDD3App" functions has a returned value "dd3".

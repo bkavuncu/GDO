@@ -1252,7 +1252,6 @@
                 radius = Math.min(width, height) / 2;
             
             var draw = function (pieData) {
-                //console.log(JSON.stringify(pieData));
                 var color = d3.scaleOrdinal(d3.schemeCategory20c);
                 var arc = d3.arc()
                         .outerRadius(radius - 10)
@@ -1291,32 +1290,29 @@
             dd3.getPieData('pie', 'pieData', draw , width / 2, height / 2);
 
 
+            // Shor. CONTROL TEMPLATE 
 
-            // *** 
+            //appTestBench.orderController.orders['initWorldConfig'] = function (data) {
 
+            //    console.log('DEBUG: ' + JSON.stringify(data));
 
+            //    world.config = data;
+            //    console.log("INFO: world config object data received");
 
-            appTestBench.orderController.orders['initWorldConfig'] = function (data) {
+            //    var peerSvrAddr = world.config.peerServerAddress, peerSvrPort = world.config.peerServerPort;
+            //    var peerObject = { host: peerSvrAddr, port: peerSvrPort };
+            //    var peerConn = new Peer(peerObject);
+            //    peerConn.on('open', function (id) {
+            //        console.log('INFO: connected to peer server - id : ' + id);
+            //    });
 
-                console.log('DEBUG: ' + JSON.stringify(data));
+            //    world.config.nodeId = dd3.browser.number;
+            //    world.config.nodeSize = [dd3.browser.svgWidth, dd3.browser.svgHeight];
+            //    world.config.nodeCol = dd3.browser.column;
+            //    world.config.nodeRow = dd3.browser.row;
 
-                world.config = data;
-                console.log("INFO: world config object data received");
-
-                var peerSvrAddr = world.config.peerServerAddress, peerSvrPort = world.config.peerServerPort;
-                var peerObject = { host: peerSvrAddr, port: peerSvrPort };
-                var peerConn = new Peer(peerObject);
-                peerConn.on('open', function (id) {
-                    console.log('INFO: connected to peer server - id : ' + id);
-                });
-
-                world.config.nodeId = dd3.browser.number;
-                world.config.nodeSize = [dd3.browser.svgWidth, dd3.browser.svgHeight];
-                world.config.nodeCol = dd3.browser.column;
-                world.config.nodeRow = dd3.browser.row;
-
-                console.log('DEBUG: ' + JSON.stringify(world.config));
-            };
+            //    console.log('DEBUG: ' + JSON.stringify(world.config));
+            //};
 
         },
 
