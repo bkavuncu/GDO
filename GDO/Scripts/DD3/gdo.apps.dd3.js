@@ -12,11 +12,34 @@
 var d3;
 var dd3Net;
 var dd3NetS;
+var dd3NetP;
 var temporary_store;//TODO v4: delete
 
+//BAI: load js in sync way;
+$.ajax({
+    async: false,
+    url: "../../Scripts/DD3/gdo.apps.dd3.net.js",
+    dataType: "script"
+});
 
-//BAI: load gdo.apps.dd3.net.js and it should be after d3 value;
-$.getScript("../../Scripts/DD3/gdo.apps.dd3.net.js", function () { console.log("INFO: dd3Net module - gdo.apps.dd3.net.js was loaded."); });
+$.ajax({
+    async: false,
+    url: "../../Scripts/DD3/gdo.apps.dd3.peernet.js",
+    dataType: "script"
+});
+
+$.ajax({
+    async: false,
+    url: "../../Scripts/DD3/gdo.apps.dd3.signalrnet.js",
+    dataType: "script"
+});
+
+$.ajax({
+    async: false,
+    url: "../../Scripts/DD3/gdo.apps.dd3.mixnet.js",
+    dataType: "script"
+});
+
 
 // Shor. load dd3 module scripts 
 $.getScript("../../Scripts/DD3/odata/o.js", function () { console.log("INFO: Odata module - o.js was loaded."); });
@@ -431,7 +454,7 @@ var initDD3App = function () {
         //Represent peerjs connection
         //BAI: this peer object will also include another property called "peer" which is added in the function "connectToPeerServer".
         //BAI: peer.peer reprents the connection between one peer and the peer server.
-        //BAI: the peer object is moved into the dd3Net module
+        //BAI: the peer object is moved into the dd3NetP module
         /*
         var peer = {
             id: null,
@@ -547,11 +570,15 @@ var initDD3App = function () {
             //connect to the peer server (and actually call the signalr connection initialisation)
             //Bai: after the peer connection is set up, it will call the next function to inilize signalr connection. 
             init.connectToPeerServer = function () {
-                dd3Net = new DD3Net('peerjs');
-                //console.log('new peer server',dd3Net);
+                //BAI: if no parameters are passed into DD3Net, we will use mix protocols (some apis are based on peerjs and some are based on signalr)
+                //BAI: 'signalr' means we use apis implemented based on signalr protocol
+                //BAI: 'peerjs' means we use apis implemented based on signalr protocol
+                dd3Net = new DD3Net();
+                //dd3NetP = new DD3Net('peerjs');
+                //console.log('new peer server',dd3NetP);
                
                 var p = dd3Net.peer;
-                //console.log(dd3Net);
+                //console.log(dd3NetP);
                 
                 p.on('open', function (id) {
                     //console.log('id is' + id );
@@ -582,9 +609,9 @@ var initDD3App = function () {
                                 dd3Net.connections[r][c].removeAllListeners().on("open", dd3Net.connections[r][c].close);
                             }
                         }
-                        //dd3Net.setConnection();
+                        //dd3NetP.setConnection();
                         dd3Net.connections[r][c] = conn;
-                        //console.log('connect to peer server',dd3Net.connections);
+                        //console.log('connect to peer server',dd3NetP.connections);
                         dd3Net.buffers[r][c] = dd3Net.buffers[r][c] || [];
                         conn.on("open", dd3Net.init.bind(dd3Net, conn, r, c));
                     });
@@ -608,7 +635,14 @@ var initDD3App = function () {
             //Connect to the signalR server and send the info
             //Bai: this function is called in the above "connectToPeerServer" function.
             init.connectToSignalRServer = function () {
-                dd3NetS = new DD3Net('signalr');
+
+                
+                //BAI: if we use mix net, we do not to create another instance again.
+                //dd3Net = new DD3Net();
+                //dd3NetS = new DD3Net('signalr');
+
+
+
                 //dd3Server contains the connection to AppHub
                 //signalR.server = dd3Server.server;
                 //signalR.client = dd3Server.client;
@@ -620,7 +654,9 @@ var initDD3App = function () {
                 //signalR_callback.receiveSynchronize = dd3NetS.receiveSynchronize;
 
                 //BAI: only for signalR protocol, second parameter is null now and will be set when dd3_data has value.
-                dd3NetS.setCallBack(init.getCaveConfiguration, {});
+                //dd3NetS.setCallBack(init.getCaveConfiguration, {});
+                dd3Net.setCallBack(init.getCaveConfiguration, {});
+
 
                 utils.log("Connected to signalR server", 1);
                 utils.log("Waiting for everyone to connect", 1);
@@ -636,7 +672,8 @@ var initDD3App = function () {
                 };
 
                 //BAI: this function will call "init.getCaveConfiguration" finally. The whole procedure is quite complex. The detailed logic can be obtained by looking through DD3App.cs and DD3AppHub.cs.
-                dd3NetS.server.updateInformation(dd3NetS.sid, thisInfo);
+                //dd3NetS.server.updateInformation(dd3NetS.sid, thisInfo);
+                dd3Net.server.updateInformation(dd3Net.sid, thisInfo);
                 utils.log("Connection to SignalR server established", 1);
             };
 
@@ -674,7 +711,7 @@ var initDD3App = function () {
                     p.row = p.initRow - minRow;
                 });
 
-                //dd3Net.setPeers(peersInfo);
+                //dd3NetP.setPeers(peersInfo);
                 dd3Net.peers = peersInfo;
                 //peer.connections are the peerjs connections matained between this node and others
                 //BAI: "d3.range(0, cave.rows)" return arrays which has the same number as the value of "cave.rows"
@@ -684,9 +721,9 @@ var initDD3App = function () {
                 //dd3Net.setConnection(d3.range(0, cave.rows).map(function() { return []; }));
                 dd3Net.connections = d3.range(0, cave.rows).map(function () { return []; });
                 
-                //console.log(dd3Net.connections);
+                //console.log(dd3NetP.connections);
                 //peer.buffers is the buffer of the data sent from this node to another one
-                //dd3Net.setBuffer(d3.range(0, cave.rows).map(function () { return []; }));
+                //dd3NetP.setBuffer(d3.range(0, cave.rows).map(function () { return []; }));
                 dd3Net.buffers = d3.range(0, cave.rows).map(function () { return []; });
 
                 //Initialize cave property
@@ -874,7 +911,7 @@ var initDD3App = function () {
                 if (options.useApi)
                     api.getDataDimensions(dataId);
                 else
-                    dd3NetS.server.getDimensions(dd3NetS.sid, dataId);
+                    dd3Net.server.getDimensions(dd3Net.sid, dataId);
             };
 
             /*APIDOC:get the raw data of the data set according to its name or id. You can filter by key if needed.
@@ -900,7 +937,7 @@ var initDD3App = function () {
                 if (options.useApi)
                     api.getData(request);
                 else
-                    dd3NetS.server.getData(dd3NetS.sid, request);
+                    dd3Net.server.getData(dd3Net.sid, request);
 
                 utils.log("Data requested : " + dataName + " (" + dataId + ")", 1);
             };
@@ -940,7 +977,7 @@ var initDD3App = function () {
                 if (options.useApi)
                     api.getPointData(request);
                 else
-                    dd3NetS.server.getPointData(dd3NetS.sid, request);
+                    dd3Net.server.getPointData(dd3Net.sid, request);
 
                 //console.log(JSON.stringify(request));
 
@@ -1002,7 +1039,7 @@ var initDD3App = function () {
                 if (options.useApi)
                     api.getPathData(request);
                 else
-                    dd3NetS.server.getPathData(dd3NetS.sid, request);
+                    dd3Net.server.getPathData(dd3Net.sid, request);
 
                 //console.log(JSON.stringify(request));
 
@@ -1065,7 +1102,7 @@ var initDD3App = function () {
                     if (options.useApi)
                         api.getBarData(request);
                     else
-                        dd3NetS.server.getBarData(dd3NetS.sid, request);
+                        dd3Net.server.getBarData(dd3Net.sid, request);
 
                         
 
@@ -1112,7 +1149,7 @@ var initDD3App = function () {
                         if (options.useApi)
                             api.getData(request); // api.getData(dataName, dataId);
                         else
-                            //dd3NetS.server.getData(dd3NetS.sid, request);
+                            //dd3Net.server.getData(dd3Net.sid, request);
 
                         console.log("Shor. PIE: " + JSON.stringify(request));
 
@@ -1156,7 +1193,7 @@ var initDD3App = function () {
                     useNames: useNames
                 };
 
-                dd3NetS.server.requestFromRemote(dd3NetS.sid, request);
+                dd3Net.server.requestFromRemote(dd3Net.sid, request);
             };
 
             // Data Reception
@@ -1208,7 +1245,7 @@ var initDD3App = function () {
             //signalR_callback.receiveRemoteDataReady = dd3_data.receiveRemoteDataReady;
 
             //BAI: only used for signalR, the first parameter has been set when init caveconfiguration.
-            dd3NetS.setCallBack({}, dd3_data);
+            dd3Net.setCallBack({}, dd3_data);
             
 
             /**
@@ -1224,7 +1261,7 @@ var initDD3App = function () {
             //Callback when data is received from another peer. Will call different functions depending on the nature of the data (shape, property, remove, transition, endTransition)
             //Return false if the data.type is unrecognised.
             //If data is an array: peer.reveive will be called recursively on each elements of the array.
-            //BAI: comments peer.flush function and move it to the dd3Net Modul
+            //BAI: comments peer.flush function and move it to the dd3NetP Modul
             var receiveDataHandler = {
                     //BAI: all the following handler functions are called in the above "peer.receive" function.
                     //Handler to be called upon the reception of a shape from peerjs.
@@ -1596,7 +1633,7 @@ var initDD3App = function () {
 
                 return function (_, t) {
                     _ = typeof _ === "function" ? _ : nop;
-                    dd3NetS.syncCallback = function () {
+                    dd3Net.syncCallback = function () {
                         syncTime = Date.now();
                         utils.log("Synchronized !", 0);
                         _();
@@ -1609,7 +1646,7 @@ var initDD3App = function () {
                     };
                     */
                     setTimeout(function () {
-                        dd3NetS.server.synchronize(dd3NetS.sid);
+                        dd3Net.server.synchronize(dd3Net.sid);
                     }, t || 0);
                 };
             })();
@@ -3002,7 +3039,7 @@ var orderTransmitter; // Callback inside the html file when the client is initia
 // BAI: the following code is to define a function called "dd3Receive" in the front end which can be called by backend. (Here, it will be called by DD3AppHub.cs and some part in this file.)
 // BAI: DD3Q: why the arguments in the definition is only one, but when we call this function in the above code in this file, several arguments are passed into this function.
 dd3Server.client.dd3Receive = function (f) {
-    dd3NetS.signalR_callback[f].apply(null, [].slice.call(arguments, 1));
+    dd3Net.signalR_callback[f].apply(null, [].slice.call(arguments, 1));
 };
 
 // Non-dd3 functions
@@ -3035,6 +3072,7 @@ dd3Server.client.receiveControllerOrder = function (orders) {
 // ==== IF THIS NODE IS A CONTROLLER ====
 //BAI: I dont think the following code is for the contoller node.
 //What to do when the controller is updated by the server => execute main_callback on  the received object.
+
 dd3Server.client.updateController = function (obj) {
     gdo.consoleOut('.DD3', 1, 'Controller : Receiving update from server');
     if (main_callback) {

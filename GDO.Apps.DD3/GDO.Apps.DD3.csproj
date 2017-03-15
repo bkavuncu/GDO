@@ -142,11 +142,13 @@
     </Content>
     <Content Include="Scripts\DD3\gdo.apps.dd3.db.js" />
     <Content Include="Scripts\DD3\gdo.apps.dd3.net.js" />
+    <Content Include="Scripts\DD3\gdo.apps.dd3.signalrnet.js" />
     <Content Include="Scripts\DD3\gdo.apps.dd3.world.js" />
     <Content Include="Scripts\DD3\gdo.apps.dd3.odata.js" />
+    <Content Include="Scripts\DD3\gdo.apps.dd3.peernet.js" />
+    <Content Include="Scripts\DD3\gdo.apps.dd3.mixnet.js" />
     <Content Include="Web\DD3\CSS\app.css" />
     <Content Include="Web\DD3\CSS\control.css" />
-
     <Content Include="packages.config" />
     <Content Include="Web\DD3\Scripts\appInit.js" />
     <Content Include="Web\DD3\Scripts\appTestBench.js" />

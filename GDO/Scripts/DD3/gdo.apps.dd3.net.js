@@ -1,232 +1,79 @@
-﻿function DD3Net(protocol, config) {
-    this.protocol = protocol;
+﻿/*this constructer will be inheretied by the other protocols*/
+function DD3Net(protocol, config) {
+    var protocol = protocol || null;
+
+    if (protocol === "peerjs") 
+        return new PeerNet(config);
+    
+    else if (protocol === "signalr") 
+        return new SignalrNet(config);
+
+    else if (protocol === "socketio") { }
+
+    else if (protocol === null) 
+        return new MixNet(config) ;
+
+    else
+        throw new Error('No specific protocal name in DD3Net parameters');
+}
+
+function inherit(subClass, superClass) {
+    function F() { };
+    F.prototype = superClass.prototype;
+    subClass.prototype = new F();
+    subClass.prototype.constructor = subClass.constructor;
+}
+
+function DD3NetInterface(config) {
     this.config = config || {};
     this.browser = {};
     this.utils = {};
-    switch (protocol) {
-        case 'peerjs':
-            this.id = this.config.id || '';
-            this.peers = [];
-            this.connections = [];
-            this.buffers = [];
-            this.peerOption = {
-                //There is no response from the peerJS server if adding the whole arguments below. Maybe we should check the peerjs set-up
-                //key: this.config.key || '',
-                host: this.config.host || "146.169.32.109",
-                port: this.config.port || 55555,
-                //path: this.config.path || '/',
-                //secure: this.config.secure || false,
-                //config: this.config.config || { 'iceServers': [{ 'url': 'stun:stun.l.google.com:19302' }] },
-                //debug: this.config.debug || 0
-            };
-            this.peer = new Peer(this.id, this.peerOption);
-            break;
-        case 'socketio':
-
-            break;
-
-        case 'signalr':
-            this.dd3Server = $.connection.dD3AppHub;
-            this.sid = this.dd3Server.instanceId;
-            this.server = this.dd3Server.server;
-            this.client = this.dd3Server.client;
-            this.signalR_callback = {};
-            this.syncCallback= function () { };
-            this.receiveSynchronize= function () {
-                this.syncCallback();
-            };
-            break;
-
-        default:
-            throw new Error('No specific protocal name in DD3Net parameters');
-    }
 }
 
-DD3Net.prototype.setBrowser = function (browser) {
-    this.browser = browser;
-}
+DD3NetInterface.prototype.setBrowser = function (browser) {}
 
-DD3Net.prototype.setUtils = function (utils) {
-    this.utils = utils;
-}
+DD3NetInterface.prototype.setUtils = function (utils) {}
 
-DD3Net.prototype.on = function (eventName, callback) {
-    ee.addListener(eventName, callback);
-}
+DD3NetInterface.prototype.on = function (eventName, callback) {}
 
-DD3Net.prototype.emit = function (eventName, data) {
-    ee.emitEvent(eventName, [data]);
-}
+DD3NetInterface.prototype.emit = function (eventName, data) {}
 //Methods of the peer object: callback when a peer is created and opened
 //Will log the connection, link to the behaviour upon data reception and call peer.flush
 //BAI: this function will be called once the peer has connected to the peer Server.
 //BAI: comments peer.init function and move it to the dd3Net Modul
-DD3Net.prototype.init = function (conn, r, c) {
-    var _self = this;
-    if ('peerjs' === this.protocol) {
-            this.utils.log("Connection established with Peer (" + [r, c] + "): " + conn.peer, 0);
-            conn.on("data", function (data) {
-                _self.receive(data);
-            });
-           
-            this.flush(r, c);
-     
-    }else if ('signalr' === this.protocol) {
-        //return this.signalrObj.init();
-        return null;
-    }
-}
+DD3NetInterface.prototype.init = function (conn, r, c) {}
 //Open the connection to row, column peer
 //Empty the buffers for the connection to ths peer
 //TODO: unobfuscate the code 
 //BAI: comments peer.connect function and move it to the dd3Net Modul
-DD3Net.prototype.connect = function (r, c) {
-    if ('peerjs' === this.protocol) {
-        r = +r;
-        c = +c;
-        // Try to find peer with r and c as row and column - use Array.some to stop when found
-        // if the row, column pair is not the same as those of the connections, return false
-        var _self = this;
-        return _self.peers.some(function (p) {
-            if (+p.row !== r || +p.col !== c)
-                return false;
-
-            var conn = _self.peer.connect(p.peerId, { reliable: true, metadata: { initiator: [_self.browser.row, _self.browser.column] } });
-            //BAI: init of peerObj is firsted called here.
-            conn.on("open", function () {
-               
-                _self.init(conn, r, c);
-            });
-            _self.connections[r][c] = conn;
-            _self.buffers[r][c] = [];
-            return true;
-        });
-    }
-    else if ('signalr' === this.protocol) {
-
-    }
-
-}
-
+DD3NetInterface.prototype.connect = function (r, c) {}
 //BAI: only trigger the dataHandler event, the listener for the data should process the recieving data. Search this function 'dd3Net.on('data',function(){})' in gdo.apps.dd3.js
-DD3Net.prototype.receive = function (data) {
-    if ('peerjs' === this.protocol) {
-        //console.log('peerReceive');
-        this.emit('data', data);
-    }
-    else if ('signalr' === this.protocol) {
-    }
-}
+DD3NetInterface.prototype.receive = function (data) {}
 //If buffer is set to true, Put data in the buffer of the connection to the node at row r and column c
 //If buffer is set to false, send the data directly
 //returns false if no connection exists 
-DD3Net.prototype.sendTo = function (r, c, data, buffer) {
-    if ('peerjs' === this.protocol) {
-        //BAI: this is the first time to call _self.peerObj.connect(r, c);
-        if (typeof this.connections[r][c] === "undefined" && !this.connect(r, c)) {
-            console.log('If there is no such peer');
-            // If there is no such peer
-            return false;
-        }
-
-        // If connection is being established or we asked to buffer, we buffer - else we send
-        if (!this.connections[r][c].open || buffer) {
-            this.buffers[r][c].push(data);
-        } else {
-            //BAI:.send is the peer api
-            this.connections[r][c].send(data);
-        }
-        return true;
-    }
-    else if ('signalr' === this.protocol) {
-    }
-}
+DD3NetInterface.prototype.sendTo = function (r, c, data, buffer) {}
 //BAI: comments peer.flush function and move it to the dd3Net Modul
 //flush the peer: i.e. SEND the data in the buffer of the connection the node (r,c) AND EMPTY the buffer
-DD3Net.prototype.flush = function (r, c) {
-    if ('peerjs' === this.protocol) {
-        var buff = this.buffers[r][c],
-            conn = this.connections[r][c];
-        if (buff && buff.length > 0 && conn && conn.open) {
-            conn.send(buff);
-            this.buffers[r][c] = [];
-            return true;
-        }
-        return false;
-    }
-    else if ('signalr' === this.protocol) {
-    }
-}
+DD3NetInterface.prototype.flush = function (r, c) {}
 
 //BAI: the two following functions defined on the singnalr server and are called on the client side.
-DD3Net.prototype.synchronize = function (r, c) {
-    if ('peerjs' === this.protocol) {
-        null;
-    }
-    else if ('signalr' === this.protocol) {
-        signalR.server.synchronize(signalR.sid);
-    }
-}
+DD3NetInterface.prototype.synchronize = function (r, c) {}
 
-DD3Net.prototype.updateInformation = function () {
-    
-}
+DD3NetInterface.prototype.updateInformation = function () {}
 
-DD3Net.prototype.setCallBack = function (caveConfiguration, dd3_data) {
-  
-    if ('peerjs' === this.protocol) {
-        null;
-    }
-    else if ('signalr' === this.protocol) {
-        this.signalR_callback.receiveSynchronize = this.receiveSynchronize;
-        if (caveConfiguration)
-            this.signalR_callback.receiveConfiguration = caveConfiguration;
-        if (dd3_data)
-        {
-            this.signalR_callback.receiveDimensions = dd3_data.receiveDimensions;
-            this.signalR_callback.receiveData = dd3_data.receiveData;
-            this.signalR_callback.receiveRemoteDataReady = dd3_data.receiveRemoteDataReady;
-        }
-    }
-    
-}
-
+DD3NetInterface.prototype.setCallBack = function (caveConfiguration, dd3_data) {}
 //BAI: the following function defined in the client and are called by the singalr server side.
-DD3Net.prototype.updateController = function() {
-    if ('peerjs' === this.protocol) {
-        null;
-    }
-    else if ('signalr' === this.protocol) {
-       
-    }
+DD3NetInterface.prototype.updateController = function() {}
 
-}
+DD3NetInterface.prototype.receiveControllerOrder = function() {}
 
-DD3Net.prototype.receiveControllerOrder = function() {
-    if ('peerjs' === this.protocol) {
-        null;
-    }
-    else if ('signalr' === this.protocol) {
+DD3NetInterface.prototype.receiveGDOConfiguration = function() {}
 
-    }
-}
+DD3NetInterface.prototype.dd3Receive = function() {};
 
-DD3Net.prototype.receiveGDOConfiguration = function() {
-    if ('peerjs' === this.protocol) {
-        null;
-    }
-    else if ('signalr' === this.protocol) {
 
-    }
-}
 
-DD3Net.prototype.dd3Receive = function() {
-    if ('peerjs' === this.protocol) {
-        null;
-    } else if ('signalr' === this.protocol) {
-
-    }
-};
 
 
 
