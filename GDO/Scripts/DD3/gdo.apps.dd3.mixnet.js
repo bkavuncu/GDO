@@ -1,6 +1,5 @@
 ﻿function MixNet(config) {
     DD3NetInterface.call(this, config);
-
     /*The following properties are for peer*/
     this.id = this.config.id || '';
     this.peers = [];
@@ -16,24 +15,16 @@
         //config: this.config.config || { 'iceServers': [{ 'url': 'stun:stun.l.google.com:19302' }] },
         //debug: this.config.debug || 0
     };
-    this.peer = new Peer(this.id, this.peerOption);
-
 
     /*The following properties are for signalr*/
-    this.dd3Server = $.connection.dD3AppHub;
-    this.sid = this.dd3Server.instanceId;
-    this.server = this.dd3Server.server;
-    this.client = this.dd3Server.client;
-    this.signalR_callback = {};
-    this.syncCallback = function () { };
+    this.signalR_callback = {},
+    this.syncCallback = function () { },
     this.receiveSynchronize = function () {
         this.syncCallback();
-    };
+    }
 }
 
-
 inherit(MixNet, DD3NetInterface);
-
 
 MixNet.prototype.setBrowser = function (browser) {
     this.browser = browser;
@@ -49,6 +40,10 @@ MixNet.prototype.on = function (eventName, callback) {
 
 MixNet.prototype.emit = function (eventName, data) {
     ee.emitEvent(eventName, [data]);
+}
+
+MixNet.prototype.connectPeer = function () {
+    this.peer = new Peer(this.id, this.peerOption);
 }
 //Methods of the peer object: callback when a peer is created and opened
 //Will log the connection, link to the behaviour upon data reception and call peer.flush
@@ -89,7 +84,6 @@ MixNet.prototype.connect = function (r, c) {
         return true;
     });
 }
-
 //BAI: only trigger the dataHandler event, the listener for the data should process the recieving data. Search this function 'dd3Net.on('data',function(){})' in gdo.apps.dd3.js
 MixNet.prototype.receive = function (data) {
     this.emit('data', data);
@@ -129,7 +123,7 @@ MixNet.prototype.flush = function (r, c) {
 
 //BAI: the two following functions defined on the singnalr server and are called on the client side.
 MixNet.prototype.synchronize = function (r, c) {
-    signalR.server.synchronize(signalR.sid);
+    //signalR.server.synchronize(signalR.sid);
 }
 
 MixNet.prototype.updateInformation = function () {
@@ -137,9 +131,12 @@ MixNet.prototype.updateInformation = function () {
 }
 
 MixNet.prototype.setCallBack = function (caveConfiguration, dd3_data) {
-    this.signalR_callback.receiveSynchronize = this.receiveSynchronize;
-    if (caveConfiguration)
+  
+    if (caveConfiguration) {
+        this.signalR_callback.receiveSynchronize = this.receiveSynchronize;
         this.signalR_callback.receiveConfiguration = caveConfiguration;
+    }
+       
     if (dd3_data) {
         this.signalR_callback.receiveDimensions = dd3_data.receiveDimensions;
         this.signalR_callback.receiveData = dd3_data.receiveData;
@@ -147,13 +144,45 @@ MixNet.prototype.setCallBack = function (caveConfiguration, dd3_data) {
     }
 }
 
+MixNet.prototype.defineSignalrClientFunc = function () {
+    this.net = {
+        server: dd3Server.server,
+        client: dd3Server.client
+    }
+    var _self = this;
+    dd3Server.on("dd3Receive", function (f) {
+        _self.signalR_callback[f].apply(null, [].slice.call(arguments, 1));
+    });
 
-//BAI: the following function defined in the client and are called by the singalr server side.
-MixNet.prototype.updateController = function () { }
+    dd3Server.on("receiveGDOConfiguration", function (id) {
+        // To get configId from server
+        if (main_callback) {
+            main_callback(id);
+        } else {
+            gdo.consoleOut('.DD3', 1, 'No callback defined');
+        }
+        main_callback = null;
+    });
+    
+    dd3Server.on("receiveControllerOrder", function (orders) {
+        if (orderTransmitter) {
+            orders = JSON.parse(orders);
+            gdo.consoleOut('.DD3', 1, 'Order received : ' + orders.name + ' [' + orders.args + ']');
+            orderTransmitter(orders);
+        } else {
+            gdo.consoleOut('.DD3', 4, 'No test controller defined');
+        }
+    });
 
-MixNet.prototype.receiveControllerOrder = function () { }
+    dd3Server.on("updateController", function (obj) {
+        gdo.consoleOut('.DD3', 1, 'Controller : Receiving update from server');
+        if (main_callback) {
+            //console.log("main_callbackmain_callbackmain_callbackmain_callbackmain_callbackmain_callbackmain_callbackmain_callbackmain_callback");
+            //console.log(main_callback);
+            main_callback(JSON.parse(obj));
+        }
+    });
+};
 
-MixNet.prototype.receiveGDOConfiguration = function () { }
 
-MixNet.prototype.dd3Receive = function () { };
 

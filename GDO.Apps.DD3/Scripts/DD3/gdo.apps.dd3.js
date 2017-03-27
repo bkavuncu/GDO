@@ -13,12 +13,15 @@ var d3;
 var dd3Net;
 var dd3NetS;
 var dd3NetP;
+var orderTransmitter;
+var main_callback;
+var dd3Server = $.connection.dD3AppHub;
 var temporary_store;//TODO v4: delete
 
 //BAI: load js in sync way;
 $.ajax({
     async: false,
-    url: "../../Scripts/DD3/gdo.apps.dd3.net.js",
+    url: "../../Scripts/DD3/gdo.apps.dd3.netinterface.js",
     dataType: "script"
 });
 
@@ -40,15 +43,23 @@ $.ajax({
     dataType: "script"
 });
 
+$.ajax({
+    async: false,
+    url: "../../Scripts/DD3/gdo.apps.dd3.gdoservice.js",
+    dataType: "script"
+});
 
 // Shor. load dd3 module scripts 
 $.getScript("../../Scripts/DD3/odata/o.js", function () { console.log("INFO: Odata module - o.js was loaded."); });
 $.getScript("../../Scripts/DD3/gdo.apps.dd3.odata.js", function () { console.log("INFO: Odata module - odata.js was loaded."); });
 
+dd3Net = new DD3Net();
+dd3Net.defineSignalrClientFunc();
 
 
+//BAI: this function is called in gdo "initClient" function.
 var initDD3App = function () {
-
+    
     //Retrieve the d3 library element
     //BAI: each test_bench (control.cshtml) will be regarded as an iframe and will be embedded into "Instances.cshtml" file which is defiend in the root GOD solution (GDO/Web/Instances.cshtml).
     //BAI: only the test_bench which is running will not be set "display:none" and it will be shown in the GDO environment (Instance panel in the GDO management website). 
@@ -374,12 +385,10 @@ var initDD3App = function () {
     //var peerObject = { host: "146.169.32.109", port: 55555 };
     //{ host: "localhost", port: 55555 };
 
-
-    
-
     //dd3 object containing the core fo DD3 functions
     //BAI: TODO : dd3 object also contains lot of initilize operations. The definition of api functions and initialization should be seperate.
     //BAI: inside the dd3 function, the returned value is "_dd3", so "_dd3" is equal to "dd3"
+
     var dd3 = (function () {
         "use strict";//In strict mode, the JS engine is more regarding
 
@@ -435,7 +444,6 @@ var initDD3App = function () {
             fatal: []
         };
    
-
         var dd3_data = {}, // Storing functions
             data = {}; // Storing data
         //Represent signalr connection
@@ -512,7 +520,11 @@ var initDD3App = function () {
                     state("fatal");
                     return;
                 }
-
+                //console.log("before dd3Net new");
+                //dd3Net = new DD3Net();
+               // console.log("after dd3Net new", dd3Net);
+                //dd3Net.defineNet();
+                //console.log("define dd3Net.defineNet()", dd3Net);
                 state('connecting');
                 init.setBrowserConfiguration();
                 init.connectToPeerServer();
@@ -573,10 +585,10 @@ var initDD3App = function () {
                 //BAI: if no parameters are passed into DD3Net, we will use mix protocols (some apis are based on peerjs and some are based on signalr)
                 //BAI: 'signalr' means we use apis implemented based on signalr protocol
                 //BAI: 'peerjs' means we use apis implemented based on signalr protocol
-                dd3Net = new DD3Net();
+                
                 //dd3NetP = new DD3Net('peerjs');
                 //console.log('new peer server',dd3NetP);
-               
+                dd3Net.connectPeer();
                 var p = dd3Net.peer;
                 //console.log(dd3NetP);
                 
@@ -615,7 +627,7 @@ var initDD3App = function () {
                         dd3Net.buffers[r][c] = dd3Net.buffers[r][c] || [];
                         conn.on("open", dd3Net.init.bind(dd3Net, conn, r, c));
                     });
-
+                    console.log("connecting...to signalr server");
                     init.connectToSignalRServer();
                 });
 
@@ -627,7 +639,7 @@ var initDD3App = function () {
                     if (!!dd3Net.peer && !dd3Net.peer.destroyed) {
                         dd3Net.peer.destroy();
                     }
-                    //signalR && signalR.connection && (signalR.connection.state === 1) && dd3NetS.server && dd3NetS.server.removeClient(dd3NetS.sid);
+                    //signalR && signalR.connection && (signalR.connection.state === 1) && dd3NetS.net.server && dd3NetS.net.server.removeClient(dd3NetS.sid);
                 };
                 utils.log("Connection to peer server established", 1);
             };
@@ -654,8 +666,10 @@ var initDD3App = function () {
 
                 //BAI: only for signalR protocol, second parameter is null now and will be set when dd3_data has value.
                 //dd3NetS.setCallBack(init.getCaveConfiguration, {});
-                dd3Net.setCallBack(init.getCaveConfiguration, {});
-
+              
+                dd3Net.setCallBack(init.getCaveConfiguration, null);
+              
+                console.log("dd3Net.signalR_callback",dd3Net.signalR_callback);
 
                 utils.log("Connected to signalR server", 1);
                 utils.log("Waiting for everyone to connect", 1);
@@ -671,8 +685,13 @@ var initDD3App = function () {
                 };
 
                 //BAI: this function will call "init.getCaveConfiguration" finally. The whole procedure is quite complex. The detailed logic can be obtained by looking through DD3App.cs and DD3AppHub.cs.
-                //dd3NetS.server.updateInformation(dd3NetS.sid, thisInfo);
-                dd3Net.server.updateInformation(dd3Net.sid, thisInfo);
+                //dd3NetS.net.server.updateInformation(dd3NetS.sid, thisInfo);
+                //dd3Server.net.server.updateInformation(gdo_appInstanceId, thisInfo);
+
+
+                /*1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111*/
+                console.log("calling update information");
+               dd3Net.net.server.updateInformation(gdo_appInstanceId, thisInfo);
                 utils.log("Connection to SignalR server established", 1);
             };
 
@@ -680,6 +699,7 @@ var initDD3App = function () {
             //Bai: this function is c. At last, it will define all the DD3 function via calling the function "defineDD3Functions" which is defined below.
             //BAI: the argument "obj" in the following function is the "thisInfo" argument in the above function "init.connectToSignalServer" 
             init.getCaveConfiguration = function (obj) {
+                console.log("init.getCaveConfiguration run");
                 utils.log("Receiving connected browsers' ids from signalR server", 1);
 
                 //obj contains info about all browsers
@@ -833,6 +853,7 @@ var initDD3App = function () {
                 return "dd3_" + s;
             };
             //BAI: data and dd3_data are both arguments defined as the beginning.
+            //BAI: data is retrieved by the responding functions like getBounds, getDimensions...
             dd3_data.data = data;
 
 
@@ -902,7 +923,7 @@ var initDD3App = function () {
             // Data Request　
             //get Dimensions of the dataset
             //BAI: this function will be called via "dd3.getDimensions" in the App.cshtml. Because "dd3_data.getDimensions" will be export as "dd3.getDimensions"
-            //BAI: here, it still uses "dd3NetS.server.getDimensions" to implement this function.
+            //BAI: here, it still uses "dd3NetS.net.server.getDimensions" to implement this function.
             dd3_data.getDimensions = function (dataId, callback) {
                 utils.log("Data dimensions requested for " + dataId, 1);
                 data[pr(dataId)] = {};
@@ -910,7 +931,7 @@ var initDD3App = function () {
                 if (options.useApi)
                     api.getDataDimensions(dataId);
                 else
-                    dd3Net.server.getDimensions(dd3Net.sid, dataId);
+                    dd3Net.net.server.getDimensions(gdo_appInstanceId, dataId);
             };
 
             /*APIDOC:get the raw data of the data set according to its name or id. You can filter by key if needed.
@@ -920,7 +941,7 @@ var initDD3App = function () {
                         * keys: array of the attributes that you want to retrieve
                         * No return as data will be passed to callback
                         */
-            //BAI: here, it still uses "dd3NetS.server.getData" to implement this function.
+            //BAI: here, it still uses "dd3NetS.net.server.getData" to implement this function.
             dd3_data.getData = function (dataName, dataId, callback, keys) {
                 data[pr(dataId)] = data[pr(dataId)] || {};
                 data[pr(dataId)][pr(dataName)] = data[pr(dataId)][pr(dataName)] || {};
@@ -936,7 +957,7 @@ var initDD3App = function () {
                 if (options.useApi)
                     api.getData(request);
                 else
-                    dd3Net.server.getData(dd3Net.sid, request);
+                    dd3Net.net.server.getData(gdo_appInstanceId, request);
 
                 utils.log("Data requested : " + dataName + " (" + dataId + ")", 1);
             };
@@ -976,7 +997,7 @@ var initDD3App = function () {
                 if (options.useApi)
                     api.getPointData(request);
                 else
-                    dd3Net.server.getPointData(dd3Net.sid, request);
+                    dd3Net.net.server.getPointData(gdo_appInstanceId, request);
 
                 //console.log(JSON.stringify(request));
 
@@ -1038,7 +1059,7 @@ var initDD3App = function () {
                 if (options.useApi)
                     api.getPathData(request);
                 else
-                    dd3Net.server.getPathData(dd3Net.sid, request);
+                    dd3Net.net.server.getPathData(gdo_appInstanceId, request);
 
                 //console.log(JSON.stringify(request));
 
@@ -1101,7 +1122,7 @@ var initDD3App = function () {
                     if (options.useApi)
                         api.getBarData(request);
                     else
-                        dd3Net.server.getBarData(dd3Net.sid, request);
+                        dd3Net.net.server.getBarData(gdo_appInstanceId, request);
 
                         
 
@@ -1148,7 +1169,7 @@ var initDD3App = function () {
                         if (options.useApi)
                             api.getData(request); // api.getData(dataName, dataId);
                         else
-                            //dd3Net.server.getData(dd3Net.sid, request);
+                            //dd3Net.net.server.getData(gdo_appInstanceId, request);
 
                         console.log("Shor. PIE: " + JSON.stringify(request));
 
@@ -1192,7 +1213,7 @@ var initDD3App = function () {
                     useNames: useNames
                 };
 
-                dd3Net.server.requestFromRemote(dd3Net.sid, request);
+                dd3Net.net.server.requestFromRemote(gdo_appInstanceId, request);
             };
 
             // Data Reception
@@ -1211,7 +1232,7 @@ var initDD3App = function () {
             };
 
             //Callback upon data reception => store it and call the next callback
-            //BAI: this function will be called when any this kind of data retrieval function "dd3NetS.server.getPointData(dd3NetS.sid, request);" get the data.
+            //BAI: this function will be called when any this kind of data retrieval function "dd3NetS.net.server.getPointData(dd3NetS.sid, request);" get the data.
             dd3_data.receiveData = function (dataName, dataId, dataPoints) {
                 utils.log("Data received : " + dataName + " (" + dataId + ")", 1);
 
@@ -1244,7 +1265,8 @@ var initDD3App = function () {
             //signalR_callback.receiveRemoteDataReady = dd3_data.receiveRemoteDataReady;
 
             //BAI: only used for signalR, the first parameter has been set when init caveconfiguration.
-            dd3Net.setCallBack({}, dd3_data);
+            console.log("dd3Net.setCallBack({}, dd3_data);");
+            dd3Net.setCallBack(null, dd3_data);
             
 
             /**
@@ -1645,7 +1667,7 @@ var initDD3App = function () {
                     };
                     */
                     setTimeout(function () {
-                        dd3Net.server.synchronize(dd3Net.sid);
+                        dd3Net.net.server.synchronize(gdo_appInstanceId);
                     }, t || 0);
                 };
             })();
@@ -3010,111 +3032,9 @@ var initDD3App = function () {
         return _dd3;
 
     })();
+
+
     utils.log('Returning dd3', 1);
 
     return dd3;
-};
-
-// These functions need to be defined before signalR is started, so we need to use a callback system:
-// signalR_callback is defined later in dd3 when it is initiated.
-
-//BAI: "dd3Server" represents a object of the class "DD3AppHub" in "DD3AppHub.cs" file.
-var dd3Server = $.connection.dD3AppHub;//Contains all methods of AppHub
-
-//BAI: signalR_callback.receiveConfiguration = init.getCaveConfiguration;
-//BAI: signalR_callback.receiveSynchronize = signalR.receiveSynchronize;
-//BAI: signalR_callback.receiveDimensions = dd3_data.receiveDimensions;
-//BAI: signalR_callback.receiveData = dd3_data.receiveData;
-//BAI: signalR_callback.receiveRemoteDataReady = dd3_data.receiveRemoteDataReady;
-//var signalR_callback = {};//Contains server interaction functions
-//BAI: this argument will be set the value in the function "gdo.net.app.DD3.initClient". Therefore, the main_callback is the function "launcher" in "App.cshtml" file.
-//BAI "main_callback" is the "launcher" function.
-var main_callback; // Callback inside the html file called when the configuration of GDO is received for application node or when the controller is updated for a controller
-var orderTransmitter; // Callback inside the html file when the client is initialized
-
-// Function used for dd3 callback
-// BAI: all the following function starting with dd3Server are called in the C# code in the DD3AppHub.cs file.
-// BAI: DD3Q: if dd3Server.client has no relationship with the functions defined in the DD3AppHub.cs file. 
-// BAI: the following code is to define a function called "dd3Receive" in the front end which can be called by backend. (Here, it will be called by DD3AppHub.cs and some part in this file.)
-// BAI: DD3Q: why the arguments in the definition is only one, but when we call this function in the above code in this file, several arguments are passed into this function.
-dd3Server.client.dd3Receive = function (f) {
-    dd3Net.signalR_callback[f].apply(null, [].slice.call(arguments, 1));
-};
-
-// Non-dd3 functions
-
-// called by AppHub when the configuration is broadcasted. Execute main_callback as defined in HTML file
-// BAI: TODO: this part should be replaced by a separated singalr server not the gdo server
-// BAI: this function only decides which test_bench will be called. 
-dd3Server.client.receiveGDOConfiguration = function (id) {
-    // To get configId from server
-    if (main_callback) {
-        main_callback(id);
-    } else {
-        gdo.consoleOut('.DD3', 1, 'No callback defined');
-    }
-    main_callback = null;
-};
-
-//called from AppHub. orderTransmitter is actually the orderController defined in html file. 
-//It isn't in the library as the controller embed the application logic.
-dd3Server.client.receiveControllerOrder = function (orders) {
-    if (orderTransmitter) {
-        orders = JSON.parse(orders);
-        gdo.consoleOut('.DD3', 1, 'Order received : ' + orders.name + ' [' + orders.args + ']');
-        orderTransmitter(orders);
-    } else {
-        gdo.consoleOut('.DD3', 4, 'No test controller defined');
-    }
-};
-
-// ==== IF THIS NODE IS A CONTROLLER ====
-//BAI: I dont think the following code is for the contoller node.
-//What to do when the controller is updated by the server => execute main_callback on  the received object.
-
-dd3Server.client.updateController = function (obj) {
-    gdo.consoleOut('.DD3', 1, 'Controller : Receiving update from server');
-    if (main_callback) {
-        main_callback(JSON.parse(obj));
-    }
-};
-
-
-// ===============================
-
-
-gdo.net.app.DD3.displayMode = 0;    //TODO: email david about it
-
-//Initialize the application node, set the orderController, the instance id, the main callback and call initDD3App;
-//BAI: this function is called in App.cshtml to initialize initDD3App(). "initDD3App" functions has a returned value "dd3".
-//BAI: When we call this function in App.cshtml, the "dd3" value defined in the html file is equal to the "dd3" object defined in "gdo.apps.dd3.js" file.
-gdo.net.app.DD3.initClient = function (launcher, orderController) {
-    gdo.consoleOut('.DD3', 1, 'Initializing DD3 App Client at Node ' + gdo.clientId);
-    dd3Server.instanceId = gdo.net.node[gdo.clientId].appInstanceId;
-    orderTransmitter = orderController;
-    main_callback = launcher;
-    return initDD3App();
-};
-
-//Initialize the controller node.
-//BAI: this function is called in Control.cshtml to get the "instanceId" value. "instanceID" represent the application set up in the GDO environment.
-gdo.net.app.DD3.initControl = function (callback) {
-    gdo.consoleOut('.DD3', 1, 'Initializing DD3 App Control at Instance ' + gdo.clientId);
-    //BAI: here main_callback is defined in the the "Control.cshtml" file. The name is just callback with an argument "message".
-    //After this initControl is called, the above function "dd3Server.client.updateController" is also called by the function "updateController" defined in DD3AppHub.cs file.
-    main_callback = callback;
-    //BAI: the following code means it will call the function "defineController" which is defiend in the backend (DD3AppHub.cs).
-    dd3Server.server.defineController(gdo.net.instance[gdo.controlId].id);
-    return gdo.net.instance[gdo.controlId].id;
-};
-
-/**What to do when application node is killed => log it + remove the client from SignalR*/ 
-gdo.net.app.DD3.terminateClient = function () {
-    gdo.consoleOut('.DD3', 1, 'Terminating DD3 App Client at Node ' + gdo.clientId);
-    dd3Server.server.removeClient(dd3Server.instanceId);//in DD3AppHub and DD3App
-};
-
-/**What to do when controller node is killed => just log it*/
-gdo.net.app.DD3.terminateControl = function () {
-    gdo.consoleOut('.DD3', 1, 'Terminating DD3 App Control at Instance ' + gdo.clientId);
 };
