@@ -39,14 +39,15 @@ var app = {
     gdoApp: parent.gdo.net.app["DD3"].initClient,
     test_bench: {},
     init: function (launcher, orderController) {
-        var dd3 = this.gdoApp(launcher, orderController);
+        dd3 = this.gdoApp(launcher, orderController);
         appTestBench.init(app.orderController);
         app.test_bench = appTestBench.test_bench;
         return dd3;
     },
     //Launch the data viz if dd3 is ready, else wait before launching
     //BAI: this launcher function will be defined as "main callback" function in gdo.apps.dd3.js
-    launcher : function(configId) {
+    launcher: function (configId) {
+        console.log("dd3 obj", dd3);
         if (dd3.state() === "ready") {
             //console.log(configId);
             //console.log(this.test_bench);

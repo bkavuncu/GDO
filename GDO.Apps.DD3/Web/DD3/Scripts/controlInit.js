@@ -29,6 +29,7 @@ var control = {
     test_bench: {},
     init: function(callback) {
         //BAI: not sure if the following code is useful or not
+        console.log("control init");
         this.gdo.controlId = parseInt(this.getUrlVar("controlId"));
         return this.gdoApp(callback);
     },
@@ -62,6 +63,7 @@ var control = {
         control.confId = message.configurationId+'';
         control.numClients = message.numClient;
         //BAI: we need to init controlTestBench, because we need to get the numClients in this callback function. After we get the numClients, we can pass this value into controlTestBench obj.
+        console.log("control.server", control.server);
         controlTestBench.init(control.server, control.numClients);
         control.test_bench = controlTestBench.test_bench;
 
@@ -87,8 +89,10 @@ var peer = {
         //{ host: "localhost", port: 55555 };
         //{ host: "146.169.32.109", port: 55555 }
         var con_peer = new Peer("idofthecontrollerfordd3", this.peerObject);
-        con_peer.on('open', function(conn) {
-            control.gdo.consoleOut()(".DD3", 4, "The peer client of the controller is opened");
+        con_peer.on('open', function (conn) {
+            //console.log("control.gdo before", control.gdo);
+           // control.gdo.consoleOut()(".DD3", 4, "The peer client of the controller is opened");
+            //console.log("control.gdo after", control.gdo);
         });
         con_peer.on('connection', function(conn) {
             control.eventLog.push([new Date().getTime(), "Connecting with  "+ conn.label]);

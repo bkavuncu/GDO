@@ -8,7 +8,7 @@ using System.ComponentModel.Composition;
 using GDO.Core.Apps;
 using System.Web;
 using GDO.Apps.DD3.Domain;
-
+using System.Diagnostics;
 
 namespace GDO.Apps.DD3
 {
@@ -80,6 +80,7 @@ namespace GDO.Apps.DD3
         //update information on each browser for a given instance
         public void updateInformation (int instanceId, BrowserInfo b)
         {
+           // Debug.WriteLine("run updateInformation ");
             JoinGroup(instanceId);
             instances = Cave.Apps["DD3"].Instances;
             ((DD3App) instances[instanceId]).newClient(Context.ConnectionId, b);
@@ -96,7 +97,10 @@ namespace GDO.Apps.DD3
         public void broadcastConfiguration(string browserInfoJson, int confId, int Id)
         {
             //BAI: the following code will call the function "init.getCaveConfiguration" which is defined in the gdo.apps.dd3.js file.
+            Debug.WriteLine("dd3Receive before ");
             Clients.Group("" + Id).dd3Receive("receiveConfiguration", browserInfoJson);
+           // Clients.All.aaa();
+            Debug.WriteLine("dd3Receive after ");
             Clients.Group("" + Id).receiveGDOConfiguration(confId);
         }
 
@@ -183,6 +187,7 @@ namespace GDO.Apps.DD3
         //Define the controller node for this instance. See DD3App and defineController for more info
         public void defineController(int instanceId)
         {
+ 
             instances = Cave.Apps["DD3"].Instances;
             ((DD3App)instances[instanceId]).defineController(Context.ConnectionId);
         }

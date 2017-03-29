@@ -1,7 +1,7 @@
 ﻿function SignalrNet(config) {
     DD3NetInterface.call(this, config);
     this.dd3Server = $.connection.dD3AppHub;
-    this.sid = this.dd3Server.instanceId;
+    this.instanceId = this.dd3Server.instanceId;
     this.server = this.dd3Server.server;
     this.client = this.dd3Server.client;
     this.signalR_callback = {};
@@ -51,7 +51,9 @@ SignalrNet.prototype.setCallBack = function (caveConfiguration, dd3_data) {
     }
 }
 
-SignalrNet.prototype.updateController = function () {}
+SignalrNet.prototype.updateController = function () {
+
+}
 
 SignalrNet.prototype.receiveControllerOrder = function () {}
 
