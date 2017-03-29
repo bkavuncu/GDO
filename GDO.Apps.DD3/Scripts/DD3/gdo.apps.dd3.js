@@ -55,8 +55,9 @@ $.getScript("../../Scripts/DD3/gdo.apps.dd3.odata.js", function () { console.log
 
 dd3Net = new DD3Net();
 dd3Net.defineSignalrClientFunc();
-console.log("dd3Server", dd3Server);
-console.log("dd3Net", dd3Net.net);
+//console.log("dd3Server", dd3Server);
+//console.log("dd3Net", dd3Net.net);
+
 
 //BAI: this function is called in gdo "initClient" function.
 var initDD3App = function () {
@@ -815,7 +816,8 @@ var initDD3App = function () {
                 // SWITCH 1
                 //dd3Net.setCallBack(init.getCaveConfiguration, null);
               
-                console.log("dd3Net.signalR_callback",dd3Net.signalR_callback);
+                //console.log("dd3Net.signalR_callback",dd3Net.signalR_callback);
+                //dd3Net.setCallBack(init.getCaveConfiguration, null);
 
 
                 utils.log("Connected to signalR server", 1);
@@ -845,6 +847,7 @@ var initDD3App = function () {
                 console.log("calling update information");
                 //dd3Net.net.server.updateInformation(gdo_appInstanceId, thisInfo);
 
+                //dd3Server.net.server.updateInformation(gdo_appInstanceId, thisInfo);
                 utils.log("Connection to SignalR server established", 1);
             };
 
@@ -858,9 +861,7 @@ var initDD3App = function () {
             init.getCaveConfiguration = function (obj) {
 
                 console.log("#31# cave config: ", obj);
-
                 //console.log("init.getCaveConfiguration run");
-
                 utils.log("Receiving connected browsers' ids from signalR server", 1);
 
                 //obj contains info about all browsers
@@ -1627,7 +1628,7 @@ var initDD3App = function () {
                         var obj = d3.select("#" + data.sendId);
                         if (!obj.empty()) {
                             var args = typeof data.property !== "undefined" ? [data.property, data.value] : [data.value];
-                            obj[data.function].apply(obj, args)
+                            obj[data.function].apply(this, args)
                                 .classed_('dd3_received', true)
                                 .attr_("id", data.sendId);
                         }
