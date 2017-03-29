@@ -56,7 +56,6 @@ $.getScript("../../Scripts/DD3/gdo.apps.dd3.odata.js", function () { console.log
 dd3Net = new DD3Net();
 dd3Net.defineSignalrClientFunc();
 
-
 //BAI: this function is called in gdo "initClient" function.
 var initDD3App = function () {
     
@@ -668,8 +667,6 @@ var initDD3App = function () {
                 //dd3NetS.setCallBack(init.getCaveConfiguration, {});
               
                 dd3Net.setCallBack(init.getCaveConfiguration, null);
-              
-                console.log("dd3Net.signalR_callback",dd3Net.signalR_callback);
 
                 utils.log("Connected to signalR server", 1);
                 utils.log("Waiting for everyone to connect", 1);
@@ -687,11 +684,7 @@ var initDD3App = function () {
                 //BAI: this function will call "init.getCaveConfiguration" finally. The whole procedure is quite complex. The detailed logic can be obtained by looking through DD3App.cs and DD3AppHub.cs.
                 //dd3NetS.net.server.updateInformation(dd3NetS.sid, thisInfo);
                 //dd3Server.net.server.updateInformation(gdo_appInstanceId, thisInfo);
-
-
-                /*1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111*/
-                console.log("calling update information");
-               dd3Net.net.server.updateInformation(gdo_appInstanceId, thisInfo);
+                dd3Net.net.server.updateInformation(gdo_appInstanceId, thisInfo);
                 utils.log("Connection to SignalR server established", 1);
             };
 
@@ -699,7 +692,6 @@ var initDD3App = function () {
             //Bai: this function is c. At last, it will define all the DD3 function via calling the function "defineDD3Functions" which is defined below.
             //BAI: the argument "obj" in the following function is the "thisInfo" argument in the above function "init.connectToSignalServer" 
             init.getCaveConfiguration = function (obj) {
-                console.log("init.getCaveConfiguration run");
                 utils.log("Receiving connected browsers' ids from signalR server", 1);
 
                 //obj contains info about all browsers
@@ -1459,7 +1451,7 @@ var initDD3App = function () {
                         var obj = d3.select("#" + data.sendId);
                         if (!obj.empty()) {
                             var args = typeof data.property !== "undefined" ? [data.property, data.value] : [data.value];
-                            obj[data.function].apply(obj, args)
+                            obj[data.function].apply(this, args)
                                 .classed_('dd3_received', true)
                                 .attr_("id", data.sendId);
                         }
