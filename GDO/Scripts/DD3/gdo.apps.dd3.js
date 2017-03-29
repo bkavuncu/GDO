@@ -573,7 +573,25 @@ var initDD3App = function () {
                 //BAI: if no parameters are passed into DD3Net, we will use mix protocols (some apis are based on peerjs and some are based on signalr)
                 //BAI: 'signalr' means we use apis implemented based on signalr protocol
                 //BAI: 'peerjs' means we use apis implemented based on signalr protocol
-                dd3Net = new DD3Net();
+
+                function guid() {
+                    var S4 = function () {
+                        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+                    };
+                    return (S4() + S4());
+                }
+
+                // TODO. use config name 
+                var timestamp = Math.floor(Date.now() / 1000);
+                var peerId = "pie" + "_r" + browser.initRow + "_c" + browser.initColumn + "_node" + browser.number + "_" + timestamp;
+                
+                var netConfig = {
+                    host: "129.31.194.142",
+                    port: 33333, 
+                    id: peerId,
+                };
+                dd3Net = new DD3Net(null, netConfig);
+
                 //dd3NetP = new DD3Net('peerjs');
                 //console.log('new peer server',dd3NetP);
                
@@ -594,6 +612,7 @@ var initDD3App = function () {
 
                         // If there is already a connection, we allow only one connection to remain active
                         // The priority is given to higher row browsers, and if equal then higher colmun
+                        console.log(dd3Net.connections);
                         if (dd3Net.connections[r][c]) {
                             var priority = r > browser.row || (r === browser.row && c > browser.column);
 
@@ -601,7 +620,6 @@ var initDD3App = function () {
                                 conn.on("open", conn.close);
                                 return;
                             }
-
 
                             if (dd3Net.connections[r][c].open) {
                                 dd3Net.connections[r][c].close();
@@ -612,12 +630,132 @@ var initDD3App = function () {
                         //dd3NetP.setConnection();
                         dd3Net.connections[r][c] = conn;
                         //console.log('connect to peer server',dd3NetP.connections);
-                        dd3Net.buffers[r][c] = dd3Net.buffers[r][c] || [];
+                        dd3Net.buffers[r][c] = dd3Net.buffers[r][c] || [];  // Shor. ? why buffer ? not work
                         conn.on("open", dd3Net.init.bind(dd3Net, conn, r, c));
+
                     });
 
-                    init.connectToSignalRServer();
+                    // if 'peernet' 
+                    //   get information from peer id / connect to peer network 
+                    // else 
+                    //   connect to signalR server
+
+                    // get information from peer id 
+                    var objAry = [];
+                    var getList = function () {
+                        p.listAllPeers(function (list) {
+                            console.log(list);
+
+                            list.forEach(function (e) {
+                                //console.log(e);
+                                var params = e.split("_");
+                                var obj = {
+                                    browserNum: params[3].charAt(4),
+                                    peerId: e,
+                                    row: params[1].charAt(1),
+                                    col: params[2].charAt(1),
+                                }
+                                //console.log(obj);
+                                objAry.push(obj);
+                            });
+                            console.log(objAry);
+
+                            // split() peerid
+                            // var peerid = "pie_r3_c0_node1_timestamp";
+                            // timestamp for sudden disconnection, didn't destory dataConnection 
+
+                            // build obj
+                            // var obj = [{ "browserNum": "1", "peerId": "pie_r3_c0_node1", "col": "0", "row": "3" }, { "browserNum": "2", "peerId": "pie_r3_c1_node2", "col": "1", "row": "3" }];
+
+                            // var obj = [];
+                            // init.getCaveConfiguration(obj);
+
+                            //init.connectToSignalRServer();
+
+                            init.getCaveConfiguration(JSON.stringify(objAry));
+                            // >>>>> test if it is working >>>>>
+
+                        });
+                    };
+
+                    getList();
+
+                    //setInterval(getList, 1000);     // wait until all nodes connected, may not need
+                    //init.getCaveConfiguration(JSON.stringify(objAry));
+                    
+                    //init.connectToPeerNetwork();    // the peer only network
+                    // use master and non-master star network structure
+
+                    // SWITCH 1
+                    init.connectToSignalRServer();  // after 'open', because of peerid
+
                 });
+
+                // check if this is a master node 
+                //var conns = [];
+                //var totalNodeNum = 2;
+                //if (browser.number == 1) {
+                //    console.log("#31# > master node <");
+
+                //    var test = function () {
+                //        p.listAllPeers(function (list) {    // T. check if stable
+                //            if (list.length = totalNodeNum) {
+                //                console.log(list);
+                //                console.log("#31# master: ready to start");
+
+                //                for (var i = 0; i < list.length; i++) {
+
+                //                    if (peerId != list[i]) {    // exclude the master
+                //                        console.log("#31# non-master: " + list[i]);
+
+                //                        // define dd3Net.peers
+                //                        var obj = [{ "browserNum": "1", "peerId": "pie_r3_c0_node1", "col": "0", "row": "3" }, { "browserNum": "2", "peerId": "pie_r3_c1_node2", "col": "1", "row": "3" }];
+                //                        init.getCaveConfiguration(JSON.stringify(obj));
+
+                //                        //peersInfo = [{ "browserNum": "1", "peerId": "pie_r3_c0_node1_6ea85cac", "col": "0", "row": "3" }, { "browserNum": "2", "peerId": "pie_r3_c1_node2_79a09db3", "col": "1", "row": "3" }];
+                //                        //dd3Net.peers = peersInfo;
+
+                //                        //conns[i] = p.connect(list[i], { reliable: true });
+                //                        conns[i] = dd3Net.connect(0, 1);
+                //                        console.log("#31# peer connect: " + conns[i]);
+                //                        // >>>>> true >>>>>
+
+                //                        return false;
+
+                //                        conns[i].on('open', function () {
+                //                            console.log(this.peer + " is connected");
+
+                //                            // unit . master receive
+                //                            this.on('data', function (data) {
+                //                                console.log("master received: " + data);
+                //                            });
+
+                //                            // unit . peer reconnect
+                //                            this.on('close', function () {
+                //                                console.log(this.peer + " is disconnected");
+                //                                //location.reload();  // reload master, if lost a peer
+                //                            });
+
+                //                            // unit . master send
+                //                            this.send("from master: hi!");
+
+                //                        });
+
+                //                    }
+
+                //                }
+
+                //            }
+
+                //        })
+                //    };
+
+                //    test();
+
+                //} else {
+                //    console.log("#31# > non-master node <");
+                //}
+                //setInterval(test, 10000);
 
                 p.on("error", function (e) {
                     utils.log("[Peer] " + e, 3);
@@ -632,31 +770,27 @@ var initDD3App = function () {
                 utils.log("Connection to peer server established", 1);
             };
 
+
             //Connect to the signalR server and send the info
             //Bai: this function is called in the above "connectToPeerServer" function.
             init.connectToSignalRServer = function () {
 
-                
                 //BAI: if we use mix net, we do not to create another instance again.
                 //dd3Net = new DD3Net();
                 //dd3NetS = new DD3Net('signalr');
-
-
 
                 //dd3Server contains the connection to AppHub
                 //signalR.server = dd3Server.server;
                 //signalR.client = dd3Server.client;
                 //signalR.sid = dd3Server.instanceId;
                 
-
                 // Define server interaction functions
                 //signalR_callback.receiveConfiguration = init.getCaveConfiguration;
                 //signalR_callback.receiveSynchronize = dd3NetS.receiveSynchronize;
 
                 //BAI: only for signalR protocol, second parameter is null now and will be set when dd3_data has value.
                 //dd3NetS.setCallBack(init.getCaveConfiguration, {});
-                dd3Net.setCallBack(init.getCaveConfiguration, {});
-
+                //dd3Net.setCallBack(init.getCaveConfiguration, {}); 
 
                 utils.log("Connected to signalR server", 1);
                 utils.log("Waiting for everyone to connect", 1);
@@ -671,16 +805,23 @@ var initDD3App = function () {
                     width: browser.width
                 };
 
-                //BAI: this function will call "init.getCaveConfiguration" finally. The whole procedure is quite complex. The detailed logic can be obtained by looking through DD3App.cs and DD3AppHub.cs.
-                //dd3NetS.server.updateInformation(dd3NetS.sid, thisInfo);
+                ////BAI: this function will call "init.getCaveConfiguration" finally. The whole procedure is quite complex. The detailed logic can be obtained by looking through DD3App.cs and DD3AppHub.cs.
+                ////dd3NetS.server.updateInformation(dd3NetS.sid, thisInfo);
+
                 dd3Net.server.updateInformation(dd3Net.sid, thisInfo);
+                //dd3Net.updateInformation(dd3Net.connections, thisInfo);
                 utils.log("Connection to SignalR server established", 1);
             };
+
+            //init.connectToPeerNetwork = function () {
+            //    console.log("this is the peer network");
+            //};
 
             //Receive the configuration of the whole cave from the backend
             //Bai: this function is c. At last, it will define all the DD3 function via calling the function "defineDD3Functions" which is defined below.
             //BAI: the argument "obj" in the following function is the "thisInfo" argument in the above function "init.connectToSignalServer" 
             init.getCaveConfiguration = function (obj) {
+                console.log("#31# cave config: ", obj);
                 utils.log("Receiving connected browsers' ids from signalR server", 1);
 
                 //obj contains info about all browsers
@@ -689,7 +830,7 @@ var initDD3App = function () {
                 var maxCol, minCol, maxRow, minRow;
 
                 //define the mine and max row and columns
-                minCol = d3.min(peersInfo, utils.d('col', true));
+                minCol = d3.min(peersInfo, utils.d('col', true));   // ? utils.d()
                 maxCol = d3.max(peersInfo, utils.d('col', true));
                 minRow = d3.min(peersInfo, utils.d('row', true));
                 maxRow = d3.max(peersInfo, utils.d('row', true));
@@ -705,14 +846,21 @@ var initDD3App = function () {
 
                 //Initialize the peerjs connection
                 peersInfo.forEach(function (p) {
+                    //console.log(p);
+
+                    p.browserNum = +p.browserNum;
+
                     p.initColumn = +p.col;
                     p.initRow = +p.row;
+
                     p.col = p.initColumn - minCol;
                     p.row = p.initRow - minRow;
+
                 });
 
                 //dd3NetP.setPeers(peersInfo);
                 dd3Net.peers = peersInfo;
+                console.log("#31# peers info: ", dd3Net.peers);
                 //peer.connections are the peerjs connections matained between this node and others
                 //BAI: "d3.range(0, cave.rows)" return arrays which has the same number as the value of "cave.rows"
                 //BAI: the following code make peer.connections as lots of blank arrays which have the same name as the value of "cave.rows"

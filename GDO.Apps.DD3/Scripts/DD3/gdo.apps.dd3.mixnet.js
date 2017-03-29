@@ -75,8 +75,10 @@ MixNet.prototype.connect = function (r, c) {
     // if the row, column pair is not the same as those of the connections, return false
     var _self = this;
     return _self.peers.some(function (p) {
-        if (+p.row !== r || +p.col !== c)
+        if (+p.row !== r || +p.col !== c) {
+            //console.log(_self.peers);
             return false;
+        }
 
         var conn = _self.peer.connect(p.peerId, { reliable: true, metadata: { initiator: [_self.browser.row, _self.browser.column] } });
         //BAI: init of peerObj is firsted called here.
@@ -86,7 +88,9 @@ MixNet.prototype.connect = function (r, c) {
         });
         _self.connections[r][c] = conn;
         _self.buffers[r][c] = [];
-        return true;
+        //return true;
+        console.log(_self.connections);
+        return conn;
     });
 }
 
@@ -132,8 +136,52 @@ MixNet.prototype.synchronize = function (r, c) {
     signalR.server.synchronize(signalR.sid);
 }
 
-MixNet.prototype.updateInformation = function () {
+MixNet.prototype.updateInformation = function (thisConn, thisNodeInfo) {
+    console.log("###### UPDATE INFORMATION START ######");
 
+    // TODO. use connect() to initialise the connection
+    // NOTE. listeners may be registered outside
+
+    // connect to master
+    // send info to master
+    // listen broadcast from master
+
+    // ** for master 
+
+    //peer.on('open', function () {
+    //    console.log("this peer id is xxx");
+    //})
+
+    //peer.on('connection', function (conn) {
+    //    console.log("xxx node is connected");
+
+    //    conn.on('data', function () {
+    //        console.log("xxx node's info received");
+
+    //        if (same) {
+    //            // broadcast to all conns
+    //        }
+    //    });
+    //});
+
+    // ** end master 
+    
+    //conn = dd3net.connect("master");
+    //conn.on('open', function () {
+    //    console.log("connected to master");
+
+    //    conn.send(thisInfo); // send back node info 
+
+    //    conn.on('data', function () {
+    //        console.log("data received"); // master broadcast info
+    //    });
+    //});
+
+
+    console.log(this);
+    console.log(thisConn, thisNodeInfo);
+
+    console.log("###### UPDATE INFORMATION END ######");
 }
 
 MixNet.prototype.setCallBack = function (caveConfiguration, dd3_data) {
