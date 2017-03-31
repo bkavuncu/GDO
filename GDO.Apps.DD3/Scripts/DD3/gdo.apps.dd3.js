@@ -53,12 +53,9 @@ $.ajax({
 $.getScript("../../Scripts/DD3/odata/o.js", function () { console.log("INFO: Odata module - o.js was loaded."); });
 $.getScript("../../Scripts/DD3/gdo.apps.dd3.odata.js", function () { console.log("INFO: Odata module - odata.js was loaded."); });
 
-var netConfig = {
-    host: "129.31.198.58",
-    port: 33333
-};
 
-dd3Net = new DD3Net(null, netConfig);
+
+dd3Net = new DD3Net();
 
 dd3Net.defineSignalrClientFunc();
 
@@ -602,7 +599,7 @@ var initDD3App = function () {
                 // TODO. use config name in peer id 
                 var timestamp = Math.floor(Date.now() / 1000);
                 var peerId = "pie" + "_r" + browser.initRow + "_c" + browser.initColumn + "_node" + browser.number + "_" + timestamp;
-<<<<<<< HEAD
+
                 /*
                 var netConfig = {
                     host: "129.31.194.142",
@@ -611,7 +608,7 @@ var initDD3App = function () {
                 };*/
                 //dd3Net = new DD3Net();
 
-=======
+
                 
                 //var netConfig = {
                 //    host: "129.31.194.142",
@@ -621,7 +618,7 @@ var initDD3App = function () {
                 //dd3Net = new DD3Net(null, netConfig);
 
                 dd3Net.id = peerId;
->>>>>>> 4e17b37136467b4b72f35037e24e2e768e0b9edc
+
                 
                 //dd3NetP = new DD3Net('peerjs');
                 //console.log('new peer server',dd3NetP);
@@ -693,10 +690,6 @@ var initDD3App = function () {
                     };
 
                     //getList();
-<<<<<<< HEAD
-=======
-                    // >> start from here >>
->>>>>>> 4e17b37136467b4b72f35037e24e2e768e0b9edc
 
                     //setInterval(getList, 1000);     // wait until all nodes connected, may not need
 
@@ -811,16 +804,11 @@ var initDD3App = function () {
                 //dd3NetS.setCallBack(init.getCaveConfiguration, {});
                 //dd3Net.setCallBack(init.getCaveConfiguration, {}); 
 
-                // CAVE CONFIG SWITCH
-                dd3Net.setCallBack(init.getCaveConfiguration, null);
               
-<<<<<<< HEAD
+
                 dd3Net.setCallBack({ caveConfigurationObj: init.getCaveConfiguration });
                 console.log("dd3Net.signalR_callback", dd3Net.signalR_callback);
-=======
-                //console.log("dd3Net.signalR_callback",dd3Net.signalR_callback);
-                //dd3Net.setCallBack(init.getCaveConfiguration, null);
->>>>>>> 4e17b37136467b4b72f35037e24e2e768e0b9edc
+
 
                 utils.log("Connected to signalR server", 1);
                 utils.log("Waiting for everyone to connect", 1);
@@ -1406,11 +1394,6 @@ var initDD3App = function () {
             //BAI: this function will be called when any this kind of data retrieval function "dd3NetS.net.server.getPointData(dd3NetS.sid, request);" get the data.
             dd3_data.receiveData = function (dataName, dataId, dataPoints) {
                 utils.log("Data received : " + dataName + " (" + dataId + ")", 1);
-<<<<<<< HEAD
-=======
-
-                console.log("RECV" + JSON.stringify(dataPoints));
->>>>>>> 4e17b37136467b4b72f35037e24e2e768e0b9edc
                 
                 if(utils.isJSON(dataPoints)) dataPoints = JSON.parse(dataPoints);
 
@@ -1439,13 +1422,9 @@ var initDD3App = function () {
             //signalR_callback.receiveRemoteDataReady = dd3_data.receiveRemoteDataReady;
 
             //BAI: only used for signalR, the first parameter has been set when init caveconfiguration.
-<<<<<<< HEAD
             console.log("dd3Net.setCallBack({}, dd3_data);");
             dd3Net.setCallBack({ dd3DataObj: dd3_data });
-=======
-            //console.log("dd3Net.setCallBack({}, dd3_data);");
-            dd3Net.setCallBack(null, dd3_data);
->>>>>>> 4e17b37136467b4b72f35037e24e2e768e0b9edc
+
             
 
             /**

@@ -53,11 +53,11 @@ $.ajax({
 $.getScript("../../Scripts/DD3/odata/o.js", function () { console.log("INFO: Odata module - o.js was loaded."); });
 $.getScript("../../Scripts/DD3/gdo.apps.dd3.odata.js", function () { console.log("INFO: Odata module - odata.js was loaded."); });
 
-dd3Net = new DD3Net();
-dd3Net.defineSignalrClientFunc();
-//console.log("dd3Server", dd3Server);
-//console.log("dd3Net", dd3Net.net);
 
+
+dd3Net = new DD3Net();
+
+dd3Net.defineSignalrClientFunc();
 
 //BAI: this function is called in gdo "initClient" function.
 var initDD3App = function () {
@@ -588,17 +588,18 @@ var initDD3App = function () {
                 //BAI: 'signalr' means we use apis implemented based on signalr protocol
                 //BAI: 'peerjs' means we use apis implemented based on signalr protocol
 
+                // TODO. to be deleted
+                //function guid() {
+                //    var S4 = function () {
+                //        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+                //    };
+                //    return (S4() + S4());
+                //}
 
-                function guid() {
-                    var S4 = function () {
-                        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
-                    };
-                    return (S4() + S4());
-                }
-
-                // TODO. use config name 
+                // TODO. use config name in peer id 
                 var timestamp = Math.floor(Date.now() / 1000);
                 var peerId = "pie" + "_r" + browser.initRow + "_c" + browser.initColumn + "_node" + browser.number + "_" + timestamp;
+
                 /*
                 var netConfig = {
                     host: "129.31.194.142",
@@ -606,6 +607,17 @@ var initDD3App = function () {
                     id: peerId,
                 };*/
                 //dd3Net = new DD3Net();
+
+
+                
+                //var netConfig = {
+                //    host: "129.31.194.142",
+                //    port: 33333, 
+                //    id: peerId,
+                //};
+                //dd3Net = new DD3Net(null, netConfig);
+
+                dd3Net.id = peerId;
 
                 
                 //dd3NetP = new DD3Net('peerjs');
@@ -617,7 +629,7 @@ var initDD3App = function () {
                 p.on('open', function (id) {
                     //console.log('id is' + id );
                     utils.log('Connected to peer server - id : ' + id, 1);
-                    dd3Net.id = id;
+                    //dd3Net.id = id;
 
                     p.on('connection', function (conn) {
                         // Previous loss of data : the buffering in peer.js seems not to work,
@@ -651,13 +663,7 @@ var initDD3App = function () {
 
                     });
 
-
-                    // if 'peernet' 
-                    //   get information from peer id / connect to peer network 
-                    // else 
-                    //   connect to signalR server
-
-                    // get information from peer id 
+                    // get information from peer id - world config
                     var objAry = [];
                     var getList = function () {
                         p.listAllPeers(function (list) {
@@ -677,41 +683,24 @@ var initDD3App = function () {
                             });
                             console.log(objAry);
 
-                            // split() peerid
-                            // var peerid = "pie_r3_c0_node1_timestamp";
-                            // timestamp for sudden disconnection, didn't destory dataConnection 
-
-                            // build obj
-                            // var obj = [{ "browserNum": "1", "peerId": "pie_r3_c0_node1", "col": "0", "row": "3" }, { "browserNum": "2", "peerId": "pie_r3_c1_node2", "col": "1", "row": "3" }];
-
-                            // var obj = [];
-                            // init.getCaveConfiguration(obj);
-
                             //init.connectToSignalRServer();
-
                             init.getCaveConfiguration(JSON.stringify(objAry));
-                            // >>>>> test if it is working >>>>>
-
+                            
                         });
                     };
 
                     //getList();
 
                     //setInterval(getList, 1000);     // wait until all nodes connected, may not need
+
                     //init.getCaveConfiguration(JSON.stringify(objAry));
                     
-                    //init.connectToPeerNetwork();    // the peer only network
-                    // use master and non-master star network structure
-
-                    // SWITCH 1
+                    // SignalR SWITCH
                     init.connectToSignalRServer();  // after 'open', because of peerid
-
-
-                    //console.log("connecting...to signalr server");
-                    //init.connectToSignalRServer();
 
                 });
 
+                // TODO. to be deleted 
                 // check if this is a master node 
                 //var conns = [];
                 //var totalNodeNum = 2;
@@ -781,6 +770,7 @@ var initDD3App = function () {
                 p.on("error", function (e) {
                     utils.log("[Peer] " + e, 3);
                 });
+
                 //Destroy the connection as soon as the window has changed or is destroyed
                 window.onunload = window.onbeforeunload = function (e) {
                     if (!!dd3Net.peer && !dd3Net.peer.destroyed) {
@@ -788,6 +778,7 @@ var initDD3App = function () {
                     }
                     //signalR && signalR.connection && (signalR.connection.state === 1) && dd3NetS.net.server && dd3NetS.net.server.removeClient(dd3NetS.sid);
                 };
+
                 utils.log("Connection to peer server established", 1);
             };
 
@@ -813,12 +804,11 @@ var initDD3App = function () {
                 //dd3NetS.setCallBack(init.getCaveConfiguration, {});
                 //dd3Net.setCallBack(init.getCaveConfiguration, {}); 
 
-                // SWITCH 1
-                //dd3Net.setCallBack(init.getCaveConfiguration, null);
               
+
                 dd3Net.setCallBack({ caveConfigurationObj: init.getCaveConfiguration });
-                //dd3Net.setCallBack(init.getCaveConfiguration, null);
                 console.log("dd3Net.signalR_callback", dd3Net.signalR_callback);
+
 
                 utils.log("Connected to signalR server", 1);
                 utils.log("Waiting for everyone to connect", 1);
@@ -851,6 +841,7 @@ var initDD3App = function () {
                 utils.log("Connection to SignalR server established", 1);
             };
 
+            // TODO. to be deleted
             //init.connectToPeerNetwork = function () {
             //    console.log("this is the peer network");
             //};
@@ -861,7 +852,6 @@ var initDD3App = function () {
             init.getCaveConfiguration = function (obj) {
 
                 console.log("#31# cave config: ", obj);
-                //console.log("init.getCaveConfiguration run");
                 utils.log("Receiving connected browsers' ids from signalR server", 1);
 
                 //obj contains info about all browsers
@@ -1340,7 +1330,7 @@ var initDD3App = function () {
                         else
                             //dd3Net.net.server.getData(gdo_appInstanceId, request);
 
-                        console.log("Shor. PIE: " + JSON.stringify(request));
+                        console.log("PIE: " + JSON.stringify(request));
 
                         // Shor. odata interface - pie data
                         var dataType = dataName;
@@ -1434,6 +1424,7 @@ var initDD3App = function () {
             //BAI: only used for signalR, the first parameter has been set when init caveconfiguration.
             console.log("dd3Net.setCallBack({}, dd3_data);");
             dd3Net.setCallBack({ dd3DataObj: dd3_data });
+
             
 
             /**
@@ -1827,23 +1818,7 @@ var initDD3App = function () {
                         _();
                     };
                     dd3Net.setCallBack({ syncObj: syncCallback });
-                   // dd3Net.setCallBacka(syncCallback);
-                    /*
-                    dd3Net.syncCallback = function () {
-                        syncTime = Date.now();
-                        utils.log("Synchronized !", 0);
-                        _();
-                    };*/
-
-
-                   // dd3Net.setCallBack(null, null, dd3Net.syncCallback);
-                    /*
-                    signalR.syncCallback = function () {
-                        syncTime = Date.now();
-                        utils.log("Synchronized !", 0);
-                        _();
-                    };
-                    */
+         
                     setTimeout(function () {
                         dd3Net.net.server.synchronize(gdo_appInstanceId);
                     }, t || 0);
