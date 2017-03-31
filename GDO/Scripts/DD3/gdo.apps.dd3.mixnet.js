@@ -17,11 +17,16 @@
     };
 
     /*The following properties are for signalr*/
-    this.signalR_callback = {},
+    this.signalR_callback = {}
+    /*
     this.syncCallback = function () { },
     this.receiveSynchronize = function () {
+        console.log("this.syncCallback");
+        console.log(this);
+        console.log(this.syncCallback);
         this.syncCallback();
-    }
+    }*/
+    
 }
 
 inherit(MixNet, DD3NetInterface);
@@ -178,19 +183,28 @@ MixNet.prototype.updateInformation = function (thisConn, thisNodeInfo) {
     console.log("###### UPDATE INFORMATION END ######");
 }
 
-MixNet.prototype.setCallBack = function (caveConfiguration, dd3_data) {
-  
-    if (caveConfiguration) {
-        this.signalR_callback.receiveSynchronize = this.receiveSynchronize;
-        this.signalR_callback.receiveConfiguration = caveConfiguration;
+MixNet.prototype.setCallBack = function (callBackObj) {
+    var dd3DataObj = callBackObj.dd3DataObj || null;
+    var syncObj = callBackObj.syncObj || null;
+    var caveConfigurationObj = callBackObj.caveConfigurationObj || null;
+
+    if (caveConfigurationObj) {
+        this.signalR_callback.receiveConfiguration = caveConfigurationObj;
     }
-       
-    if (dd3_data) {
-        this.signalR_callback.receiveDimensions = dd3_data.receiveDimensions;
-        this.signalR_callback.receiveData = dd3_data.receiveData;
-        this.signalR_callback.receiveRemoteDataReady = dd3_data.receiveRemoteDataReady;
+
+    if (dd3DataObj) {
+        this.signalR_callback.receiveDimensions = dd3DataObj.receiveDimensions;
+        this.signalR_callback.receiveData = dd3DataObj.receiveData;
+        this.signalR_callback.receiveRemoteDataReady = dd3DataObj.receiveRemoteDataReady;
+    }
+
+    if (syncObj) {
+        this.signalR_callback.receiveSynchronize = function () {
+            syncObj();
+        };
     }
 }
+
 
 MixNet.prototype.defineSignalrClientFunc = function () {
     this.net = {
@@ -198,7 +212,11 @@ MixNet.prototype.defineSignalrClientFunc = function () {
         client: dd3Server.client
     }
     var _self = this;
+
+    
     dd3Server.on("dd3Receive", function (f) {
+        console.log(_self.signalR_callback);
+        console.log(_self.signalR_callback[f]);
         _self.signalR_callback[f].apply(null, [].slice.call(arguments, 1));
     });
 
