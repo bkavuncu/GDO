@@ -450,37 +450,7 @@ var initDD3App = function () {
             data = {}; // Storing data
         //Represent signalr connection
 
-        /*
-        var signalR = {
-            server: null,
-            client: null,
-            syncCallback: function () { },
-            receiveSynchronize: function () {
-                signalR.syncCallback();
-            }
-        };
-        */
-
-        //Represent peerjs connection
-        //BAI: this peer object will also include another property called "peer" which is added in the function "connectToPeerServer".
-        //BAI: peer.peer reprents the connection between one peer and the peer server.
-        //BAI: the peer object is moved into the dd3NetP module
-        /*
-        var peer = {
-            id: null,
-            peers: [],
-            connections: [],
-            buffers: [],
-
-            init: function () { },
-            connect: function () { },
-            receive: function () { },
-            sendTo: function () { },
-            flush: function () { }
-        };*/
-
         //Represents Cave
-        //BAI: I guess the cave reprents how many screens which you are using to visualize this application.
         var cave = {
             width: 0,
             height: 0,
@@ -1157,8 +1127,6 @@ var initDD3App = function () {
                     api.getPointData(request);
                 else
                     dd3Net.net.server.getPointData(gdo_appInstanceId, request);
-
-                //console.log(JSON.stringify(request));
 
                 // Shor. odata interface - point data 
                 var dataFilter = "x ge " + limits.xmin + " and x lt " + limits.xmax + " and y ge " + limits.ymin + " and y lt " + limits.ymax;
@@ -2580,6 +2548,8 @@ var initDD3App = function () {
             var _dd3_idTransition = 1;
 
             //Contain tween functions for transitions. Prevents having to send tween funciton definition through peerjs
+            //BAI: we do not need to send the whole tween defination between peers, and we define all the names of different tweens. Then we only need to 
+            //send the name of tween effect.
             var _dd3_tweens = {};
 
             //Contain tween functions for transitions. Prevents having to send ease function definition through peerjs

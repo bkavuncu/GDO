@@ -68,6 +68,7 @@ MixNet.prototype.init = function (conn, r, c) {
 //Empty the buffers for the connection to ths peer
 //TODO: unobfuscate the code 
 //BAI: comments peer.connect function and move it to the dd3Net Modul
+//BAI: Q: this function can not be treated as prototype function.
 MixNet.prototype.connect = function (r, c) {
     r = +r;
     c = +c;
