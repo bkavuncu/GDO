@@ -206,7 +206,6 @@ MixNet.prototype.setCallBack = function (callBackObj) {
     }
 }
 
-
 MixNet.prototype.defineSignalrClientFunc = function () {
     this.net = {
         server: dd3Server.server,
