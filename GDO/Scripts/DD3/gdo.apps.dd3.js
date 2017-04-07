@@ -57,7 +57,7 @@ $.getScript("../../Scripts/DD3/gdo.apps.dd3.odata.js", function () { console.log
 
 dd3Net = new DD3Net();
 
-dd3Net.defineSignalrClientFunc();
+dd3Net.onClientCallbackFunc();
 
 //BAI: this function is called in gdo "initClient" function.
 var initDD3App = function () {
@@ -771,12 +771,12 @@ var initDD3App = function () {
                 //signalR_callback.receiveSynchronize = dd3NetS.receiveSynchronize;
 
                 //BAI: only for signalR protocol, second parameter is null now and will be set when dd3_data has value.
-                //dd3NetS.setCallBack(init.getCaveConfiguration, {});
-                //dd3Net.setCallBack(init.getCaveConfiguration, {}); 
+                //dd3NetS.setClientCallbackFunc(init.getCaveConfiguration, {});
+                //dd3Net.setClientCallbackFunc(init.getCaveConfiguration, {}); 
 
               
 
-                dd3Net.setCallBack({ caveConfigurationObj: init.getCaveConfiguration });
+                dd3Net.setClientCallbackFunc({ caveConfigurationObj: init.getCaveConfiguration });
                 console.log("dd3Net.signalR_callback", dd3Net.signalR_callback);
 
 
@@ -1390,8 +1390,8 @@ var initDD3App = function () {
             //signalR_callback.receiveRemoteDataReady = dd3_data.receiveRemoteDataReady;
 
             //BAI: only used for signalR, the first parameter has been set when init caveconfiguration.
-            console.log("dd3Net.setCallBack({}, dd3_data);");
-            dd3Net.setCallBack({ dd3DataObj: dd3_data });
+            console.log("dd3Net.setClientCallbackFunc({}, dd3_data);");
+            dd3Net.setClientCallbackFunc({ dd3DataObj: dd3_data });
 
             
 
@@ -1785,7 +1785,7 @@ var initDD3App = function () {
                         utils.log("Synchronized !", 0);
                         _();
                     };
-                    dd3Net.setCallBack({ syncObj: syncCallback });
+                    dd3Net.setClientCallbackFunc({ syncObj: syncCallback });
          
                     setTimeout(function () {
                         dd3Net.net.server.synchronize(gdo_appInstanceId);

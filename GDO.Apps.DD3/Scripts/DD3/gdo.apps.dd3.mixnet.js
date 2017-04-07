@@ -184,7 +184,7 @@ MixNet.prototype.updateInformation = function (thisConn, thisNodeInfo) {
     console.log("###### UPDATE INFORMATION END ######");
 }
 
-MixNet.prototype.setCallBack = function (callBackObj) {
+MixNet.prototype.setClientCallbackFunc = function (callBackObj) {
     var dd3DataObj = callBackObj.dd3DataObj || null;
     var syncObj = callBackObj.syncObj || null;
     var caveConfigurationObj = callBackObj.caveConfigurationObj || null;
