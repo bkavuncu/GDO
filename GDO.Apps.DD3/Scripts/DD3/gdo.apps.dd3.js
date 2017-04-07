@@ -57,7 +57,7 @@ $.getScript("../../Scripts/DD3/gdo.apps.dd3.odata.js", function () { console.log
 
 dd3Net = new DD3Net();
 
-dd3Net.defineSignalrClientFunc();
+dd3Net.onClientCallbackFunc();
 
 //BAI: this function is called in gdo "initClient" function.
 var initDD3App = function () {

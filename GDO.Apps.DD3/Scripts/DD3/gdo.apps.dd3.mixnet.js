@@ -206,14 +206,14 @@ MixNet.prototype.setCallBack = function (callBackObj) {
     }
 }
 
-MixNet.prototype.defineSignalrClientFunc = function () {
+MixNet.prototype.onClientCallbackFunc = function () {
     this.net = {
         server: dd3Server.server,
         client: dd3Server.client
     }
     var _self = this;
 
-    
+    //BAI: all the these functions should be implemented by Peer.
     dd3Server.on("dd3Receive", function (f) {
         console.log(_self.signalR_callback);
         console.log(_self.signalR_callback[f]);
