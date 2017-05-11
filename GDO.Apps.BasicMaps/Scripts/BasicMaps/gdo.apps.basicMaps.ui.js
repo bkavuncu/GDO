@@ -466,6 +466,18 @@ gdo.net.app["BasicMaps"].drawMapTable = function (instanceId) {
         .click(function () {
             gdo.net.app["BasicMaps"].server.setLayerVisible(instanceId, 37);
         });
+    $("iframe").contents().find("#map_table_row_5_col_6")
+        .empty()
+        .append("<div><button type='button' id='basicMaps_layer_41' class='btn btn-danger  btn-outline btn-block'>Edwardian</button></div>")
+        .css("margin", "0px")
+        .css("padding", "0px")
+        .css("width", 100 / gdo.net.app["BasicMaps"].numButtons + "%")
+        .css("height", "40px")
+        .unbind()
+        .click(function() {
+            gdo.net.app["BasicMaps"].server.setLayerVisible(instanceId, 41);
+        });
+
     /*$("iframe").contents().find("#map_table_row_4_col_4")
         .empty()
         .append("<div><button type='button' id='basicMaps_layer_32' class='btn btn-danger btn-outline btn-block'>Bedrock and Superficial Geology</button></div>")
