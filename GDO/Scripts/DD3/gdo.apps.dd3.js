@@ -49,13 +49,24 @@ $.ajax({
     dataType: "script"
 });
 
+
+$.ajax({
+    async: false,
+    url: "../../Scripts/DD3/socket.io.min.js",
+    dataType: "script"
+});
+
 // Shor. load dd3 module scripts 
 $.getScript("../../Scripts/DD3/odata/o.js", function () { console.log("INFO: Odata module - o.js was loaded."); });
 $.getScript("../../Scripts/DD3/gdo.apps.dd3.odata.js", function () { console.log("INFO: Odata module - odata.js was loaded."); });
 
-
-
 dd3Net = new DD3Net();
+
+dd3Net.socket.on('news', function (data) {
+    console.log(data);
+    dd3Net.socket.emit('my other event', { my: 'data' });
+});
+
 
 dd3Net.onClientCallbackFunc();
 

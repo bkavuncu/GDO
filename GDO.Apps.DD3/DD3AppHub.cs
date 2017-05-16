@@ -198,10 +198,12 @@ namespace GDO.Apps.DD3
         {
             if (all)
             {
+                //send the order to all the clients in a cave (which means all the clients for a single application)
                 broadcastControllerOrder(instanceId, order);
             }
             else
             {
+                //send the order to one client in a cave (which means a single client for one application )
                 //Maybe should we make more checks to ensure we always send order to the same node...
                 //BAI: TODO: a strange comments above.
                 instances = Cave.Apps["DD3"].Instances;

@@ -17,7 +17,7 @@
     };
 
     /*The following properties are for signalr*/
-    this.signalR_callback = {}
+    this.signalR_callback = {};
     /*
     this.syncCallback = function () { },
     this.receiveSynchronize = function () {
@@ -26,7 +26,8 @@
         console.log(this.syncCallback);
         this.syncCallback();
     }*/
-    
+    this.socket = io.connect('http://localhost:8000');
+
 }
 
 inherit(MixNet, DD3NetInterface);
@@ -118,6 +119,12 @@ MixNet.prototype.sendTo = function (r, c, data, buffer) {
     }
     return true;
 }
+
+/*
+MixNet.prototype.sendOrder = function (r, c, data, buffer) {
+   
+}*/
+
 //BAI: comments peer.flush function and move it to the dd3Net Modul
 //flush the peer: i.e. SEND the data in the buffer of the connection the node (r,c) AND EMPTY the buffer
 MixNet.prototype.flush = function (r, c) {

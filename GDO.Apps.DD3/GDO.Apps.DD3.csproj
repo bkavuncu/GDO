@@ -156,6 +156,7 @@
     <Content Include="Web\DD3\Scripts\controlInit.js" />
     <Content Include="Web\DD3\Scripts\controlTestBench.js" />
     <Content Include="Web\DD3\Scripts\d3.v4.js" />
+    <Content Include="Scripts\DD3\socket.io.min.js" />
     <Content Include="Web\DD3\Scripts\tube_viz\animation.js" />
     <Content Include="Web\DD3\Scripts\tube_viz\animationLines.js" />
     <Content Include="Web\DD3\Scripts\tube_viz\lines.js" />
