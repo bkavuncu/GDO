@@ -1,4 +1,4 @@
-Specification:
+# Specification:
 1. Install nodejs server via "https://nodejs.org/en/"
 2. Control ULR: http://127.0.0.1:8080/Web/DD3/Control.html?confId=0&controlId=3&numClients=2
 3. Client URL: http://localhost:8080/Web/DD3/App.html?confId=0&controlId=3&clientId=2&row=1&column=1&numClients=2
@@ -11,7 +11,7 @@ Specification:
 
 
 
-Test Example:
+# Test Example:
 1. Open console and make sure the direction is in this folder.
 2. In console, input "npm install"
 3. In console, input "node server.js" to launch nodejs server.
