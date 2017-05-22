@@ -1,0 +1,58 @@
+﻿<!--
+@{
+    Layout = null;
+}
+-->
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+    <link href="../../Web/DD3/CSS/app.css" rel="stylesheet" type="text/css"/>
+  
+</head>
+<body>
+<!--BAI: how to refer to the following js if we can not find them in the directory.-->
+<!--BAI: gdo.apps.dd3.js should be loaded here by the god.js file in original GOD core project.-->
+<script src="../../Scripts/jquery-2.1.4.min.js"></script>
+<script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+<script src="../../Scripts/peer.js"></script>
+<script src="../../Scripts/socket.io.min.js"></script>
+<script src="../../Web/DD3/Scripts/d3.v4.js"></script>
+
+
+<!-- JS FOR TUBE VIZ-->
+<script src="../../Web/DD3/Scripts/tube_viz/map.js"></script>
+<script src="../../Web/DD3/Scripts/tube_viz/stations.js"></script>
+<script src="../../Web/DD3/Scripts/tube_viz/lines.js"></script>
+<script src="../../Web/DD3/Scripts/tube_viz/animation.js"></script>
+<script src="../../Web/DD3/Scripts/tube_viz/animationLines.js"></script>
+
+
+<!-- Shor. load dd3 modules -->
+<script src="../../Scripts/DD3/gdo.apps.dd3.world.js"></script>
+<script src="../../Scripts/DD3/gdo.apps.dd3.js"></script>
+
+<script src="../../Web/DD3/Scripts/appTestBench.js"></script>
+<script src="../../Web/DD3/Scripts/appInit.js"></script>
+ 
+    
+    
+
+<div id="error" style="display: none">
+    <p style="color: rgb(237, 20, 51); font-size: 2.5em;">
+        :(
+    </p>
+    <p style="color: rgb(237, 20, 51); font-size: 2.5em;">
+        Something went wrong, please reload the page<br>
+        <span style="color: firebrick; font-size: 0.7em; font-style: italic"> Error : the function 'initClient' was not initialized</span>
+    </p>
+</div>
+
+<div id="clock" style="display: none"></div>
+<div id="viz_title" style="display: none">METRO LINES</div>
+
+</body>
+</html>
+

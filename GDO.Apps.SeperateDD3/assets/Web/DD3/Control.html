@@ -1,0 +1,252 @@
+﻿<!--
+@using System
+@using System.IO
+@using System.IO.Compression
+@using System.Web.Helpers
+@using GDO.Core
+@{
+    Layout = null;
+}
+-->
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+    <link href="../../Web/DD3/CSS/control.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <script src="../../Scripts/jquery-2.1.4.min.js"></script>
+    <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script src="../../Web/DD3/Scripts/d3.v4.js"></script>
+    <script src="../../Scripts/peer.js"></script>
+    <script src="../../Scripts/socket.io.min.js"></script>
+    
+
+
+    <!-- Shor. load dd3 modules -->
+    <script src="../../Scripts/DD3/gdo.apps.dd3.world.js"></script>
+    <!--<script src="../../Scripts/DD3/gdo.apps.dd3.js"></script>-->
+    <script src="../../Web/DD3/Scripts/controlTestBench.js"></script>
+    <script src="../../Web/DD3/Scripts/controlInit.js"></script> 
+
+    <div id="wait" style="">
+        Please wait while app is initializing...
+    </div>
+
+    <div id="error" style="display:none">
+        <p style="color: rgb(237, 20, 51);font-size: 2.5em;">
+            :(
+        </p>
+        <p style="color: rgb(237, 20, 51);font-size:2.5em;">
+            Something went wrong, please <a href="javascript:parent.location.href=parent.location.href" style="color: rgb(237, 20, 51);">reload</a> the page<br>
+            <span style="color:firebrick;font-size:0.7em;font-style:italic"> Error : the function 'initControl' was not initialized</span>
+        </p>
+    </div>
+
+    <div id="control_0" style="display:none">
+        <table class="table_control">
+            <tr class="basic_moves">
+                <td colspan="3">Basic moves</td>
+            </tr>
+            <tr class="basic_moves">
+                <td rowspan="4" class="green" id="createRect">Create Rectangle</td>
+                <td class="red" id="translationX">X Translation</td>
+                <td rowspan="4" class="red" id="removeRect">Remove Rectangle</td>
+            </tr>
+            <tr class="basic_moves">
+                <td class="red" id="translationY">Y Translation</td>
+            </tr>
+            <tr class="basic_moves">
+                <td class="red" id="rotation">Rotation</td>
+            </tr>
+            <tr class="basic_moves">
+                <td class="red" id="allMoves">All</td>  
+            </tr>
+            <tr class="superposition">
+                <td colspan="3">Superposition</td>
+            </tr>
+            <tr class="superposition non_distributed">
+                <td rowspan="2" class="green" id="createCircles">Create Circles</td>
+                <td class="red" id="moveCircles">Move <span id="spanc"></span> Circles</td>
+                <td rowspan="2" class="red" id="removeCircles">Remove Circles</td>
+            </tr>
+            <tr class="superposition non_distributed">
+                <td class="red" id="addCircles">Add Circles <input id="nbAddCircles" type="number" value="100" style="width:50px"/></td>
+            </tr>
+            <tr class="superposition distributed">
+                <td rowspan="2" class="green" id="createDistributedCircles">Create distributed Circles</td>
+                <td class="red" id="moveDistributedCircles">Move <span id="spandc"></span> distributed Circles</td>
+                <td rowspan="2" class="red" id="removeDistributedCircles">Remove distributed Circles</td>
+            </tr>
+            <tr class="superposition distributed">
+                <td class="red" id="addDistributedCircles">Add Distributed Circles <input id="nbAddDistributedCircles" type="number" value="10" style="width:50px" /></td>
+            </tr>
+            <tr class="group">
+                <td colspan="3">Group transition</td>
+            </tr>
+            <tr class="group">
+                <td rowspan="2" class="green" id="createPolygon">Create</td>
+                <td class="red" id="movePolygon">Test 1</td>
+                <td rowspan="2" class="red" id="removePolygon">Remove</td>
+            </tr>
+            <tr class="group">
+                <td class="red">Test 2 (not implemented)</td>
+            </tr>
+            <tr class="fps">
+                <td colspan="3">Framepersecond</td>
+            </tr>
+            <tr class="group">
+                <td colspan="3" rowspan="1" class="green" id="fps_data"> Save FPS to CSV </td>
+            </tr>
+            <tr class="group">
+                <td colspan="3" rowspan="1" class="green" id="event_data"> Save event to CSV </td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="control_1" style="display:none">
+        <table class="table_control">
+
+        </table>
+    </div>
+
+    <div id="control_2" style="display: none">
+        <table class="table_control">
+            <tr>
+                <td class="green" id="changeValues">Change Values</td>
+            </tr>
+            <tr>
+                <td class="green">Transition Duration : <input id="timeTr" type="number" value="1000" style="width: 60px"/></td>
+            </tr>
+        </table>
+    </div>
+    
+    <div id="control_3" style="display: none">
+
+        <form id="submit_file_form" action="" method="post" enctype="multipart/form-data">
+            <table class="table_control">
+                <tr>
+                    <td class="green" id="addRect">Add Rectangle</td>
+                </tr>
+                <tr>
+                    <td class="green" id="addUrl">Add Image Url</td>
+                    <td class="green" id="urlinputtd"><input id="inputUrl" type="url" /></td>
+                </tr>
+                <tr>
+
+                    <td class="green" id="addFiles">Upload files (.zip, .png, jpg, .gif)</td>
+                    <td class="green"><input id="fileInput" type="file" name="fileUpload"/></td>
+                    <td class="green"><input id="submit_file" class="btn btn-primary btn-block" style="border-color: transparent;" type="submit" value="Submit"/></td>
+
+                </tr>
+                <tr>
+                    <td class="green">Choose uploaded</td>
+                    <td class="green">
+                        <select class="input_field" id="fileSelect">
+                            @foreach (var s in database)
+                            { <option value="@web_path@s">@s</option>  }
+                        </select>
+                    </td>
+                    <td class="green"><button id="fileSelectButton" type="button">Choose</button></td>
+                    <td class="green"><button id="allFileSelectButton" type="button">All</button></td>
+                </tr>
+                <tr>
+                    <td class="green" id="removeAllRect">Remove All</td>
+                </tr>
+                <tr>
+                    <td class="green">Sensibility (ms) <input id="sens" type="number" value="100" style="width: 40px" /></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+
+    <div id="control_4" style="display:none">
+        <table class="table_control">
+            <tr>
+                <td class="green" id="launchEntryAnimationLondon">Launch Animation of entries</td>
+            </tr>
+            <tr>
+                <td class="green" id="launchExitAnimationLondon">Launch Animation of exit</td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="control_5" style="display:none">
+        <table class="table_control">
+            <tr>
+                <td class="green" id="launchEntryAnimationShanghai">Launch Animation of entries</td>
+            </tr>
+            <tr>
+                <td class="green" id="launchExitAnimationShanghai">Launch Animation of exit</td>
+            </tr>
+            <!--
+            <tr>
+                <td class="green" id="createAnimationShanghai">Create</td>
+            </tr>
+            <tr>
+                <td class="green" id="initAnimationShanghai">Init</td>
+            </tr>
+            <tr>
+                <td class="green" id="startAnimationShanghai">Start</td>
+            </tr>
+            <tr>
+                <td class="green" id="pauseAnimationShanghai">Pause</td>
+            </tr>
+            <tr>
+                <td class="green" id="cleanupAnimationShanghai">Cleanup</td>
+            </tr>
+            <!---->
+        </table>
+    </div>
+    
+    <div id="control_6" style="display:none">
+        <table class="table_control">
+            <tr>
+                <td class="green"><INPUT type="checkbox" name="outter" id="outterCheckbox"> With outter lines (Choose before launching)</td>
+            </tr>
+            <tr>
+                <td class="green"><INPUT type="checkbox" name="widthChanging" id="widthChangingCheckbox" checked> Width changing (Choose before launching)</td>
+            </tr>
+            <tr>
+                <td class="green"><INPUT type="checkbox" name="widthChangingLinkLoad" id="widthChangingLinkLoadCheckbox"> Width represents link load (Choose before launching)</td>
+            </tr>
+            <tr>
+                <td class="green" id="launchNormalAnimationShanghaiLines">Launch Animation with normal data</td>
+            </tr>
+            <tr>
+                <td class="green" id="launchDisruptedAnimationShanghaiLines">Launch Animation with disrupted data</td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="control_10" style="display:none">
+        <table class="table_control">
+            <tr>
+                <td class="green" id="updim">Update Dimensions:  <input id="dimension_list" type="string" value="Gender,Id,Partner Id,Match,Partner Age,Partner Race,Partner's Preference of Attractiveness,Partner's Preference of Sincerity,Partner's Preference of Intelligence,Partner's Preference of Fun,Partner's Preference of Ambition,Partner's Preference of Shared Interest,Partner's decision" style="width:200px"/></td>
+            </tr>
+            <tr>
+                <td class="green" id="resetviz">Reset Dimensions</td>
+            </tr>
+            <tr>
+                <td class="green" id="upfilter">Update Filter: <input id="attr" type="string" value="Id" style="width:100px"/> Min: <input id="min" type="number" value="0" style="width:50px"/> Max: <input id="max" type="number" value="10" style="width:50px"/></td>
+            </tr>
+            
+        </table>
+    </div>
+
+    <div id="control_11" style="display:none">
+        <table class="table_control">
+            <tr>
+                <td class="green" id="dd3-start">Start DD3</td>
+            </tr>
+            <tr>
+                <td class="green" id="dd3-refresh">Refresh DD3</td>
+            </tr>
+        </table>
+    </div>
+
+</body>
+</html>
