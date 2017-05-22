@@ -180,6 +180,7 @@ namespace GDO.Apps.DD3
         //Broadcast order from the controller to one browser node
         public void sendControllerOrder(string Id, string order)
         {
+            Debug.WriteLine("The firstnode id is " + Id);
             Clients.Client(Id).receiveControllerOrder(order);
         }
 

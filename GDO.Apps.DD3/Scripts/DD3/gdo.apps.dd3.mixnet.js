@@ -224,6 +224,8 @@ MixNet.prototype.onClientCallbackFunc = function () {
     dd3Server.on("dd3Receive", function (f) {
         console.log(_self.signalR_callback);
         console.log(_self.signalR_callback[f]);
+        console.log("arguments", arguments);
+        console.log("[].slice.call(arguments, 1", [].slice.call(arguments, 1));
         _self.signalR_callback[f].apply(null, [].slice.call(arguments, 1));
     });
 

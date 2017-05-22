@@ -1359,6 +1359,7 @@ var initDD3App = function () {
             //Callback upon data dimensions reception => store it and call the next callback
             dd3_data.receiveDimensions = function (dataId, dimensions) {
                 utils.log("Data dimensions received for " + dataId, 1);
+                utils.log(" 111111dimensions   " + dimensions, 1);
                 dimensions = JSON.parse(dimensions);
                 if (dimensions.error) {
                     utils.log("Error requesting dimensions : " + dimensions.error, 3);
