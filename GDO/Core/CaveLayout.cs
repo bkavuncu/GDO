@@ -18,7 +18,7 @@ namespace GDO.Core
         public CaveLayout()
         {
             Modules = new ConcurrentDictionary<string, IModule>();
-
+            Nodes = new ConcurrentDictionary<int, Node>();
         }
 
         /// <summary>

@@ -64,7 +64,7 @@
         gdo.net.neighbour = {};
 
         @{
-            foreach (KeyValuePair<string, IModule> moduleEntry in Cave.Modules)
+            foreach (KeyValuePair<string, IModule> moduleEntry in Cave.Layout.Modules)
             {
                 @:gdo.net.module["@moduleEntry.Value.Name"] = {};
                 @:gdo.net.module["@moduleEntry.Value.Name"].name = "@moduleEntry.Value.Name";
@@ -227,7 +227,7 @@
                 {
                     @:gdo.loadScript("@appEntry.Value.Name", "@appEntry.Value.Name", gdo.SCRIPT_TYPE.APP);
                 }
-                foreach (KeyValuePair<string, IModule> moduleEntry in Cave.Modules)
+                foreach (KeyValuePair<string, IModule> moduleEntry in Cave.Layout.Modules)
                 {
                     @:gdo.loadScript("@moduleEntry.Value.Name","@moduleEntry.Value.Name", gdo.SCRIPT_TYPE.MODULE);
                 }

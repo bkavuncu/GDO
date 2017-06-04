@@ -19,13 +19,13 @@ namespace GDO.Tests.Core
             {
                 Assert.Fail();
             }
-            Assert.AreNotEqual(true, Cave.Nodes.IsEmpty);
-            if (Cave.Nodes.Count < Cave.Cols*Cave.Rows)
+            Assert.AreNotEqual(true, Cave.Layout.Nodes.IsEmpty);
+            if (Cave.Layout.Nodes.Count < Cave.Cols*Cave.Rows)
             {
                 Assert.Fail();
             }
             Node node;
-            Cave.Nodes.TryGetValue(Cave.Cols*Cave.Rows, out node);
+            Cave.Layout.Nodes.TryGetValue(Cave.Cols*Cave.Rows, out node);
             Assert.AreNotEqual(null, node);
             Assert.AreEqual(16, node.Id);
             Assert.AreEqual(3, node.Col);
@@ -37,9 +37,9 @@ namespace GDO.Tests.Core
         {
             Cave.Init();
             Section section;
-            if (Cave.Nodes.Count <= 0)
+            if (Cave.Layout.Nodes.Count <= 0)
             {
-                Assert.Fail("Cave.nodes.Count:" + Cave.Nodes.Count);
+                Assert.Fail("Cave.Layout.Nodes.Count:" + Cave.Layout.Nodes.Count);
             }
             List<Node> deployedNodes = Cave.CreateSection(2, 2, 3, 3);
             if (deployedNodes.Count < 4)
@@ -73,7 +73,7 @@ namespace GDO.Tests.Core
             {
                 Assert.Fail();
             }
-            foreach (KeyValuePair<int, Node> nodeEntry in Cave.Nodes)
+            foreach (KeyValuePair<int, Node> nodeEntry in Cave.Layout.Nodes)
             {
                 if (nodeEntry.Value.SectionId > 0)
                 {

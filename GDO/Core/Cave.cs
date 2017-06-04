@@ -39,10 +39,9 @@ namespace GDO.Core
         public static string ConsoleId { get; set; }
         public static System.Timers.Timer SyncTimer { get; set; }
         public static bool InitializedSync { get; set; }
+        public static CaveLayout Layout { get; set; }
         public static ConcurrentDictionary<string, App> Apps { get; set; }
-        public static ConcurrentDictionary<string, IModule> Modules { get; set; }
         public static ConcurrentDictionary<int, IAppInstance> Instances { get; set; }
-        public static ConcurrentDictionary<int, Node> Nodes { get; set; }
         public static ConcurrentDictionary<int, Section> Sections { get; set; }
         public static ConcurrentDictionary<int, State> States { get; set; }
         public static ConcurrentDictionary<string, Scenario> Scenarios { get; set; }
@@ -70,9 +69,8 @@ namespace GDO.Core
             MaintenanceMode = true;
             BlankMode = false;
             Apps = new ConcurrentDictionary<string, App>();
-            Modules = new ConcurrentDictionary<string, IModule>();
+            Layout = new CaveLayout();
             Instances = new ConcurrentDictionary<int, IAppInstance>();
-            Nodes = new ConcurrentDictionary<int, Node>();
             Sections = new ConcurrentDictionary<int, Section>();
             States = new ConcurrentDictionary<int, State>();
             Scenarios = new ConcurrentDictionary<string, Scenario>();
@@ -100,7 +98,7 @@ namespace GDO.Core
                 string[] s = ConfigurationManager.AppSettings["node" + id].Split(',');
                 int col = int.Parse(s[0]);
                 int row = int.Parse(s[1]);
-                CreateNode(id, col, row);
+                Layout.CreateNode(id, col, row, NodeWidth, NodeHeight, Rows * Cols);
                 AppLocks.Add(new object());
             }
             CreateSection(0, 0, Cols - 1, Rows - 1); //Free Nodes Pool , id=0
@@ -140,76 +138,6 @@ namespace GDO.Core
         }
 
         /// <summary>
-        /// Creates the node.
-        /// </summary>
-        /// <param name="nodeId">The node identifier.</param>
-        /// <param name="col">The col.</param>
-        /// <param name="row">The row.</param>
-        public static void CreateNode(int nodeId, int col, int row)
-        {
-            Node node = new Node(nodeId, col, row, NodeWidth, NodeHeight, Rows * Cols);
-            Nodes.TryAdd(nodeId, node);
-        }
-
-        /// <summary>
-        /// Gets the node with connectionId.
-        /// </summary>
-        /// <param name="connectionId">The connection identifier.</param>
-        /// <returns></returns>
-        public static Node GetNode(string connectionId) {
-            return
-                (from nodeEntry in Nodes
-                    where connectionId == nodeEntry.Value.ConnectionId
-                    select nodeEntry.Value)
-                    .FirstOrDefault();
-        }
-
-
-        /// <summary>
-        /// Deploys the node to a section.
-        /// </summary>
-        /// <param name="sectionId">The section identifier.</param>
-        /// <param name="nodeId">The node identifier.</param>
-        /// <param name="col">The col.</param>
-        /// <param name="row">The row.</param>
-        /// <returns></returns>
-        public static Node DeployNode(int sectionId, int nodeId, int col, int row) {
-            if (Sections.ContainsKey(sectionId) && Nodes.ContainsKey(nodeId)) {
-                if (!Nodes[nodeId].IsDeployed) {
-                    Nodes[nodeId].Deploy(Sections[sectionId], col, row);
-                    Sections[sectionId].Nodes[col, row] = Nodes[nodeId];
-                    return Nodes[nodeId];
-                }
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// Frees the node.
-        /// </summary>
-        /// <param name="nodeId">The node identifier.</param>
-        /// <returns></returns>
-        public static Node FreeNode(int nodeId) {
-            if (Nodes.ContainsKey(nodeId)) {
-                Nodes[nodeId].Free();
-                return Nodes[nodeId];
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// Sets the node P2P mode.
-        /// </summary>
-        /// <param name="nodeId">The node identifier.</param>
-        /// <param name="p2pmode">The p2pmode.</param>
-        /// <returns></returns>
-        public static Node SetNodeP2PMode(int nodeId, int p2pmode)
-        {
-            Nodes[nodeId].P2PMode = p2pmode;
-            return Nodes[nodeId];
-        }
-
-        /// <summary>
         /// Creates a section.
         /// </summary>
         /// <param name="colStart">The col start.</param>
@@ -226,12 +154,12 @@ namespace GDO.Core
                 Section section = new Section(sectionId, colStart, rowStart, colEnd - colStart + 1, rowEnd - rowStart + 1);
                 Sections.TryAdd(sectionId, section);
                     
-                foreach (KeyValuePair<int, Node> nodeEntry in Nodes)
+                foreach (KeyValuePair<int, Node> nodeEntry in Layout.Nodes)
                 {
                     Node node = nodeEntry.Value;
                     if (node.Col <= colEnd && node.Col >= colStart && node.Row <= rowEnd && node.Row >= rowStart)
                     {
-                        deployedNodes.Add(DeployNode(section.Id, node.Id, node.Col - colStart, node.Row - rowStart));
+                        deployedNodes.Add(Layout.DeployNode(section.Id, node.Id, node.Col - colStart, node.Row - rowStart));
                     }
                 }
                 section.CalculateDimensions();
@@ -252,7 +180,7 @@ namespace GDO.Core
                 {
                     foreach (Node node in Sections[sectionId].Nodes)
                     {
-                        freedNodes.Add(FreeNode(node.Id));
+                        freedNodes.Add(Layout.FreeNode(node.Id));
                     }
                     Sections[sectionId].Nodes = null;
                     Section section;
@@ -271,7 +199,7 @@ namespace GDO.Core
         /// <param name="rowEnd">The row end.</param>
         /// <returns></returns>
         public static bool IsSectionFree(int colStart, int rowStart, int colEnd, int rowEnd) {
-            foreach (KeyValuePair<int, Node> nodeEntry in Nodes) {
+            foreach (KeyValuePair<int, Node> nodeEntry in Layout.Nodes) {
                 Node node = nodeEntry.Value;
                 if (colStart > colEnd || rowStart > rowEnd) {
                     return false;
@@ -286,26 +214,12 @@ namespace GDO.Core
         }
 
         /// <summary>
-        /// Determines whether the specified node identifier contains node.
-        /// </summary>
-        /// <param name="nodeId">The node identifier.</param>
-        /// <returns></returns>
-        public static bool ContainsNode(int nodeId) {
-            return Nodes.ContainsKey(nodeId);
-        }
-
-        /// <summary>
         /// Determines whether the specified section identifier contains section.
         /// </summary>
         /// <param name="sectionId">The section identifier.</param>
         /// <returns></returns>
         public static bool ContainsSection(int sectionId) {
             return Sections.ContainsKey(sectionId);
-        }
-
-        public static bool ContainsModule(string moduleName)
-        {
-            return Modules.ContainsKey(moduleName);
         }
 
         public static bool ContainsApp(string appName) {
@@ -338,7 +252,7 @@ namespace GDO.Core
         /// <param name="row">The row.</param>
         /// <returns></returns>
         public static int GetSectionId(int col, int row) {
-            return Nodes[GetNodeId(col, row)].SectionId;
+            return Layout.Nodes[GetNodeId(col, row)].SectionId;
         }
         /// <summary>
         /// Gets the node identifier.
@@ -348,7 +262,7 @@ namespace GDO.Core
         /// <returns></returns>
         public static int GetNodeId(int col, int row)
         {
-            foreach (KeyValuePair<int, Node> nodeEntry in Nodes)
+            foreach (KeyValuePair<int, Node> nodeEntry in Layout.Nodes)
             {
                 if (nodeEntry.Value.Col == col && nodeEntry.Value.Row == row)
                 {
@@ -372,7 +286,7 @@ namespace GDO.Core
                 //close app
                 foreach (Node node in Sections[sectionId].Nodes)
                 {
-                    affectedNodes.Add(SetNodeP2PMode(node.Id, p2pmode));
+                    affectedNodes.Add(Layout.SetNodeP2PMode(node.Id, p2pmode));
                 }
             }
             return affectedNodes;
@@ -385,7 +299,7 @@ namespace GDO.Core
         public static int[,] GetNodeMap()
         {
             int[,] nodeMap = new int[Cols, Rows];
-            foreach (KeyValuePair<int, Node> nodeEntry in Nodes)
+            foreach (KeyValuePair<int, Node> nodeEntry in Layout.Nodes)
             {
                 nodeMap[nodeEntry.Value.Col, nodeEntry.Value.Row] = nodeEntry.Value.Id;
             }
@@ -403,7 +317,7 @@ namespace GDO.Core
             if (ContainsSection(sectionId))
             {
                 sectionMap = new int[Sections[sectionId].Cols, Sections[sectionId].Rows];
-                foreach (var nodeEntry in Nodes)
+                foreach (var nodeEntry in Layout.Nodes)
                 {
                     if (nodeEntry.Value.SectionId == sectionId)
                     {
@@ -422,7 +336,7 @@ namespace GDO.Core
         public static int[,] GetNeighbourMap(int nodeId)
         {
             int[,] neighbours = null;
-            if (ContainsNode(nodeId))
+            if (Layout.ContainsNode(nodeId))
             {
                 int[,] nodeMap = GetNodeMap();
                 neighbours = new int[3, 3];
@@ -430,8 +344,9 @@ namespace GDO.Core
                 {
                     for (int j = -1; j < 2; j++)
                     {
-                        int col = Nodes[nodeId].Col + i;
-                        int row = Nodes[nodeId].Row + j;
+                        Node node = Layout.Nodes[nodeId];
+                        int col = node.Col + i;
+                        int row = node.Row + j;
                         if (col >= 0 && row >= 0 && col < Cols && row < Rows)
                         {
                             neighbours[i + 1, j + 1] = nodeMap[col, row];
@@ -461,19 +376,6 @@ namespace GDO.Core
                     Apps[name].Configurations.TryAdd(configuration.Name, configuration);
                 }
                 Apps[name].Hub = appHub;
-                return true;
-            }
-            return false;
-        }
-
-        public static bool RegisterModule(string name, Type moduleClassType)
-        {
-            if (!Modules.ContainsKey(name))
-            {
-                IModule module = (IModule)Activator.CreateInstance(moduleClassType, new object[0]);
-                module.Init();
-                Modules.TryAdd(module.Name, module);
-                ModuleLocks.Add(module.Name, new object());
                 return true;
             }
             return false;
@@ -627,12 +529,14 @@ namespace GDO.Core
             return configurationList;
         }
 
-
         public static List<string> GetModuleList()
         {
-            List<string> moduleList = Modules.Select(moduleEntry => moduleEntry.Value.Name).ToList();
-            moduleList.Sort();
-            return moduleList;
+            return Layout.GetModuleList();
+        }
+
+        public static bool RegisterModule(string name, Type moduleClassType)
+        {
+            return Layout.RegisterModule(name, moduleClassType);
         }
 
         /// <summary>

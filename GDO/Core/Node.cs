@@ -118,7 +118,7 @@ namespace GDO.Core
             }
             switch (P2PMode) {
                 case (int) Cave.P2PModes.Cave:
-                    if (Cave.Nodes.Any(nodeEntry => !ConnectedNodeList.Contains(nodeEntry.Value.Id) && nodeEntry.Value.Id != Id)) {
+                    if (Cave.Layout.Nodes.Any(nodeEntry => !ConnectedNodeList.Contains(nodeEntry.Value.Id) && nodeEntry.Value.Id != Id)) {
                         AggregatedConnectionHealth = 3;
                         return;
                     }
@@ -135,7 +135,7 @@ namespace GDO.Core
                     {
                         if (!ConnectedNodeList.Contains(neighbourId) && neighbourId != Id && neighbourId > 0)
                         {
-                            if (Cave.Nodes[neighbourId].SectionId == SectionId)
+                            if (Cave.Layout.Nodes[neighbourId].SectionId == SectionId)
                             {
                                 AggregatedConnectionHealth = 3;
                                 return;
