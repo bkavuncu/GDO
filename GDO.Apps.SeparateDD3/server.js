@@ -31,12 +31,13 @@ var members = {};
 var roomInfo = [];
 
 
+
 io.on('connection',function(socket){
   members[socket.id] = socket;
   socket.emit('connected');
   socket.on('disconnect', function(){
     api.removeMember(socket);
-    //console.log('after remove',rooms);
+    console.log('after remove',rooms);
   });
 
 
@@ -56,11 +57,7 @@ io.on('connection',function(socket){
     var roomId = ''+ data.gdo_appInstanceId.applicationId + data.gdo_appInstanceId.instanceId;
     //console.log('data.browserInfo',data.browserInfo);
  
-    if(rooms[roomId].ready){
-        delete rooms[socket.roomId];
-        io.to(roomId).emit('refresh');
-        return;
-    }
+    
 
     if(rooms[roomId] && rooms[roomId].clientLength == rooms[roomId].currentLength){
         var browserInfoArray = [];
@@ -120,8 +117,6 @@ io.on('connection',function(socket){
   });
 
 
-
-
   socket.on('sendOrder', function (data) {
     console.log('sendOrder',data);
 
@@ -143,6 +138,7 @@ io.on('connection',function(socket){
 
 var api = {
   joinRoom(socket, roomId, memberLength){
+   
       if(!rooms[roomId]){
            rooms[roomId] = {currentLength:0, clientLength: memberLength, browserInfo: {}, controllerId: null, ready: false, firstNode: null}
       }
@@ -160,8 +156,9 @@ var api = {
         if(rooms[roomId].clientLength == rooms[roomId].currentLength)
           socket.emit('updateController', {show:true});
       }
-     
+      console.log("[joinRoom]");
       socket.join(roomId);
+      console.log("[emit joined]");
       socket.emit('joined');
   },
   removeMember(socket){
@@ -175,7 +172,7 @@ var api = {
         }
         socket.leave(socket.roomId);
 
-        if(rooms[socket.roomId].currentLength == 0 && rooms[socket.roomId].controllerId ==null)
+        if(rooms[socket.roomId].currentLength == 0 && rooms[socket.roomId].controllerId == null)
             delete rooms[socket.roomId];
     }
     delete members[socket.id];
@@ -184,5 +181,17 @@ var api = {
         console.log('[firstNode changed from]',socket.id , ' [to ]', Object.keys(members)[0]);
         rooms[socket.roomId].firstNode = Object.keys(members)[0];
     }
+
+    if(rooms[socket.roomId]&&rooms[socket.roomId].ready){
+        //delete rooms[socket.roomId];
+        rooms[socket.roomId].ready = false;
+        io.to(socket.roomId).emit('refresh');
+        //io.sockets.emit('refresh');
+        return;
+    }
   }
 }
+
+process.on('uncaughtException',function(err){
+  console.log("[uncaughtException]",err);
+});

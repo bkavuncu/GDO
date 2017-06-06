@@ -32,7 +32,7 @@ $.ajax({
 });
 
 
-//separate version changed: do not need signalr any more
+//seperate version changed: do not need signalr any more
 /*
 $.ajax({
     async: false,
@@ -41,14 +41,14 @@ $.ajax({
 });
 */
 
-//separate version changed: need nodejs socketio library in this version
+//seperate version changed: need nodejs socketio library in this version
 $.ajax({
     async: false,
     url: "../../Scripts/DD3/gdo.apps.dd3.socketio.js",
     dataType: "script"
 });
 
-//separate version changed: do not need any gdo service
+//seperate version changed: do not need any gdo service
 /*
 $.ajax({
     async: false,
@@ -67,7 +67,7 @@ dd3Net = new DD3Net("socketio");
 
 
 
-dd3Net.onClientCallbackFunc();
+
 
 
 
@@ -102,7 +102,7 @@ var initDD3App = function () {
              *get the value of an url variable if it exist, false else
              */
              
-            //separate version changed: changed this function and make it more easy to be used
+            //seperate version changed: changed this function and make it more easy to be used
             getUrlVar: function (name, url) {
                 if (!url) url = window.location.href;
                 name = name.replace(/[\[\]]/g, "\\$&");
@@ -402,7 +402,7 @@ var initDD3App = function () {
     //{ host: "localhost", port: 55555 };
 
     //dd3 object containing the core fo DD3 functions
-    //BAI: TODO : dd3 object also contains lot of initilize operations. The definition of api functions and initialization should be separate.
+    //BAI: TODO : dd3 object also contains lot of initilize operations. The definition of api functions and initialization should be seperate.
     //BAI: inside the dd3 function, the returned value is "_dd3", so "_dd3" is equal to "dd3"
 
     var dd3 = (function () {
@@ -789,7 +789,7 @@ var initDD3App = function () {
                 //dd3NetS.setClientCallbackFunc(init.getCaveConfiguration, {});
                 //dd3Net.setClientCallbackFunc(init.getCaveConfiguration, {}); 
 
-              
+                dd3Net.onClientCallbackFunc();
 
                 dd3Net.setClientCallbackFunc({ caveConfigurationObj: init.getCaveConfiguration });
                 console.log("dd3Net.signalR_callback", dd3Net.signalR_callback);
@@ -822,7 +822,7 @@ var initDD3App = function () {
 
 
                 console.log("calling update information");
-                //separate version changed: listen to the nodejs server events instead of signalr(below)
+                //seperate version changed: listen to the nodejs server events instead of signalr(below)
                 var controlId = parseInt(utils.getUrlVar("controlId"));
                 var confId = parseInt(utils.getUrlVar("confId"));
                 var clientId =  parseInt(utils.getUrlVar("clientId"));
@@ -833,8 +833,10 @@ var initDD3App = function () {
 
 
                 dd3Net.net.client.on('connected',function(){
+                    console.log("connected-----------------------------------------------------");
                     dd3Net.net.client.emit('joinroom',{instanceId: controlId, applicationId: confId, clientId: clientId, numClients:numClients, browserInfo:thisInfo});
                     dd3Net.net.client.on('joined',function(){
+                        console.log("joined room!*********************************************");
                       dd3Net.net.server.updateInformation(gdo_appInstanceId, thisInfo);
                     }); 
                 }); 
@@ -842,7 +844,7 @@ var initDD3App = function () {
                 dd3Net.net.client.on('refresh',function(){
                    location.reload();
                 }); 
-                //separate version changed: listen to the nodejs server events instead of signalr(above)
+                //seperate version changed: listen to the nodejs server events instead of signalr(above)
                   
                
 
@@ -933,7 +935,7 @@ var initDD3App = function () {
                 browser.svgWidth = Math.max(browser.width - browser.margin.left - browser.margin.right, 0);
                 browser.svgHeight = Math.max(browser.height - browser.margin.top - browser.margin.bottom, 0);
 
-                //separate version changed: only changed the order of the following two functions: "dd3Net.setUtils(utils)" and "dd3Net.setBrowser(browser);"
+                //seperate version changed: only changed the order of the following two functions: "dd3Net.setUtils(utils)" and "dd3Net.setBrowser(browser);"
                 dd3Net.setUtils(utils);
                 
                 dd3Net.setBrowser(browser);
@@ -1103,7 +1105,7 @@ var initDD3App = function () {
                     api.getDataDimensions(dataId);
                 else{
                     //getdata
-                    //separate version changed: this data query function should be implemented by Odata
+                    //seperate version changed: this data query function should be implemented by Odata
                     //var controlId = parseInt(utils.getUrlVar("controlId"));
                     //var confId = parseInt(utils.getUrlVar("confId"));
                     //var gdo_appInstanceId = {instanceId: controlId, applicationId: confId}
@@ -1135,7 +1137,7 @@ var initDD3App = function () {
                     api.getData(request);
                 else{
                     //getdata
-                    //separate version changed: this data query function should be implemented by Odata
+                    //seperate version changed: this data query function should be implemented by Odata
                    // dd3Net.net.server.getData(gdo_appInstanceId, request);
                 }
 
@@ -1178,7 +1180,7 @@ var initDD3App = function () {
                     api.getPointData(request);
                 else{
                     //getdata
-                    //separate version changed: this data query function should be implemented by Odata
+                    //seperate version changed: this data query function should be implemented by Odata
                     //var controlId = parseInt(utils.getUrlVar("controlId"));
                    // var confId = parseInt(utils.getUrlVar("confId"));
                    // var gdo_appInstanceId = {instanceId: controlId, applicationId: confId}
@@ -1244,7 +1246,7 @@ var initDD3App = function () {
                     api.getPathData(request);
                 else{
                     //getdata
-                    //separate version changed: this data query function should be implemented by Odata
+                    //seperate version changed: this data query function should be implemented by Odata
                     //dd3Net.net.server.getPathData(gdo_appInstanceId, request);
                 }
 
@@ -1310,7 +1312,7 @@ var initDD3App = function () {
                         api.getBarData(request);
                     else{
                         //getdata
-                        //separate version changed: this data query function should be implemented by Odata
+                        //seperate version changed: this data query function should be implemented by Odata
                         //dd3Net.net.server.getBarData(gdo_appInstanceId, request);
                     }
 
@@ -1360,7 +1362,7 @@ var initDD3App = function () {
                             api.getData(request); // api.getData(dataName, dataId);
                         else{
                             //getdata
-                            //separate version changed: this data query function should be implemented by Odata
+                            //seperate version changed: this data query function should be implemented by Odata
                             //dd3Net.net.server.getData(gdo_appInstanceId, request);
                         }
 
@@ -1406,7 +1408,7 @@ var initDD3App = function () {
                     useNames: useNames
                 };
                 //getdata
-                //separate version changed: this data query function should be implemented by Odata
+                //seperate version changed: this data query function should be implemented by Odata
                 //dd3Net.net.server.requestFromRemote(gdo_appInstanceId, request);
             };
 
@@ -1857,7 +1859,7 @@ var initDD3App = function () {
          
                     setTimeout(function () {
                         //getdata
-                        //separate version changed: this data query function should be implemented by Peerjs
+                        //seperate version changed: this data query function should be implemented by Peerjs
                        // dd3Net.net.server.synchronize(gdo_appInstanceId);
                     }, t || 0);
                 };
