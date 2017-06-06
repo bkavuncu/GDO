@@ -11526,8 +11526,14 @@ $.extend( $.DziTileSource.prototype, $.TileSource.prototype, /** @lends OpenSead
      * @param {Number} x
      * @param {Number} y
      */
-    getTileUrl: function( level, x, y ) {
-        return [ this.tilesUrl, level, '/', x, '_', y, '.', this.fileFormat, this.queryParams ].join( '' );
+    getTileUrl: function (level, x, y) {
+        if (this.tilesUrl.includes("bentley")) {
+            // here we undo Bentley's hack
+            // return [ this.tilesUrl, level, '/', x, '_', y, '.', this.fileFormat, this.queryParams ].join( '' );
+            return [ this.tilesUrl, level, '/', x, '/', x, '_', y, '.', this.fileFormat, this.queryParams ].join( '' );
+        } else {
+            return [this.tilesUrl, level, '/', x, '_', y, '.', this.fileFormat, this.queryParams].join('');
+        }
     },
 
 

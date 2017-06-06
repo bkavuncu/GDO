@@ -87,6 +87,7 @@
     <Content Include="Configurations\GigaImages\In2White.json" />
     <Content Include="Configurations\GigaImages\chetif.json" />
     <Content Include="Configurations\GigaImages\northface.json" />
+    <Content Include="Configurations\GigaImages\Bentley.json" />
     <None Include="packages.config" />
     <Content Include="Scripts\GigaImages\OpenSeaDragon\openseadragon.min.js.map" />
     <Content Include="Scripts\GigaImages\OpenSeaDragon\changelog.txt" />
