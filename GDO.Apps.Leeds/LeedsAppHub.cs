@@ -16,7 +16,7 @@ namespace GDO.Apps.Leeds
         public Type InstanceType { get; set; } = new LeedsApp().GetType();
         public void JoinGroup(string groupId)
         {
-            Cave.Apps[Name].Hub.Clients = Clients;
+            Cave.Deployment.Apps[Name].Hub.Clients = Clients;
             Groups.Add(Context.ConnectionId, "" + groupId);
         }
         public void ExitGroup(string groupId)
@@ -30,7 +30,7 @@ namespace GDO.Apps.Leeds
             {
                 try
                 {
-                    ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).SetMapPosition(topLeft, center, bottomRight, resolution, width, height, zoom);
+                    ((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).SetMapPosition(topLeft, center, bottomRight, resolution, width, height, zoom);
                     Clients.Caller.receiveMapPosition(instanceId, topLeft, center, bottomRight, resolution, width, height, zoom);
                     BroadcastMapPosition(instanceId, topLeft, center, bottomRight, resolution, width, height, zoom);
                 }
@@ -43,12 +43,12 @@ namespace GDO.Apps.Leeds
 
         public void RequestTimeStep()
         {
-            int instanceId = Utilities.GetFirstKey(Cave.Apps["Leeds"].Instances);
+            int instanceId = Utilities.GetFirstKey(Cave.Deployment.Apps["Leeds"].Instances);
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    Clients.Caller.receiveTimeStep(instanceId, (((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).TimeStep));
+                    Clients.Caller.receiveTimeStep(instanceId, (((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).TimeStep));
                 }
                 catch (Exception e)
                 {
@@ -63,11 +63,11 @@ namespace GDO.Apps.Leeds
             {
                 try
                 {
-                    ((LeedsApp) Cave.Apps["Leeds"].Instances[instanceId]).Blur = blur;
-                    ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).Radius = radius;
-                    ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).Opacity = opacity;
-                    ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).StationWidth = station;
-                    ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).Dataserie = dataseries;
+                    ((LeedsApp) Cave.Deployment.Apps["Leeds"].Instances[instanceId]).Blur = blur;
+                    ((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).Radius = radius;
+                    ((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).Opacity = opacity;
+                    ((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).StationWidth = station;
+                    ((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).Dataserie = dataseries;
                     Clients.Group("" + instanceId).receiveProperties(instanceId, blur, radius, opacity, station, dataseries);
                     Clients.Caller.receiveProperties(instanceId, blur, radius, opacity, station, dataseries);
                 }
@@ -84,11 +84,11 @@ namespace GDO.Apps.Leeds
             {
                 try
                 {
-                    int blur = ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).Blur;
-                    int radius = ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).Radius;
-                    float opacity = ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).Opacity;
-                    int station = ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).StationWidth;
-                    string dataseries = ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).Dataserie;
+                    int blur = ((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).Blur;
+                    int radius = ((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).Radius;
+                    float opacity = ((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).Opacity;
+                    int station = ((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).StationWidth;
+                    string dataseries = ((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).Dataserie;
                     Clients.Caller.receiveProperties(instanceId, blur, radius, opacity, station, dataseries);
                 }
                 catch (Exception e)
@@ -100,10 +100,10 @@ namespace GDO.Apps.Leeds
 
         public void StartAnimation()
         {
-            int instanceId = Utilities.GetFirstKey(Cave.Apps["Leeds"].Instances);
+            int instanceId = Utilities.GetFirstKey(Cave.Deployment.Apps["Leeds"].Instances);
             try
             {
-                if (((LeedsApp) Cave.Apps["Leeds"].Instances[instanceId]).IsAnimating == false)
+                if (((LeedsApp) Cave.Deployment.Apps["Leeds"].Instances[instanceId]).IsAnimating == false)
                 {
                     Animate();
                 }
@@ -116,34 +116,34 @@ namespace GDO.Apps.Leeds
 
         public void Animate()
         {
-            int instanceId = Utilities.GetFirstKey(Cave.Apps["Leeds"].Instances);
+            int instanceId = Utilities.GetFirstKey(Cave.Deployment.Apps["Leeds"].Instances);
             try
             {
-                if (((LeedsApp) Cave.Apps["Leeds"].Instances[instanceId]).IsAnimating == false)
+                if (((LeedsApp) Cave.Deployment.Apps["Leeds"].Instances[instanceId]).IsAnimating == false)
                 {
-                    ((LeedsApp) Cave.Apps["Leeds"].Instances[instanceId]).IsAnimating = true;
-                    while (((LeedsApp) Cave.Apps["Leeds"].Instances[instanceId]).IsAnimating)
+                    ((LeedsApp) Cave.Deployment.Apps["Leeds"].Instances[instanceId]).IsAnimating = true;
+                    while (((LeedsApp) Cave.Deployment.Apps["Leeds"].Instances[instanceId]).IsAnimating)
                     {
                         System.Threading.Thread.Sleep(
-                            ((LeedsApp) Cave.Apps["Leeds"].Instances[instanceId]).WaitTime);
-                        if (((LeedsApp) Cave.Apps["Leeds"].Instances[instanceId]).TimeStep >= 8523)
+                            ((LeedsApp) Cave.Deployment.Apps["Leeds"].Instances[instanceId]).WaitTime);
+                        if (((LeedsApp) Cave.Deployment.Apps["Leeds"].Instances[instanceId]).TimeStep >= 8523)
                         {
-                            ((LeedsApp) Cave.Apps["Leeds"].Instances[instanceId]).TimeStep = 0;
+                            ((LeedsApp) Cave.Deployment.Apps["Leeds"].Instances[instanceId]).TimeStep = 0;
                         }
-                        foreach (KeyValuePair<int, IAppInstance> instanceKeyValuePair in Cave.Instances)
+                        foreach (KeyValuePair<int, IAppInstance> instanceKeyValuePair in Cave.Deployment.Instances)
                         {
                             if (instanceKeyValuePair.Value.AppName == "Leeds")
                             {
                                 Clients.Group("" + instanceKeyValuePair.Value.Id).receiveTimeStep(
-                                    ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).TimeStep);
+                                    ((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).TimeStep);
                             }
                         }
-                        ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).TimeStep++;
+                        ((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).TimeStep++;
                     }
                 }
                 else
                 {
-                    ((LeedsApp) Cave.Apps["Leeds"].Instances[instanceId]).IsAnimating = false;
+                    ((LeedsApp) Cave.Deployment.Apps["Leeds"].Instances[instanceId]).IsAnimating = false;
                 }
 
             }
@@ -160,11 +160,11 @@ namespace GDO.Apps.Leeds
                 try
                 {
                     //change its value with !
-                    ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).BingLayer =
-                        !((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).BingLayer;
+                    ((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).BingLayer =
+                        !((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).BingLayer;
                     
-                    Clients.Group("" + instanceId).setBingLayerVisible(instanceId, ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).BingLayer);
-                    Clients.Caller.setBingLayerVisible(instanceId, ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).BingLayer);
+                    Clients.Group("" + instanceId).setBingLayerVisible(instanceId, ((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).BingLayer);
+                    Clients.Caller.setBingLayerVisible(instanceId, ((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).BingLayer);
                 }
                 catch (Exception e)
                 {
@@ -180,11 +180,11 @@ namespace GDO.Apps.Leeds
                 try
                 {
                     //change its value with !
-                    ((LeedsApp) Cave.Apps["Leeds"].Instances[instanceId]).CartoDBLayer =
-                        !((LeedsApp) Cave.Apps["Leeds"].Instances[instanceId]).CartoDBLayer;
+                    ((LeedsApp) Cave.Deployment.Apps["Leeds"].Instances[instanceId]).CartoDBLayer =
+                        !((LeedsApp) Cave.Deployment.Apps["Leeds"].Instances[instanceId]).CartoDBLayer;
 
-                    Clients.Group("" + instanceId).setCartoDBLayerVisible(instanceId, ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).CartoDBLayer);
-                    Clients.Caller.setCartoDBLayerVisible(instanceId, ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).CartoDBLayer);
+                    Clients.Group("" + instanceId).setCartoDBLayerVisible(instanceId, ((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).CartoDBLayer);
+                    Clients.Caller.setCartoDBLayerVisible(instanceId, ((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).CartoDBLayer);
                 }
                 catch (Exception e)
                 {
@@ -199,11 +199,11 @@ namespace GDO.Apps.Leeds
                 try
                 {
                     //change its value with !
-                    ((LeedsApp) Cave.Apps["Leeds"].Instances[instanceId]).OpenCycleLayer =
-                        !((LeedsApp) Cave.Apps["Leeds"].Instances[instanceId]).OpenCycleLayer;
+                    ((LeedsApp) Cave.Deployment.Apps["Leeds"].Instances[instanceId]).OpenCycleLayer =
+                        !((LeedsApp) Cave.Deployment.Apps["Leeds"].Instances[instanceId]).OpenCycleLayer;
 
-                    Clients.Group("" + instanceId).setOpenCycleLayerVisible(instanceId, ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).OpenCycleLayer);
-                    Clients.Caller.setOpenCycleLayerVisible(instanceId, ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).OpenCycleLayer);
+                    Clients.Group("" + instanceId).setOpenCycleLayerVisible(instanceId, ((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).OpenCycleLayer);
+                    Clients.Caller.setOpenCycleLayerVisible(instanceId, ((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).OpenCycleLayer);
                 }
                 catch (Exception e)
                 {
@@ -218,11 +218,11 @@ namespace GDO.Apps.Leeds
                 try
                 {
                     //change its value with !
-                    ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).StamenLayer =
-                        !((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).StamenLayer;
+                    ((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).StamenLayer =
+                        !((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).StamenLayer;
 
-                    Clients.Group("" + instanceId).setStamenLayerVisible(instanceId, ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).StamenLayer);
-                    Clients.Caller.setStamenLayerVisible(instanceId, ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).StamenLayer);
+                    Clients.Group("" + instanceId).setStamenLayerVisible(instanceId, ((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).StamenLayer);
+                    Clients.Caller.setStamenLayerVisible(instanceId, ((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).StamenLayer);
                 }
                 catch (Exception e)
                 {
@@ -238,11 +238,11 @@ namespace GDO.Apps.Leeds
                 try
                 {
                     //change its value with !
-                    ((LeedsApp) Cave.Apps["Leeds"].Instances[instanceId]).StationLayer =
-                        !((LeedsApp) Cave.Apps["Leeds"].Instances[instanceId]).StationLayer;
+                    ((LeedsApp) Cave.Deployment.Apps["Leeds"].Instances[instanceId]).StationLayer =
+                        !((LeedsApp) Cave.Deployment.Apps["Leeds"].Instances[instanceId]).StationLayer;
 
-                    Clients.Group("" + instanceId).setStationLayerVisible(instanceId, ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).StationLayer);
-                    Clients.Caller.setStationLayerVisible(instanceId, ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).StationLayer);
+                    Clients.Group("" + instanceId).setStationLayerVisible(instanceId, ((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).StationLayer);
+                    Clients.Caller.setStationLayerVisible(instanceId, ((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).StationLayer);
                 }
                 catch (Exception e)
                 {
@@ -258,11 +258,11 @@ namespace GDO.Apps.Leeds
                 try
                 {
                     //change its value with !
-                    ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).HeatmapLayer = 
-                        !((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).HeatmapLayer;
+                    ((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).HeatmapLayer = 
+                        !((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).HeatmapLayer;
 
-                    Clients.Group("" + instanceId).setHeatmapLayerVisible(instanceId, ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).HeatmapLayer);
-                    Clients.Caller.setHeatmapLayerVisible(instanceId, ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).HeatmapLayer);
+                    Clients.Group("" + instanceId).setHeatmapLayerVisible(instanceId, ((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).HeatmapLayer);
+                    Clients.Caller.setHeatmapLayerVisible(instanceId, ((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).HeatmapLayer);
                 }
                 catch (Exception e)
                 {
@@ -277,28 +277,28 @@ namespace GDO.Apps.Leeds
             {
                 try
                 {
-                    switch (((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).Dataserie)
+                    switch (((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).Dataserie)
                     {
                         case "entries":
-                            ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).Dataserie = "entries";
+                            ((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).Dataserie = "entries";
                             break;
                         case "exits":
-                            ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).Dataserie = "exits";
+                            ((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).Dataserie = "exits";
                             break;
                         case "emptiness":
-                            ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).Dataserie = "emptiness";
+                            ((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).Dataserie = "emptiness";
                             break;
                     }*/
                     /*
-                    if (((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).Dataserie)
+                    if (((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).Dataserie)
                     {
-                        ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).Dataserie = false;
+                        ((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).Dataserie = false;
                     }
                     else
                     {
-                        ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).Dataserie = true;
+                        ((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).Dataserie = true;
                     }*/
- /*                   Clients.Group("" + instanceId).setEntry(instanceId, ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).Dataserie);
+ /*                   Clients.Group("" + instanceId).setEntry(instanceId, ((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).Dataserie);
                 }
                 catch (Exception e)
                 {
@@ -313,7 +313,7 @@ namespace GDO.Apps.Leeds
             {
                 try
                 {
-                    Clients.Caller.setBingLayerVisible(instanceId, ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).BingLayer);
+                    Clients.Caller.setBingLayerVisible(instanceId, ((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).BingLayer);
                 }
                 catch (Exception e)
                 {
@@ -328,7 +328,7 @@ namespace GDO.Apps.Leeds
             {
                 try
                 {
-                    Clients.Caller.setCartoDBLayerVisible(instanceId, ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).CartoDBLayer);
+                    Clients.Caller.setCartoDBLayerVisible(instanceId, ((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).CartoDBLayer);
                 }
                 catch (Exception e)
                 {
@@ -342,7 +342,7 @@ namespace GDO.Apps.Leeds
             {
                 try
                 {
-                    Clients.Caller.setOpenCycleLayerVisible(instanceId, ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).OpenCycleLayer);
+                    Clients.Caller.setOpenCycleLayerVisible(instanceId, ((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).OpenCycleLayer);
                 }
                 catch (Exception e)
                 {
@@ -356,7 +356,7 @@ namespace GDO.Apps.Leeds
             {
                 try
                 {
-                    Clients.Caller.setStamenVisible(instanceId, ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).StamenLayer);
+                    Clients.Caller.setStamenVisible(instanceId, ((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).StamenLayer);
                 }
                 catch (Exception e)
                 {
@@ -370,7 +370,7 @@ namespace GDO.Apps.Leeds
             {
                 try
                 {
-                    Clients.Caller.setStationLayerVisible(instanceId, ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).StationLayer);
+                    Clients.Caller.setStationLayerVisible(instanceId, ((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).StationLayer);
                 }
                 catch (Exception e)
                 {
@@ -385,7 +385,7 @@ namespace GDO.Apps.Leeds
             {
                 try
                 {
-                    Clients.Caller.setHeatmapLayerVisible(instanceId, ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).HeatmapLayer);
+                    Clients.Caller.setHeatmapLayerVisible(instanceId, ((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).HeatmapLayer);
                 }
                 catch (Exception e)
                 {
@@ -401,7 +401,7 @@ namespace GDO.Apps.Leeds
             {
                 try
                 {
-                    ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).Style = style;
+                    ((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).Style = style;
                     Clients.Caller.receiveLeedstyle(instanceId, style);
                     BroadcastMapStyle(instanceId, style);
                 }
@@ -418,7 +418,7 @@ namespace GDO.Apps.Leeds
             {
                 try
                 {
-                    MapPosition position = ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).GetMapPosition();
+                    MapPosition position = ((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).GetMapPosition();
                     if (control)
                     {
                         Clients.Caller.receiveInitialMapPosition(instanceId, position.Center, position.Resolution, position.Zoom);
@@ -441,7 +441,7 @@ namespace GDO.Apps.Leeds
             {
                 try
                 {
-                    string style = ((LeedsApp) Cave.Apps["Leeds"].Instances[instanceId]).Style;
+                    string style = ((LeedsApp) Cave.Deployment.Apps["Leeds"].Instances[instanceId]).Style;
                     Clients.Caller.receiveMapStyle(instanceId, style);
                 }
                 catch (Exception e)
@@ -465,7 +465,7 @@ namespace GDO.Apps.Leeds
             {
                 try
                 {
-                    ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).mode = mode;
+                    ((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).mode = mode;
                     Clients.Group("" + instanceId).receive3DMode(instanceId, mode);
                     Clients.Caller.receive3DMode(instanceId, mode);
                 }
@@ -483,7 +483,7 @@ namespace GDO.Apps.Leeds
             {
                 try
                 {
-                    Clients.Caller.receive3DMode(instanceId, ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).mode);
+                    Clients.Caller.receive3DMode(instanceId, ((LeedsApp)Cave.Deployment.Apps["Leeds"].Instances[instanceId]).mode);
                 }
                 catch (Exception e)
                 {

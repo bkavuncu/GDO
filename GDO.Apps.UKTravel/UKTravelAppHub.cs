@@ -17,7 +17,7 @@ namespace GDO.Apps.UKTravel
         public Type InstanceType { get; set; } = new UKTravelApp().GetType();
         public void JoinGroup(string groupId)
         {
-            Cave.Apps[Name].Hub.Clients = Clients;
+            Cave.Deployment.Apps[Name].Hub.Clients = Clients;
             Groups.Add(Context.ConnectionId, "" + groupId);
         }
         public void ExitGroup(string groupId)
@@ -31,7 +31,7 @@ namespace GDO.Apps.UKTravel
             {
                 try
                 {
-                    ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).SetMapPosition(topLeft, center, bottomRight, resolution, width, height, zoom);
+                    ((UKTravelApp)Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).SetMapPosition(topLeft, center, bottomRight, resolution, width, height, zoom);
                     Clients.Caller.receiveMapPosition(instanceId, topLeft, center, bottomRight, resolution, width, height, zoom);
                     BroadcastMapPosition(instanceId, topLeft, center, bottomRight, resolution, width, height, zoom);
                 }
@@ -44,12 +44,12 @@ namespace GDO.Apps.UKTravel
 
         public void RequestTimeStep()
         {
-            int instanceId = Utilities.GetFirstKey(Cave.Apps["UKTravel"].Instances);
+            int instanceId = Utilities.GetFirstKey(Cave.Deployment.Apps["UKTravel"].Instances);
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    Clients.Caller.receiveTimeStep(instanceId, (((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).TimeStep));
+                    Clients.Caller.receiveTimeStep(instanceId, (((UKTravelApp)Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).TimeStep));
                 }
                 catch (Exception e)
                 {
@@ -64,11 +64,11 @@ namespace GDO.Apps.UKTravel
             {
                 try
                 {
-                    ((UKTravelApp) Cave.Apps["UKTravel"].Instances[instanceId]).Blur = blur;
-                    ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).Radius = radius;
-                    ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).Opacity = opacity;
-                    ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).StationWidth = station;
-                    ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).Dataserie = dataseries;
+                    ((UKTravelApp) Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).Blur = blur;
+                    ((UKTravelApp)Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).Radius = radius;
+                    ((UKTravelApp)Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).Opacity = opacity;
+                    ((UKTravelApp)Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).StationWidth = station;
+                    ((UKTravelApp)Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).Dataserie = dataseries;
                     Clients.Group("" + instanceId).receiveProperties(instanceId, blur, radius, opacity, station, dataseries);
                     Clients.Caller.receiveProperties(instanceId, blur, radius, opacity, station, dataseries);
                 }
@@ -85,11 +85,11 @@ namespace GDO.Apps.UKTravel
             {
                 try
                 {
-                    int blur = ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).Blur;
-                    int radius = ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).Radius;
-                    float opacity = ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).Opacity;
-                    int station = ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).StationWidth;
-                    string dataseries = ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).Dataserie;
+                    int blur = ((UKTravelApp)Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).Blur;
+                    int radius = ((UKTravelApp)Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).Radius;
+                    float opacity = ((UKTravelApp)Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).Opacity;
+                    int station = ((UKTravelApp)Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).StationWidth;
+                    string dataseries = ((UKTravelApp)Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).Dataserie;
                     Clients.Caller.receiveProperties(instanceId, blur, radius, opacity, station, dataseries);
                 }
                 catch (Exception e)
@@ -101,10 +101,10 @@ namespace GDO.Apps.UKTravel
 
         public void StartAnimation()
         {
-            int instanceId = Utilities.GetFirstKey(Cave.Apps["UKTravel"].Instances);
+            int instanceId = Utilities.GetFirstKey(Cave.Deployment.Apps["UKTravel"].Instances);
             try
             {
-                if (((UKTravelApp) Cave.Apps["UKTravel"].Instances[instanceId]).IsAnimating == false)
+                if (((UKTravelApp) Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).IsAnimating == false)
                 {
                     Animate();
                 }
@@ -118,34 +118,34 @@ namespace GDO.Apps.UKTravel
         public void Animate()
         {
             int MAX_TIMESTEP = 17;
-            int instanceId = Utilities.GetFirstKey(Cave.Apps["UKTravel"].Instances);
+            int instanceId = Utilities.GetFirstKey(Cave.Deployment.Apps["UKTravel"].Instances);
             try
             {
-                if (((UKTravelApp) Cave.Apps["UKTravel"].Instances[instanceId]).IsAnimating == false)
+                if (((UKTravelApp) Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).IsAnimating == false)
                 {
-                    ((UKTravelApp) Cave.Apps["UKTravel"].Instances[instanceId]).IsAnimating = true;
-                    while (((UKTravelApp) Cave.Apps["UKTravel"].Instances[instanceId]).IsAnimating)
+                    ((UKTravelApp) Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).IsAnimating = true;
+                    while (((UKTravelApp) Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).IsAnimating)
                     {
                         System.Threading.Thread.Sleep(
-                            ((UKTravelApp) Cave.Apps["UKTravel"].Instances[instanceId]).WaitTime);
-                        if (((UKTravelApp) Cave.Apps["UKTravel"].Instances[instanceId]).TimeStep >= MAX_TIMESTEP)
+                            ((UKTravelApp) Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).WaitTime);
+                        if (((UKTravelApp) Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).TimeStep >= MAX_TIMESTEP)
                         {
-                            ((UKTravelApp) Cave.Apps["UKTravel"].Instances[instanceId]).TimeStep = 0;
+                            ((UKTravelApp) Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).TimeStep = 0;
                         }
-                        foreach (KeyValuePair<int, IAppInstance> instanceKeyValuePair in Cave.Instances)
+                        foreach (KeyValuePair<int, IAppInstance> instanceKeyValuePair in Cave.Deployment.Instances)
                         {
                             if (instanceKeyValuePair.Value.AppName == "UKTravel")
                             {
                                 Clients.Group("" + instanceKeyValuePair.Value.Id).receiveTimeStep(
-                                    ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).TimeStep);
+                                    ((UKTravelApp)Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).TimeStep);
                             }
                         }
-                        ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).TimeStep++;
+                        ((UKTravelApp)Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).TimeStep++;
                     }
                 }
                 else
                 {
-                    ((UKTravelApp) Cave.Apps["UKTravel"].Instances[instanceId]).IsAnimating = false;
+                    ((UKTravelApp) Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).IsAnimating = false;
                 }
 
             }
@@ -162,11 +162,11 @@ namespace GDO.Apps.UKTravel
                 try
                 {
                     //change its value with !
-                    ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).BingLayer =
-                        !((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).BingLayer;
+                    ((UKTravelApp)Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).BingLayer =
+                        !((UKTravelApp)Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).BingLayer;
                     
-                    Clients.Group("" + instanceId).setBingLayerVisible(instanceId, ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).BingLayer);
-                    Clients.Caller.setBingLayerVisible(instanceId, ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).BingLayer);
+                    Clients.Group("" + instanceId).setBingLayerVisible(instanceId, ((UKTravelApp)Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).BingLayer);
+                    Clients.Caller.setBingLayerVisible(instanceId, ((UKTravelApp)Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).BingLayer);
                 }
                 catch (Exception e)
                 {
@@ -182,11 +182,11 @@ namespace GDO.Apps.UKTravel
                 try
                 {
                     //change its value with !
-                    ((UKTravelApp) Cave.Apps["UKTravel"].Instances[instanceId]).CartoDBLayer =
-                        !((UKTravelApp) Cave.Apps["UKTravel"].Instances[instanceId]).CartoDBLayer;
+                    ((UKTravelApp) Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).CartoDBLayer =
+                        !((UKTravelApp) Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).CartoDBLayer;
 
-                    Clients.Group("" + instanceId).setCartoDBLayerVisible(instanceId, ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).CartoDBLayer);
-                    Clients.Caller.setCartoDBLayerVisible(instanceId, ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).CartoDBLayer);
+                    Clients.Group("" + instanceId).setCartoDBLayerVisible(instanceId, ((UKTravelApp)Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).CartoDBLayer);
+                    Clients.Caller.setCartoDBLayerVisible(instanceId, ((UKTravelApp)Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).CartoDBLayer);
                 }
                 catch (Exception e)
                 {
@@ -201,11 +201,11 @@ namespace GDO.Apps.UKTravel
                 try
                 {
                     //change its value with !
-                    ((UKTravelApp) Cave.Apps["UKTravel"].Instances[instanceId]).OpenCycleLayer =
-                        !((UKTravelApp) Cave.Apps["UKTravel"].Instances[instanceId]).OpenCycleLayer;
+                    ((UKTravelApp) Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).OpenCycleLayer =
+                        !((UKTravelApp) Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).OpenCycleLayer;
 
-                    Clients.Group("" + instanceId).setOpenCycleLayerVisible(instanceId, ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).OpenCycleLayer);
-                    Clients.Caller.setOpenCycleLayerVisible(instanceId, ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).OpenCycleLayer);
+                    Clients.Group("" + instanceId).setOpenCycleLayerVisible(instanceId, ((UKTravelApp)Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).OpenCycleLayer);
+                    Clients.Caller.setOpenCycleLayerVisible(instanceId, ((UKTravelApp)Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).OpenCycleLayer);
                 }
                 catch (Exception e)
                 {
@@ -221,11 +221,11 @@ namespace GDO.Apps.UKTravel
                 try
                 {
                     //change its value with !
-                    ((UKTravelApp) Cave.Apps["UKTravel"].Instances[instanceId]).StationLayer =
-                        !((UKTravelApp) Cave.Apps["UKTravel"].Instances[instanceId]).StationLayer;
+                    ((UKTravelApp) Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).StationLayer =
+                        !((UKTravelApp) Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).StationLayer;
 
-                    Clients.Group("" + instanceId).setStationLayerVisible(instanceId, ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).StationLayer);
-                    Clients.Caller.setStationLayerVisible(instanceId, ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).StationLayer);
+                    Clients.Group("" + instanceId).setStationLayerVisible(instanceId, ((UKTravelApp)Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).StationLayer);
+                    Clients.Caller.setStationLayerVisible(instanceId, ((UKTravelApp)Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).StationLayer);
                 }
                 catch (Exception e)
                 {
@@ -241,11 +241,11 @@ namespace GDO.Apps.UKTravel
                 try
                 {
                     //change its value with !
-                    ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).HeatmapLayer = 
-                        !((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).HeatmapLayer;
+                    ((UKTravelApp)Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).HeatmapLayer = 
+                        !((UKTravelApp)Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).HeatmapLayer;
 
-                    Clients.Group("" + instanceId).setHeatmapLayerVisible(instanceId, ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).HeatmapLayer);
-                    Clients.Caller.setHeatmapLayerVisible(instanceId, ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).HeatmapLayer);
+                    Clients.Group("" + instanceId).setHeatmapLayerVisible(instanceId, ((UKTravelApp)Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).HeatmapLayer);
+                    Clients.Caller.setHeatmapLayerVisible(instanceId, ((UKTravelApp)Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).HeatmapLayer);
                 }
                 catch (Exception e)
                 {
@@ -260,28 +260,28 @@ namespace GDO.Apps.UKTravel
             {
                 try
                 {
-                    switch (((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).Dataserie)
+                    switch (((UKTravelApp)Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).Dataserie)
                     {
                         case "entries":
-                            ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).Dataserie = "entries";
+                            ((UKTravelApp)Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).Dataserie = "entries";
                             break;
                         case "exits":
-                            ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).Dataserie = "exits";
+                            ((UKTravelApp)Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).Dataserie = "exits";
                             break;
                         case "emptiness":
-                            ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).Dataserie = "emptiness";
+                            ((UKTravelApp)Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).Dataserie = "emptiness";
                             break;
                     }*/
                     /*
-                    if (((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).Dataserie)
+                    if (((UKTravelApp)Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).Dataserie)
                     {
-                        ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).Dataserie = false;
+                        ((UKTravelApp)Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).Dataserie = false;
                     }
                     else
                     {
-                        ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).Dataserie = true;
+                        ((UKTravelApp)Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).Dataserie = true;
                     }*/
- /*                   Clients.Group("" + instanceId).setEntry(instanceId, ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).Dataserie);
+ /*                   Clients.Group("" + instanceId).setEntry(instanceId, ((UKTravelApp)Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).Dataserie);
                 }
                 catch (Exception e)
                 {
@@ -296,7 +296,7 @@ namespace GDO.Apps.UKTravel
             {
                 try
                 {
-                    Clients.Caller.setBingLayerVisible(instanceId, ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).BingLayer);
+                    Clients.Caller.setBingLayerVisible(instanceId, ((UKTravelApp)Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).BingLayer);
                 }
                 catch (Exception e)
                 {
@@ -311,7 +311,7 @@ namespace GDO.Apps.UKTravel
             {
                 try
                 {
-                    Clients.Caller.setCartoDBLayerVisible(instanceId, ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).CartoDBLayer);
+                    Clients.Caller.setCartoDBLayerVisible(instanceId, ((UKTravelApp)Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).CartoDBLayer);
                 }
                 catch (Exception e)
                 {
@@ -325,7 +325,7 @@ namespace GDO.Apps.UKTravel
             {
                 try
                 {
-                    Clients.Caller.setOpenCycleLayerVisible(instanceId, ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).OpenCycleLayer);
+                    Clients.Caller.setOpenCycleLayerVisible(instanceId, ((UKTravelApp)Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).OpenCycleLayer);
                 }
                 catch (Exception e)
                 {
@@ -339,7 +339,7 @@ namespace GDO.Apps.UKTravel
             {
                 try
                 {
-                    Clients.Caller.setStationLayerVisible(instanceId, ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).StationLayer);
+                    Clients.Caller.setStationLayerVisible(instanceId, ((UKTravelApp)Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).StationLayer);
                 }
                 catch (Exception e)
                 {
@@ -354,7 +354,7 @@ namespace GDO.Apps.UKTravel
             {
                 try
                 {
-                    Clients.Caller.setHeatmapLayerVisible(instanceId, ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).HeatmapLayer);
+                    Clients.Caller.setHeatmapLayerVisible(instanceId, ((UKTravelApp)Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).HeatmapLayer);
                 }
                 catch (Exception e)
                 {
@@ -370,7 +370,7 @@ namespace GDO.Apps.UKTravel
             {
                 try
                 {
-                    ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).Style = style;
+                    ((UKTravelApp)Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).Style = style;
                     Clients.Caller.receiveUKTravelStyle(instanceId, style);
                     BroadcastMapStyle(instanceId, style);
                 }
@@ -387,7 +387,7 @@ namespace GDO.Apps.UKTravel
             {
                 try
                 {
-                    MapPosition position = ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).GetMapPosition();
+                    MapPosition position = ((UKTravelApp)Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).GetMapPosition();
                     if (control)
                     {
                         Clients.Caller.receiveInitialMapPosition(instanceId, position.Center, position.Resolution, position.Zoom);
@@ -410,7 +410,7 @@ namespace GDO.Apps.UKTravel
             {
                 try
                 {
-                    string style = ((UKTravelApp) Cave.Apps["UKTravel"].Instances[instanceId]).Style;
+                    string style = ((UKTravelApp) Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).Style;
                     Clients.Caller.receiveMapStyle(instanceId, style);
                 }
                 catch (Exception e)
@@ -434,7 +434,7 @@ namespace GDO.Apps.UKTravel
             {
                 try
                 {
-                    ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).mode = mode;
+                    ((UKTravelApp)Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).mode = mode;
                     Clients.Group("" + instanceId).receive3DMode(instanceId, mode);
                     Clients.Caller.receive3DMode(instanceId, mode);
                 }
@@ -452,7 +452,7 @@ namespace GDO.Apps.UKTravel
             {
                 try
                 {
-                    Clients.Caller.receive3DMode(instanceId, ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).mode);
+                    Clients.Caller.receive3DMode(instanceId, ((UKTravelApp)Cave.Deployment.Apps["UKTravel"].Instances[instanceId]).mode);
                 }
                 catch (Exception e)
                 {

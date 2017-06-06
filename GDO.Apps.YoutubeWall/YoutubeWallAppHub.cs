@@ -20,7 +20,7 @@ namespace GDO.Apps.YoutubeWall
         public Type InstanceType { get; set; } = new YoutubeWallApp().GetType();
         public void JoinGroup(string groupId)
         {
-            Cave.Apps[Name].Hub.Clients = Clients;
+            Cave.Deployment.Apps[Name].Hub.Clients = Clients;
             Groups.Add(Context.ConnectionId, "" + groupId);
         }
         public void ExitGroup(string groupId)
@@ -36,7 +36,7 @@ namespace GDO.Apps.YoutubeWall
                 {
                     Clients.Caller.setMessage("Initializing for keywords...");
 
-                    YoutubeWallApp yf = ((YoutubeWallApp) Cave.Apps["YoutubeWall"].Instances[instanceId]);
+                    YoutubeWallApp yf = ((YoutubeWallApp) Cave.Deployment.Apps["YoutubeWall"].Instances[instanceId]);
 
                     yf.Error = false;
                     yf.VideoReady = false;
@@ -64,7 +64,7 @@ namespace GDO.Apps.YoutubeWall
             {
                 try
                 {
-                    YoutubeWallApp yf = ((YoutubeWallApp) Cave.Apps["YoutubeWall"].Instances[instanceId]);
+                    YoutubeWallApp yf = ((YoutubeWallApp) Cave.Deployment.Apps["YoutubeWall"].Instances[instanceId]);
 
                     if (yf.Error)
                     {
@@ -149,7 +149,7 @@ namespace GDO.Apps.YoutubeWall
 
                     Clients.Caller.setMessage("Searching for Channel id!");
 
-                    YoutubeWallApp yf = ((YoutubeWallApp) Cave.Apps["YoutubeWall"].Instances[instanceId]);
+                    YoutubeWallApp yf = ((YoutubeWallApp) Cave.Deployment.Apps["YoutubeWall"].Instances[instanceId]);
                     YoutubeWallApp.ChannelInfo channelJson = yf.getChannelIdByChannelName(newChannelName);
                     if (channelJson.items.Length <= 0)
                     {
@@ -204,7 +204,7 @@ namespace GDO.Apps.YoutubeWall
 
                     Clients.Caller.setMessage("Searching for Channel id!");
 
-                    YoutubeWallApp yf = ((YoutubeWallApp)Cave.Apps["YoutubeWall"].Instances[instanceId]);
+                    YoutubeWallApp yf = ((YoutubeWallApp)Cave.Deployment.Apps["YoutubeWall"].Instances[instanceId]);
                     YoutubeWallApp.PlaylistInfo playlistJson = yf.getPlaylistIdByPlaylistName(newPlaylistName);
                     if (playlistJson.items.Length <= 0)
                     {
@@ -242,7 +242,7 @@ namespace GDO.Apps.YoutubeWall
             {
                 try
                 {
-                    YoutubeWallApp yf = ((YoutubeWallApp) Cave.Apps["YoutubeWall"].Instances[instanceId]);
+                    YoutubeWallApp yf = ((YoutubeWallApp) Cave.Deployment.Apps["YoutubeWall"].Instances[instanceId]);
 
                     if (yf.Error)
                     {
@@ -326,7 +326,7 @@ namespace GDO.Apps.YoutubeWall
                 try
                 {
                     Clients.Caller.setMessage("Requesting latest video information!");
-                    YoutubeWallApp yf = ((YoutubeWallApp) Cave.Apps["YoutubeWall"].Instances[instanceId]);
+                    YoutubeWallApp yf = ((YoutubeWallApp) Cave.Deployment.Apps["YoutubeWall"].Instances[instanceId]);
                     /*if (yf.Keywords != "")
                     {
                         Clients.Caller.setKeywords(yf.Keywords);
@@ -364,7 +364,7 @@ namespace GDO.Apps.YoutubeWall
             {
                 try
                 {
-                    YoutubeWallApp yf = ((YoutubeWallApp) Cave.Apps["YoutubeWall"].Instances[instanceId]);
+                    YoutubeWallApp yf = ((YoutubeWallApp) Cave.Deployment.Apps["YoutubeWall"].Instances[instanceId]);
                     if (!yf.VideoReady || yf.CurrentVideoUrls == null)
                     {
                         Clients.Caller.setMessage("Video Not Ready!");
@@ -389,7 +389,7 @@ namespace GDO.Apps.YoutubeWall
                 try
                 {
                     Clients.Caller.setMessage("Updating search mode...");
-                    YoutubeWallApp yf = ((YoutubeWallApp) Cave.Apps["YoutubeWall"].Instances[instanceId]);
+                    YoutubeWallApp yf = ((YoutubeWallApp) Cave.Deployment.Apps["YoutubeWall"].Instances[instanceId]);
                     if (sm == 0 || sm == 1 || sm == 2)
                         yf.SearchMode = sm;
                     Clients.Caller.updateSearchMode(yf.SearchMode);

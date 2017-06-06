@@ -62,12 +62,12 @@ namespace GDO.Core
         public Node DeployNode(int sectionId, int nodeId, int col, int row)
         {
             // TODO: Find a better way of linking between Nodes and Sections
-            if (Cave.Sections.ContainsKey(sectionId) && Nodes.ContainsKey(nodeId))
+            if (Cave.Deployment.Sections.ContainsKey(sectionId) && Nodes.ContainsKey(nodeId))
             {
                 if (!Nodes[nodeId].IsDeployed)
                 {
-                    Nodes[nodeId].Deploy(Cave.Sections[sectionId], col, row);
-                    Cave.Sections[sectionId].Nodes[col, row] = Nodes[nodeId];
+                    Nodes[nodeId].Deploy(Cave.Deployment.Sections[sectionId], col, row);
+                    Cave.Deployment.Sections[sectionId].Nodes[col, row] = Nodes[nodeId];
                     return Nodes[nodeId];
                 }
             }

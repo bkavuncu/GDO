@@ -27,7 +27,7 @@ namespace GDO.Apps.Maps
 
         public void JoinGroup(string groupId)
         {
-            Cave.Apps[Name].Hub.Clients = Clients;
+            Cave.Deployment.Apps[Name].Hub.Clients = Clients;
             Groups.Add(Context.ConnectionId, "" + groupId);
         }
         public void ExitGroup(string groupId)
@@ -41,7 +41,7 @@ namespace GDO.Apps.Maps
             {
                 try
                 {
-                    ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]).Mode = mode;
+                    ((MapsApp) Cave.Deployment.Apps["Maps"].Instances[instanceId]).Mode = mode;
                     Clients.Group("" + instanceId).receive3DMode(instanceId, mode);
                     Clients.Caller.receive3DMode(instanceId, mode);
                 }
@@ -59,7 +59,7 @@ namespace GDO.Apps.Maps
             {
                 try
                 {
-                    Clients.Caller.receive3DMode(instanceId, ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]).Mode);
+                    Clients.Caller.receive3DMode(instanceId, ((MapsApp) Cave.Deployment.Apps["Maps"].Instances[instanceId]).Mode);
                 }
                 catch (Exception e)
                 {
@@ -76,7 +76,7 @@ namespace GDO.Apps.Maps
             {
                 try
                 {
-                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    MapsApp maps = ((MapsApp)Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                     string serializedMap = maps.GetSerializedMap();
                     if (serializedMap != null)
                     {
@@ -102,7 +102,7 @@ namespace GDO.Apps.Maps
             {
                 try
                 {
-                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    MapsApp maps = ((MapsApp)Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                     maps.Init();
                 }
                 catch (Exception e)
@@ -116,7 +116,7 @@ namespace GDO.Apps.Maps
         {
             try
             {
-                MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                MapsApp maps = ((MapsApp)Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                 string serializedTemplate = maps.GetSerializedTemplate();
                 Clients.Caller.receiveTemplate(instanceId, serializedTemplate);
             }
@@ -134,10 +134,10 @@ namespace GDO.Apps.Maps
             {
                 try
                 {
-                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    MapsApp maps = ((MapsApp)Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                     maps.ExtractConfigurations();
                     string serializedConfigurations = maps.GetSerializedConfigurations();
-                    foreach (KeyValuePair<int, IAppInstance> instanceKeyValue in Cave.Apps["Maps"].Instances)
+                    foreach (KeyValuePair<int, IAppInstance> instanceKeyValue in Cave.Deployment.Apps["Maps"].Instances)
                     {
                         if (instanceKeyValue.Value.AppName == "Maps")
                         {
@@ -160,12 +160,12 @@ namespace GDO.Apps.Maps
             {
                 try
                 {
-                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    MapsApp maps = ((MapsApp)Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                     maps.SaveMap(configName);
                     Cave.LoadAppConfiguration(Cave.GetAppName(instanceId), configName);
                     maps.ExtractConfigurations();
                     string serializedConfigurations = maps.GetSerializedConfigurations();
-                    foreach (KeyValuePair<int,IAppInstance> instanceKeyValue in Cave.Apps["Maps"].Instances)
+                    foreach (KeyValuePair<int,IAppInstance> instanceKeyValue in Cave.Deployment.Apps["Maps"].Instances)
                     {
                         if (instanceKeyValue.Value.AppName == "Maps")
                         {
@@ -189,10 +189,10 @@ namespace GDO.Apps.Maps
                 try
                 {
                     Cave.UnloadAppConfiguration(Cave.GetAppName(instanceId), configName);
-                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    MapsApp maps = ((MapsApp)Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                     maps.ExtractConfigurations();
                     string serializedConfigurations = maps.GetSerializedConfigurations();
-                    foreach (KeyValuePair<int, IAppInstance> instanceKeyValue in Cave.Apps["Maps"].Instances)
+                    foreach (KeyValuePair<int, IAppInstance> instanceKeyValue in Cave.Deployment.Apps["Maps"].Instances)
                     {
                         if (instanceKeyValue.Value.AppName == "Maps")
                         {
@@ -215,7 +215,7 @@ namespace GDO.Apps.Maps
             {
                 try
                 {
-                    MapsApp maps = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]);
+                    MapsApp maps = ((MapsApp) Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                     maps.UpdateLabel(label, sublabel);
                     Clients.Group("c" + instanceId).receiveLabel(instanceId, label, sublabel);
                     Clients.Group("" + instanceId).receiveLabel(instanceId, label, sublabel);
@@ -233,7 +233,7 @@ namespace GDO.Apps.Maps
             {
                 try
                 {
-                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    MapsApp maps = ((MapsApp)Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                     maps.SetLabelVisible(visible);
                     Clients.Group("c" + instanceId).receiveLabelVisibility(instanceId, visible);
                     Clients.Group("" + instanceId).receiveLabelVisibility(instanceId, visible);
@@ -252,7 +252,7 @@ namespace GDO.Apps.Maps
             {
                 try
                 {
-                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    MapsApp maps = ((MapsApp)Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                     int viewId = -1;
                     viewId = maps.AddView(JsonConvert.DeserializeObject<View>(serializedView));
                     BroadcastView(instanceId, viewId);
@@ -270,7 +270,7 @@ namespace GDO.Apps.Maps
             {
                 try
                 {
-                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    MapsApp maps = ((MapsApp)Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                     maps.UpdateView(viewId, JsonConvert.DeserializeObject<View>(serializedView));
                     BroadcastView(instanceId, viewId);
                 }
@@ -288,7 +288,7 @@ namespace GDO.Apps.Maps
             {
                 try
                 {
-                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    MapsApp maps = ((MapsApp)Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                     string serializedView = maps.GetSerializedView(viewId);
                     if (serializedView != null)
                     {
@@ -310,7 +310,7 @@ namespace GDO.Apps.Maps
         {
             try
             {
-                MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                MapsApp maps = ((MapsApp)Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                 string serializedView = maps.GetSerializedView(viewId);
                 if (serializedView != null)
                 {
@@ -335,7 +335,7 @@ namespace GDO.Apps.Maps
             {
                 try
                 {
-                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    MapsApp maps = ((MapsApp)Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                     maps.RemoveView(viewId);
                     BroadcastView(instanceId, viewId);
                 }
@@ -366,7 +366,7 @@ namespace GDO.Apps.Maps
             {
                 try
                 {
-                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    MapsApp maps = ((MapsApp)Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                     maps.UpdatePosition(topLeft, center, bottomRight, resolution, width, height);
                     BroadcastPosition(instanceId);
                     //Clients.Caller.receivePosition(instanceId, topLeft, center, bottomRight, resolution, width, height);
@@ -384,7 +384,7 @@ namespace GDO.Apps.Maps
             {
                 try
                 {
-                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    MapsApp maps = ((MapsApp)Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                     Clients.Caller.receivePosition(instanceId, maps.Position.TopLeft, maps.Position.Center, maps.Position.BottomRight, maps.Position.Resolution, maps.Position.Width, maps.Position.Height);
                 }
                 catch (Exception e)
@@ -396,20 +396,20 @@ namespace GDO.Apps.Maps
 
         public void BroadcastPosition(int instanceId)
         {
-            MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+            MapsApp maps = ((MapsApp)Cave.Deployment.Apps["Maps"].Instances[instanceId]);
             Clients.Group("" + instanceId).receivePosition(instanceId, maps.Position.TopLeft, maps.Position.Center, maps.Position.BottomRight, maps.Position.Resolution, maps.Position.Width, maps.Position.Height);
         }
 
         public void UseView(int instanceId, int viewId)
         {
-            MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+            MapsApp maps = ((MapsApp)Cave.Deployment.Apps["Maps"].Instances[instanceId]);
             maps.UseView(viewId);
             Clients.Caller.receivePosition(instanceId, maps.Position.TopLeft, maps.Position.Center, maps.Position.BottomRight, maps.Position.Resolution, maps.Position.Width, maps.Position.Height);
         }
 
         public void UsePosition(int instanceId, int viewId)
         {
-            MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+            MapsApp maps = ((MapsApp)Cave.Deployment.Apps["Maps"].Instances[instanceId]);
             maps.UsePosition(viewId);
             BroadcastView(instanceId, viewId);
         }
@@ -420,7 +420,7 @@ namespace GDO.Apps.Maps
             {
                 try
                 {
-                    ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).SetMarkerPosition(pos);
+                    ((MapsApp)Cave.Deployment.Apps["Maps"].Instances[instanceId]).SetMarkerPosition(pos);
                     Clients.Caller.receiveMarkerPosition(instanceId, pos);
                     BroadcastMarkerPosition(instanceId, pos);
                 }
@@ -437,7 +437,7 @@ namespace GDO.Apps.Maps
             {
                 try
                 {
-                    string[] position = ((MapsApp)Cave.Apps["BasicMaps"].Instances[instanceId]).GetMarkerPosition();
+                    string[] position = ((MapsApp)Cave.Deployment.Apps["BasicMaps"].Instances[instanceId]).GetMarkerPosition();
                     Clients.Caller.receiveMarkerPosition(instanceId, position);
                 }
                 catch (Exception e)
@@ -460,7 +460,7 @@ namespace GDO.Apps.Maps
             {
                 try
                 {
-                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    MapsApp maps = ((MapsApp)Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                     int animationId = -1;
                     switch (className)
                     {
@@ -485,7 +485,7 @@ namespace GDO.Apps.Maps
             {
                 try
                 {
-                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    MapsApp maps = ((MapsApp)Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                     switch (className)
                     {
                         case "GlobalAnimation":
@@ -507,7 +507,7 @@ namespace GDO.Apps.Maps
         {
             try
             {
-                MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                MapsApp maps = ((MapsApp)Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                 foreach (Layer layer in maps.Layers.ToArray())
                 {
                     if (layer.ClassName.Value == "DynamicVectorLayer" || layer.ClassName.Value == "DynamicHeatmapLayer")
@@ -529,7 +529,7 @@ namespace GDO.Apps.Maps
         {
             try
             {
-                MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                MapsApp maps = ((MapsApp)Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                 Animation animation = maps.GetAnimation<Animation>(animationId);
                 if (animation != null)
                 {
@@ -555,7 +555,7 @@ namespace GDO.Apps.Maps
         {
             try
             {
-                MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                MapsApp maps = ((MapsApp)Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                 Animation animation = maps.GetAnimation<Animation>(animationId);
                 if (animation != null)
                 {
@@ -586,7 +586,7 @@ namespace GDO.Apps.Maps
         {
             try
             {
-                MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                MapsApp maps = ((MapsApp)Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                 Animation animation = maps.GetAnimation<Animation>(animationId);
                 if (animation != null)
                 {
@@ -668,7 +668,7 @@ namespace GDO.Apps.Maps
             {
                 try
                 {
-                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    MapsApp maps = ((MapsApp)Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                     string serializedAnimation = maps.GetSerializedAnimation(animationId);
                     if (serializedAnimation != null)
                     {
@@ -690,7 +690,7 @@ namespace GDO.Apps.Maps
         {
             try
             {
-                MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                MapsApp maps = ((MapsApp)Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                 string serializedAnimation = maps.GetSerializedAnimation(animationId);
                 if (serializedAnimation != null)
                 {
@@ -715,7 +715,7 @@ namespace GDO.Apps.Maps
             {
                 try
                 {
-                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    MapsApp maps = ((MapsApp)Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                     maps.RemoveAnimation(animationId);
                     BroadcastAnimation(instanceId, animationId);
                 }
@@ -734,7 +734,7 @@ namespace GDO.Apps.Maps
             {
                 try
                 {
-                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    MapsApp maps = ((MapsApp)Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                     int layerId = -1;
 
                     switch (className)
@@ -775,7 +775,7 @@ namespace GDO.Apps.Maps
             {
                 try
                 {
-                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    MapsApp maps = ((MapsApp)Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                     switch (className)
                     {
                         case "DynamicHeatmapLayer":
@@ -814,7 +814,7 @@ namespace GDO.Apps.Maps
             {
                 try
                 {
-                    MapsApp maps = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]);
+                    MapsApp maps = ((MapsApp) Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                     string serializedLayer = maps.GetSerializedLayer(layerId);
                     if (serializedLayer != null)
                     {
@@ -836,7 +836,7 @@ namespace GDO.Apps.Maps
         {
             try
             {
-                MapsApp maps = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]);
+                MapsApp maps = ((MapsApp) Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                 string serializedLayer = maps.GetSerializedLayer(layerId);
                 if (serializedLayer != null)
                 {
@@ -861,7 +861,7 @@ namespace GDO.Apps.Maps
             {
                 try
                 {
-                    MapsApp maps = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]);
+                    MapsApp maps = ((MapsApp) Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                     DynamicLayer layer = maps.GetLayer<DynamicLayer>(layerId);
                     if (layer != null)
                     {
@@ -882,7 +882,7 @@ namespace GDO.Apps.Maps
         {
             try
             {
-                MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                MapsApp maps = ((MapsApp)Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                 DynamicLayer layer = maps.GetLayer<DynamicLayer>(layerId);
                 if (layer != null)
                 {
@@ -945,7 +945,7 @@ namespace GDO.Apps.Maps
         {
             try
             {
-                MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                MapsApp maps = ((MapsApp)Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                 DynamicLayer layer = maps.GetLayer<DynamicLayer>(layerId);
                 if (layer != null)
                 {
@@ -963,7 +963,7 @@ namespace GDO.Apps.Maps
         {
             try
             {
-                MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                MapsApp maps = ((MapsApp)Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                 DynamicLayer layer = maps.GetLayer<DynamicLayer>(layerId);
                 if (layer != null)
                 {
@@ -987,7 +987,7 @@ namespace GDO.Apps.Maps
             {
                 try
                 {
-                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    MapsApp maps = ((MapsApp)Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                     int sourceId = -1;
                     switch (className)
                     {
@@ -1048,7 +1048,7 @@ namespace GDO.Apps.Maps
             {
                 try
                 {
-                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    MapsApp maps = ((MapsApp)Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                     switch (className)
                     {
                         case "BingMapsSource":
@@ -1109,7 +1109,7 @@ namespace GDO.Apps.Maps
             {
                 try
                 {
-                    MapsApp maps = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]);
+                    MapsApp maps = ((MapsApp) Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                     string serializedSource = maps.GetSerializedSource(sourceId);
                     if (serializedSource != null)
                     {
@@ -1131,7 +1131,7 @@ namespace GDO.Apps.Maps
         {
             try
             {
-                MapsApp maps = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]);
+                MapsApp maps = ((MapsApp) Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                 string serializedSource = maps.GetSerializedSource(sourceId);
                 if (serializedSource != null)
                 {
@@ -1156,7 +1156,7 @@ namespace GDO.Apps.Maps
             {
                 try
                 {
-                    MapsApp maps = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]);
+                    MapsApp maps = ((MapsApp) Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                     maps.RemoveSource(sourceId);
                     BroadcastSource(instanceId, sourceId);
                 }
@@ -1222,7 +1222,7 @@ namespace GDO.Apps.Maps
             {
                 try
                 {
-                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    MapsApp maps = ((MapsApp)Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                     int styleId = -1;
                     switch (className)
                     {
@@ -1271,7 +1271,7 @@ namespace GDO.Apps.Maps
             {
                 try
                 {
-                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    MapsApp maps = ((MapsApp)Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                     switch (className)
                     {
                         case "CircleStyle":
@@ -1319,7 +1319,7 @@ namespace GDO.Apps.Maps
             {
                 try
                 {
-                    MapsApp maps = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]);
+                    MapsApp maps = ((MapsApp) Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                     string serializedStyle = maps.GetSerializedStyle(styleId);
                     if (serializedStyle != null)
                     {
@@ -1341,7 +1341,7 @@ namespace GDO.Apps.Maps
         {
             try
             {
-                MapsApp maps = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]);
+                MapsApp maps = ((MapsApp) Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                 string serializedStyle = maps.GetSerializedStyle(styleId);
                 if (serializedStyle != null)
                 {
@@ -1366,7 +1366,7 @@ namespace GDO.Apps.Maps
             {
                 try
                 {
-                    MapsApp maps = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]);
+                    MapsApp maps = ((MapsApp) Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                     maps.RemoveStyle(styleId);
                     BroadcastStyle(instanceId, styleId);
                 }
@@ -1384,7 +1384,7 @@ namespace GDO.Apps.Maps
             {
                 try
                 {
-                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    MapsApp maps = ((MapsApp)Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                     Format deserializedFormat = JsonConvert.DeserializeObject<Format>(serializedFormat);
                     int formatId = -1;
                     switch (className)
@@ -1431,7 +1431,7 @@ namespace GDO.Apps.Maps
             {
                 try
                 {
-                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    MapsApp maps = ((MapsApp)Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                     switch (className)
                     {
                         case "EsriJSONFormat":
@@ -1476,7 +1476,7 @@ namespace GDO.Apps.Maps
             {
                 try
                 {
-                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    MapsApp maps = ((MapsApp)Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                     string serializedFormat = maps.GetSerializedFormat(formatId);
                     if (serializedFormat != null)
                     {
@@ -1498,7 +1498,7 @@ namespace GDO.Apps.Maps
         {
             try
             {
-                MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                MapsApp maps = ((MapsApp)Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                 string serializedFormat = maps.GetSerializedFormat(formatId);
                 if (serializedFormat != null)
                 {
@@ -1523,7 +1523,7 @@ namespace GDO.Apps.Maps
             {
                 try
                 {
-                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    MapsApp maps = ((MapsApp)Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                     maps.RemoveFormat(formatId);
                     BroadcastFormat(instanceId, formatId);
                 }

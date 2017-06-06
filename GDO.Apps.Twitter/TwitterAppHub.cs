@@ -19,7 +19,7 @@ namespace GDO.Apps.Twitter
 
         public void JoinGroup(string groupId)
         {
-            Cave.Apps[Name].Hub.Clients = Clients;
+            Cave.Deployment.Apps[Name].Hub.Clients = Clients;
             Groups.Add(Context.ConnectionId, "" + groupId);
         }
 
@@ -40,7 +40,7 @@ namespace GDO.Apps.Twitter
                 try
                 {
                     Clients.Caller.receiveFileLists(instanceId,
-                        ((TwitterApp) Cave.Apps["Twitter"].Instances[instanceId]).GetFileLists());
+                        ((TwitterApp) Cave.Deployment.Apps["Twitter"].Instances[instanceId]).GetFileLists());
                 }
                 catch (Exception e)
                 {
@@ -53,7 +53,7 @@ namespace GDO.Apps.Twitter
         /* Get the latest Cave State */
         private void BroadcastState(int instanceId, int refresh = 0)
         {
-            var ta = (TwitterApp) Cave.Apps["Twitter"].Instances[instanceId];
+            var ta = (TwitterApp) Cave.Deployment.Apps["Twitter"].Instances[instanceId];
             Clients.Caller.receiveCaveStatus(instanceId, ta.GetPseudoCaveStatus(), refresh);
         }
 
@@ -65,8 +65,8 @@ namespace GDO.Apps.Twitter
             {
                 try
                 {
-                    bool toggle = ((TwitterApp) Cave.Apps["Twitter"].Instances[instanceId]).ReplaceExisting;
-                    ((TwitterApp) Cave.Apps["Twitter"].Instances[instanceId]).ReplaceExisting = !toggle;
+                    bool toggle = ((TwitterApp) Cave.Deployment.Apps["Twitter"].Instances[instanceId]).ReplaceExisting;
+                    ((TwitterApp) Cave.Deployment.Apps["Twitter"].Instances[instanceId]).ReplaceExisting = !toggle;
                     Debug.WriteLine("Set redownload files to: " + !toggle);
                     Clients.Caller.setMessage(instanceId, "Set redownload files to: " + !toggle, false);
                     Clients.Caller.setRedownloadButton(instanceId, !toggle);
@@ -108,7 +108,7 @@ namespace GDO.Apps.Twitter
             {
                 try
                 {
-                    var message = ((TwitterApp) Cave.Apps["Twitter"].Instances[instanceId]).GetApiMessage();
+                    var message = ((TwitterApp) Cave.Deployment.Apps["Twitter"].Instances[instanceId]).GetApiMessage();
                     var serialisedMessage = JsonConvert.SerializeObject(message);
                     Debug.WriteLine("Status message: " + message);
                     Clients.Group("" + instanceId).setAPIMessage(instanceId, serialisedMessage);
@@ -132,7 +132,7 @@ namespace GDO.Apps.Twitter
                 try
                 {
                     string serialisedOptions =
-                        ((TwitterApp) Cave.Apps["Twitter"].Instances[instanceId]).GetAnalyticsOptions();
+                        ((TwitterApp) Cave.Deployment.Apps["Twitter"].Instances[instanceId]).GetAnalyticsOptions();
                     Debug.WriteLine("Status message: " + serialisedOptions);
                     Clients.Caller.updateAnalyticsOptions(instanceId, serialisedOptions);
                 }
@@ -151,7 +151,7 @@ namespace GDO.Apps.Twitter
             {
                 try
                 {
-                    ((TwitterApp) Cave.Apps["Twitter"].Instances[instanceId]).GetNewAnalytics(
+                    ((TwitterApp) Cave.Deployment.Apps["Twitter"].Instances[instanceId]).GetNewAnalytics(
                         JsonConvert.DeserializeObject<List<AnalyticsRequest>>(serialisedRequests));
                 }
                 catch (Exception e)
@@ -188,7 +188,7 @@ namespace GDO.Apps.Twitter
                 {
                     string msg = "Confirming launch for sections: " + string.Join(",", sectionIds.ToArray());
                     Debug.WriteLine(msg);
-                    ((TwitterApp) Cave.Apps["Twitter"].Instances[instanceId]).ConfirmLaunch(sectionIds);
+                    ((TwitterApp) Cave.Deployment.Apps["Twitter"].Instances[instanceId]).ConfirmLaunch(sectionIds);
                     Clients.Caller.setMessage(instanceId, msg, false);
                     BroadcastState(instanceId, 1);
                 }
@@ -209,7 +209,7 @@ namespace GDO.Apps.Twitter
                 {
                     string msg = "Creating section: (" + colStart + "," + rowStart + "," + colEnd + "," + rowEnd + ")";
                     Debug.WriteLine(msg);
-                    ((TwitterApp) Cave.Apps["Twitter"].Instances[instanceId]).CreateSection(colStart, rowStart, colEnd,
+                    ((TwitterApp) Cave.Deployment.Apps["Twitter"].Instances[instanceId]).CreateSection(colStart, rowStart, colEnd,
                         rowEnd);
                     Clients.Caller.setMessage(instanceId, msg, false);
                     BroadcastState(instanceId, 1);
@@ -233,8 +233,8 @@ namespace GDO.Apps.Twitter
                     List<SectionRequest> sectionRequests =
                         JsonConvert.DeserializeObject<List<SectionRequest>>(serialisedSections);
                     Clients.Caller.setMessage(instanceId, "Auto launching " + sectionRequests.Count + " sections", false);
-                    ((TwitterApp) Cave.Apps["Twitter"].Instances[instanceId]).CreateSections(sectionRequests);
-                    ((TwitterApp) Cave.Apps["Twitter"].Instances[instanceId]).QueueApps(
+                    ((TwitterApp) Cave.Deployment.Apps["Twitter"].Instances[instanceId]).CreateSections(sectionRequests);
+                    ((TwitterApp) Cave.Deployment.Apps["Twitter"].Instances[instanceId]).QueueApps(
                         JsonConvert.DeserializeObject<List<SectionRequest>>(serialisedSections));
                     Clients.Caller.setMessage(instanceId, serialisedSections, false);
                     BroadcastState(instanceId, 2);
@@ -255,7 +255,7 @@ namespace GDO.Apps.Twitter
                 try
                 {
                     Debug.WriteLine("Multiple section creation " + serialisedSections);
-                    ((TwitterApp) Cave.Apps["Twitter"].Instances[instanceId]).CreateSections(
+                    ((TwitterApp) Cave.Deployment.Apps["Twitter"].Instances[instanceId]).CreateSections(
                         JsonConvert.DeserializeObject<List<SectionRequest>>(serialisedSections));
                     Clients.Caller.setMessage(instanceId, serialisedSections, false);
                     BroadcastState(instanceId, 1);
@@ -278,7 +278,7 @@ namespace GDO.Apps.Twitter
                     string msg = "Closing section: (" + sectionId + ")";
                     Debug.WriteLine(msg);
                     Clients.Caller.setMessage(instanceId, msg, false);
-                    ((TwitterApp) Cave.Apps["Twitter"].Instances[instanceId]).CloseSections(new List<int> {sectionId});
+                    ((TwitterApp) Cave.Deployment.Apps["Twitter"].Instances[instanceId]).CloseSections(new List<int> {sectionId});
                     BroadcastState(instanceId, 1);
                 }
                 catch (Exception e)
@@ -299,7 +299,7 @@ namespace GDO.Apps.Twitter
                     string msg = "Loading visualisation (" + dataSetId + "," + analyticsId + ") from REST api";
                     Clients.Caller.setMessage(instanceId, msg, false);
                     Debug.WriteLine(msg);
-                    ((TwitterApp) Cave.Apps["Twitter"].Instances[instanceId]).LoadVisualisation(sectionId, analyticsId,
+                    ((TwitterApp) Cave.Deployment.Apps["Twitter"].Instances[instanceId]).LoadVisualisation(sectionId, analyticsId,
                         dataSetId);
                     Clients.Caller.setMessage(instanceId,
                         "Loading visualisation for section (" + sectionId + ") from REST api", false);
@@ -322,7 +322,7 @@ namespace GDO.Apps.Twitter
                 {
                     string msg = "Unloading visualisation at section: " + sectionId;
                     Debug.WriteLine(msg);
-                    ((TwitterApp) Cave.Apps["Twitter"].Instances[instanceId]).UnLoadVisualisation(sectionId);
+                    ((TwitterApp) Cave.Deployment.Apps["Twitter"].Instances[instanceId]).UnLoadVisualisation(sectionId);
                     Clients.Caller.setMessage(instanceId, msg, false);
                     BroadcastState(instanceId, 0);
                 }
@@ -344,7 +344,7 @@ namespace GDO.Apps.Twitter
                 {
                     string msg = "Clearing cave for instance: " + instanceId;
                     Debug.WriteLine(msg);
-                    ((TwitterApp) Cave.Apps["Twitter"].Instances[instanceId]).ClearCave();
+                    ((TwitterApp) Cave.Deployment.Apps["Twitter"].Instances[instanceId]).ClearCave();
                     Clients.Caller.setMessage(instanceId, msg, false);
                     BroadcastState(instanceId, 1);
                 }
@@ -365,7 +365,7 @@ namespace GDO.Apps.Twitter
                 {
                     string msg = "Deploying Apps at Sections: " + string.Join(",", sectionIds.ToArray());
                     Debug.WriteLine(msg);
-                    ((TwitterApp) Cave.Apps["Twitter"].Instances[instanceId]).DeployApps(sectionIds);
+                    ((TwitterApp) Cave.Deployment.Apps["Twitter"].Instances[instanceId]).DeployApps(sectionIds);
                     Clients.Caller.setMessage(instanceId, msg, false);
                     BroadcastState(instanceId, 2);
                 }
@@ -387,7 +387,7 @@ namespace GDO.Apps.Twitter
                     string msg = "Closing app section: " + sectionId;
                     Debug.WriteLine(msg);
                     Clients.Caller.setMessage(instanceId, msg, false);
-                    ((TwitterApp) Cave.Apps["Twitter"].Instances[instanceId]).CloseApps(new List<int> {sectionId});
+                    ((TwitterApp) Cave.Deployment.Apps["Twitter"].Instances[instanceId]).CloseApps(new List<int> {sectionId});
                     BroadcastState(instanceId, 1);
                 }
                 catch (Exception e)
@@ -406,7 +406,7 @@ namespace GDO.Apps.Twitter
                 try
                 {
                     var serialisedAnalytics =
-                        ((TwitterApp) Cave.Apps["Twitter"].Instances[instanceId]).GetAnalytics(dataSetIds);
+                        ((TwitterApp) Cave.Deployment.Apps["Twitter"].Instances[instanceId]).GetAnalytics(dataSetIds);
                     Clients.Caller.setMessage(instanceId,
                         "Retreived analytics for datasets: " + string.Join(",", dataSetIds.ToArray()), false);
                     Clients.Caller.updateAnalytics(instanceId, serialisedAnalytics);
@@ -426,7 +426,7 @@ namespace GDO.Apps.Twitter
             {
                 try
                 {
-                    string serialisedDataSets = ((TwitterApp) Cave.Apps["Twitter"].Instances[instanceId]).GetDataSets();
+                    string serialisedDataSets = ((TwitterApp) Cave.Deployment.Apps["Twitter"].Instances[instanceId]).GetDataSets();
                     Clients.Caller.updateDataSets(instanceId, serialisedDataSets);
                 }
                 catch (Exception e)
@@ -444,7 +444,7 @@ namespace GDO.Apps.Twitter
             {
                 try
                 {
-                    string serialisedSlides = ((TwitterApp) Cave.Apps["Twitter"].Instances[instanceId]).GetSlides();
+                    string serialisedSlides = ((TwitterApp) Cave.Deployment.Apps["Twitter"].Instances[instanceId]).GetSlides();
                     Clients.Caller.setMessage(instanceId, "Updated slide list", false);
                     Clients.Caller.updateSlides(instanceId, serialisedSlides);
                 }

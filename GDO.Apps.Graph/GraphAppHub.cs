@@ -21,7 +21,7 @@ namespace GDO.Apps.Graph
         public Type InstanceType { get; set; } = new GraphApp().GetType();
         public void JoinGroup(string groupId)
         {
-            Cave.Apps[Name].Hub.Clients = Clients;
+            Cave.Deployment.Apps[Name].Hub.Clients = Clients;
             Groups.Add(Context.ConnectionId, "" + groupId);
         }
         public void ExitGroup(string groupId)
@@ -36,12 +36,12 @@ namespace GDO.Apps.Graph
                 try
                 {
            
-                    ga = (GraphApp) Cave.Apps["Graph"].Instances[instanceId];
+                    ga = (GraphApp) Cave.Deployment.Apps["Graph"].Instances[instanceId];
                     Clients.Caller.setMessage("Requesting fields...");
-                    if (((GraphApp) Cave.Apps["Graph"].Instances[instanceId]).graphinfo.NodeOtherFields != null)
+                    if (((GraphApp) Cave.Deployment.Apps["Graph"].Instances[instanceId]).graphinfo.NodeOtherFields != null)
                     {
                         Clients.Caller.setFields(
-                            ((GraphApp) Cave.Apps["Graph"].Instances[instanceId]).graphinfo.NodeOtherFields.ToArray(),
+                            ((GraphApp) Cave.Deployment.Apps["Graph"].Instances[instanceId]).graphinfo.NodeOtherFields.ToArray(),
                             instanceId);
                         Clients.Caller.setMessage("Graph fields requested and sent successfully!");
                     }
@@ -70,7 +70,7 @@ namespace GDO.Apps.Graph
                     this.ControllerId = Context.ConnectionId;
 
                     // create GraphApp project and call its function to process graph
-                    ga = (GraphApp)Cave.Apps["Graph"].Instances[instanceId];
+                    ga = (GraphApp)Cave.Deployment.Apps["Graph"].Instances[instanceId];
                     
                     Clients.Caller.setMessage("Initiating processing of graph data in file: " + filename);
                     string folderNameDigit = ga.ProcessGraph(filename, false, null, ga.Section.Width, ga.Section.Height);
@@ -87,7 +87,7 @@ namespace GDO.Apps.Graph
                     Clients.Caller.setMessage("Graph is now ready for zooming."); */
 
                     Clients.Caller.setMessage("Requesting fields...");
-                    Clients.Caller.setFields(((GraphApp)Cave.Apps["Graph"].Instances[instanceId]).graphinfo.NodeOtherFields.ToArray(), instanceId);
+                    Clients.Caller.setFields(((GraphApp)Cave.Deployment.Apps["Graph"].Instances[instanceId]).graphinfo.NodeOtherFields.ToArray(), instanceId);
                     Clients.Caller.setMessage("Graph fields requested and sent successfully!");
                 }
                 catch (WebException e)
@@ -113,9 +113,9 @@ namespace GDO.Apps.Graph
                 try
                 {
                     // with this if condition, node only gets painted when there is a graph; otherwise node will appear empty if it's loaded without any graph uploaded
-                    if (((GraphApp)Cave.Apps["Graph"].Instances[instanceId]).FolderNameDigit != null)
+                    if (((GraphApp)Cave.Deployment.Apps["Graph"].Instances[instanceId]).FolderNameDigit != null)
                     {
-                        Clients.Caller.renderGraph(((GraphApp)Cave.Apps["Graph"].Instances[instanceId]).FolderNameDigit, false);
+                        Clients.Caller.renderGraph(((GraphApp)Cave.Deployment.Apps["Graph"].Instances[instanceId]).FolderNameDigit, false);
                     }
 
                 }
@@ -274,10 +274,10 @@ namespace GDO.Apps.Graph
                     // updated zoomedIn variable within ga object
                     ga.UpdateZoomVar(true);
 
-                    Clients.Group("" + instanceId).renderGraph(((GraphApp)Cave.Apps["Graph"].Instances[instanceId]).FolderNameDigit, true);
+                    Clients.Group("" + instanceId).renderGraph(((GraphApp)Cave.Deployment.Apps["Graph"].Instances[instanceId]).FolderNameDigit, true);
                     Clients.Caller.setMessage("Zoomed-in graph is now being rendered.");
 
-                    Clients.Group("" + instanceId).renderBuffer(((GraphApp)Cave.Apps["Graph"].Instances[instanceId]).FolderNameDigit);
+                    Clients.Group("" + instanceId).renderBuffer(((GraphApp)Cave.Deployment.Apps["Graph"].Instances[instanceId]).FolderNameDigit);
                     Clients.Caller.setMessage("Buffer for zoomed-in graph is now being rendered.");
                 }
                 catch (Exception e)
@@ -300,7 +300,7 @@ namespace GDO.Apps.Graph
                     // updated zoomedIn variable within ga object
                     ga.UpdateZoomVar(false);
 
-                    Clients.Group("" + instanceId).renderGraph(((GraphApp)Cave.Apps["Graph"].Instances[instanceId]).FolderNameDigit, false);
+                    Clients.Group("" + instanceId).renderGraph(((GraphApp)Cave.Deployment.Apps["Graph"].Instances[instanceId]).FolderNameDigit, false);
                     Clients.Caller.setMessage("Zoomed-out graph is now being rendered.");
                 }
                 catch (Exception e)

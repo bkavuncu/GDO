@@ -24,7 +24,7 @@ namespace GDO.Apps.Presentation
         public Type InstanceType { get; set; } = new PresentationApp().GetType();
         public void JoinGroup(string groupId)
         {
-            Cave.Apps[Name].Hub.Clients = Clients;
+            Cave.Deployment.Apps[Name].Hub.Clients = Clients;
             Groups.Add(Context.ConnectionId, "" + groupId);
         }
         public void ExitGroup(string groupId)
@@ -38,7 +38,7 @@ namespace GDO.Apps.Presentation
             {
                 try
                 {
-                    PresentationApp pa = ((PresentationApp) Cave.Apps["Presentation"].Instances[instanceId]);
+                    PresentationApp pa = ((PresentationApp) Cave.Deployment.Apps["Presentation"].Instances[instanceId]);
 
                     Clients.Caller.setMessage("Generating unique digits for presentation file...");
                     // generate unique digit name of the presentation file
@@ -85,7 +85,7 @@ namespace GDO.Apps.Presentation
             {
                 try
                 {
-                    PresentationApp pa = ((PresentationApp) Cave.Apps["Presentation"].Instances[instanceId]);
+                    PresentationApp pa = ((PresentationApp) Cave.Deployment.Apps["Presentation"].Instances[instanceId]);
                     Clients.Caller.receivePptInfo(pa.FileNameDigit, pa.PageCount, pa.CurrentPage);
                 }
                 catch (Exception e)
@@ -102,7 +102,7 @@ namespace GDO.Apps.Presentation
             {
                 try
                 {
-                    PresentationApp pa = ((PresentationApp) Cave.Apps["Presentation"].Instances[instanceId]);
+                    PresentationApp pa = ((PresentationApp) Cave.Deployment.Apps["Presentation"].Instances[instanceId]);
                     Clients.Group("" + instanceId).receivePptInfo(pa.FileNameDigit, pa.PageCount, pa.CurrentPage);
                     Clients.Caller.receivePptInfo(pa.FileNameDigit, pa.PageCount, pa.CurrentPage);
                 }
@@ -120,7 +120,7 @@ namespace GDO.Apps.Presentation
             {
                 try
                 {
-                    PresentationApp pa = ((PresentationApp) Cave.Apps["Presentation"].Instances[instanceId]);
+                    PresentationApp pa = ((PresentationApp) Cave.Deployment.Apps["Presentation"].Instances[instanceId]);
                     if (pa.CurrentPage <= 0)
                     {
                         pa.CurrentPage = 0;
@@ -150,7 +150,7 @@ namespace GDO.Apps.Presentation
             {
                 try
                 {
-                    PresentationApp pa = ((PresentationApp) Cave.Apps["Presentation"].Instances[instanceId]);
+                    PresentationApp pa = ((PresentationApp) Cave.Deployment.Apps["Presentation"].Instances[instanceId]);
                     if (pa.CurrentPage < 0)
                     {
                         pa.CurrentPage = 0;

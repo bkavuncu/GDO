@@ -70,7 +70,7 @@
                 @:gdo.net.module["@moduleEntry.Value.Name"] = {};
                 @:gdo.net.module["@moduleEntry.Value.Name"].name = "@moduleEntry.Value.Name";
             }
-            foreach (KeyValuePair<string, App> appEntry in Cave.Apps)
+            foreach (KeyValuePair<string, App> appEntry in Cave.Deployment.Apps)
             {
                 @:gdo.net.app["@appEntry.Value.Name"] = {};
                 @:gdo.net.app["@appEntry.Value.Name"].name = "@appEntry.Value.Name";
@@ -99,7 +99,7 @@
     }
     $(function () {
         @{
-            foreach (KeyValuePair<string, App> appEntry in Cave.Apps)
+            foreach (KeyValuePair<string, App> appEntry in Cave.Deployment.Apps)
             {
                 @:gdo.loadScript("@appEntry.Value.Name", "@appEntry.Value.Name", gdo.SCRIPT_TYPE.APP);
             }

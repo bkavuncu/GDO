@@ -41,7 +41,7 @@ namespace GDO.Tests.Core
             {
                 Assert.Fail("Cave.Layout.Nodes.Count:" + Cave.Layout.Nodes.Count);
             }
-            List<Node> deployedNodes = Cave.CreateSection(2, 2, 3, 3);
+            List<Node> deployedNodes = Cave.Deployment.CreateSection(2, 2, 3, 3);
             if (deployedNodes.Count < 4)
             {
                 Assert.Fail("deployedNodes.Count:" + deployedNodes.Count);
@@ -57,8 +57,8 @@ namespace GDO.Tests.Core
                 {
                     Assert.Fail("node.row:" + node.Row);
                 }
-                Cave.Sections.TryGetValue(node.SectionId, out section);
-                if (!Cave.Sections.ContainsKey(node.SectionId))
+                Cave.Deployment.Sections.TryGetValue(node.SectionId, out section);
+                if (!Cave.Deployment.Sections.ContainsKey(node.SectionId))
                 {
                     Assert.Fail("node.sectionID:" + node.SectionId);
                 }
@@ -67,9 +67,9 @@ namespace GDO.Tests.Core
                     Assert.Fail();
                 }
             }
-            Cave.Sections.TryGetValue(1, out section);
-            Cave.CloseSection(1);
-            if (Cave.Sections.ContainsKey(1))
+            Cave.Deployment.Sections.TryGetValue(1, out section);
+            Cave.Deployment.CloseSection(1);
+            if (Cave.Deployment.Sections.ContainsKey(1))
             {
                 Assert.Fail();
             }
@@ -84,8 +84,8 @@ namespace GDO.Tests.Core
                     Assert.Fail();
                 }
             }
-            Cave.CreateSection(1, 2, 3, 3);
-            Cave.Sections.TryGetValue(1, out section);
+            Cave.Deployment.CreateSection(1, 2, 3, 3);
+            Cave.Deployment.Sections.TryGetValue(1, out section);
             Assert.AreEqual(1920 + 1920 + 1920, section.Width);
             Assert.AreEqual(1080 + 1080, section.Height);
         }
@@ -94,7 +94,7 @@ namespace GDO.Tests.Core
         public void GetMapTests()
         {
             Cave.Init();
-            List<Node> deployedNodes = Cave.CreateSection(2, 2, 3, 3);
+            List<Node> deployedNodes = Cave.Deployment.CreateSection(2, 2, 3, 3);
 
             _nodeMap = Cave.GetNodeMap();
             _sectionMap = Cave.GetSectionMap(1);

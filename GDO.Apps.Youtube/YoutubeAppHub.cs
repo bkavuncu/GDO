@@ -18,7 +18,7 @@ namespace GDO.Apps.Youtube
 
         public void JoinGroup(string groupId)
         {
-            Cave.Apps[Name].Hub.Clients = Clients;
+            Cave.Deployment.Apps[Name].Hub.Clients = Clients;
             Groups.Add(Context.ConnectionId, "" + groupId);
         }
         public void ExitGroup(string groupId)
@@ -32,7 +32,7 @@ namespace GDO.Apps.Youtube
             {
                 try
                 {
-                    ((YoutubeApp)Cave.Apps["Youtube"].Instances[instanceId]).SetURL(url);
+                    ((YoutubeApp)Cave.Deployment.Apps["Youtube"].Instances[instanceId]).SetURL(url);
                     Clients.Group("" + instanceId).receiveURL(instanceId, url);
                     //Clients.Caller.receiveURL(instanceId, url);
                 }
@@ -49,7 +49,7 @@ namespace GDO.Apps.Youtube
             {
                 try
                 {
-                    Clients.Caller.receiveURL(instanceId, ((YoutubeApp)Cave.Apps["Youtube"].Instances[instanceId]).GetURL());
+                    Clients.Caller.receiveURL(instanceId, ((YoutubeApp)Cave.Deployment.Apps["Youtube"].Instances[instanceId]).GetURL());
                 }
                 catch (Exception e)
                 {
@@ -142,11 +142,11 @@ namespace GDO.Apps.Youtube
             {
                 try
                 {
-                    ((YoutubeApp) Cave.Apps["Youtube"].Instances[instanceId]).BufferStatus[col, row] = status;
-                    if (((YoutubeApp) Cave.Apps["Youtube"].Instances[instanceId]).CheckBufferComplete() && !((YoutubeApp)Cave.Apps["Youtube"].Instances[instanceId]).VideoReady)
+                    ((YoutubeApp) Cave.Deployment.Apps["Youtube"].Instances[instanceId]).BufferStatus[col, row] = status;
+                    if (((YoutubeApp) Cave.Deployment.Apps["Youtube"].Instances[instanceId]).CheckBufferComplete() && !((YoutubeApp)Cave.Deployment.Apps["Youtube"].Instances[instanceId]).VideoReady)
                     {
                         Clients.Group("" + instanceId).bufferComplete(instanceId);
-                        ((YoutubeApp)Cave.Apps["Youtube"].Instances[instanceId]).VideoReady = true;
+                        ((YoutubeApp)Cave.Deployment.Apps["Youtube"].Instances[instanceId]).VideoReady = true;
                     }
                 }
                 catch (Exception e)

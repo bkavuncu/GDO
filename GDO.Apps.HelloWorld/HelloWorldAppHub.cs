@@ -23,7 +23,7 @@ namespace GDO.Apps.HelloWorld {
 
         public void JoinGroup(string groupId)
         {
-            Cave.Apps[Name].Hub.Clients = Clients;
+            Cave.Deployment.Apps[Name].Hub.Clients = Clients;
             Groups.Add(Context.ConnectionId, "" + groupId);
         }
         public void ExitGroup(string groupId)
@@ -41,7 +41,7 @@ namespace GDO.Apps.HelloWorld {
         public void SetName(int instanceId, string name) {
             lock (Cave.AppLocks[instanceId]) {
                 try {
-                    ((HelloWorldApp)Cave.Apps["HelloWorld"].Instances[instanceId]).SetName(name);
+                    ((HelloWorldApp)Cave.Deployment.Apps["HelloWorld"].Instances[instanceId]).SetName(name);
                     Clients.Group("" + instanceId).receiveName(instanceId, name);
                 } catch (Exception e) {
                     Console.WriteLine(e);// TODO show how log4net can be used
@@ -58,7 +58,7 @@ namespace GDO.Apps.HelloWorld {
         public void RequestName(int instanceId) {
             lock (Cave.AppLocks[instanceId]) {
                 try {
-                    Clients.Caller.receiveName(instanceId, ((HelloWorldApp)Cave.Apps["HelloWorld"].Instances[instanceId]).GetName());
+                    Clients.Caller.receiveName(instanceId, ((HelloWorldApp)Cave.Deployment.Apps["HelloWorld"].Instances[instanceId]).GetName());
                 } catch (Exception e) {
                     Console.WriteLine(e);// TODO show how log4net can be used
                 }

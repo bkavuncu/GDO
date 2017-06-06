@@ -19,7 +19,7 @@ namespace GDO.Apps.BasicMaps
         public Type InstanceType { get; set; } = new BasicMapsApp().GetType();
         public void JoinGroup(string groupId)
         {
-            Cave.Apps[Name].Hub.Clients = Clients;
+            Cave.Deployment.Apps[Name].Hub.Clients = Clients;
             Groups.Add(Context.ConnectionId, "" + groupId);
         }
         public void ExitGroup(string groupId)
@@ -33,7 +33,7 @@ namespace GDO.Apps.BasicMaps
             {
                 try
                 {
-                    ((BasicMapsApp)Cave.Apps["BasicMaps"].Instances[instanceId]).SetMapPosition(topLeft, center, bottomRight, resolution, width, height, zoom);
+                    ((BasicMapsApp)Cave.Deployment.Apps["BasicMaps"].Instances[instanceId]).SetMapPosition(topLeft, center, bottomRight, resolution, width, height, zoom);
                     Clients.Caller.receiveMapPosition(instanceId, topLeft, center, bottomRight, resolution, width, height, zoom);
                     BroadcastMapPosition(instanceId, topLeft, center, bottomRight, resolution, width, height, zoom);
                 }
@@ -50,7 +50,7 @@ namespace GDO.Apps.BasicMaps
             {
                 try
                 {
-                    ((BasicMapsApp)Cave.Apps["BasicMaps"].Instances[instanceId]).SetMarkerPosition(pos);
+                    ((BasicMapsApp)Cave.Deployment.Apps["BasicMaps"].Instances[instanceId]).SetMarkerPosition(pos);
                     Clients.Caller.receiveMarkerPosition(instanceId, pos);
                     BroadcastMarkerPosition(instanceId, pos);
                 }
@@ -67,7 +67,7 @@ namespace GDO.Apps.BasicMaps
             {
                 try
                 {
-                    ((BasicMapsApp)Cave.Apps["BasicMaps"].Instances[instanceId]).SetLayerVisible(id);
+                    ((BasicMapsApp)Cave.Deployment.Apps["BasicMaps"].Instances[instanceId]).SetLayerVisible(id);
                     Clients.Group("c" + instanceId).setLayerVisible(instanceId, id);
                     Clients.Group("" + instanceId).setLayerVisible(instanceId, id);
                 }
@@ -84,7 +84,7 @@ namespace GDO.Apps.BasicMaps
             {
                 try
                 {
-                    List<int> visible = ((BasicMapsApp)Cave.Apps["BasicMaps"].Instances[instanceId]).GetLayersVisible();
+                    List<int> visible = ((BasicMapsApp)Cave.Deployment.Apps["BasicMaps"].Instances[instanceId]).GetLayersVisible();
                     foreach (int layer in visible)
                     {
                         Clients.Caller.setLayerVisible(instanceId, layer);
@@ -105,14 +105,14 @@ namespace GDO.Apps.BasicMaps
                 {
                     if (control)
                     {
-                            MapPosition position = ((BasicMapsApp)Cave.Apps["BasicMaps"].Instances[instanceId]).GetMapPosition();
+                            MapPosition position = ((BasicMapsApp)Cave.Deployment.Apps["BasicMaps"].Instances[instanceId]).GetMapPosition();
                             Clients.Caller.receiveInitialMapPosition(instanceId, position.Center, position.Resolution, position.Zoom);
                     }
                     else
                     {
-                        //if (((MapsApp)Cave.Apps["BasicMaps"].Instances[instanceId]).IsInitialized)
+                        //if (((MapsApp)Cave.Deployment.Apps["BasicMaps"].Instances[instanceId]).IsInitialized)
                         //{
-                            MapPosition position = ((BasicMapsApp)Cave.Apps["BasicMaps"].Instances[instanceId]).GetMapPosition();
+                            MapPosition position = ((BasicMapsApp)Cave.Deployment.Apps["BasicMaps"].Instances[instanceId]).GetMapPosition();
                             Clients.Caller.receiveMapPosition(instanceId, position.TopLeft, position.Center, position.BottomRight, position.Resolution, position.Width, position.Height, position.Zoom);
                         //}
                     }
@@ -131,7 +131,7 @@ namespace GDO.Apps.BasicMaps
             {
                 try
                 {
-                    string[] position = ((BasicMapsApp)Cave.Apps["BasicMaps"].Instances[instanceId]).GetMarkerPosition();
+                    string[] position = ((BasicMapsApp)Cave.Deployment.Apps["BasicMaps"].Instances[instanceId]).GetMarkerPosition();
                     Clients.Caller.receiveMarkerPosition(instanceId, position);
                 }
                 catch (Exception e)
