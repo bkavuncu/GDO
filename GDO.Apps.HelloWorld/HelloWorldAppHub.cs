@@ -16,7 +16,7 @@ namespace GDO.Apps.HelloWorld {
     /// First argument should always be the instance ID
     /// </summary>
     [Export(typeof(IAppHub))]
-    public class HelloWorldAppHub : Hub, IBaseAppHub {
+    public class HelloWorldAppHub : GDOHub, IBaseAppHub {
         public string Name { get; set; } = "HelloWorld";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.None;
         public Type InstanceType { get; set; } = new HelloWorldApp().GetType();

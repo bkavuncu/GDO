@@ -10,7 +10,7 @@ using GDO.Core.Apps;
 namespace GDO.Apps.Graph
 {
     [Export(typeof(IAppHub))]
-    public class GraphAppHub : Hub, IBaseAppHub
+    public class GraphAppHub : GDOHub, IBaseAppHub
     {
         public string ControllerId { get; set; }
         public static GraphAppHub self;

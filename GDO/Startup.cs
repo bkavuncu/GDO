@@ -51,6 +51,7 @@ namespace GDO
             try
             {
                 Cave.Init();
+                //http://docs.autofac.org/en/latest/integration/signalr.html
                 var builder = new ContainerBuilder();
                 var config = new HubConfiguration();
                 GlobalHost.DependencyResolver.Register(typeof(IAssemblyLocator), () => new AssemblyLocator());

@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 
 namespace GDO.Apps.Temperatures {
     [Export(typeof(IAppHub))]
-    public class temperaturesAppHub : Hub, IBaseAppHub
+    public class temperaturesAppHub : GDOHub, IBaseAppHub
     {
         public string Name { get; set; } = "Temperatures";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.None;

@@ -10,7 +10,7 @@ using GDO.Core.Apps;
 namespace GDO.Apps.Fractals
 {
     [Export(typeof(IAppHub))]
-    public class FractalsAppHub : Hub, IBaseAppHub
+    public class FractalsAppHub : GDOHub, IBaseAppHub
     {
         public string Name { get; set; } = "Fractals";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.None;

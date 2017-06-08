@@ -9,7 +9,7 @@ using GDO.Core.Apps;
 namespace GDO.Apps.Cortical
 {
     [Export(typeof(IAppHub))]
-    public class CorticalAppHub : Hub, IBaseAppHub
+    public class CorticalAppHub : GDOHub, IBaseAppHub
     {
         public string ControllerId { get; set; }
         public static CorticalAppHub self;

@@ -10,7 +10,7 @@ using GDO.Core.Apps;
 namespace GDO.Apps.RayMarching
 {
     [Export(typeof(IAppHub))]
-    public class RayMarchingAppHub : Hub, IBaseAppHub
+    public class RayMarchingAppHub : GDOHub, IBaseAppHub
     {
         public string Name { get; set; } = "RayMarching";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.None;

@@ -13,7 +13,7 @@ namespace GDO.Apps.Bitcoin
 {
 
     [Export(typeof(IAppHub))]
-    public class BitcoinAppHub : Hub, IBaseAppHub
+    public class BitcoinAppHub : GDOHub, IBaseAppHub
     {
         public string Name { get; set; } = "Bitcoin";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.Neighbours;
