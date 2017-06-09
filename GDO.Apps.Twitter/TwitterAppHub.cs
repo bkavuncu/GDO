@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace GDO.Apps.Twitter
 {
     [Export(typeof(IAppHub))]
-    public class TwitterAppHub : Hub, IBaseAppHub
+    public class TwitterAppHub : GDOHub, IBaseAppHub
     {
         public string Name { get; set; } = "Twitter";
         public int P2PMode { get; set; } = (int) Cave.P2PModes.None;

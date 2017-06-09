@@ -10,7 +10,7 @@ using Newtonsoft.Json.Linq;
 namespace GDO.Apps.SAGE2
 {
     [Export(typeof(IAppHub))]
-    public class SAGE2AppHub : Hub, IBaseAppHub
+    public class SAGE2AppHub : GDOHub, IBaseAppHub
     {
         public string Name { get; set; } = "SAGE2";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.None;

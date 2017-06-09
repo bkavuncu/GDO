@@ -9,7 +9,7 @@ using Newtonsoft.Json.Linq;
 namespace GDO.Apps.WebGL
 {
     [Export(typeof(IAppHub))]
-    public class WebGLAppHub : Hub, IBaseAppHub
+    public class WebGLAppHub : GDOHub, IBaseAppHub
     {
         public string Name { get; set; } = "WebGL";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.Section;

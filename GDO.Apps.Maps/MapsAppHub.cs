@@ -19,7 +19,7 @@ using Style = GDO.Apps.Maps.Core.Style;
 namespace GDO.Apps.Maps
 {
     [Export(typeof (IAppHub))]
-    public class MapsAppHub : Hub, IBaseAppHub
+    public class MapsAppHub : GDOHub, IBaseAppHub
     {
         public string Name { get; set; } = "Maps";
         public int P2PMode { get; set; } = (int) Cave.P2PModes.None;

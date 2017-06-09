@@ -15,7 +15,7 @@ using Microsoft.Office.Interop.PowerPoint;
 namespace GDO.Apps.Presentation
 {
     [Export(typeof(IAppHub))]
-    public class PresentationAppHub : Hub, IBaseAppHub
+    public class PresentationAppHub : GDOHub, IBaseAppHub
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(PresentationAppHub));
 

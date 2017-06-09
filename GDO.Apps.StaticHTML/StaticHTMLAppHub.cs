@@ -11,7 +11,7 @@ using Newtonsoft.Json.Linq;
 namespace GDO.Apps.StaticHTML
 {
     [Export(typeof(IAppHub))]
-    public class StaticHTMLAppHub : Hub, IBaseAppHub
+    public class StaticHTMLAppHub : GDOHub, IBaseAppHub
     {
         public string Name { get; set; } = "StaticHTML";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.None;

@@ -15,7 +15,7 @@ using Microsoft.SqlServer.Server;
 namespace GDO.Apps.City
 {
     [Export(typeof (IAppHub))]
-    public class CityAppHub : Hub, ICompositeAppHub
+    public class CityAppHub : GDOHub, ICompositeAppHub
     {
         public string Name { get; set; } = "City";
         public int P2PMode { get; set; } = (int) Cave.P2PModes.None;

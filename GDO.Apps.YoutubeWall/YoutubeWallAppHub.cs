@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 namespace GDO.Apps.YoutubeWall
 {
     [Export(typeof (IAppHub))]
-    public class YoutubeWallAppHub : Hub, IBaseAppHub
+    public class YoutubeWallAppHub : GDOHub, IBaseAppHub
     {
         public string Name { get; set; } = "YoutubeWall";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.None;

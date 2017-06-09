@@ -13,7 +13,7 @@ namespace GDO.Apps.DD3
 {
 
     [Export(typeof(IAppHub))]
-    public class DD3AppHub : Hub, IBaseAppHub
+    public class DD3AppHub : GDOHub, IBaseAppHub
     {
 
         private static ConcurrentDictionary<int, IAppInstance> instances;

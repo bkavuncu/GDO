@@ -13,7 +13,7 @@ using log4net;
 namespace GDO.Apps.Images
 {
     [Export(typeof(IAppHub))]
-    public class ImagesAppHub : Hub, IBaseAppHub, IHubLog
+    public class ImagesAppHub : GDOHub, IBaseAppHub, IHubLog
     {
 
         public ILog Log { get; set; } = LogManager.GetLogger(typeof(ImagesAppHub));

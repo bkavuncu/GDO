@@ -7,7 +7,7 @@ using Microsoft.AspNet.SignalR;
 namespace GDO.Apps.Spreadsheets
 {
     [Export(typeof(IAppHub))]
-    public class SpreadsheetsAppHub : Hub, IBaseAppHub
+    public class SpreadsheetsAppHub : GDOHub, IBaseAppHub
     {
         public string Name { get; set; } = "Spreadsheets";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.None;

@@ -10,7 +10,7 @@ using Newtonsoft.Json.Linq;
 namespace GDO.Apps.FusionChart
 {
     [Export(typeof(IAppHub))]
-    public class FusionChartAppHub : Hub, IBaseAppHub
+    public class FusionChartAppHub : GDOHub, IBaseAppHub
     {
         public string Name { get; set; } = "FusionChart";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.None;

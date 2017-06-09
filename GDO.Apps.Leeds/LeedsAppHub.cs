@@ -9,7 +9,7 @@ using Microsoft.AspNet.SignalR;
 namespace GDO.Apps.Leeds
 {
     [Export(typeof(IAppHub))]
-    public class LeedsAppHub : Hub, IBaseAppHub
+    public class LeedsAppHub : GDOHub, IBaseAppHub
     {
         public string Name { get; set; } = "Leeds";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.None;

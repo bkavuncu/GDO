@@ -8,7 +8,7 @@ using Microsoft.AspNet.SignalR;
 namespace GDO.Apps.GigaImages
 {
     [Export(typeof(IAppHub))]
-    public class GigaImagesAppHub : Hub, IBaseAppHub
+    public class GigaImagesAppHub : GDOHub, IBaseAppHub
     {
         public string Name { get; set; } = "GigaImages";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.None;

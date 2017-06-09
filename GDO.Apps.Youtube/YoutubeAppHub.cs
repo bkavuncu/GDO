@@ -10,7 +10,7 @@ using Newtonsoft.Json.Linq;
 namespace GDO.Apps.Youtube
 {
     [Export(typeof(IAppHub))]
-    public class YoutubeAppHub : Hub, IBaseAppHub
+    public class YoutubeAppHub : GDOHub, IBaseAppHub
     {
         public string Name { get; set; } = "Youtube";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.None;

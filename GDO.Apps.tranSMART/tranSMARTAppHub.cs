@@ -10,7 +10,7 @@ using Newtonsoft.Json.Linq;
 namespace GDO.Apps.tranSMART
 {
     [Export(typeof(IAppHub))]
-    public class tranSMARTAppHub : Hub, IBaseAppHub
+    public class tranSMARTAppHub : GDOHub, IBaseAppHub
     {
         public string Name { get; set; } = "tranSMART";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.None;
