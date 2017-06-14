@@ -607,6 +607,26 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
     });
     gdo.net.instance[instanceId].layers[40].wms = true;
 
+    // Edwardian hotels json
+    gdo.net.instance[instanceId].layers[41] = new ol.layer.Vector({
+        visible: false,
+        source: new ol.source.Vector({
+            url: '/Data/BasicMaps/edwardian.json',
+            format: new ol.format.GeoJSON()
+        }),
+        style: new ol.style.Style({
+            fill: new ol.style.Fill({
+                color: '#B29255'
+            }),
+            stroke: new ol.style.Stroke({
+                color: '#715E3A',
+                width: 4
+            })
+        }),
+        opacity: 0.7
+    });
+    gdo.net.instance[instanceId].layers[41].wms = true;
+
     //BGS Bedrock and Superficial Geology
     /*gdo.net.instance[instanceId].layers[32] = new ol.layer.Tile({
         visible: false,

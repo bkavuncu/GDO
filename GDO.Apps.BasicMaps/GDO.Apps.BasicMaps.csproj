@@ -90,6 +90,8 @@
     <Content Include="Configurations\BasicMaps\Istanbul.json" />
     <Content Include="Configurations\BasicMaps\New York.json" />
     <Content Include="Configurations\BasicMaps\World.json" />
+    <Content Include="Data\BasicMaps\SK.json" />
+    <Content Include="Data\BasicMaps\edwardian.json" />
     <None Include="packages.config" />
     <Content Include="Scripts\BasicMaps\Cesium\Assets\IAU2006_XYS\IAU2006_XYS_0.json" />
     <Content Include="Scripts\BasicMaps\Cesium\Assets\IAU2006_XYS\IAU2006_XYS_1.json" />
@@ -405,9 +407,7 @@
     <Compile Include="BasicMapsAppHub.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Data\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\GDO\GDO.csproj">
       <Project>{4A27F694-1D9A-420A-A3A6-62521EAA047E}</Project>

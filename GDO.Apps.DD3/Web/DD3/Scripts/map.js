@@ -69,7 +69,9 @@ var mapHandler = function (arg) {
 	};
 	
 	var loadLayer = function (type, i, j, callback) {
-	    d3.json("https://tile.mapzen.com/mapzen/vector/v1/" + type + "/" + m.zoom + "/" + i + "/" + j + ".json", function (error, tile) {
+		//BAI
+		d3.json("http://tile.mapzen.com/mapzen/vector/v1/" + type + "/" + m.zoom + "/" + i + "/" + j + ".json" + "?api_key=mapzen-gGKpBK7", function (error, tile) {
+	    //d3.json("https://tile.mapzen.com/mapzen/vector/v1/" + type + "/" + m.zoom + "/" + i + "/" + j + ".json", function (error, tile) {
 			if (error) {
 				return console.error(error);
 			};

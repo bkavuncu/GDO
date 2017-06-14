@@ -73,7 +73,9 @@ namespace GDO.Apps.Twitter
             RestController = new RestController(new Uri(apiAddress));
 
             Debug.WriteLine("Using the following address a root api: " + apiAddress);
-            CaveState = new CaveState(Cave.Nodes, Cave.Sections, Section.Id);
+
+            CaveState = new CaveState(Cave.Layout.Nodes, Cave.Deployment.Sections, Section.Id);
+
         }
 
         #region CaveManagement
@@ -81,7 +83,9 @@ namespace GDO.Apps.Twitter
         public string GetCaveStateStatus()
         {
             Debug.WriteLine("Getting Twitter App Cave Status");
-            return CaveState.CloneCaveState(Cave.Nodes, Cave.Sections, Section.Id).SerializeJSON();
+
+            return CaveState.CloneCaveState(Cave.Layout.Nodes, Cave.Deployment.Sections, Section.Id).SerializeJSON();
+
         }
 
         public void CreateSection(int colStart, int rowStart, int colEnd, int rowEnd)

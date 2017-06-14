@@ -120,7 +120,7 @@ namespace GDO.Core
             this.AppInstanceId = instanceId;
             foreach (int nodeId in this.GetNodeMap())
             {
-                Cave.Nodes[nodeId].AppInstanceId = instanceId;
+                Cave.Layout.Nodes[nodeId].AppInstanceId = instanceId;
             }
         }
         public void FreeSection()
@@ -128,7 +128,7 @@ namespace GDO.Core
             this.AppInstanceId = -1;
             foreach (int nodeId in this.GetNodeMap())
             {
-                Cave.Nodes[nodeId].AppInstanceId = -1;
+                Cave.Layout.Nodes[nodeId].AppInstanceId = -1;
             }
         }
 

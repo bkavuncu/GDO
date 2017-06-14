@@ -9,7 +9,7 @@ using Newtonsoft.Json.Linq;
 namespace GDO.Apps.WebGL
 {
     [Export(typeof(IAppHub))]
-    public class WebGLAppHub : Hub, IBaseAppHub
+    public class WebGLAppHub : GDOHub, IBaseAppHub
     {
         public string Name { get; set; } = "WebGL";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.Section;
@@ -17,7 +17,7 @@ namespace GDO.Apps.WebGL
 
         public void JoinGroup(string groupId)
         {
-            Cave.Apps[Name].Hub.Clients = Clients;
+            Cave.Deployment.Apps[Name].Hub.Clients = Clients;
             Groups.Add(Context.ConnectionId, "" + groupId);
         }
         public void ExitGroup(string groupId)
@@ -31,7 +31,7 @@ namespace GDO.Apps.WebGL
             {
                 try
                 {
-                    ((WebGLApp)Cave.Apps["WebGL"].Instances[instanceId]).Camera = camera;
+                    ((WebGLApp)Cave.Deployment.Apps["WebGL"].Instances[instanceId]).Camera = camera;
                     //Clients.Group("" + instanceId).receiveCameraPosition(instanceId, camera);
                 }
                 catch (Exception e)
@@ -47,7 +47,7 @@ namespace GDO.Apps.WebGL
             {
                 try
                 {
-                    Camera camera = ((WebGLApp)Cave.Apps["WebGL"].Instances[instanceId]).Camera;
+                    Camera camera = ((WebGLApp)Cave.Deployment.Apps["WebGL"].Instances[instanceId]).Camera;
                     Clients.Caller.receiveCameraPosition(instanceId, camera);
                 }
                 catch (Exception e)
@@ -63,7 +63,7 @@ namespace GDO.Apps.WebGL
             {
                 try
                 {
-                    ((WebGLApp)Cave.Apps["WebGL"].Instances[instanceId]).CollectPerformanceData = collectStats;
+                    ((WebGLApp)Cave.Deployment.Apps["WebGL"].Instances[instanceId]).CollectPerformanceData = collectStats;
                     Clients.Group("" + instanceId).collectStats(instanceId, collectStats);
                 }
                 catch (Exception e)
@@ -79,7 +79,7 @@ namespace GDO.Apps.WebGL
             {
                 try
                 {
-                    Dictionary<int, List<PerformanceData>> data = ((WebGLApp)Cave.Apps["WebGL"].Instances[instanceId]).PerformanceData;
+                    Dictionary<int, List<PerformanceData>> data = ((WebGLApp)Cave.Deployment.Apps["WebGL"].Instances[instanceId]).PerformanceData;
                     Clients.Caller.receiveNewPerformanceData(instanceId, data);
                 }
                 catch (Exception e)
@@ -95,7 +95,7 @@ namespace GDO.Apps.WebGL
             {
                 try
                 {
-                    ((WebGLApp)Cave.Apps["WebGL"].Instances[instanceId]).AddNewPerformanceData(nodeId, data);
+                    ((WebGLApp)Cave.Deployment.Apps["WebGL"].Instances[instanceId]).AddNewPerformanceData(nodeId, data);
                 }
                 catch (Exception e)
                 {
@@ -110,7 +110,7 @@ namespace GDO.Apps.WebGL
             {
                 try
                 {
-                    WebGLApp app = (WebGLApp)Cave.Apps["WebGL"].Instances[instanceId];
+                    WebGLApp app = (WebGLApp)Cave.Deployment.Apps["WebGL"].Instances[instanceId];
 
                     if (app.FrameSyncActive)
                     {
@@ -138,7 +138,7 @@ namespace GDO.Apps.WebGL
             {
                 try
                 {
-                    ((WebGLApp)Cave.Apps["WebGL"].Instances[instanceId]).FrameSyncActive = frameSyncActive;
+                    ((WebGLApp)Cave.Deployment.Apps["WebGL"].Instances[instanceId]).FrameSyncActive = frameSyncActive;
                 }
                 catch (Exception e)
                 {

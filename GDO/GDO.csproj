@@ -992,6 +992,8 @@
     <Content Include="Scenarios\DSIslide.json" />
     <Content Include="Scenarios\GDOslide.json" />
     <Content Include="Scenarios\LondonMap.json" />
+    <Content Include="Scenarios\SharingEconomy.json" />
+    <Content Include="Scenarios\PeopleFlow.json" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\heatmap.js" />
     <Content Include="Scripts\heatmap.min.js" />
@@ -1029,6 +1031,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\Apps\IHubLog.cs" />
+    <Compile Include="Core\CaveDeployment.cs" />
+    <Compile Include="Core\CaveLayout.cs" />
     <Compile Include="Core\Scenarios\Element.cs" />
     <Compile Include="Core\Apps\ICompositeAppHub.cs" />
     <Compile Include="Core\Modules\IModuleHub.cs" />
@@ -1039,6 +1043,7 @@
     <Compile Include="Core\Apps\AppConfiguration.cs" />
     <Compile Include="Core\Apps\App.cs" />
     <Compile Include="Core\Scenarios\Loop.cs" />
+    <Compile Include="Core\GDOHub.cs" />
     <Compile Include="Core\States\State.cs" />
     <Compile Include="Core\Apps\IAppHub.cs" />
     <Compile Include="Core\Apps\ICompositeAppInstance.cs" />

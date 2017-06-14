@@ -129,7 +129,7 @@ namespace GDO.Apps.Maps
             Configurations = new GenericDictionary<Configuration>();
             Configurations.Init();
 
-            foreach (AppConfiguration config in Cave.Apps["Maps"].Configurations.Values)
+            foreach (AppConfiguration config in Cave.Deployment.Apps["Maps"].Configurations.Values)
             {
                 Core.Configuration configuration = new Core.Configuration();
                 configuration.Name.Value = config.Name;

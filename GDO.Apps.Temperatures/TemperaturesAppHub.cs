@@ -13,14 +13,14 @@ using Newtonsoft.Json;
 
 namespace GDO.Apps.Temperatures {
     [Export(typeof(IAppHub))]
-    public class temperaturesAppHub : Hub, IBaseAppHub
+    public class temperaturesAppHub : GDOHub, IBaseAppHub
     {
         public string Name { get; set; } = "Temperatures";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.None;
         public Type InstanceType { get; set; } = new TemperaturesApp().GetType();
         public void JoinGroup(string groupId)
         {
-            Cave.Apps[Name].Hub.Clients = Clients;
+            Cave.Deployment.Apps[Name].Hub.Clients = Clients;
             Groups.Add(Context.ConnectionId, "" + groupId);
         }
         public void ExitGroup(string groupId)
@@ -47,7 +47,7 @@ namespace GDO.Apps.Temperatures {
 
                     Clients.Caller.setMessage("Refreshing Temps");
 
-                    // TemperaturesApp yf = ((TemperaturesApp)Cave.Apps["Temperatures"].Instances[instanceId]);
+                    // TemperaturesApp yf = ((TemperaturesApp)Cave.Deployment.Apps["Temperatures"].Instances[instanceId]);
 
                     Clients.Group("" + instanceId).refresh();
 
