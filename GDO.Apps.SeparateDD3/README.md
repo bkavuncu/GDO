@@ -4,9 +4,9 @@
 ## Motivation
 Key to the success of a data driven economy is the sharing of the insight generated from data. At the heart of this is data visualisation. Indeed visualisation and visual analytics remain one of the key tools used to generate insight from data.
 
-However current visualisation techniques like Data-Driven-Documents (D3.js) still remain unaffected by the rise of Big Data, most visualisation tools and environments are capable of showing only small datasets and a tiny number of data points. 
+However current visualisation techniques like [Data-Driven-Documents (D3.js)](https://d3js.org/) still remain unaffected by the rise of Big Data, most visualisation tools and environments are capable of showing only small datasets and a tiny number of data points. 
 
-Because one key role for universities is to lead the development of tools for better Data Science, at the Data Science Institute we have been developing a Distributed model for data visualisation building upon the D3.js approach. This will enable easy scalability of visualisations to multiple computers, high resolution screens and video walls which are becoming increasingly common. This will enable orders of magnitude more data points to be visualised for greater insight.
+Because one key role for universities is to lead the development of tools for better Data Science, at the [Data Science Institute](https://www.imperial.ac.uk/data-science/) we have been developing a Distributed model for data visualisation building upon the D3.js approach. This will enable easy scalability of visualisations to multiple computers, high resolution screens and video walls which are becoming increasingly common. This will enable orders of magnitude more data points to be visualised for greater insight.
 
 
 ## Features
