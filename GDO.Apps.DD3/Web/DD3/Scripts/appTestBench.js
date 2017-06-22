@@ -608,15 +608,8 @@
                     .duration(time)
                     .precision(0.1)
                     .attr('fill', function () { return color(i); })
-                    .attr({
-                        'y': function (d, i) {
-                            return (yScale(randomGDP[i]));
-                        },
-                        'height': function (d, i) {
-                            return (yScale(0) - yScale(randomGDP[i]));
-                        }
-                    });
-
+                    .attr('y', function (d, i) { return (yScale(randomGDP[i])); })
+                    .attr('height', function (d, i) { return (yScale(0) - yScale(randomGDP[i])); });
                 i++;
             };
         },
