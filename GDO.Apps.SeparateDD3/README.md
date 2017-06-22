@@ -10,7 +10,11 @@ Because one key role for universities is to lead the development of tools for be
 
 
 ## Features
-DD3 
+- Distributed Data Visualization:
+
+- Nodejs Server Support
+
+- Peerjs Server Support
 
 
 
