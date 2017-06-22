@@ -53,9 +53,9 @@ Show what the library does as concisely as possible, developers should be able t
 
 ## Installation
 
-Provide code examples and explanations of how to get the project.
-
-
+```bash
+npm install dd3
+```
 
 
 ## Contributors
