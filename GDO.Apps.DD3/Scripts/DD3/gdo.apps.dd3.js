@@ -50,7 +50,6 @@ $.ajax({
     dataType: "script"
 });
 
-
 $.ajax({
     async: false,
     url: "../../Scripts/DD3/socket.io.min.js",
@@ -67,7 +66,6 @@ dd3Net.socket.on('news', function (data) {
     console.log(data);
     dd3Net.socket.emit('my other event', { my: 'data' });
 });
-
 
 dd3Net.onClientCallbackFunc();
 
@@ -461,7 +459,6 @@ var initDD3App = function () {
    
         var dd3_data = {}, // Storing functions
             data = {}; // Storing data
-        //Represent signalr connection
 
         //Represents Cave
         var cave = {
@@ -667,6 +664,7 @@ var initDD3App = function () {
                             console.log(objAry);
 
                             //init.connectToSignalRServer();
+                            
                             init.getCaveConfiguration(JSON.stringify(objAry));
                             
                         });
@@ -976,7 +974,6 @@ var initDD3App = function () {
             };
 
             // Most used functions already computed ... time saving ! - 
-            //TODEL:...and never used ...
             var hghl = _dd3.position('html', 'global', 'html', 'local'),
                 hlhg = _dd3.position('html', 'local', 'html', 'global'),
                 hlsg = _dd3.position('html', 'local', 'svg', 'global'),
