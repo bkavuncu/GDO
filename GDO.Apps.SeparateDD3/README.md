@@ -1,3 +1,21 @@
+# Distributed D3.js (DD3):
+![NPM version](https://badge.fury.io/js/socket.io.svg)
+
+## Motivation
+Key to the success of a data driven economy is the sharing of the insight generated from data. At the heart of this is data visualisation. Indeed visualisation and visual analytics remain one of the key tools used to generate insight from data.
+
+However current visualisation techniques like Data-Driven-Documents (D3.js) still remain unaffected by the rise of Big Data, most visualisation tools and environments are capable of showing only small datasets and a tiny number of data points. 
+
+Because one key role for universities is to lead the development of tools for better Data Science, at the Data Science Institute we have been developing a Distributed model for data visualisation building upon the D3.js approach. This will enable easy scalability of visualisations to multiple computers, high resolution screens and video walls which are becoming increasingly common. This will enable orders of magnitude more data points to be visualised for greater insight.
+
+
+## Features
+DD3 
+
+
+
+
+
 # Specification:
 1. Install nodejs server via "https://nodejs.org/en/"
 2. Control ULR: http://127.0.0.1:8080/Web/DD3/Control.html?confId=0&controlId=3&numClients=2
@@ -19,3 +37,36 @@
 5. In browser, input client1 URL:http://localhost:8080/Web/DD3/App.html?confId=0&controlId=3&clientId=1&row=1&column=1&numClients=2
 6. In browser, input client2 URL:http://localhost:8080/Web/DD3/App.html?confId=0&controlId=3&clientId=2&row=1&column=1&numClients=2
 7. You will find the transition application (confId = 0) will be launched successfully.
+
+
+## Synopsis
+
+At the top of the file there should be a short introduction and/ or overview that explains **what** the project is. This description should match descriptions added for package managers (Gemspec, package.json, etc.)
+
+## Code Example
+
+Show what the library does as concisely as possible, developers should be able to figure out **how** your project solves their problem by looking at the code example. Make sure the API you are showing off is obvious, and that your code is short and concise.
+
+## Motivation
+
+A short description of the motivation behind the creation and maintenance of the project. This should explain **why** the project exists.
+
+## Installation
+
+Provide code examples and explanations of how to get the project.
+
+## API Reference
+
+Depending on the size of the project, if it is small and simple enough the reference docs can be added to the README. For medium size to larger projects it is important to at least provide a link to where the API reference docs live.
+
+## Tests
+
+Describe and show how to run the tests with code examples.
+
+## Contributors
+
+Let people know how they can dive into the project, include important links to things like issue trackers, irc, twitter accounts if applicable.
+
+## License
+
+A short snippet describing the license (MIT, Apache, etc.)
