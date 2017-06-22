@@ -153,23 +153,28 @@
                 .attr("dominant-baseline", "text-before-edge")
                 .attr("transform", 'translate(' + [p.left(0), p.top(0)] + ')');
 
-            dd3.defineEase("normalEase", d3.easeLinear());
+            dd3.defineEase("bounce", d3.easeBounceIn);
 
             dd3.defineTween("myTween", function () {
+                var node = this;
                 return function (t) {
-                    this.setAttribute("width", t * 500);
+                    node.setAttribute("width", t * 400 + 50);
                 }
             });
 
-            dd3.defineStyleTween("my3Tween", function (d, i, a) {
-                var i = d3.interpolate(a, "#AAA");
+            dd3.defineStyleTween("my3Tween", function (d, i) {
+                var i = d3.interpolate(this.style.fill, "#AAA");
                 return function (t) {
                     return i(t);
                 }
             });
+            
+            dd3.defineAttrTween("tweenRotation", function (d, i) {
+                return d3.interpolateString("rotate(0)", "rotate(720)");
+            });
 
-            dd3.defineAttrTween("tweenRotation", function (d, i, a) {
-                return d3.interpolateString(a, a.replace("rotate(0", "rotate(720"));
+            dd3.defineAttrTween("tweenRotRect", function (d, i) {
+                return d3.interpolateString("rotate(0)", "rotate(-40)");
             });
 
             appTestBench.orderController.orders['createRect'] = function () {
@@ -265,19 +270,28 @@
             appTestBench.orderController.orders['startXTranslation'] = function (name) {
                 fpss = [];
                 triggered = false;
-                rect.transition(name)
-                    .duration(10000)
-                    .style("fill", "#AAA")
+
+                t = dd3.transition(name).duration(10000)
+
+                rect.transition(t)
                     .attr('x', 8 * width / 10)
                     .text("test")
-                    .ease(d3.easeLinear)
-                    //.tween('name', 'myTween')
-                    //.styleTween('fill', 'my3Tween')
-                    .transition(name)
+                    .ease("bounce")
+                    .tween('name', 'myTween')
+                    .styleTween('fill', 'my3Tween')
+                    .transition()
                     .duration(5000)
+                    .ease(d3.easeCubicOut)
                     .style("fill", "#EEE")
                     .attr('x', width / 10)
-                    .on("end", sendFPSAvg);
+                    .on("start", function () {
+                        dd3.active(this, name)
+                            .transition()
+                            .duration(1000)
+                            .attr("width", width / 10);
+                    })
+                   .on("end", sendFPSAvg);
+
             };
 
             appTestBench.orderController.orders['startYTranslation'] = function (name) {
@@ -295,9 +309,10 @@
             appTestBench.orderController.orders['startRotation'] = function (name) {
                 fpss = [];
                 triggered = false;
-                rect.transition(name)
+                rect.attr('transform', 'rotate(0)')
+                    .transition(name)
                     .duration(3000)
-                    .attr('transform', 'rotate(-40)')
+                    .attrTween('transform', 'tweenRotRect')
                     .transition(name)
                     .duration(3000)
                     .attr('transform', 'rotate(40)')
@@ -350,7 +365,7 @@
                         .ease(d3.easeLinear)
                         .attr('transform', 'translate(' + p[0] + ' ' + p[1] + ')');
                 });
-
+                
                 polygonGroupInner
                     .attr('transform', 'rotate(0 ' + [pw / 2, ph / 2] + ')')
                     .transition()
@@ -609,7 +624,7 @@
         //handMoving
         '3': function () {
             var w = 682,
-                        h = 455;
+                h = 455;
             var svg = dd3.svgCanvas,
                 width = dd3.cave.svgWidth,
                 height = dd3.cave.svgHeight,
@@ -618,6 +633,13 @@
             var max_y = 0;
             var current_y = 0;
             var last_row = 0;
+
+            // Not clear why but was removed from d3 v4 ...
+            d3.selection.prototype.moveToFront = function () {
+                return this.each(function () {
+                    this.parentNode.appendChild(this);
+                });
+            };
 
             appTestBench.orderController.orders['createRect'] = function (id, image, w_img, h_img) {
                 var rectG = svg.append('g').attr('id', "r" + id);
