@@ -268,6 +268,14 @@
 
             var g = svg.append("g");
 
+            // Thanks stackoverflow for the following, replacing d3.transform
+            function getTranslation(transform) {
+                var g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                g.setAttributeNS(null, "transform", transform);
+                var matrix = g.transform.baseVal.consolidate().matrix;
+                return [matrix.e, matrix.f];
+            }
+
             var moveRect = function () {
                 var o = controlTestBench.order("moveRect", [this.parentElement.id, (d3.mouse(g.node())[0] + pos.x) / wr, (d3.mouse(g.node())[1] + pos.y) / hr]),
                     tr = [d3.mouse(g.node())[0] + pos.x, d3.mouse(g.node())[1] + pos.y];
@@ -313,7 +321,7 @@
                 console.log('move');
                 console.log(this);
                 d3.select(this.parentElement).moveToFront();
-                var t = d3.transform(d3.select(this.parentElement).attr("transform")).translate;
+                var t = getTranslation(d3.select(this.parentElement).attr("transform"));
                 previous = Date.now();
                 pos.x = t[0] - d3.mouse(g.node())[0];
                 pos.y = t[1] - d3.mouse(g.node())[1];
@@ -325,7 +333,7 @@
                 console.log('resize');
                 console.log(this);
                 d3.select(this.parentElement).moveToFront();
-                var t = d3.transform(d3.select(this.parentElement).attr("transform")).translate;
+                var t = getTranslation(d3.select(this.parentElement).attr("transform"));
                 previous = Date.now();
                 posC.x = t[0] - d3.mouse(g.node())[0];
                 posC.y = t[1] - d3.mouse(g.node())[1];
