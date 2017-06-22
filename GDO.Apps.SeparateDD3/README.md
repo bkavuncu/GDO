@@ -12,9 +12,9 @@ Because one key role for universities is to lead the development of tools for be
 ## Features
 - Distributed Data Visualization:
 
-- Nodejs Server Support
+- Nodejs Server Support:
 
-- Peerjs Server Support
+- Peerjs Server Support:
 
 
 ## API Reference
