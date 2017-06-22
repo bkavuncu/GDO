@@ -79,8 +79,9 @@ var initDD3App = function () {
     //BAI: only the test_bench which is running will not be set "display:none" and it will be shown in the GDO environment (Instance panel in the GDO management website). 
     //BAI: each test_bench (client.cshtml) will also be regarded as an iframe and will be embeded into "Node.cshtml" file (a div called "wrapper") which is defined in the root GOD solution (GDO/Web/Node.cshtml).
     d3 = document.getElementById('app_frame_content').contentWindow.d3;
+    // TODO v4: delete the ugly hack below
+    d3_attrs = d3.selection.prototype.attrs
 
-   
     /**
      * Common JS utility function. 
      */
@@ -1769,6 +1770,7 @@ var initDD3App = function () {
 
             /*APIDOC: see d3.selection */
             //BAI: DD3Q: dd3.selection is the same as the d3.selection.
+
             _dd3.selection = d3.selection;
 
 
@@ -1801,11 +1803,11 @@ var initDD3App = function () {
             //Function to add a watcher function on selection function. Function in _dd3
             var _dd3_watchSelectFactory = _dd3_factory(_dd3);
 
-            //Called on a change to the DOM structure
 
+            //Called on a change to the DOM structure
             var _dd3_watchChange = function (original, funcName, expectedArg) {
                 return function () {
-                    if (arguments.length < expectedArg && typeof arguments[0] !== 'object')
+                    if (arguments.length < expectedArg && typeof arguments[0] !== 'object') // TODO v4 : Second part after && should be removed as unuseful with v4
                         return original.apply(this, arguments);
                     
                     original.apply(this, arguments);
@@ -1827,15 +1829,25 @@ var initDD3App = function () {
                 return function (what, beforeWhat) {
                     if (funcName === 'append') {
                         beforeWhat = function () {
+                            var parent = this;
+                            if (_dd3_isEnterNode(this)) {
+                                if (this._next !== null)
+                                    return this._next;
+                                else
+                                    parent = this._parent;
+                            }
 
-                            var a = _dd3_selection_filterUnreceived(d3.selectAll(this.childNodes));
-                            return (a[0] && a[0][a[0].length - 1] && a[0][a[0].length - 1].nextElementSibling);//TO v4 added one additionnal condition which shouldn't trigger
+                            var a = _dd3_selection_filterUnreceived(d3.selectAll(parent.childNodes));
+                            if (!a.empty())
+                                return a.nodes().pop().nextElementSibling;
+                            else if (a.empty() && parent.childNodes.length > 0)
+                                return _dd3_getOrderFollower(d3.select(parent), browser.row + '-' + browser.column + '_0');
+                            else
+                                return null;
                         };
                     }
 
-
-
-                    return _dd3.selection.prototype.insert_.call(this, what, beforeWhat).each(function () {
+                    return _dd3.selection.prototype.insert_.call(this, what, beforeWhat).each(function () {   // EVANN : problem with insert if element to insert will be last (ie. beforeWhat is or returns null) ... can't see why anymore ??
                         _dd3_createProperties.call(this);
                         if (this.parentNode.__unwatch__)
                             _dd3_unwatch.call(this);
@@ -1847,7 +1859,7 @@ var initDD3App = function () {
             //Called when a DOM element is selected
             var _dd3_watchSelect = function (original) {
                 return function (selector) {
-                    if (typeof selector !== "string") return original.apply(this, arguments);// if the selector is not a string, nothing to do
+                    if (typeof selector !== "string") return original.apply(this, arguments); // if the selector is not a string, nothing to do
                     selector += ':not(.dd3_received)';
                     //else, we don't want to select elements that have yet to be received.
                     return original.call(this, selector);
@@ -1855,9 +1867,8 @@ var initDD3App = function () {
             };
 
 
-            //Called when no operation is performer ... or an insert call in some remote circumstances
+            //Called when no operation is performed ... or an insert call in some remote circumstances
             var _dd3_watchNoOperation = function (original) {
-
                 return function () {
                     return original.apply(this, arguments);
                 };
@@ -1868,7 +1879,13 @@ var initDD3App = function () {
             //BAI: For example: dd3.selection.attr('cx','10'). Therefore, there are two arguments in this function.
             _dd3.selection.prototype.attr = _dd3_watchFactory(_dd3_watchChange, d3.selection.prototype.attr, 'attr', 2);
 
-            _dd3.selection.prototype.style = _dd3_watchFactory(_dd3_watchChange, d3.selection.prototype.style, 'style', 2);
+            // Working properly but calling d3...attr
+            //_dd3.selection.prototype.attrs = _dd3_watchFactory(_dd3_watchChange, d3.selection.prototype.attrs, 'attrs', 1); // TODO v4: Handle case where arg is function
+
+            _dd3.selection.prototype.style = _dd3_watchFactory(_dd3_watchChange, d3.selection.prototype.style, 'style', 2); // TODO: Check for 3rd arg
+
+            // Working properly but calling d3...style
+            //_dd3.selection.prototype.styles = _dd3_watchFactory(_dd3_watchChange, d3.selection.prototype.styles, 'styles', 1); // TODO v4: Handle case where arg is function
 
             _dd3.selection.prototype.html = _dd3_watchFactory(_dd3_watchChange, d3.selection.prototype.html, 'html', 1);
 
@@ -1877,6 +1894,9 @@ var initDD3App = function () {
             _dd3.selection.prototype.classed = _dd3_watchFactory(_dd3_watchChange, d3.selection.prototype.classed, 'classed', 2);
 
             _dd3.selection.prototype.property = _dd3_watchFactory(_dd3_watchChange, d3.selection.prototype.property, 'property', 2);
+
+            // Working properly but calling d3...property
+            //_dd3.selection.prototype.properties = _dd3_watchFactory(_dd3_watchChange, d3.selection.prototype.properties, 'properties', 1); // TODO v4: Handle case where arg is function
 
             _dd3.selection.prototype.remove = _dd3_watchFactory(_dd3_watchChange, d3.selection.prototype.remove, 'remove', 0);
 
@@ -1912,7 +1932,7 @@ var initDD3App = function () {
             *  oldSelection are the former recipients
             *  Returns which elements enter, update or exit the new selection 
             */
-            //BAI: this function is called in the function "_dd3_sendGroup" and "_dd3_sendElement"
+            // BAI: this function is called in the function "_dd3_sendGroup" and "_dd3_sendElement"
             var _dd3_getSelections = function (newSelection, oldSelection) {
                 var ns = newSelection.slice(),
                     os = oldSelection.slice();
@@ -1934,7 +1954,6 @@ var initDD3App = function () {
                     return r;
                 };
 
-                if (!(ns instanceof Array)) utils.log("V4 Error: ns is a Map and handled as an array",4);
                 ns.forEach(function (d) {
                     if ((i = contain(os, d)) >= 0) {
                         os[i].min = d.min;
@@ -2124,6 +2143,7 @@ var initDD3App = function () {
                     obj.containers = groups;
                 };
 
+                // Not used in v4
                 var createPropertiesObject = function (obj, elem, f, props) {
                     var array = [];
                     for (var prop in props) {
@@ -2133,6 +2153,7 @@ var initDD3App = function () {
                     }
                     return array;
                 };
+
                 //BAI: this function will be called by the above function "createPropertiesObject"
                 var createPropertyObject = function (obj, elem, f, p) {
                     if (f !== "remove") {
@@ -2254,8 +2275,10 @@ var initDD3App = function () {
                             if (type === 'shape') { // If we want to send the shape...
                                 createShapeObject(objTemp, elem, onSend);
                             } else if (type === 'property') { // Otherwise, if we just want to update a property ...
-                                if (typeof args.property === 'object') { // If we gave object as { property -> value, ... }
-                                    objTemp = createPropertiesObject(objTemp, elem, args.function, args.property);
+                                if (typeof args.property === 'object') { // If we gave object as { property -> value, ... } // v4: This is not supposed to be used
+                                    var func = ({ "attrs": "attr", "properties": "property", "styles": "style" })[args.function]
+                                    objTemp = createPropertiesObject(objTemp, elem, func, args.property);
+                                    console.warn("DD3 v4: You shouldn't be here... (sending properties change as an object)")
                                 } else {
                                     createPropertyObject(objTemp, elem, args.function, args.property);
                                 }
@@ -2365,7 +2388,7 @@ var initDD3App = function () {
             };
 
             /**
-            *  Watch methods    
+            *  Watch methods
             */
 
             // To go to helpers
@@ -2402,7 +2425,6 @@ var initDD3App = function () {
 
             /** calls _dd3_createProperties for each element in the input*/
             var _dd3_selection_createProperties = function (elem) {
-
                 elem.each(function () { _dd3_createProperties.call(this); });
                 return elem;
             };
@@ -2432,6 +2454,10 @@ var initDD3App = function () {
                 });
             };
 
+            var _dd3_isEnterNode = function (node) {
+                return node.constructor.name == "EnterNode"
+            };
+            
             var _dd3_isReceived = function (e) {
                 return [].indexOf.call(e.classList || [], 'dd3_received') >= 0;
             };
