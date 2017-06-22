@@ -17,7 +17,21 @@ Because one key role for universities is to lead the development of tools for be
 - Peerjs Server Support
 
 
+## API Reference
 
+Depending on the size of the project, if it is small and simple enough the reference docs can be added to the README. For medium size to larger projects it is important to at least provide a link to where the API reference docs live.
+
+
+
+
+# Tests:
+1. Open console and make sure the direction is in this folder.
+2. In console, input "npm install"
+3. In console, input "node server.js" to launch nodejs server.
+4. In browser, input control URL:http://127.0.0.1:8080/Web/DD3/Control.html?confId=0&controlId=3&numClients=2
+5. In browser, input client1 URL:http://localhost:8080/Web/DD3/App.html?confId=0&controlId=3&clientId=1&row=1&column=1&numClients=2
+6. In browser, input client2 URL:http://localhost:8080/Web/DD3/App.html?confId=0&controlId=3&clientId=2&row=1&column=1&numClients=2
+7. You will find the transition application (confId = 0) will be launched successfully.
 
 
 # Specification:
@@ -32,40 +46,17 @@ Because one key role for universities is to lead the development of tools for be
 9. Most of the changes of this version is in the "control.html" and "app.html" as well as their js files. Some changes also happened in the "gdo.apps.dd3.js" file and all these changes are commented by "seperate version changed". The reason is that all these changes are about signalR or GDO framework code. In this seperate version, signalr and GDO are not needed any more.
 
 
-
-# Test Example:
-1. Open console and make sure the direction is in this folder.
-2. In console, input "npm install"
-3. In console, input "node server.js" to launch nodejs server.
-4. In browser, input control URL:http://127.0.0.1:8080/Web/DD3/Control.html?confId=0&controlId=3&numClients=2
-5. In browser, input client1 URL:http://localhost:8080/Web/DD3/App.html?confId=0&controlId=3&clientId=1&row=1&column=1&numClients=2
-6. In browser, input client2 URL:http://localhost:8080/Web/DD3/App.html?confId=0&controlId=3&clientId=2&row=1&column=1&numClients=2
-7. You will find the transition application (confId = 0) will be launched successfully.
-
-
-## Synopsis
-
-At the top of the file there should be a short introduction and/ or overview that explains **what** the project is. This description should match descriptions added for package managers (Gemspec, package.json, etc.)
-
 ## Code Example
 
 Show what the library does as concisely as possible, developers should be able to figure out **how** your project solves their problem by looking at the code example. Make sure the API you are showing off is obvious, and that your code is short and concise.
 
-## Motivation
-
-A short description of the motivation behind the creation and maintenance of the project. This should explain **why** the project exists.
 
 ## Installation
 
 Provide code examples and explanations of how to get the project.
 
-## API Reference
 
-Depending on the size of the project, if it is small and simple enough the reference docs can be added to the README. For medium size to larger projects it is important to at least provide a link to where the API reference docs live.
 
-## Tests
-
-Describe and show how to run the tests with code examples.
 
 ## Contributors
 
