@@ -10,6 +10,7 @@
 
 // ==== IF THIS NODE IS AN APP ====
 var d3;
+var dd3;
 var dd3Net;
 var dd3NetS;
 var dd3NetP;
@@ -402,7 +403,7 @@ var initDD3App = function () {
     //BAI: TODO : dd3 object also contains lot of initilize operations. The definition of api functions and initialization should be seperate.
     //BAI: inside the dd3 function, the returned value is "_dd3", so "_dd3" is equal to "dd3"
 
-    var dd3 = (function () {
+    dd3 = (function () {
         "use strict";//In strict mode, the JS engine is more regarding
 
         //BAI: DD3Q: if "_dd3" has all the same functions defined in the original d3 library. 
