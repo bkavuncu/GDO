@@ -176,12 +176,12 @@ var api = {
             delete rooms[socket.roomId];
     }
     delete members[socket.id];
-
+/*
     if(rooms[socket.roomId] && rooms[socket.roomId].firstNode == socket.id){
         console.log('[firstNode changed from]',socket.id , ' [to ]', Object.keys(members)[0]);
         rooms[socket.roomId].firstNode = Object.keys(members)[0];
     }
-
+*/
     if(rooms[socket.roomId]&&rooms[socket.roomId].ready){
         //delete rooms[socket.roomId];
         rooms[socket.roomId].ready = false;
