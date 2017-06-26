@@ -30,10 +30,11 @@ dd3.defineEase()
 ## Specification (BAI)
 #### Control ULR: 
 - http://127.0.0.1:8080/Web/DD3/Control.html?confId=0&controlId=3&numClients=2
-- "confId" in the URL represents application and "controlId" reprenets the instanceId of each application.
+- ```bash confId``` in the URL represents application 
+- ```bash"controlId``` reprenets the instanceId of each application.
 #### Client URL: 
 - http://localhost:8080/Web/DD3/App.html?confId=0&controlId=3&clientId=2&row=1&column=1&numClients=2
-- "clientId" has the same meaning with the GDO client which is the id of each browser.
+- ```clientId``` has the same meaning with the GDO client which is the id of each browser.
 
 
 ## Installation (BAI)
