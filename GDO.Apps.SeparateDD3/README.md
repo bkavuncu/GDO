@@ -1,7 +1,7 @@
 # Distributed D3.js (DD3):
 ![NPM version](https://badge.fury.io/js/socket.io.svg)
 
-## Motivation
+## Motivation (BAI)
 Key to the success of a data driven economy is the sharing of the insight generated from data. At the heart of this is data visualisation. Indeed visualisation and visual analytics remain one of the key tools used to generate insight from data.
 
 However current visualisation techniques like [Data-Driven-Documents (D3.js)](https://d3js.org/) still remain unaffected by the rise of Big Data, most visualisation tools and environments are capable of showing only small datasets and a tiny number of data points. 
@@ -10,9 +10,9 @@ Because one key role for universities is to lead the development of tools for be
 
 
 ## Features
-- Distributed Data Visualization:
+- Distributed Data Visualization: (BAI)
 
-- Nodejs Server Support:
+- Nodejs Server Support: (BAI)
 
 - Peerjs Server Support:
 
@@ -27,23 +27,11 @@ dd3.defineEase()
 ```
 
 
-
-
-
-
-
-
-# Specification:
-1. Install nodejs server via "https://nodejs.org/en/"
-2. Control ULR: http://127.0.0.1:8080/Web/DD3/Control.html?confId=0&controlId=3&numClients=2
-3. Client URL: http://localhost:8080/Web/DD3/App.html?confId=0&controlId=3&clientId=2&row=1&column=1&numClients=2
-4. "confId" in the URL represents application and "controlId" reprenets the instanceId of each application.
+# Specification (BAI)
+- Control ULR: http://127.0.0.1:8080/Web/DD3/Control.html?confId=0&controlId=3&numClients=2
+"confId" in the URL represents application and "controlId" reprenets the instanceId of each application.
+- Client URL: http://localhost:8080/Web/DD3/App.html?confId=0&controlId=3&clientId=2&row=1&column=1&numClients=2
 5. "clientId" has the same meaning with the GDO client which is the id of each browser.
-6. The URL query parameters should be modified according to Xiaoping's design.
-7. All the data query function in this version is removed, because they should be replaced by Odata.
-8. Only when "confId=0", the application can work good. Because only the application with "confId=0" does not need to query data from the server but all the other applications need to query data from server. After the data query functions are implemented, we could test the other applications one by one.
-9. Most of the changes of this version is in the "control.html" and "app.html" as well as their js files. Some changes also happened in the "gdo.apps.dd3.js" file and all these changes are commented by "seperate version changed". The reason is that all these changes are about signalR or GDO framework code. In this seperate version, signalr and GDO are not needed any more.
-
 
 
 ## Installation (BAI)
@@ -61,10 +49,7 @@ npm install dd3
 6. In browser, input client2 URL:http://localhost:8080/Web/DD3/App.html?confId=0&controlId=3&clientId=2&row=1&column=1&numClients=2
 7. You will find the transition application (confId = 0) will be launched successfully.
 
-## Contributors
 
-Let people know how they can dive into the project, include important links to things like issue trackers, irc, twitter accounts if applicable.
-
-## License
+## License (BAI)
 
 A short snippet describing the license (MIT, Apache, etc.)
