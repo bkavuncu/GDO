@@ -27,7 +27,7 @@ dd3.defineEase()
 ```
 
 
-# Specification (BAI)
+## Specification (BAI)
 #### Control ULR: 
 - http://127.0.0.1:8080/Web/DD3/Control.html?confId=0&controlId=3&numClients=2
 - "confId" in the URL represents application and "controlId" reprenets the instanceId of each application.
@@ -42,7 +42,8 @@ dd3.defineEase()
 npm install dd3
 ```
 
-# Launch Example (BAI)
+## Launch Example (BAI)
+```bash
 1. Open console and make sure the direction is in this folder.
 2. In console, input "npm install"
 3. In console, input "node server.js" to launch nodejs server.
@@ -50,7 +51,7 @@ npm install dd3
 5. In browser, input client1 URL:http://localhost:8080/Web/DD3/App.html?confId=0&controlId=3&clientId=1&row=1&column=1&numClients=2
 6. In browser, input client2 URL:http://localhost:8080/Web/DD3/App.html?confId=0&controlId=3&clientId=2&row=1&column=1&numClients=2
 7. You will find the transition application (confId = 0) will be launched successfully.
-
+```
 
 ## License (BAI)
 
