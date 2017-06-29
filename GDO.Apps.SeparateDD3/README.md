@@ -38,16 +38,16 @@ dd3.defineEase()
 ## Specification (BAI)
 #### Control ULR: 
 - http://127.0.0.1:8080/Web/DD3/Control.html?confId=0&controlId=3&numClients=2
-- ```bash confId``` in the URL represents application 
-- ```bash controlId``` reprenets the instanceId of each application.
-- ```bash numClients``` indicates that how many browsers you wanna use to visualize data.
+- ```confId``` in the URL represents application 
+- ```controlId``` reprenets the instanceId of each application.
+- ```numClients``` indicates that how many browsers you wanna use to visualize data.
 #### Client URL: 
 - http://localhost:8080/Web/DD3/App.html?confId=0&controlId=3&clientId=2&row=1&column=1&numClients=2
-- ```bash confId``` in the URL represents application which is should be the same with the Control URL above.
-- ```bash clientId``` has the same meaning with the GDO client which is the id of each browser.
-- ```bash row``` indicate the row index of the browser.
-- ```bash column``` indicate the column index of the browser.
-- ```bash numClients``` indicates that how many browsers you wanna use to visualize data and it should be the same with the Control URL above.
+- ```confId``` in the URL represents application which is should be the same with the Control URL above.
+- ```clientId``` has the same meaning with the GDO client which is the id of each browser.
+- ```row``` indicate the row index of the browser.
+- ```column``` indicate the column index of the browser.
+- ```numClients``` indicates that how many browsers you wanna use to visualize data and it should be the same with the Control URL above.
 
 ## Installation (BAI)
 
