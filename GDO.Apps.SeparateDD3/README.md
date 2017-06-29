@@ -13,7 +13,8 @@ Because one key role for universities is to lead the development of tools for be
 #### Distributed Data Visualization: 
 - Each browser only holds part of the whole data which it needs to visualize.
 - If some data in the current browser need to be visualized in the other browsers dynamically, these data will be transferred from the current browser to the other browser via [Peerjs](http://peerjs.com/). The browsers will create new dom elements according to the received data (position, radius, transition, tween...).
-- This design can avoid to save all the data in a centralized server (single machine and single threaded model) and dynamically reduce the limitation of showing only small datasets and a tiny number of data points.
+- This design can avoid to save all the visualized data in a centralized server (single machine and single threaded model) and dynamically reduce the limitation of showing only small datasets and a tiny number of data points under the centralized model.
+- As more visualized data can be supported in DD3 framework, tt could help practitioners gain a complete view of the data with the rise of Big Data.
 
 #### Nodejs Server Support: (BAI)
 - The nodejs server utilize the [room](https://socket.io/docs/rooms-and-namespaces/) concept: each application in one room, each instance of any application in one room.
