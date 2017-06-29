@@ -10,7 +10,7 @@ Because one key role for universities is to lead the development of tools for be
 
 
 ## Features
-#### Distributed Data Visualization: 
+#### Distributed Data Visualization: (BAI)
 - Each browser only holds part of the whole data which it needs to visualize.
 - If some data in the current browser need to be visualized in the other browsers dynamically, these data will be transferred from the current browser to the other browser via [Peerjs](http://peerjs.com/). The browsers will create new dom elements according to the received data (position, radius, transition, tween...).
 - This design can avoid to save all the visualized data in a centralized server (single machine and single threaded model) and dynamically reduce the limitation of showing only small datasets and a tiny number of data points under the centralized model.
