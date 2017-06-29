@@ -1,5 +1,5 @@
 # Distributed D3.js (DD3):
-[![NPM version](https://www.npmjs.com/package/dd3)](#NPM version)
+[![NPM version](https://badge.fury.io/js/socket.io.svg)](https://www.npmjs.com/package/dd3)
 
 ## Motivation (BAI)
 Key to the success of a data driven economy is the sharing of the insight generated from data. At the heart of this is data visualisation. Indeed visualisation and visual analytics remain one of the key tools used to generate insight from data.
