@@ -16,7 +16,7 @@ Because one key role for universities is to lead the development of tools for be
 #### Nodejs Server Support: (BAI)
 - The nodejs server utilize the [room](https://socket.io/docs/rooms-and-namespaces/) concept: each application in one room, each instance of any application in one room.
 - All the clients in the same room can be regarded as a group of visulation browsers which will show one application.
-- Nodejs server which works as a HTTP server only provides simple functions: 1. Response the HTML page loading request. 2. Room management for each joined client. 3. Decide if all the required clients joined according to the qurey parameters in URL and broadcast launch app command.
+- Nodejs server which works as a HTTP server only provides simple functions: 1) Response the HTML page loading request. 2) Room management for each joined client. 3) Decide if all the required clients joined according to the qurey parameters in URL and broadcast launch app command.
 - We will make the nodejs server more simple via the Peerjs server in the next version. The nodejs server only plays a role of a HTTP server. All the other funtions are implemented by the Peerjs server.
 
 #### Peerjs Server Support:
