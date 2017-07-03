@@ -54,8 +54,8 @@ dd3.defineEase()
 
 
 1. Clone this project.
-2. Find and get into the project directory.
-3. Input ```npm install```.
+2. Find and get into the project directory via the console.
+3. Input ```npm install``` in the console.
 
 
 ## Launch Example (BAI)
