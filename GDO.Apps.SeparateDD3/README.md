@@ -52,9 +52,11 @@ dd3.defineEase()
 
 ## Installation (BAI)
 
-```bash
-npm install dd3
-```
+
+1. Clone this project.
+2. Find and get into the project directory.
+3. Input ```npm install```.
+
 
 ## Launch Example (BAI)
 
