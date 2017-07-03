@@ -22,11 +22,11 @@ Because one key role for universities is to lead the development of tools for be
 - Nodejs server which works as a HTTP server only provides simple functions: 1) Response the HTML page loading request. 2) Room management for each joined client. 3) Decide if all the required clients joined according to the qurey parameters in URL and broadcast launch app command.
 - We will make the nodejs server more simple via the Peerjs server in the next version. The nodejs server only plays a role of a HTTP server. All the other funtions are implemented by the Peerjs server.
 
-#### Peerjs Server Support:
+#### Peerjs Server Support: (XIAO)
 
-#### Odata Support:
+#### Odata Support: (XIAO)
 
-## API Reference
+## API Reference (Evann)
 A introduction of the dd3 api to do the visualization. It should be like the [API Reference of D3.js](https://github.com/d3/d3/blob/master/API.md)
 ```js
 dd3.svgCanvas
