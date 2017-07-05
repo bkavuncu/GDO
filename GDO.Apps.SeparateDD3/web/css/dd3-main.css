@@ -1,0 +1,24 @@
+body {
+  padding-top: 50px;
+  font-size: 15px;
+}
+footer {
+  float: right;
+}
+.brand {
+  padding: 40px 15px 10px 15px;
+}
+.chart {
+  padding: 0 0 10px 0;
+  position: relative;
+}
+.chart-text {
+    top: 20px;
+    left: 30px;
+    color: #888;
+    font-size: 16px;
+    position: absolute;
+}
+.feature{
+  padding: 0px 15px;
+}
