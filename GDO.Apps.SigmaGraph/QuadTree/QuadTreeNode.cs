@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using SpaceStructures.QuadTrees;
 
 namespace GDO.Apps.SigmaGraph.QuadTree {
     /// <summary>
@@ -36,14 +35,18 @@ namespace GDO.Apps.SigmaGraph.QuadTree {
             this.treeId = treeId;
         }
 
-        public QuadTreeNode<T> ReturnQuadrant(double x, double y) {
-            double xCentroid = this.centroid.xCentroid;
+        public List<QuadTreeNode<T>> ReturnQuadrant(T o) {//todo we need to change IQuadable to have methods to be able to work out which quad its in 
+            //todo  we need to change this method to support returning  multiple quads for the edges which will lie in many quads. 
+
+            return this.SubQuads.Where(o.IsWithin).ToList();
+
+         /*   double xCentroid = this.centroid.xCentroid;
             double yCentroid = this.centroid.yCentroid;
             bool infMiddleX = x < xCentroid;
             bool infMiddleY = y < yCentroid;
             int indexOfPointed;
             if (infMiddleX) { indexOfPointed = infMiddleY ? 0 : 1; } else { indexOfPointed = infMiddleY ? 2 : 3; }
-            return this.GetSubQuads(indexOfPointed);
+            return this.GetSubQuads(indexOfPointed);*/
         }
 
         public QuadTreeNode<T>[] ReturnQuadrants(double x, double y, double xWidth,double yWidth)

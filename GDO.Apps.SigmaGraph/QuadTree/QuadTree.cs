@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using SpaceStructures.QuadTrees;
 
 namespace GDO.Apps.SigmaGraph.QuadTree
 {
@@ -10,8 +9,6 @@ namespace GDO.Apps.SigmaGraph.QuadTree
         public readonly int MaxObjectsPerBag;
 
         public readonly QuadTreeNode<T> Root;
-        internal readonly Func<T, double> GetDimA;
-        internal readonly Func<T, double> GetDimB;
         internal readonly Action<QuadTreeBag<T>> ShedObjects;
         internal readonly Action<string> MarkObjectsForRework;
         internal readonly Action<string, QuadTreeNode<T>> RegisterQuadTree;
@@ -19,12 +16,10 @@ namespace GDO.Apps.SigmaGraph.QuadTree
         //Critical
         internal string treeId = System.Guid.NewGuid().ToString();
 
-        public QuadTree(QuadCentroid centroid, Func<T, double> getDimA, Func<T, double> getDimB, Action<QuadTreeBag<T>> shedObjects, Action<string> markObjectsForRework, Action<string, QuadTreeNode<T>> registerQuadTree, int maxBagsBeforeSplit = 10, int maxObjectsPerBag = 500)
+        public QuadTree(QuadCentroid centroid, Action<QuadTreeBag<T>> shedObjects, Action<string> markObjectsForRework, Action<string, QuadTreeNode<T>> registerQuadTree, int maxBagsBeforeSplit = 10, int maxObjectsPerBag = 500)
         {
             // Critical
             this.Root = new QuadTreeNode<T>(centroid, treeId);
-            this.GetDimA = getDimA;
-            this.GetDimB = getDimB;
             this.ShedObjects = shedObjects;
             this.MarkObjectsForRework = markObjectsForRework;
             this.RegisterQuadTree = registerQuadTree;
@@ -47,7 +42,7 @@ namespace GDO.Apps.SigmaGraph.QuadTree
             // we're a lead and we are full - we break down and add objects...
             while (quad != null && !quad.IsLeaf())
             {
-                quad = quad.ReturnQuadrant(GetDimA(o), GetDimB(o)); // this avoids recursion
+                quad = quad.ReturnQuadrant(o); // this avoids recursion
             }
             if (quad == null)
             {

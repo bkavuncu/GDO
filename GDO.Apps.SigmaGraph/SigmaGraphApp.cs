@@ -73,8 +73,9 @@ namespace GDO.Apps.SigmaGraph
 
 
             SigmaGraphProcessor.ProcessGraph(graph, filename, zoomed, folderName,  indexFile, FolderNameDigit,Section);
+            SigmaGraphQuadProcesor.ProcessGraph(graph, filename, folderName, indexFile, FolderNameDigit);
 
-                return this.FolderNameDigit;
+            return this.FolderNameDigit;
             }
 
 

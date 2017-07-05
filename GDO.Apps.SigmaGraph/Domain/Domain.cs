@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
+using GDO.Apps.SigmaGraph.QuadTree;
 
 namespace GDO.Apps.SigmaGraph.Domain
 {
@@ -40,8 +41,11 @@ namespace GDO.Apps.SigmaGraph.Domain
         public float Y { get; set; }
     }
 
-    public class GraphNode
-    {
+    public abstract class GraphObject : IQuadable<double> {
+        public abstract bool IsWithin<T>(QuadTreeNode<T> q) where T : IQuadable<double>;
+    }
+
+    public class GraphNode : GraphObject {
         public string ID { get; set; }
         public Position Pos { get; set; }
         public string Label { get; set; }
@@ -54,8 +58,7 @@ namespace GDO.Apps.SigmaGraph.Domain
         public List<string> Adj { get; set; }  // adj = list of connectedNodes
     }
 
-    public class GraphLink
-    {
+    public class GraphLink : GraphObject {
         public string Source { get; set; }
         public string Target { get; set; }
         public Position StartPos { get; set; }

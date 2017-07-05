@@ -1,5 +1,4 @@
 ﻿using System.Xml.Linq;
-using SpaceStructures.QuadTrees;
 
 namespace GDO.Apps.SigmaGraph.QuadTree.Utilities
 {

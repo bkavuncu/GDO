@@ -123,6 +123,7 @@
   <ItemGroup>
     <Compile Include="Domain\Domain.cs" />
     <Compile Include="Domain\SigmaGraphProcessor.cs" />
+    <Compile Include="Domain\SigmaGraphQuadProcesor.cs" />
     <Compile Include="QuadTree\AConcurrentQuadTreeFactory.cs" />
     <Compile Include="QuadTree\ConcurrentQuadTreeFactory.cs" />
     <Compile Include="QuadTree\IQuadable.cs" />

@@ -2,7 +2,6 @@
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Text;
-using SpaceStructures.QuadTrees;
 
 namespace GDO.Apps.SigmaGraph.QuadTree
 {
@@ -21,7 +20,7 @@ namespace GDO.Apps.SigmaGraph.QuadTree
             = new ConcurrentBag<QuadTreeBag<T>>();
         private readonly ConcurrentBag<string> quadIdsWhichHaveBeenReworked = new ConcurrentBag<string>();
 
-        public ConcurrentQuadTreeFactory(QuadCentroid centroid, Func<T, double> getDimA, Func<T, double> getDimB,
+        public ConcurrentQuadTreeFactory(QuadCentroid centroid,
             int maxbags = 10, int maxobjectPerBag = 500, int maxWorklistSize = 250, int delay = 5)
         {
             Console.WriteLine("---- ConcurrentQuadTreeFactory ----");
@@ -29,9 +28,7 @@ namespace GDO.Apps.SigmaGraph.QuadTree
             MaxobjectPerBag = maxobjectPerBag;
             MaxWorklistSize = maxWorklistSize;
             this.Delay = delay;
-            this.QuadTree = new QuadTree<T>(centroid,
-                getDimA,
-                getDimB,
+            this.QuadTree = new QuadTree<T>(centroid,               
                 ShedObjects,
                 MarkObjectsForRework,
                 RegisterQuad, maxBagsBeforeSplit: Maxbags,

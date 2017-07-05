@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using GDO.Apps.SigmaGraph.QuadTree.Utilities;
-using SpaceStructures.QuadTrees;
 
 namespace GDO.Apps.SigmaGraph.QuadTree
 {

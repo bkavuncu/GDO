@@ -10,6 +10,9 @@ namespace GDO.Apps.SigmaGraph.QuadTree
         public double yCentroid;
         public double xWidth;
         public double yWidth;
+        private float width;
+        private float height;
+
         // ReSharper restore InconsistentNaming
 
         public bool Equals(QuadCentroid other)
@@ -54,6 +57,19 @@ namespace GDO.Apps.SigmaGraph.QuadTree
             this.yCentroid = yCentroid;
             this.xWidth = xWidth;
             this.yWidth = yWidth;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="QuadCentroid"/> class.
+        /// Assume that the data is located between 0 and width and 0 and height
+        /// </summary>
+        /// <param name="width">The width.</param>
+        /// <param name="height">The height.</param>
+        public QuadCentroid(float width, float height) { 
+            this.width = width;
+            this.height = height;
+            this.xCentroid = width / 2;
+            this.yCentroid = height / 2;
         }
 
         public override string ToString()
