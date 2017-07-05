@@ -56,6 +56,9 @@ namespace GDO.Apps.SigmaGraph.Domain
         public Dictionary<string, string> Attrs { get; set; }
         public int NumLinks { get; set; }
         public List<string> Adj { get; set; }  // adj = list of connectedNodes
+        public override bool IsWithin<T>(QuadTreeNode<T> q) {
+            throw new System.NotImplementedException();
+        }
     }
 
     public class GraphLink : GraphObject {
@@ -71,6 +74,10 @@ namespace GDO.Apps.SigmaGraph.Domain
 
         public override string ToString() {
             return "Link = S:"+Source+" T:"+Target+ " | "+ StartPos+" to "+EndPos;
+        }
+
+        public override bool IsWithin<T>(QuadTreeNode<T> q) {
+            throw new System.NotImplementedException();
         }
     }
 

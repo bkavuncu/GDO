@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GDO.Apps.SigmaGraph.QuadTree
 {
@@ -29,12 +30,70 @@ namespace GDO.Apps.SigmaGraph.QuadTree
         }
 
         #region Add
-        public void AddObject(T o)
-        {
-            AddObject(this.Root, o);
+
+
+        public void AddObject(T o) {
+            var worklist = new Stack<Tuple<QuadTreeNode<T>, T>>();
+            worklist.Push(new Tuple<QuadTreeNode<T>, T>(this.Root,o));
+            AddObjects(worklist);
         }
 
-        public void AddObject(QuadTreeNode<T> quad, T o)
+        internal void AddObject(QuadTreeNode<T> quad, T o) {
+            var worklist = new Stack<Tuple<QuadTreeNode<T>, T>>();
+            worklist.Push(new Tuple<QuadTreeNode<T>, T>(quad, o));
+            AddObjects(worklist);
+        }
+
+        private void AddObjects(Stack<Tuple<QuadTreeNode<T> ,T>> worklist) {
+
+            while (worklist.Any()) {
+                var item = worklist.Pop();
+                var quad = item.Item1;
+                var o = item.Item2;
+
+                // cases    
+                // we're a node - we chose the correct quadrant and recurse
+                // we're a leaf and we're not full - we add
+                // we're a lead and we are full - we break down and add objects...
+                while (quad != null && !quad.IsLeaf()) {
+                   var  quads = quad.ReturnMatchingQuadrants(o); // this avoids recursion
+
+                    quad = quads.First();// recurse down the quadtree for the first object
+                    foreach (var aquad in quads.Skip(1)) {// add any others to the worklist
+                        worklist.Push(new Tuple<QuadTreeNode<T>, T>(aquad, o));
+                    }
+                }
+                if (quad == null) {
+                    throw new ArgumentException("null quad tree");
+                }
+                // add the object
+                quad.ObjectsInside.Add(o);
+
+                // Shed objects if we have more than Max inside, and erase the local objects - this avoids memory intensity 
+                bool madechildren = false;
+                if (quad.ObjectsInside.Count >= MaxObjectsPerBag) {
+                    ShedObjectsToExternalStore(quad);
+                    // if we've pushed sufficient bags then make children and mark all of those bags for rework 
+                    if (quad.Counters.GetOrAdd("BagsPushedToMongo", 0) >= MaxBagsBeforeSplit) {
+                        // note that this locks on the object
+                        madechildren = quad.TryGenerateChildren(RegisterQuadTree);
+
+                        // we are now full so we should turn into a node - to do this we must retreive objects from Mongo and add them to the worklsit 
+                        // If we are turning into a node, then we need to put back the objects inside the worklist, by setting the flag on the guid objects to true
+                        if (madechildren) MarkObjectsForRework(quad.Guid);
+                    }
+                }
+
+                // // if the leaf has been made a node then remove any last objects left which may have been added by other threads ... 
+
+                if (madechildren || (!quad.IsLeaf() && !quad.ObjectsInside.IsEmpty)) {
+                    ShedObjectsToExternalStore(quad);
+                }
+            }
+            
+        }
+
+        /*public void AddObjectOld(QuadTreeNode<T> quad, T o)
         {
             // cases    
             // we're a node - we chose the correct quadrant and recurse
@@ -42,7 +101,7 @@ namespace GDO.Apps.SigmaGraph.QuadTree
             // we're a lead and we are full - we break down and add objects...
             while (quad != null && !quad.IsLeaf())
             {
-                quad = quad.ReturnQuadrant(o); // this avoids recursion
+                quad = quad.ReturnMatchingQuadrants(o); // this avoids recursion
             }
             if (quad == null)
             {
@@ -74,7 +133,7 @@ namespace GDO.Apps.SigmaGraph.QuadTree
             {
                 ShedObjectsToExternalStore(quad);
             }
-        }
+        }*/
 
         private void ShedObjectsToExternalStore(QuadTreeNode<T> quad)
         {
