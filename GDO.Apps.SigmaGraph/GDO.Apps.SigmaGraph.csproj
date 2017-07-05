@@ -102,6 +102,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="GraphConversion\processGephi.js" />
     <Content Include="packages.config" />
     <Content Include="Configurations\SigmaGraph\Default.json" />
     <None Include="Web.Debug.config">
@@ -120,11 +121,20 @@
     <Content Include="Web\SigmaGraph\Control.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Domain.cs" />
+    <Compile Include="Domain\Domain.cs" />
+    <Compile Include="Domain\SigmaGraphProcessor.cs" />
+    <Compile Include="QuadTree\AConcurrentQuadTreeFactory.cs" />
+    <Compile Include="QuadTree\ConcurrentQuadTreeFactory.cs" />
+    <Compile Include="QuadTree\IQuadable.cs" />
+    <Compile Include="QuadTree\QuadCentroid.cs" />
+    <Compile Include="QuadTree\QuadTree.cs" />
+    <Compile Include="QuadTree\QuadTreeBag.cs" />
+    <Compile Include="QuadTree\QuadTreeNode.cs" />
+    <Compile Include="QuadTree\Utilities\QuadPrinter.cs" />
     <Compile Include="SigmaGraphApp.cs" />
     <Compile Include="SigmaGraphAppHub.cs" />
-    <Compile Include="SigmaGraphDataReader.cs" />
-    <Compile Include="SigmaGraphPartitioning.cs" />
+    <Compile Include="Domain\SigmaGraphDataReader.cs" />
+    <Compile Include="Domain\SigmaGraphPartitioning.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />
