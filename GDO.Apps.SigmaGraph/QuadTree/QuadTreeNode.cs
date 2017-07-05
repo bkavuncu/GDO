@@ -35,7 +35,7 @@ namespace GDO.Apps.SigmaGraph.QuadTree {
             this.treeId = treeId;
         }
 
-        public List<QuadTreeNode<T>> ReturnQuadrant(T o) {//todo we need to change IQuadable to have methods to be able to work out which quad its in 
+        public List<QuadTreeNode<T>> ReturnMatchingQuadrants(T o) {//todo we need to change IQuadable to have methods to be able to work out which quad its in 
             //todo  we need to change this method to support returning  multiple quads for the edges which will lie in many quads. 
 
             return this.SubQuads.Where(o.IsWithin).ToList();

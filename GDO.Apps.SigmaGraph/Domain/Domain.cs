@@ -75,7 +75,6 @@ namespace GDO.Apps.SigmaGraph.Domain
             double maxX = xCentroid + xWidth;
             double minY = yCentroid - yWidth;
             double maxY = yCentroid + yWidth;
-            // todo check boundary conditions open or closed
             return Pos.X >= minX && Pos.X <= maxX 
                 && Pos.Y >= minY && Pos.Y <= maxY;
         }
