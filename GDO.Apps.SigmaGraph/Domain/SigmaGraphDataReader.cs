@@ -4,15 +4,18 @@ using System.Diagnostics;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
-using GDO.Apps.SigmaGraph.Domain;
 
-namespace GDO.Apps.SigmaGraph
+namespace GDO.Apps.SigmaGraph.Domain
 {
     public static class GraphDataReader
     {
-        public static void ReadGraphMLData(string graphmlfile, out GraphInfo graphinfo, out List<GraphLink> links,
-            out List<GraphNode> nodes, out RectDimension dimension)
-        {
+        /// <summary>
+        /// Reads the graphml XML file into c# classes we can work with
+        /// </summary>
+        /// <param name="graphmlfile">The graphmlfile.</param>
+        /// <returns></returns>
+        public static GraphInfo ReadGraphMLData(string graphmlfile) {
+            GraphInfo graphinfo;
             Stopwatch sw = new Stopwatch();
             using (var xreader = XmlReader.Create(graphmlfile))
             {
@@ -68,7 +71,7 @@ namespace GDO.Apps.SigmaGraph
                     LinkKeys = edgekeys.Select(f => f.name).ToList()
                 };
 
-                nodes = graphelem.Elements(ns + "node").Select(xn =>
+                graphinfo.Nodes = graphelem.Elements(ns + "node").Select(xn =>
                     new
                     {
                         id = xn.Attribute("id").Value,
@@ -98,33 +101,33 @@ namespace GDO.Apps.SigmaGraph
                         })
                     .ToList();
 
-                var nodesbyID = nodes.ToDictionary(n => n.ID, n => n);
+                var nodesbyID = graphinfo.Nodes.ToDictionary(n => n.ID, n => n);
 
                 #endregion
 
                 #region rescale nodes
 
-                float minX = nodes.Min(n => n.Pos.X);
-                float minY = nodes.Min(n => n.Pos.Y);
-                float maxX = nodes.Max(n => n.Pos.X);
-                float maxY = nodes.Max(n => n.Pos.Y);
+                float minX = graphinfo.Nodes.Min(n => n.Pos.X);
+                float minY = graphinfo.Nodes.Min(n => n.Pos.Y);
+                float maxX = graphinfo.Nodes.Max(n => n.Pos.X);
+                float maxY = graphinfo.Nodes.Max(n => n.Pos.Y);
 
-                dimension = new RectDimension()
+                graphinfo.RectDim = new RectDimension()
                 {
                     Width = maxX - minX,
                     Height = maxY - minY
                 };
 
-                var xscale = 1/dimension.Width;
-                var yscale = 1/dimension.Height;
+                var xscale = 1/ graphinfo.RectDim.Width;
+                var yscale = 1/ graphinfo.RectDim.Height;
 
-                foreach (var node in nodes)
+                foreach (var node in graphinfo.Nodes)
                 {
                     node.Pos.X = (node.Pos.X - minX)*xscale;
                     node.Pos.Y = (node.Pos.Y - minY)*yscale;
                 }
 
-                dimension = new RectDimension()
+                graphinfo.RectDim = new RectDimension()
                 {
                     Width = 1,
                     Height = 1
@@ -133,7 +136,7 @@ namespace GDO.Apps.SigmaGraph
 
                 #region fill Links data structure 
 
-                links = graphelem.Elements(ns + "edge").Select(xn =>
+                graphinfo.Links = graphelem.Elements(ns + "edge").Select(xn =>
                     new
                     {
                         source = xn.Attribute("source").Value,
@@ -163,6 +166,8 @@ namespace GDO.Apps.SigmaGraph
             sw.Stop();
             Debug.WriteLine("Time to read the Graphml file: " + sw.ElapsedMilliseconds + "ms");
             SigmaGraphAppHub.self.LogTime("Time to read the Graphml file: " + sw.ElapsedMilliseconds + "ms");
+
+            return graphinfo;
         }
     }
 }

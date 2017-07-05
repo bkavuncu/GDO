@@ -312,8 +312,8 @@
                 {
                     filename = Path.GetFileName(file.FileName);
                     //foldername
-                    Directory.CreateDirectory(HttpContext.Current.Server.MapPath("~/Web/Graph/graphmls"));
-                    path = HttpContext.Current.Server.MapPath("~/Web/Graph/graphmls/") + filename;
+                    Directory.CreateDirectory(HttpContext.Current.Server.MapPath("~/Web/SigmaGraph/graphmls"));
+                    path = HttpContext.Current.Server.MapPath("~/Web/SigmaGraph/graphmls/") + filename;
                     if (File.Exists(path)) {  // if the file already exists, delete it
                         File.Delete(path);
                     }
@@ -364,7 +364,7 @@
                                             <div class="input_field_div">
                                                 <select class="input_field" id="graph_digit">
                                                     @{
-                                                        string graphfolder = System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graphmls");
+                                                        string graphfolder = System.Web.HttpContext.Current.Server.MapPath("~/Web/SigmaGraph/graphmls");
                                                         string[] files = Directory.GetFiles(graphfolder);
                                                     }
                                                     @foreach (var s in files)

@@ -80,12 +80,6 @@ namespace GDO.Apps.SigmaGraph
                     Clients.Group("" + instanceId).renderGraph(folderNameDigit, false);
                     Clients.Caller.setMessage("SigmaGraph is now being rendered.");
 
-                    // After rendering, start processing graph for zooming
-                    /* //TODO commented by now 
-                    Clients.Caller.setMessage("Initiating processing of graph to prepare for zooming.");
-                    ga.ProcessGraph(filename, true, folderNameDigit);
-                    Clients.Caller.setMessage("Graph is now ready for zooming."); */
-
                     Clients.Caller.setMessage("Requesting fields...");
                     Clients.Caller.setFields(((SigmaGraphApp)Cave.Apps["SigmaGraph"].Instances[instanceId]).graphinfo.NodeOtherFields.ToArray(), instanceId);
                     Clients.Caller.setMessage("Graph fields requested and sent successfully!");

@@ -3,10 +3,9 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using GDO.Apps.SigmaGraph.Domain;
 using GDO.Core;
 
-namespace GDO.Apps.SigmaGraph
+namespace GDO.Apps.SigmaGraph.Domain
 {
     internal static class SigmaGraphPartitioning
     {
@@ -58,7 +57,6 @@ namespace GDO.Apps.SigmaGraph
             int singleDisplayHeight, Section section)
         {
 
-            //TODO this algorithm should be parallelised - a parallel.ForEach would be fine provided that the partition.links is made into a ConcurrentList 
             // distribute links into respective partitions
             Parallel.ForEach(links, link => {
                 Position startPos, endPos;

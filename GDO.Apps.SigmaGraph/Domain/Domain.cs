@@ -8,6 +8,9 @@ namespace GDO.Apps.SigmaGraph.Domain
         public List<string> NodeMandatoryFields { get; set; }
         public List<string> NodeOtherFields { get; set; }
         public List<string> LinkKeys { get; set; }
+        public List<GraphNode> Nodes = new List<GraphNode>();
+        public List<GraphLink> Links = new List<GraphLink>();
+        public RectDimension RectDim;
     }
     public class Position
     {
