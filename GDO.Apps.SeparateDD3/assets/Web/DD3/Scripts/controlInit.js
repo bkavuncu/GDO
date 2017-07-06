@@ -17,6 +17,7 @@ d3.selection.prototype.moveToBack = function () {
 };
 
 
+var ctrlConn = null;
 
 var control = {
     //gdo: parent.gdo,
@@ -24,16 +25,28 @@ var control = {
     //server: parent.gdo.net.app.DD3.server,
     server: {
         sendOrder: function(instanceId, order, all){
-            console.log('sendOrder',instanceId);
-           control.socket.emit('sendOrder',{applicationId: control.confId, instanceId: instanceId, order: order, all: all });
+            console.log("@Controller", instanceId, order, all);
+            // control.socket.emit('sendOrder',{applicationId: control.confId, instanceId: instanceId, order: order, all: all });
+
+            if(ctrlConn){
+                console.log("@Controller ctrl net exists", ctrlConn);
+                ctrlConn.send({ functionName: "sendOrder", data: { instanceId, order, all }});
+
+            }else{
+                console.log("@Controller ctrl net DONT exist");
+            }
+
         },
     },
+
     //dataset:null,
     eventLog:[],
+
     //confId is used to confirm which application you want to launch
     confId:null,
     numClients:null,
     test_bench: {},
+
     init: function() {
         //BAI: not sure if the following code is useful or not
         this.test_bench = controlTestBench.test_bench;
@@ -42,35 +55,85 @@ var control = {
         //confId is the application ID
         this.confId = parseInt(this.getUrlVar("confId"));
         this.numClients = parseInt(this.getUrlVar("numClients"));
-        this.socket = io('http://localhost:8080');
+
+        // connect to peer server
+        var timestamp = Date.now();
+        this.peerOption = { host: "127.0.0.1", port: 33333 },
+
+        this.peerId = "ctrl" + this.controlId + "_conf" + this.confId + "_control" + "_numClients" + this.numClients + "_" + timestamp;
+        this.peerConn = new Peer(this.peerId, this.peerOption);
+
+        this.peerConn.on('connection', function(conn) {
+            console.log("@Controller master found", conn.peer);
+
+            ctrlConn = conn;
+
+            conn.on('open', function(){
+
+                conn.on('data', function(order){
+                    console.log("@Controller received", order);
+
+                    switch (order.functionName) {
+                        case "updateController":
+                            // console.log(order.data.show);
+                            if(order.data.show){
+                                main_callback();
+                                $("#wait").css("display", "none");
+                                if (control.confId == '6' || control.confId == '7' || control.confId == '8' || control.confId == '9') { // all of these are Shangai LinkLoad, and should share the control menu
+                                    $("#control_6").css("display", "");
+                                } else {
+                                    $("#control_" + control.confId).css("display", "");
+                                } 
+                            }else{
+                                // location.reload();
+                            }
+                            break;
+                    
+                        default:
+                            console.log("@Controller", "undefined function name");
+                            break;
+                    }
+
+                    // conn.send("message");
+                });
+
+                // conn.send("message");
+            })
+
+        });
+
+
+
+        // this.socket = io('http://localhost:8080');
 
         var _self = this;
        
 
-        this.socket.on('connected',function(){
-            _self.socket.emit('joinroom',{instanceId: control.controlId, applicationId: control.confId, numClients: control.numClients});
-        });
+        // this.socket.on('connected',function(){
+        //     _self.socket.emit('joinroom',{instanceId: control.controlId, applicationId: control.confId, numClients: control.numClients});
+        // });
 
-        this.socket.on('refresh',function(){
-            location.reload();
-        });
+        // this.socket.on('refresh',function(){
+        //     location.reload();
+        // });
         
-
         main_callback = this.callback;
-        this.socket.on('updateController',function(data){
-            if(data.show){
-                main_callback();
-                $("#wait").css("display", "none");
-                if (control.confId == '6' || control.confId == '7' || control.confId == '8' || control.confId == '9') { // all of these are Shangai LinkLoad, and should share the control menu
-                    $("#control_6").css("display", "");
-                } else {
-                    $("#control_" + control.confId).css("display", "");
-                } 
-            }
-            else{
-                location.reload();
-            }
-        });
+        
+        // this.socket.on('updateController',function(data){
+        //     if(data.show){
+        //         main_callback();
+        //         $("#wait").css("display", "none");
+        //         if (control.confId == '6' || control.confId == '7' || control.confId == '8' || control.confId == '9') { // all of these are Shangai LinkLoad, and should share the control menu
+        //             $("#control_6").css("display", "");
+        //         } else {
+        //             $("#control_" + control.confId).css("display", "");
+        //         } 
+        //     }
+        //     else{
+        //         location.reload();
+        //     }
+        // });
+
         return this.controlId;
     },
    
@@ -141,17 +204,13 @@ $(document).ready(function () {
         instanceId = control.init();
 
         
-         //console.log('control.confId');
-        
         //BAI: change num to string
       
 
         //$("#error").css("display", "");
     
    
-
-   
-        peer.init();
+        //peer.init();
   
 
 });

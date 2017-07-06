@@ -10,8 +10,13 @@ function SocketioNet(config) {
     this.peerOption = {
         //There is no response from the peerJS server if adding the whole arguments below. Maybe we should check the peerjs set-up
         //key: this.config.key || '',
+
         host: this.config.host || "146.169.32.109",
         port: this.config.port || 55555,
+
+        // host: this.config.host || "127.0.0.1",
+        // port: this.config.port || 33333,
+
         //path: this.config.path || '/',
         //secure: this.config.secure || false,
         //config: this.config.config || { 'iceServers': [{ 'url': 'stun:stun.l.google.com:19302' }] },
@@ -28,7 +33,7 @@ function SocketioNet(config) {
         console.log(this.syncCallback);
         this.syncCallback();
     }*/
-    
+
 
 }
 
@@ -71,7 +76,7 @@ SocketioNet.prototype.init = function (conn, r, c) {
 }
 //Open the connection to row, column peer
 //Empty the buffers for the connection to ths peer
-//TODO: unobfuscate the code 
+//TODO: unobfuscate the code
 //BAI: comments peer.connect function and move it to the dd3Net Modul
 //BAI: Q: this function can not be treated as prototype function.
 SocketioNet.prototype.connect = function (r, c) {
@@ -105,7 +110,7 @@ SocketioNet.prototype.receive = function (data) {
 }
 //If buffer is set to true, Put data in the buffer of the connection to the node at row r and column c
 //If buffer is set to false, send the data directly
-//returns false if no connection exists 
+//returns false if no connection exists
 SocketioNet.prototype.sendTo = function (r, c, data, buffer) {
     //BAI: this is the first time to call _self.peerObj.connect(r, c);
     if (typeof this.connections[r][c] === "undefined" && !this.connect(r, c)) {
@@ -142,51 +147,7 @@ SocketioNet.prototype.synchronize = function (r, c) {
 }
 
 SocketioNet.prototype.updateInformation = function (thisConn, thisNodeInfo) {
-    console.log("###### UPDATE INFORMATION START ######");
-
-    // TODO. use connect() to initialise the connection
-    // NOTE. listeners may be registered outside
-
-    // connect to master
-    // send info to master
-    // listen broadcast from master
-
-    // ** for master 
-
-    //peer.on('open', function () {
-    //    console.log("this peer id is xxx");
-    //})
-
-    //peer.on('connection', function (conn) {
-    //    console.log("xxx node is connected");
-
-    //    conn.on('data', function () {
-    //        console.log("xxx node's info received");
-
-    //        if (same) {
-    //            // broadcast to all conns
-    //        }
-    //    });
-    //});
-
-    // ** end master 
-    
-    //conn = dd3net.connect("master");
-    //conn.on('open', function () {
-    //    console.log("connected to master");
-
-    //    conn.send(thisInfo); // send back node info 
-
-    //    conn.on('data', function () {
-    //        console.log("data received"); // master broadcast info
-    //    });
-    //});
-
-
-    console.log(this);
-    console.log(thisConn, thisNodeInfo);
-
-    console.log("###### UPDATE INFORMATION END ######");
+    console.log(thisConn, thisNodeInfo); // DEBUG
 }
 
 SocketioNet.prototype.setClientCallbackFunc = function (callBackObj) {
@@ -229,16 +190,16 @@ SocketioNet.prototype.onClientCallbackFunc = function () {
                 _self.net.client.emit("updateInformation",{gdo_appInstanceId: gdo_appInstanceId, browserInfo: thisInfo});
             },
             getDimensions:function(gdo_appInstanceId, dataId){
-                _self.net.client.emit("getDimensions",{gdo_appInstanceId: gdo_appInstanceId, dataId: dataId});   
+                _self.net.client.emit("getDimensions",{gdo_appInstanceId: gdo_appInstanceId, dataId: dataId});
             }
             //这里只有这一个方程其余的都是在获取数据。应该由peer完成。
         },
         client: io('http://localhost:8080')
     };
-    
 
 
-  
+
+
 
     //BAI: all the these functions should be implemented by Peer.
     this.net.client.on("dd3Receive", function (data) {
@@ -253,7 +214,7 @@ SocketioNet.prototype.onClientCallbackFunc = function () {
         _self.signalR_callback[f].apply(null, [].slice.call(argsArray,0));
 
         //_self.signalR_callback[f].apply(null, args);
-        
+
     });
 
     this.net.client.on("receiveGDOConfiguration", function (data) {
@@ -268,9 +229,9 @@ SocketioNet.prototype.onClientCallbackFunc = function () {
             console.log('.DD3', 1, 'No callback defined');
         }
         main_callback = null;
-      
+
     });
-    
+
     this.net.client.on("receiveControllerOrder", function (orders) {
         console.log('orderTransmitter',orderTransmitter);
         if (orderTransmitter) {
@@ -291,6 +252,3 @@ SocketioNet.prototype.onClientCallbackFunc = function () {
         }
     });*/
 };
-
-
-

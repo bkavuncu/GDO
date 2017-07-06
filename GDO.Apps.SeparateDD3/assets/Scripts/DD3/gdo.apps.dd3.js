@@ -58,11 +58,11 @@ $.ajax({
 */
 
 
-// Shor. load dd3 module scripts 
+// Shor. load dd3 module scripts
 $.getScript("../../Scripts/DD3/odata/o.js", function () { console.log("INFO: Odata module - o.js was loaded."); });
 $.getScript("../../Scripts/DD3/gdo.apps.dd3.odata.js", function () { console.log("INFO: Odata module - odata.js was loaded."); });
 
-dd3Net = new DD3Net("socketio");
+dd3Net = new DD3Net("peerjs");
 //console.log('dd3Net.socket', dd3Net.socket);
 
 
@@ -73,16 +73,16 @@ dd3Net = new DD3Net("socketio");
 
 //BAI: this function is called in gdo "initClient" function.
 var initDD3App = function () {
-    
+
     //Retrieve the d3 library element
     //BAI: each test_bench (control.cshtml) will be regarded as an iframe and will be embedded into "Instances.cshtml" file which is defiend in the root GOD solution (GDO/Web/Instances.cshtml).
-    //BAI: only the test_bench which is running will not be set "display:none" and it will be shown in the GDO environment (Instance panel in the GDO management website). 
+    //BAI: only the test_bench which is running will not be set "display:none" and it will be shown in the GDO environment (Instance panel in the GDO management website).
     //BAI: each test_bench (client.cshtml) will also be regarded as an iframe and will be embeded into "Node.cshtml" file (a div called "wrapper") which is defined in the root GOD solution (GDO/Web/Node.cshtml).
    // d3 = document.getElementById('app_frame_content').contentWindow.d3;
 
-   
+
     /**
-     * Common JS utility function. 
+     * Common JS utility function.
      */
     var utils = (function () {
         return {
@@ -101,7 +101,7 @@ var initDD3App = function () {
             /**
              *get the value of an url variable if it exist, false else
              */
-             
+
             //seperate version changed: changed this function and make it more easy to be used
             getUrlVar: function (name, url) {
                 if (!url) url = window.location.href;
@@ -408,7 +408,7 @@ var initDD3App = function () {
     var dd3 = (function () {
         "use strict";//In strict mode, the JS engine is more regarding
 
-        //BAI: DD3Q: if "_dd3" has all the same functions defined in the original d3 library. 
+        //BAI: DD3Q: if "_dd3" has all the same functions defined in the original d3 library.
         var _dd3 = Object.create(d3);
 
         var options = {
@@ -419,6 +419,7 @@ var initDD3App = function () {
             //uses clientid in url to definne position. If false, use row and colmun in url
             positionByClientId: true,
             //global window margin will be transmitted to cave margin
+            reverseRowOrder: true,    // true for GDO
             margin: {
                 top: 20,
                 bottom: 20,
@@ -459,7 +460,7 @@ var initDD3App = function () {
             ready: [],
             fatal: []
         };
-   
+
         var dd3_data = {}, // Storing functions
             data = {}; // Storing data
         //Represent signalr connection
@@ -556,201 +557,183 @@ var initDD3App = function () {
                     //BAI: the reason of divided by 16 is because we have 16 screens in GOD.
                     browser.initColumn = (browser.number - 1) % 16;
                     browser.initRow = 3 - ~~((browser.number - 1) / 16);
+                    console.log("@Main clientId 1 - num / col / row", browser.number, browser.initColumn, browser.initRow);
                 } else {
                     //BAI: we will get the browser position by the url via "column" and "row"
                     browser.initColumn = +utils.getUrlVar('column');
                     browser.initRow = +utils.getUrlVar('row');
-                    browser.number = (3 - browser.initRow) * 16 + (browser.initColumn + 1);
+                    // browser.number = +utils.getUrlVar('clientId');
+                    if (options.reverseRowOrder) {
+                        browser.number = (3 - browser.initRow) * 16 + (browser.initColumn + 1);
+                    } else {
+                        browser.number = browser.initRow * 16 + (browser.initColumn + 1);
+                    }
+                    console.log("@Main clientId 0 - num / col / row", browser.number, browser.initColumn, browser.initRow);
                 }
-               
+
                 utils.log("Browser Configuration Set", 1);
             };
 
             //connect to the peer server (and actually call the signalr connection initialisation)
-            //Bai: after the peer connection is set up, it will call the next function to inilize signalr connection. 
+            //Bai: after the peer connection is set up, it will call the next function to inilize signalr connection.
             init.connectToPeerServer = function () {
                 //BAI: if no parameters are passed into DD3Net, we will use mix protocols (some apis are based on peerjs and some are based on signalr)
                 //BAI: 'signalr' means we use apis implemented based on signalr protocol
                 //BAI: 'peerjs' means we use apis implemented based on signalr protocol
 
-                // TODO. to be deleted
-                //function guid() {
-                //    var S4 = function () {
-                //        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
-                //    };
-                //    return (S4() + S4());
-                //}
+                var controlId = parseInt(utils.getUrlVar("controlId"));
+                var confId = parseInt(utils.getUrlVar("confId"));
+                var clientId =  parseInt(utils.getUrlVar("clientId"));
+                var numClients = parseInt(utils.getUrlVar("numClients"));
+                var gdo_appInstanceId = {instanceId: controlId, applicationId: confId}
 
-                // TODO. use config name in peer id 
-                var timestamp = Math.floor(Date.now() / 1000);
-                var peerId = "pie" + "_r" + browser.initRow + "_c" + browser.initColumn + "_node" + browser.number + "_" + timestamp;
-
-                /*
-                var netConfig = {
-                    host: "129.31.194.142",
-                    port: 33333, 
-                    id: peerId,
-                };*/
-                //dd3Net = new DD3Net();
-
-
-                
-                //var netConfig = {
-                //    host: "129.31.194.142",
-                //    port: 33333, 
-                //    id: peerId,
-                //};
-                //dd3Net = new DD3Net(null, netConfig);
+                var timestamp = Date.now();
+                var peerId = "ctrl" + controlId + "_conf" + confId + "_client" + "_r" + browser.initRow + "_c" + browser.initColumn + "_node" + browser.number + "_" + timestamp;
 
                 dd3Net.id = peerId;
-
-                
-                //dd3NetP = new DD3Net('peerjs');
-                //console.log('new peer server',dd3NetP);
                 dd3Net.connectPeer();
                 var p = dd3Net.peer;
-                //console.log(dd3NetP);
-                
+
+                var thisInfo = {
+                    browserNum: browser.number,
+                    peerId: dd3Net.id,
+                    row: browser.initRow,
+                    col: browser.initColumn,
+                    height: browser.height,
+                    width: browser.width
+                };
+
                 p.on('open', function (id) {
                     //console.log('id is' + id );
                     utils.log('Connected to peer server - id : ' + id, 1);
                     //dd3Net.id = id;
 
                     p.on('connection', function (conn) {
-                        // Previous loss of data : the buffering in peer.js seems not to work,
-                        // and data have to be sent only when connection is opened (connection != open)
-                        // Row and columun form the browser which connects to this one
-                        var r = +conn.metadata.initiator[0],
-                            c = +conn.metadata.initiator[1];
 
-                        // If there is already a connection, we allow only one connection to remain active
-                        // The priority is given to higher row browsers, and if equal then higher colmun
-                        console.log(dd3Net.connections);
-                        if (dd3Net.connections[r][c]) {
-                            var priority = r > browser.row || (r === browser.row && c > browser.column);
+                        if (conn.metadata) {
 
-                            if (!priority) {
-                                conn.on("open", conn.close);
-                                return;
+                            // Previous loss of data : the buffering in peer.js seems not to work,
+                            // and data have to be sent only when connection is opened (connection != open)
+                            // Row and columun form the browser which connects to this one
+                            var r = +conn.metadata.initiator[0],
+                                c = +conn.metadata.initiator[1];
+
+                            // If there is already a connection, we allow only one connection to remain active
+                            // The priority is given to higher row browsers, and if equal then higher colmun
+                            console.log(dd3Net.connections);
+
+                            if (dd3Net.connections[r][c]) {
+                                var priority = r > browser.row || (r === browser.row && c > browser.column);
+
+                                if (!priority) {
+                                    conn.on("open", conn.close);
+                                    return;
+                                }
+
+                                if (dd3Net.connections[r][c].open) {
+                                    dd3Net.connections[r][c].close();
+                                } else {
+                                    dd3Net.connections[r][c].removeAllListeners().on("open", dd3Net.connections[r][c].close);
+                                }
                             }
+                            //dd3NetP.setConnection();
+                            dd3Net.connections[r][c] = conn;
+                            //console.log('connect to peer server',dd3NetP.connections);
+                            dd3Net.buffers[r][c] = dd3Net.buffers[r][c] || [];  // Shor. ? why buffer ? not work
+                            conn.on("open", dd3Net.init.bind(dd3Net, conn, r, c));
 
-                            if (dd3Net.connections[r][c].open) {
-                                dd3Net.connections[r][c].close();
-                            } else {
-                                dd3Net.connections[r][c].removeAllListeners().on("open", dd3Net.connections[r][c].close);
-                            }
+                        } else {
+                            // @@ non-master
+                            console.log("@Non-master", conn);
+
+                            conn.on('open', function() {
+
+                                var thisNode = { gdo_appInstanceId, thisInfo };
+
+                                this.send(thisNode);
+
+                                conn.on('data', function(data) {
+
+                                    console.log('@Non-master received', data);
+
+                                    // to be switched - functionName
+
+                                    switch (data.functionName) {
+                                        case "receiveConfiguration":
+                                            dd3Net.net.test.dd3Receive({ functionName: 'receiveConfiguration', data: data.data }); 
+                                            dd3Net.net.test.receiveGDOConfiguration({ id: gdo_appInstanceId.applicationId });
+                                            break;
+
+                                        case "receiveControllerOrder":
+                                            dd3Net.net.test.receiveControllerOrder(data.data);
+                                            break;
+                                    
+                                        // send before master reload
+                                        case "reloadThisNode":
+                                            dd3Net.net.test.reloadThisNode();
+                                            break;
+
+                                        default:
+                                            console.log("@Non-master received", "undefined function name");
+                                            break;
+                                    }
+
+
+
+                                    // dd3Net.net.client.emit('dd3Receive', { functionName: 'receiveConfiguration', data: data });
+                                    
+                                    // dd3Net.net.client.emit('receiveGDOConfiguration', { id: data[0].gdo_appInstanceId.applicationId });
+
+                                    // this.send("from non-master: data received!");
+                                });
+                            });
+
+                            conn.on('close', function() {
+                                console.log("@Non-master master disconnected");
+                                location.reload();
+                            });
+
                         }
-                        //dd3NetP.setConnection();
-                        dd3Net.connections[r][c] = conn;
-                        //console.log('connect to peer server',dd3NetP.connections);
-                        dd3Net.buffers[r][c] = dd3Net.buffers[r][c] || [];  // Shor. ? why buffer ? not work
-                        conn.on("open", dd3Net.init.bind(dd3Net, conn, r, c));
 
                     });
 
                     // get information from peer id - world config
-                    var objAry = [];
-                    var getList = function () {
-                        p.listAllPeers(function (list) {
-                            console.log(list);
 
-                            list.forEach(function (e) {
-                                //console.log(e);
-                                var params = e.split("_");
-                                var obj = {
-                                    browserNum: params[3].charAt(4),
-                                    peerId: e,
-                                    row: params[1].charAt(1),
-                                    col: params[2].charAt(1),
-                                }
-                                //console.log(obj);
-                                objAry.push(obj);
-                            });
-                            console.log(objAry);
+                    // var objAry = [];
+                    // var getList = function () {
+                    //     p.listAllPeers(function (list) {
+                    //         console.log("@PeerList", list);
 
-                            //init.connectToSignalRServer();
-                            init.getCaveConfiguration(JSON.stringify(objAry));
-                            
-                        });
-                    };
+                    //         list.forEach(function (e) {
+                    //             //console.log(e);
+                    //             var params = e.split("_");
+                    //             var obj = {
+                    //                 browserNum: params[3].charAt(4),
+                    //                 peerId: e,
+                    //                 row: params[1].charAt(1),
+                    //                 col: params[2].charAt(1),
+                    //             }
+                    //             //console.log(obj);
+                    //             objAry.push(obj);
+                    //         });
+                    //         console.log(objAry);
+
+                    //         //init.connectToSignalRServer();
+                    //         init.getCaveConfiguration(JSON.stringify(objAry));
+
+                    //     });
+                    // };
 
                     //getList();
 
-                    //setInterval(getList, 1000);     // wait until all nodes connected, may not need
+                    //setInterval(getList, 1000);
 
                     //init.getCaveConfiguration(JSON.stringify(objAry));
-                    
+
                     // SignalR SWITCH
                     init.connectToSignalRServer();  // after 'open', because of peerid
 
                 });
-
-                // TODO. to be deleted 
-                // check if this is a master node 
-                //var conns = [];
-                //var totalNodeNum = 2;
-                //if (browser.number == 1) {
-                //    console.log("#31# > master node <");
-
-                //    var test = function () {
-                //        p.listAllPeers(function (list) {    // T. check if stable
-                //            if (list.length = totalNodeNum) {
-                //                console.log(list);
-                //                console.log("#31# master: ready to start");
-
-                //                for (var i = 0; i < list.length; i++) {
-
-                //                    if (peerId != list[i]) {    // exclude the master
-                //                        console.log("#31# non-master: " + list[i]);
-
-                //                        // define dd3Net.peers
-                //                        var obj = [{ "browserNum": "1", "peerId": "pie_r3_c0_node1", "col": "0", "row": "3" }, { "browserNum": "2", "peerId": "pie_r3_c1_node2", "col": "1", "row": "3" }];
-                //                        init.getCaveConfiguration(JSON.stringify(obj));
-
-                //                        //peersInfo = [{ "browserNum": "1", "peerId": "pie_r3_c0_node1_6ea85cac", "col": "0", "row": "3" }, { "browserNum": "2", "peerId": "pie_r3_c1_node2_79a09db3", "col": "1", "row": "3" }];
-                //                        //dd3Net.peers = peersInfo;
-
-                //                        //conns[i] = p.connect(list[i], { reliable: true });
-                //                        conns[i] = dd3Net.connect(0, 1);
-                //                        console.log("#31# peer connect: " + conns[i]);
-                //                        // >>>>> true >>>>>
-
-                //                        return false;
-
-                //                        conns[i].on('open', function () {
-                //                            console.log(this.peer + " is connected");
-
-                //                            // unit . master receive
-                //                            this.on('data', function (data) {
-                //                                console.log("master received: " + data);
-                //                            });
-
-                //                            // unit . peer reconnect
-                //                            this.on('close', function () {
-                //                                console.log(this.peer + " is disconnected");
-                //                                //location.reload();  // reload master, if lost a peer
-                //                            });
-
-                //                            // unit . master send
-                //                            this.send("from master: hi!");
-
-                //                        });
-
-                //                    }
-
-                //                }
-
-                //            }
-
-                //        })
-                //    };
-
-                //    test();
-
-                //} else {
-                //    console.log("#31# > non-master node <");
-                //}
-                //setInterval(test, 10000);
 
                 p.on("error", function (e) {
                     utils.log("[Peer] " + e, 3);
@@ -780,14 +763,14 @@ var initDD3App = function () {
                 //signalR.server = dd3Server.server;
                 //signalR.client = dd3Server.client;
                 //signalR.sid = dd3Server.instanceId;
-                
+
                 // Define server interaction functions
                 //signalR_callback.receiveConfiguration = init.getCaveConfiguration;
                 //signalR_callback.receiveSynchronize = dd3NetS.receiveSynchronize;
 
                 //BAI: only for signalR protocol, second parameter is null now and will be set when dd3_data has value.
                 //dd3NetS.setClientCallbackFunc(init.getCaveConfiguration, {});
-                //dd3Net.setClientCallbackFunc(init.getCaveConfiguration, {}); 
+                //dd3Net.setClientCallbackFunc(init.getCaveConfiguration, {});
 
                 dd3Net.onClientCallbackFunc();
 
@@ -820,49 +803,162 @@ var initDD3App = function () {
                 //dd3Server.server.updateInformation(gdo_appInstanceId, thisInfo);
 
 
-
                 console.log("calling update information");
                 //seperate version changed: listen to the nodejs server events instead of signalr(below)
                 var controlId = parseInt(utils.getUrlVar("controlId"));
                 var confId = parseInt(utils.getUrlVar("confId"));
                 var clientId =  parseInt(utils.getUrlVar("clientId"));
                 var numClients = parseInt(utils.getUrlVar("numClients"));
-                var gdo_appInstanceId = {instanceId: controlId, applicationId: confId}
+                var gdo_appInstanceId = {instanceId: controlId, applicationId: confId};
+
+
+                // logic for peerjs network
+
+                // @@ master (maybe put in dd3.peernet.js)
+
+                // if (clientId == 1) {  // master node
+                //     console.log("@Master");
+
+                //     function getList() {
+                //         var p = dd3Net.peer;
+                //         p.listAllPeers(function (list) {
+                //             console.log("@Master list", list);
+
+                //             // remove control peer id
+                //             list.forEach(function(l, i) {
+                //                 var ctrlIndex = l.indexOf("control")
+                //                 if(ctrlIndex !== -1) list.splice(i, 1);
+                //             }, this);
+                //             // console.log("@Master list after", list);
+
+                //             if (list.length == numClients) {
+                //                 clearInterval(getListTimer);
+                //                 // console.log("@Master", list.length, numClients);
+
+                //                 var conns = [];
+                //                 var infos = [ thisInfo ];  // add self info
+                //                 list.forEach(function(id, i) {
+                //                     // console.log("@Master", id);
+                //                     var idAry = id.split("_");  // get all peer info
+                //                     var idInt = parseInt(idAry[3][4]);
+                //                     var rowInt = parseInt(idAry[1][1]);
+                //                     var colInt = parseInt(idAry[2][1]);
+                //                     if (idInt != 1) {
+
+                //                         var conn = p.connect(id);
+
+                //                         conns.push(conn);
+
+                //                         conn.on('open', function() {
+                //                             console.log("@Master", this.peer + " is connected");
+
+                //                             this.on('data', function(info) {
+                //                                 console.log("@Master master received", info);
+
+                //                                 // collect other peers info
+                //                                 infos.push(info.thisInfo);
+
+                //                                 // broadcast to all
+                //                                 console.log("@Master check same", infos.length, numClients)
+                //                                 if (infos.length == numClients) {
+
+                //                                     // convert objects to an array
+                //                                     var infosAry = $.map(infos, function(value, index) { return [value]; });
+                //                                     infosAry = [JSON.stringify(infosAry)];
+                //                                     console.log("@Master convert array", infosAry); 
+
+                //                                     conns.forEach(function(c) {
+                //                                         c.send({ functionName: 'reloadThisNode' });
+                //                                         c.send({ functionName: 'receiveConfiguration', data: infosAry });
+                //                                     }, this);
+
+                //                                     // for master node
+
+                //                                     // dd3Net.net.client.emit('dd3Receive', { functionName: 'receiveConfiguration', data: infos });
+                //                                     // dd3Net.net.client.emit('receiveGDOConfiguration', { id: infos[0].gdo_appInstanceId.applicationId });
+                                                    
+                //                                     dd3Net.net.test.dd3Receive({ functionName: 'receiveConfiguration', data: infosAry }); 
+
+                //                                     dd3Net.net.test.receiveGDOConfiguration({ id: gdo_appInstanceId.applicationId });
+
+                //                                     dd3Net.net.test.updateController({ show: true });
+
+                //                                     // dd3Net.net.client.emit('updateController', { controllerId: peerId, message: 'message' });
+                //                                     // dd3Net.net.client.emit('updateController', { show: true });
+
+                //                             }
+
+                //                             });
+
+                //                             // ? close connections
+
+                //                         });
+                //                     }
+                //                 });
+                //             }
+                //         });
+                //     };
+
+                //     getList();
+
+                //     var getListTimer = setInterval(getList, 2000);
+                // }
+
+                // if clientId = 0, its a master
+                // try to get all, other peers ids [getPeerList()]
+                // establish connetions to found peers [dd3.connect()]
+                // add peers to a room (with some information) ** [maintain a list]
+                // broadcast information whenever needed
+
+
+                dd3Net.net.server.updateInformation(gdo_appInstanceId, thisInfo);
+
+                // dd3Net.net.client.on('connected',function(){
+                //     console.log("connected-----------------------------------------------------");
+                //     dd3Net.net.client.emit('joinroom',{instanceId: controlId, applicationId: confId, clientId: clientId, numClients:numClients, browserInfo:thisInfo});
+                //     dd3Net.net.client.on('joined',function(){
+                //         console.log("joined room!*********************************************");
+                //       dd3Net.net.server.updateInformation(gdo_appInstanceId, thisInfo);
+                //     });
+                // });
+
+
+                // non-master
+                // dd3Net.net.client.on('connected',function(){
+                //     console.log("connected-----------------------------------------------------");
+                //     // connected by master
+
+                //     dd3Net.net.client.emit('joinroom',{instanceId: controlId, applicationId: confId, clientId: clientId, numClients:numClients, browserInfo:thisInfo});
+                //     // * join the room * or registered by master
+
+                //     dd3Net.net.client.on('joined',function(){
+                //         console.log("joined room!*********************************************");
+                //         // * when joined a room * or when registered by master
+
+                //         dd3Net.net.server.updateInformation(gdo_appInstanceId, thisInfo);
+                //         // ask the master to update information
+                //     });
+
+                // });
+
+
+                // dd3Net.net.client.on('refresh',function(){
+                //    location.reload();
+                // });
                 
-                 
-
-
-                dd3Net.net.client.on('connected',function(){
-                    console.log("connected-----------------------------------------------------");
-                    dd3Net.net.client.emit('joinroom',{instanceId: controlId, applicationId: confId, clientId: clientId, numClients:numClients, browserInfo:thisInfo});
-                    dd3Net.net.client.on('joined',function(){
-                        console.log("joined room!*********************************************");
-                      dd3Net.net.server.updateInformation(gdo_appInstanceId, thisInfo);
-                    }); 
-                }); 
-
-                dd3Net.net.client.on('refresh',function(){
-                   location.reload();
-                }); 
                 //seperate version changed: listen to the nodejs server events instead of signalr(above)
-                  
-               
+
 
                 //dd3Server.server.updateInformation(gdo_appInstanceId, thisInfo);
                 utils.log("Connection to SignalR server established", 1);
             };
 
-            // TODO. to be deleted
-            //init.connectToPeerNetwork = function () {
-            //    console.log("this is the peer network");
-            //};
-
             //Receive the configuration of the whole cave from the backend
             //Bai: this function is c. At last, it will define all the DD3 function via calling the function "defineDD3Functions" which is defined below.
-            //BAI: the argument "obj" in the following function is the "thisInfo" argument in the above function "init.connectToSignalServer" 
+            //BAI: the argument "obj" in the following function is the "thisInfo" argument in the above function "init.connectToSignalServer"
             init.getCaveConfiguration = function (obj) {
 
-                console.log("#31# cave config: ", obj);
+                console.log("@Main getCaveConfiguration", obj);
                 utils.log("Receiving connected browsers' ids from signalR server", 1);
 
                 //obj contains info about all browsers
@@ -882,7 +978,7 @@ var initDD3App = function () {
                 cave.columns = maxCol - minCol + 1;
 
                 //Offset the column,row coordinate of this browser with minimal row and column
-                //BAI: TODO: dynamically set the column and rom as the properties in browser object. Should be got from signalR server. 
+                //BAI: TODO: dynamically set the column and rom as the properties in browser object. Should be got from signalR server.
                 browser.column = browser.initColumn - minCol;
                 browser.row = browser.initRow - minRow;
 
@@ -910,7 +1006,7 @@ var initDD3App = function () {
                 //console.log('x_array', x_array);
                 //dd3Net.setConnection(d3.range(0, cave.rows).map(function() { return []; }));
                 dd3Net.connections = d3.range(0, cave.rows).map(function () { return []; });
-                
+
                 //console.log(dd3NetP.connections);
                 //peer.buffers is the buffer of the data sent from this node to another one
                 //dd3NetP.setBuffer(d3.range(0, cave.rows).map(function () { return []; }));
@@ -937,10 +1033,10 @@ var initDD3App = function () {
 
                 //seperate version changed: only changed the order of the following two functions: "dd3Net.setUtils(utils)" and "dd3Net.setBrowser(browser);"
                 dd3Net.setUtils(utils);
-                
+
                 dd3Net.setBrowser(browser);
 
-                
+
 
                 defineDD3Functions();
             };
@@ -949,7 +1045,7 @@ var initDD3App = function () {
 
         })();
 
-        // Create all dd3 functions	
+        // Create all dd3 functions
         //BAI: this function is called when initialize the getCaveConfiguration function above.
         var defineDD3Functions = function () {
 
@@ -1006,7 +1102,7 @@ var initDD3App = function () {
                 top: browser.row * browser.height
             };
 
-            // Most used functions already computed ... time saving ! - 
+            // Most used functions already computed ... time saving ! -
             //TODEL:...and never used ...
             var hghl = _dd3.position('html', 'global', 'html', 'local'),
                 hlhg = _dd3.position('html', 'local', 'html', 'global'),
@@ -1020,7 +1116,7 @@ var initDD3App = function () {
              * BAI: We should make the data reception as a separate module.
              */
 
-            //Prefix a string with dd3_ 
+            //Prefix a string with dd3_
             //TODEL: obfuscate the code
             var pr = function (s) {
                 return "dd3_" + s;
@@ -1106,10 +1202,15 @@ var initDD3App = function () {
                 else{
                     //getdata
                     //seperate version changed: this data query function should be implemented by Odata
-                    //var controlId = parseInt(utils.getUrlVar("controlId"));
-                    //var confId = parseInt(utils.getUrlVar("confId"));
-                    //var gdo_appInstanceId = {instanceId: controlId, applicationId: confId}
-                    //dd3Net.net.server.getDimensions(gdo_appInstanceId, dataId);
+                    // var controlId = parseInt(utils.getUrlVar("controlId"));
+                    // var confId = parseInt(utils.getUrlVar("confId"));
+                    // var gdo_appInstanceId = {instanceId: controlId, applicationId: confId}
+                    // console.log("Dimensions request before");
+                    // dd3Net.net.server.getDimensions(gdo_appInstanceId, dataId);
+                    // console.log("Dimensions request after");
+
+                    odata.dims(dataId, dd3_data.receiveDimensions); // dataId is dataName in Odata
+
                 }
             };
 
@@ -1148,7 +1249,7 @@ var initDD3App = function () {
                         * dataName: name of the data => Apparently, this isn't used
                         * dataId: id of the dataset
                         * callback: function to call once the data is received
-                        * scaleX: scale of the data to return according to x (cf. D3 scale object) 
+                        * scaleX: scale of the data to return according to x (cf. D3 scale object)
                         * scaleY: scale of the data to return according to y (cf. D3 scale object)
                         * xKey: attribute of the data set to use for x axis
                         * yKey: attribute of the data set to use for y axis
@@ -1187,7 +1288,7 @@ var initDD3App = function () {
                    // dd3Net.net.server.getPointData(gdo_appInstanceId, request);
                 }
 
-                // Shor. odata interface - point data 
+                // Shor. odata interface - point data
                 var dataFilter = "x ge " + limits.xmin + " and x lt " + limits.xmax + " and y ge " + limits.ymin + " and y lt " + limits.ymax;
                 var dataType = dataName;
                 var select = xKey.concat(yKey);
@@ -1197,11 +1298,11 @@ var initDD3App = function () {
                 utils.log("Data requested : " + dataName + " (" + dataId + ")", 1);
             };
 
-            /*APIDOC:get data of the data set according to its name or id. You can filter by key if needed. Tailored for data that will be represented as path 
+            /*APIDOC:get data of the data set according to its name or id. You can filter by key if needed. Tailored for data that will be represented as path
              * dataName: name of the data => Apparently, this isn't used
              * dataId: id of the dataset
              * callback: function to call once the data is received
-             * scaleX: scale of the data to return according to x (cf. D3 scale object) 
+             * scaleX: scale of the data to return according to x (cf. D3 scale object)
              * scaleY: scale of the data to return according to y (cf. D3 scale object)
              * xKey: attribute of the data set to use for x axis
              * yKey: attribute of the data set to use for y axis
@@ -1280,7 +1381,7 @@ var initDD3App = function () {
                 var r=[],
                     toGlobal = slsg[orientation === "bottom" || orientation === "top" ? 'left' : 'top'],
                     limits = limit || {};
-                
+
                 for ( var ky in scale.domain()){
                     r.push(scale(ky));
                 }
@@ -1316,8 +1417,6 @@ var initDD3App = function () {
                         //dd3Net.net.server.getBarData(gdo_appInstanceId, request);
                     }
 
-                        
-
                     //console.log(JSON.stringify(request));
 
                     // Shor. odata interface - bar data
@@ -1327,7 +1426,8 @@ var initDD3App = function () {
                     var dataFilter = "";
                     var dataTop = limits.max - limits.min;
                     var dataSkip = limits.min;      // if count from 0
-                    odata.queryWith(dataType, dataId, select, orderby, dataFilter, dataTop, dataSkip, dd3_data.receiveData);
+                    var addOrder = true;
+                    odata.queryWith(dataType, dataId, select, orderby, dataFilter, dataTop, dataSkip, addOrder, dd3_data.receiveData);
 
                 } else {
                     dd3_data.receiveData(dataName, dataId, "[]");
@@ -1349,7 +1449,7 @@ var initDD3App = function () {
                 data[pr(dataId)][pr(dataName)].callback_data = callback;
 
                 var sgsl = _dd3.position('svg', 'global', 'svg', 'local');
-                if (sgsl.left(centerX) >= 0 && sgsl.left(centerX) < browser.width)  // Shor. check if the pie center is inside the browser 
+                if (sgsl.left(centerX) >= 0 && sgsl.left(centerX) < browser.width)  // Shor. check if the pie center is inside the browser
                     if (sgsl.top(centerY) >= 0 && sgsl.top(centerY) < browser.height) {
 
                         var request = {
@@ -1432,7 +1532,7 @@ var initDD3App = function () {
             //BAI: this function will be called when any this kind of data retrieval function "dd3NetS.net.server.getPointData(dd3NetS.sid, request);" get the data.
             dd3_data.receiveData = function (dataName, dataId, dataPoints) {
                 utils.log("Data received : " + dataName + " (" + dataId + ")", 1);
-                
+
                 if(utils.isJSON(dataPoints)) dataPoints = JSON.parse(dataPoints);
 
                 if (dataPoints.error) {
@@ -1463,12 +1563,12 @@ var initDD3App = function () {
             console.log("dd3Net.setClientCallbackFunc({}, dd3_data);");
             dd3Net.setClientCallbackFunc({ dd3DataObj: dd3_data });
 
-            
+
 
             /**
              * PEER FUNCTIONS
              * Data reception handling
-             * 
+             *
              */
             dd3Net.on('data', function (data) {
                 //console.log('dd3NET on', data);
@@ -1489,9 +1589,9 @@ var initDD3App = function () {
                                 data.forEach(receiveDataHandler.dataPreProcess);
                                 return;
                             }
-                     
+
                         switch (data.type) {
-                            
+
                             case 'shape':
                                 utils.log("Receiving a new shape...");
                                 receiveDataHandler._dd3_shapeHandler(data);
@@ -1542,9 +1642,9 @@ var initDD3App = function () {
                         if (!elems.empty()) {
                             s[1] = +s[1];
                             //TODO v4: use selection.nodes() to return an array
-                    
+
                             elems = elems.nodes();
-                    
+
 
                             elems.some(function (a) {
                                 o = +a.getAttribute('order').split("_")[1];
@@ -1562,9 +1662,9 @@ var initDD3App = function () {
 
                         } else {
                             elems = g.selectAll_("#" + g.node().id + " > [order]");
-                    
+
                             elems = elems.nodes();
-                    
+
 
                             elems.some(function (a) {
                                 var o = a.getAttribute('order');
@@ -1856,7 +1956,7 @@ var initDD3App = function () {
                         _();
                     };
                     dd3Net.setClientCallbackFunc({ syncObj: syncCallback });
-         
+
                     setTimeout(function () {
                         //getdata
                         //seperate version changed: this data query function should be implemented by Peerjs
@@ -1875,8 +1975,8 @@ var initDD3App = function () {
 
 
             //Create the watcher function for a given prototype
-            //IN: prototype of the object to watch for 
-            //OUT: the watcher function:  
+            //IN: prototype of the object to watch for
+            //OUT: the watcher function:
             var _dd3_factory = function (path) {
                 //append the original function with functionName suffixed with a _ to the input prototype.
                 // and then call watcher with arguments as its first argument.
@@ -1887,7 +1987,7 @@ var initDD3App = function () {
                     path[funcName + '_'] = original;
 
                     //INFO: difference between apply and call: apply lets you specify arguments as an array.
-                    //Call the watcher function with no context and the argument 1 in an array 
+                    //Call the watcher function with no context and the argument 1 in an array
 
                     return watcher.apply(null, [].slice.call(arguments, 1));
                 };
@@ -1897,7 +1997,7 @@ var initDD3App = function () {
             //Function to add a watcher function on a change function call to selection. Function in _dd3.selection.prototype
             var _dd3_watchFactory = _dd3_factory(_dd3.selection.prototype);
 
-            //Function to add a watcher function on a enter funtion call to selection. Function in _dd3.selection.prototype.enter.prototype 
+            //Function to add a watcher function on a enter funtion call to selection. Function in _dd3.selection.prototype.enter.prototype
             var _dd3_watchEnterFactory = _dd3_factory(_dd3.selection.prototype.enter.prototype);
 
             //Function to add a watcher function on selection function. Function in _dd3
@@ -1909,7 +2009,7 @@ var initDD3App = function () {
                 return function () {
                     if (arguments.length < expectedArg && typeof arguments[0] !== 'object')
                         return original.apply(this, arguments);
-                    
+
                     original.apply(this, arguments);
 
                     //e is the property  of changes that have yet to be received and that we are watching for
@@ -2012,7 +2112,7 @@ var initDD3App = function () {
             *  Function for preparing and sending data
             *  newSelection are the recipients
             *  oldSelection are the former recipients
-            *  Returns which elements enter, update or exit the new selection 
+            *  Returns which elements enter, update or exit the new selection
             */
             //BAI: this function is called in the function "_dd3_sendGroup" and "_dd3_sendElement"
             var _dd3_getSelections = function (newSelection, oldSelection) {
@@ -2157,10 +2257,10 @@ var initDD3App = function () {
 
             /** send an element to its recipients
              * type: can be shape, property, endTransition, transitions and updateContainer
-             * args: 
+             * args:
              * rcpts: array of recipients for this send
              */
-            
+
             var _dd3_sendElement = function (type, args, rcpts) {
                 var active = this.__dd3_transitions__.size() > 0, rcpt, formerRcpts, selections, objs;
                 // Get former recipients list saved in the __recipients__ variable to send them 'exit' message
@@ -2457,7 +2557,7 @@ var initDD3App = function () {
                             //BAI: change from peer.sendTo to dd3Net.sendTo
                             //console.log(dd3Net);
                             //console.log('before send property');
-                            dd3Net.sendTo(d[0], d[1], obj, true); // true for buffering 
+                            dd3Net.sendTo(d[0], d[1], obj, true); // true for buffering
                             //console.log('after send property');
                         });
                     }
@@ -2467,7 +2567,7 @@ var initDD3App = function () {
             };
 
             /**
-            *  Watch methods    
+            *  Watch methods
             */
 
             // To go to helpers
@@ -2521,7 +2621,7 @@ var initDD3App = function () {
                     [].forEach.call(this.childNodes, function (_) { _dd3_createProperties.call(_); });
             };
 
-            //Filter elements from a d3 selection to keep only  
+            //Filter elements from a d3 selection to keep only
             var _dd3_selection_filterWatched = function (e) {
                 return e.filter(function (d, i) {
                     return !this.__unwatch__ && ([].indexOf.call(this.classList, 'dd3_received') < 0);
@@ -2620,7 +2720,7 @@ var initDD3App = function () {
             var _dd3_idTransition = 1;
 
             //Contain tween functions for transitions. Prevents having to send tween funciton definition through peerjs
-            //BAI: we do not need to send the whole tween defination between peers, and we define all the names of different tweens. Then we only need to 
+            //BAI: we do not need to send the whole tween defination between peers, and we define all the names of different tweens. Then we only need to
             //send the name of tween effect.
             var _dd3_tweens = {};
 
@@ -2631,7 +2731,7 @@ var initDD3App = function () {
                 return !name ? "__transition__" : "__transition_" + name + "__";
             };
 
-            
+
             var _dd3_findTransitionsRecipients = function (elem) {
                 if (!elem || !elem.parentNode) {
                     return [];
@@ -2647,10 +2747,10 @@ var initDD3App = function () {
                     max = now,
                     precision = 1;
                 do {
-                    
+
                     containers.unshift(g);
                 } while (g.id !== "dd3_rootGroup" && (g = g.parentNode));
-                
+
 
                 var c1 = containers[0], c2;
 
@@ -2666,7 +2766,7 @@ var initDD3App = function () {
 
                 clones = containers.map(function (c) {
                     g = c.cloneNode(c.nodeName === "g" ? false : true);
-                    c2.appendChild(g); 
+                    c2.appendChild(g);
                     c2 = g;
                     return g;
                 });
@@ -2690,7 +2790,7 @@ var initDD3App = function () {
                 });
                 // ! Doesn't take in account order of the transitions !
                 var step = precision * (max - now);
-                
+
                 //TODO v4: fixing the  other mistake oof no dd3 transitions would be better
                 var range = d3.range(now, max, step);
                 range.push(max);
@@ -2748,21 +2848,21 @@ var initDD3App = function () {
                     endValues = [];
 
                 //TODO v4: find how to call tween.each
-                
+
                 //TODO v4: refine
                 /*var d_transition;
                 for(var key in args.transition.node().__transition) d_transition=args.transition.node().__transition[key];*/
-                
+
 
                 /*for (var k in d_transition.value){
                     properties.push(k);
                     tweened.push(d_transition.value[k]);
                 }*/
-                
+
                 //TODO v4: something in this block prevenrs the transition from running
                 tween.forEach(function (obj) {
                     //var type = value.type;
-                    
+
                     //var value = obj.value.call(elem, args.data, args.index);
                     var i = obj.value._value.call(elem, args.data, args.index);
                     //TODO v4: handle if NAMEspace and if style
@@ -2771,19 +2871,19 @@ var initDD3App = function () {
                         this.setAttribute(name, i(t));
                     };
                     //The original tween function  is bound to the node it interpolates.
-                    
+
                     if (value) {
                           properties.push(obj.name);
                           tweened.push(value);
                     }
                 });
-                
+
 
                 group.appendChild(node);
-                
+
 
                 var d3_node = d3.select(node);
-                
+
                 /*
                 properties.forEach(function(prop){
                     var ps = prop.split('.'),
@@ -2794,7 +2894,7 @@ var initDD3App = function () {
                     //endValues.push(args.transition.value[prop]);
                 });
 */
-                
+
 
                 //TODO v4: check if we can have start and end values without touching stuff
 
@@ -2808,10 +2908,10 @@ var initDD3App = function () {
                         startValues.push(null);
                         endValues.push(null);
                     } else {
-                        
+
                         //TODO v4: how can I call thos
                         f.call(node, 0);
-                        
+
                         startValues.push(d3_node[p0].apply(d3_node, p1));
                         f.call(node, 1);
 
@@ -2820,8 +2920,8 @@ var initDD3App = function () {
                     }
                 });
 
-                
-                    
+
+
                 group.removeChild(node);
 
 
@@ -2873,7 +2973,7 @@ var initDD3App = function () {
                         }
                         if(!transition) utils.log("V4 Warning: No transition on the object",4);
 
-                        
+
                         //var transition = this.__transition[2];
                         //if(!transition) transition = this.__transition[2];
                         /*if(!transition) {
@@ -3009,7 +3109,7 @@ var initDD3App = function () {
 
                     //TODO V4: overwrite the attr function
                     t.attr = function (name, value){
-                        
+
                         if(value){
                             if (typeof value === "function"){
                                 _dd3_tweens["dd3_"+name+"_std_function"] = value;
@@ -3018,7 +3118,7 @@ var initDD3App = function () {
                             }
                         }
 
-                        
+
 
                         return d3.transition.prototype.attr.call(this, name, value);
 
@@ -3028,14 +3128,14 @@ var initDD3App = function () {
                     t.attrTween = function (attr, tween) {
                         var temp, trst;
 
-                        //In v4, d3.transition.attr uses attrTween, which we don't need.  
+                        //In v4, d3.transition.attr uses attrTween, which we don't need.
                         if (typeof tween === "function" && utils.getFnName(tween) === "anonymous") {
                             dd3.defineTween(attr + "_std_trans", tween);
                             tween = attr + "_std_trans";
                         }
                         //v4: check attrFunctionNS$1
 
-                        
+
                         if (arguments.length < 2) return attrTweens.get(attr);
 
 

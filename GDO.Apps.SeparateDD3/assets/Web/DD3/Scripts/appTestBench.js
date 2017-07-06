@@ -15,7 +15,7 @@
     //BAI: "d3" variable is needed in this test_bench.
     test_bench: {
 
-      
+
 
         //transitions
         '0': function () {
@@ -97,7 +97,7 @@
                 if (!triggered) {
                     console.log("Average FPS: " + avg);
                     console.log("Standard Deviation: " + std);
-                    conn_to_controller.send(r + ";" + c + ";" + nbr + ";" + nbc + ";" + nbdc + ";" + new Date().getTime() + ";" + avg + ";" + std);
+                    // conn_to_controller.send(r + ";" + c + ";" + nbr + ";" + nbc + ";" + nbdc + ";" + new Date().getTime() + ";" + avg + ";" + std);
                     triggered = true;
                 }
 
@@ -184,7 +184,7 @@
                     .style("fill", "#EEE")
                     .text("None");
 
-                connectToController();
+                // connectToController();
             };
 
             appTestBench.orderController.orders['removeRect'] = function () {
@@ -209,7 +209,7 @@
                     .classed("new", false);
 
 
-                connectToController();
+                // connectToController();
             };
 
             appTestBench.orderController.orders['removeCircles'] = function () {
@@ -235,7 +235,7 @@
                     .attr("fill", "#FFF")
                     .classed("new", false);
 
-                connectToController();
+                // connectToController();
 
             };
 
@@ -254,7 +254,7 @@
                     .attr("stroke-width", "4")
                     .attr("fill", "transparent");
 
-                connectToController();
+                // connectToController();
             };
 
             appTestBench.orderController.orders['removePolygon'] = function () {
@@ -516,15 +516,22 @@
                 });
 
             var draw = function (barData) {
-                barData.forEach(function (d) { xDomain[d.order] = d.country; });
+                console.log("@appTest", xDomain);
+                console.log(barData);
+
+                barData.forEach(function (d, index) {
+                    console.log("@appTest", d.country, d.gdp);
+                    xDomain[d.order] = d.country;
+                });
                 xRange.domain(xDomain);
+                console.log("@appTest", xDomain);
 
                 //  PLOT X AXIS
                 //TODO v4: axis doesn't show anymore'
                 xAxis = d3.axisBottom(xRange);
                 yAxis = d3.axisLeft(yScale);
-                console.log(xAxis.scale());
-                console.log(xAxis.tickArguments());
+                console.log("@appTest", xAxis.scale());
+                console.log("@appTest", xAxis.tickArguments());
 
                 svg.append("g")
                     .unwatch()
@@ -1243,14 +1250,14 @@
 
         },
 
-        // Shor. simple pie chart 
+        // Shor. simple pie chart
         '12': function () {
 
             var svg = dd3.svgCanvas;
             var width = dd3.cave.svgWidth,
                 height = dd3.cave.svgHeight,
                 radius = Math.min(width, height) / 2;
-            
+
             var draw = function (pieData) {
                 var color = d3.scaleOrdinal(d3.schemeCategory20c);
                 var arc = d3.arc()
@@ -1285,12 +1292,12 @@
                     .style("text-anchor", "middle")
                     .text(function (d) { return d.country; })
                     .send();
-            }; 
+            };
 
             dd3.getPieData('pie', 'pieData', draw , width / 2, height / 2);
 
 
-            // Shor. CONTROL TEMPLATE 
+            // Shor. CONTROL TEMPLATE
 
             //appTestBench.orderController.orders['initWorldConfig'] = function (data) {
 

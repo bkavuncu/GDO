@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "dependencies": {
     "express": "^4.15.2",
-    "socketio": "^1.0.0"
-  },
-  "devDependencies": {}
+    "peer": "^0.2.8"
+  }
 }
