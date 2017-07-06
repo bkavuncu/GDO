@@ -71,10 +71,10 @@ namespace GDO.Apps.SigmaGraph.Domain
             double xWidth = quadTreeNode.centroid.xWidth;
             double yWidth = quadTreeNode.centroid.yWidth;
 
-            double minX = xCentroid - xWidth;
-            double maxX = xCentroid + xWidth;
-            double minY = yCentroid - yWidth;
-            double maxY = yCentroid + yWidth;
+            double minX = xCentroid - xWidth/2;
+            double maxX = xCentroid + xWidth/2;
+            double minY = yCentroid - yWidth/2;
+            double maxY = yCentroid + yWidth/2;
             return Pos.X >= minX && Pos.X <= maxX 
                 && Pos.Y >= minY && Pos.Y <= maxY;
         }
@@ -99,10 +99,10 @@ namespace GDO.Apps.SigmaGraph.Domain
             double xWidth = quadTreeNode.centroid.xWidth;
             double yWidth = quadTreeNode.centroid.yWidth;
 
-            double minX = xCentroid - xWidth;
-            double maxX = xCentroid + xWidth;
-            double minY = yCentroid - yWidth;
-            double maxY = yCentroid + yWidth;
+            double minX = xCentroid - xWidth/2;
+            double maxX = xCentroid + xWidth/2;
+            double minY = yCentroid - yWidth/2;
+            double maxY = yCentroid + yWidth/2;
 
             bool quadContainsWholeLink = StartPos.X >= minX && EndPos.X >= minX
                                       && StartPos.X <= maxX && EndPos.X <= maxX
