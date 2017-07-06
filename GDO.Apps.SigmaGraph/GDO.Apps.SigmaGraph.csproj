@@ -116,6 +116,7 @@
     <Content Include="Scripts\SigmaGraph\gdo.apps.SigmaGraph.js" />
     <Content Include="Scripts\jquery.signalR-2.2.1.js" />
     <Content Include="Scripts\jquery.signalR-2.2.1.min.js" />
+    <Content Include="Scripts\SigmaGraph\gdo.apps.Render.js" />
     <Content Include="Scripts\SigmaGraph\sigma\LICENSE.txt" />
     <Content Include="Scripts\SigmaGraph\sigma\plugins\sigma.exporters.svg.min.js" />
     <Content Include="Scripts\SigmaGraph\sigma\plugins\sigma.layout.forceAtlas2.min.js" />
@@ -138,6 +139,7 @@
     <Content Include="Scripts\SigmaGraph\sigma\plugins\sigma.statistics.HITS.min.js" />
     <Content Include="Scripts\SigmaGraph\sigma\sigma.min.js" />
     <Content Include="Scripts\SigmaGraph\sigma\sigma.require.js" />
+    <Content Include="Scripts\SigmaGraph\gdo.apps.Logging.js" />
     <Content Include="Web.config" />
     <Content Include="Web\SigmaGraph\App.cshtml" />
     <Content Include="Web\SigmaGraph\Control.cshtml" />
