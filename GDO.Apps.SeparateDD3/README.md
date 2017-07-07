@@ -24,7 +24,7 @@ Client 2: http://localhost:8080/Web/DD3/App.html?confId=0&controlId=3&clientId=2
 
 2. Import data files (from /odata/data-files)
     
-    `mongoimport --db dd3 --collection scatterplot33 --file scatterplot33.txt --jsonArray`
+    `mongoimport --db dd3 --collection barData --file barData.txt --jsonArray`
 
 ### Start OData
 
