@@ -2,13 +2,13 @@
 
 ## Getting Started
 
-### Quick Setup
+#### Quick Setup
 
 1. `npm install` (NodeJS required)
 
 2. `node server.js`
 
-### Click to Play
+#### Click to Play
 
 Control: http://localhost:8080/Web/DD3/Control.html?confId=0&controlId=3&numClients=2 
 
@@ -16,9 +16,9 @@ Client 1: http://localhost:8080/Web/DD3/App.html?confId=0&controlId=3&clientId=1
 
 Client 2: http://localhost:8080/Web/DD3/App.html?confId=0&controlId=3&clientId=2&row=1&column=1&numClients=2
 
-## OData + MongoDB
+## Setup OData
 
-### Prepare MongoDB
+#### Prepare MongoDB
 
 1. Install mongodb (download from [link](https://www.mongodb.com/download-center#community))
 
@@ -29,3 +29,4 @@ Client 2: http://localhost:8080/Web/DD3/App.html?confId=0&controlId=3&clientId=2
 ### Start OData
 
 1. `node odata-server.js`
+
