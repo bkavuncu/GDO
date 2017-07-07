@@ -419,6 +419,7 @@ var initDD3App = function () {
             //uses clientid in url to definne position. If false, use row and colmun in url
             positionByClientId: true,
             //global window margin will be transmitted to cave margin
+            reverseRowOrder: true,    // true for GDO
             margin: {
                 top: 20,
                 bottom: 20,
@@ -560,7 +561,11 @@ var initDD3App = function () {
                     //BAI: we will get the browser position by the url via "column" and "row"
                     browser.initColumn = +utils.getUrlVar('column');
                     browser.initRow = +utils.getUrlVar('row');
-                    browser.number = (3 - browser.initRow) * 16 + (browser.initColumn + 1);
+                    if (options.reverseRowOrder) {
+                        browser.number = (3 - browser.initRow) * 16 + (browser.initColumn + 1);
+                    } else {
+                        browser.number = browser.initRow * 16 + (browser.initColumn + 1);
+                    }
                 }
                
                 utils.log("Browser Configuration Set", 1);
@@ -1110,6 +1115,8 @@ var initDD3App = function () {
                     //var confId = parseInt(utils.getUrlVar("confId"));
                     //var gdo_appInstanceId = {instanceId: controlId, applicationId: confId}
                     //dd3Net.net.server.getDimensions(gdo_appInstanceId, dataId);
+
+                    odata.dims(dataId, dd3_data.receiveDimensions); // dataId is dataName in Odata
                 }
             };
 
@@ -1327,7 +1334,9 @@ var initDD3App = function () {
                     var dataFilter = "";
                     var dataTop = limits.max - limits.min;
                     var dataSkip = limits.min;      // if count from 0
-                    odata.queryWith(dataType, dataId, select, orderby, dataFilter, dataTop, dataSkip, dd3_data.receiveData);
+                    var addOrder = true;
+
+                    odata.queryWith(dataType, dataId, select, orderby, dataFilter, dataTop, dataSkip, addOrder, dd3_data.receiveData);
 
                 } else {
                     dd3_data.receiveData(dataName, dataId, "[]");
