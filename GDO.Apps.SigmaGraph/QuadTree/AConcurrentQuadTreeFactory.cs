@@ -296,7 +296,9 @@ namespace GDO.Apps.SigmaGraph.QuadTree
 
         public string PrintQuad()
         {
-            return this.QuadTree.PrintQuad();
+            return this.QuadTree.PrintQuad(this);
         }
+
+        public abstract QuadTreeBag<T>[] GetBagsForQuad(QuadTreeNode<T> quad);
     }
 }

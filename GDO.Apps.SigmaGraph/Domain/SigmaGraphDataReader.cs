@@ -159,9 +159,9 @@ namespace GDO.Apps.SigmaGraph.Domain
                         }).ToList();
 
                 #endregion
+
                 Console.WriteLine(keys.Count);
             }
-
 
             sw.Stop();
             Debug.WriteLine("Time to read the Graphml file: " + sw.ElapsedMilliseconds + "ms");

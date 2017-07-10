@@ -13,6 +13,9 @@ namespace GDO.Apps.SigmaGraph.QuadTree
     {
 #pragma warning restore 693
 
+        /// <summary>
+        /// The _shed bags - index by QuadID and 
+        /// </summary>
         private readonly ConcurrentDictionary<string, ConcurrentBag<QuadTreeBag<T>>>
             _shedBags= new ConcurrentDictionary<string, ConcurrentBag<QuadTreeBag<T>>>();
 
@@ -124,6 +127,14 @@ namespace GDO.Apps.SigmaGraph.QuadTree
         // todo Remove after tests. Should never be called
         public override bool GetReworkBag(out QuadTreeBag<T> bag, string treeId) {
             return this._bagsForRework.TryTake(out bag); // pass by reference (twice)
+        }
+
+        public override QuadTreeBag<T>[] GetBagsForQuad(QuadTreeNode<T> quad) {
+            ConcurrentBag<QuadTreeBag<T>> res;
+            if (this._shedBags.TryGetValue(quad.Guid, out res)) {
+                return res.ToArray();
+            }
+            return new QuadTreeBag<T>[0];
         }
     }
 }

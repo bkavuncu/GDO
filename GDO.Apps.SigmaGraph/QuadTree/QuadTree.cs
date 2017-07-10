@@ -57,7 +57,9 @@ namespace GDO.Apps.SigmaGraph.QuadTree
                 // we're a lead and we are full - we break down and add objects...
                 while (quad != null && !quad.IsLeaf()) {
                    var  quads = quad.ReturnMatchingQuadrants(o); // this avoids recursion
-
+                    if (!quads.Any()) {
+                        Console.WriteLine("logic error, no quad matched an item");
+                    }
                     quad = quads.First();// recurse down the quadtree for the first object
                     foreach (var aquad in quads.Skip(1)) {// add any others to the worklist
                         worklist.Push(new Tuple<QuadTreeNode<T>, T>(aquad, o));

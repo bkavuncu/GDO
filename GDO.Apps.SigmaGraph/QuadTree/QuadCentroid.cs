@@ -10,8 +10,6 @@ namespace GDO.Apps.SigmaGraph.QuadTree
         public double yCentroid;
         public double xWidth;
         public double yWidth;
-        private float width;
-        private float height;
 
         // ReSharper restore InconsistentNaming
 
@@ -66,8 +64,8 @@ namespace GDO.Apps.SigmaGraph.QuadTree
         /// <param name="width">The width.</param>
         /// <param name="height">The height.</param>
         public QuadCentroid(float width, float height) { 
-            this.width = width;
-            this.height = height;
+            this.xWidth = width;
+            this.yWidth = height;
             this.xCentroid = width / 2;
             this.yCentroid = height / 2;
         }

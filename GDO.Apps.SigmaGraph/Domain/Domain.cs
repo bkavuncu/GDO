@@ -12,6 +12,7 @@ namespace GDO.Apps.SigmaGraph.Domain
         public List<GraphNode> Nodes = new List<GraphNode>();
         public List<GraphLink> Links = new List<GraphLink>();
         public RectDimension RectDim;
+
     }
     public class Position
     {
@@ -68,8 +69,8 @@ namespace GDO.Apps.SigmaGraph.Domain
         {
             double xCentroid = quadTreeNode.centroid.xCentroid;
             double yCentroid = quadTreeNode.centroid.yCentroid;
-            double xWidth = quadTreeNode.centroid.xWidth;
-            double yWidth = quadTreeNode.centroid.yWidth;
+            double xWidth = quadTreeNode.centroid.xWidth/2.0;
+            double yWidth = quadTreeNode.centroid.yWidth/2.0;
 
             double minX = xCentroid - xWidth/2;
             double maxX = xCentroid + xWidth/2;
@@ -90,14 +91,14 @@ namespace GDO.Apps.SigmaGraph.Domain
         public int G { get; set; }
         public int B { get; set; }
         public Dictionary<string, string> Attrs { get; set; }
-        private const double Epsilon = 1E-6;
+        private const double Epsilon = 1E-9;
 
         public override bool IsWithin<T>(QuadTreeNode<T> quadTreeNode)
         {
             double xCentroid = quadTreeNode.centroid.xCentroid;
             double yCentroid = quadTreeNode.centroid.yCentroid;
-            double xWidth = quadTreeNode.centroid.xWidth;
-            double yWidth = quadTreeNode.centroid.yWidth;
+            double xWidth = quadTreeNode.centroid.xWidth/2.0;
+            double yWidth = quadTreeNode.centroid.yWidth/2.0;
 
             double minX = xCentroid - xWidth/2;
             double maxX = xCentroid + xWidth/2;

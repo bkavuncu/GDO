@@ -1,4 +1,6 @@
-﻿using System.Xml.Linq;
+﻿using System.Linq;
+using System.Xml.Linq;
+using GDO.Apps.SigmaGraph.Domain;
 
 namespace GDO.Apps.SigmaGraph.QuadTree.Utilities
 {
@@ -8,20 +10,21 @@ namespace GDO.Apps.SigmaGraph.QuadTree.Utilities
     /// </summary>
     public static class QuadPrinter
     {
-        public static string PrintQuad<T>(this QuadTree<T> quad ) where T: IQuadable<double> {
+        public static string PrintQuad<T>(this QuadTree<T> quad, AConcurrentQuadTreeFactory<T> factory) where T: IQuadable<double> {
             XElement root = new XElement("root");
-            int objs = PrintQuad(root, quad.Root);
+            int objs = PrintQuad(root, quad.Root,factory);
             root.Add(new XAttribute("count",objs));
             return root.ToString( );
         }
 
-        private static int PrintQuad<T>(XElement root, QuadTreeNode<T> quad) where T : IQuadable<double> {
+        private static int PrintQuad<T>(XElement root, QuadTreeNode<T> quad, AConcurrentQuadTreeFactory<T> factory) where T : IQuadable<double> {
             XElement node = new XElement("node");
             node.Add(new XAttribute("guid", quad.Guid));
-
+                
             int itemsInThisTree = quad.ObjectsInside.Count; 
             int itemsShed = quad.Counters.GetOrAdd("ObjectsShed", 0);
             int localitems = quad.ObjectsInside.Count;
+            
 
             if (quad.IsLeaf()) {
                 node.Add(new XAttribute("isleaf", true));
@@ -29,14 +32,18 @@ namespace GDO.Apps.SigmaGraph.QuadTree.Utilities
             }
             else {
                 foreach (var child in quad.SubQuads) {
-                    itemsInThisTree += PrintQuad(node, child);
+                    itemsInThisTree += PrintQuad(node, child,factory);
                 }
             }
 
             node.Add(new XAttribute("itemsInThisTree", itemsInThisTree));
             node.Add(new XAttribute("localItems", localitems));
             node.Add(new XAttribute("itemsshed", itemsShed));
+            node.Add(new XAttribute("c", quad.centroid.ToString()));
+            node.Add(new XAttribute("Items", factory.GetBagsForQuad(quad).Aggregate(0,(acc,next) => acc+next.Objects.Count)));
             root.Add(node);
+           
+
 
             return itemsInThisTree;
         }
