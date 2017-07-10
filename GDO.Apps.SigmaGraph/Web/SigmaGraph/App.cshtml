@@ -32,27 +32,22 @@
     </style>
 </head>
 <body unselectable="on" class="unselectable" onload="getTime()">
-    <script src="../../Scripts/jquery-2.1.4.min.js"></script>
-    <script src="../../Scripts/jquery.signalR-2.2.1.min.js"></script>
-    <script src="../../Scripts/SigmaGraph/sigma/sigma.min.js"></script>
-    <script src="../../Scripts/SigmaGraph/sigma/plugins/sigma.layout.forceAtlas2.min.js"></script>
-    <script src="../../Scripts/SigmaGraph/gdo.apps.Logging.js"></script>
-    <script src="../../Scripts/SigmaGraph/gdo.apps.Render.js"></script>
-    <script>
-        $(function () {
-            $(document).ready(function () {
-                var gdo = parent.gdo;
-                console.log("Start time: " + window.performance.now());
-                gdo.net.app["SigmaGraph"].initClient();
-            });
+<div id= "graphArea"></div>
+<script src="../../Scripts/jquery-2.1.4.min.js"></script>
+<script src="../../Scripts/jquery.signalR-2.2.1.min.js"></script>
+<script>
+    $(function() {
+        $(document).ready(function() {
+            var gdo = parent.gdo;
+            console.log("Start time: " + window.performance.now());
+            gdo.net.app["SigmaGraph"].initClient();
         });
+    });
 
-        function getTime() {
-            console.log("Intermediate time: " + window.performance.now());
-        }
+    function getTime() {
+        console.log("Intermediate time: " + window.performance.now());
+    }
 
-    </script>
-    <div id= "graphArea">
-    </div>
+</script>
 </body>
 </html>
