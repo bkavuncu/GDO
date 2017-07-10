@@ -118,28 +118,7 @@
     <Content Include="Scripts\jquery.signalR-2.2.1.js" />
     <Content Include="Scripts\jquery.signalR-2.2.1.min.js" />
     <Content Include="Scripts\SigmaGraph\gdo.apps.SigmaGraph.render.js" />
-    <Content Include="Scripts\SigmaGraph\sigma\LICENSE.txt" />
-    <Content Include="Scripts\SigmaGraph\sigma\plugins\sigma.exporters.svg.min.js" />
-    <Content Include="Scripts\SigmaGraph\sigma\plugins\sigma.layout.forceAtlas2.min.js" />
-    <Content Include="Scripts\SigmaGraph\sigma\plugins\sigma.layout.noverlap.min.js" />
-    <Content Include="Scripts\SigmaGraph\sigma\plugins\sigma.neo4j.cypher.min.js" />
-    <Content Include="Scripts\SigmaGraph\sigma\plugins\sigma.parsers.gexf.min.js" />
-    <Content Include="Scripts\SigmaGraph\sigma\plugins\sigma.parsers.json.min.js" />
-    <Content Include="Scripts\SigmaGraph\sigma\plugins\sigma.pathfinding.astar.min.js" />
-    <Content Include="Scripts\SigmaGraph\sigma\plugins\sigma.plugins.animate.min.js" />
-    <Content Include="Scripts\SigmaGraph\sigma\plugins\sigma.plugins.dragNodes.min.js" />
-    <Content Include="Scripts\SigmaGraph\sigma\plugins\sigma.plugins.filter.min.js" />
-    <Content Include="Scripts\SigmaGraph\sigma\plugins\sigma.plugins.neighborhoods.min.js" />
-    <Content Include="Scripts\SigmaGraph\sigma\plugins\sigma.plugins.relativeSize.min.js" />
-    <Content Include="Scripts\SigmaGraph\sigma\plugins\sigma.renderers.customEdgeShapes.min.js" />
-    <Content Include="Scripts\SigmaGraph\sigma\plugins\sigma.renderers.customShapes.min.js" />
-    <Content Include="Scripts\SigmaGraph\sigma\plugins\sigma.renderers.edgeDots.min.js" />
-    <Content Include="Scripts\SigmaGraph\sigma\plugins\sigma.renderers.edgeLabels.min.js" />
-    <Content Include="Scripts\SigmaGraph\sigma\plugins\sigma.renderers.parallelEdges.min.js" />
-    <Content Include="Scripts\SigmaGraph\sigma\plugins\sigma.renderers.snapshot.min.js" />
-    <Content Include="Scripts\SigmaGraph\sigma\plugins\sigma.statistics.HITS.min.js" />
     <Content Include="Scripts\SigmaGraph\gdo.apps.SigmaGraph.sigma.min.js" />
-    <Content Include="Scripts\SigmaGraph\sigma\sigma.require.js" />
     <Content Include="Scripts\SigmaGraph\gdo.apps.SigmaGraph.logging.js" />
     <Content Include="Web.config" />
     <Content Include="Web\SigmaGraph\App.cshtml" />
@@ -163,9 +142,7 @@
     <Compile Include="Domain\SigmaGraphPartitioning.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Scripts\SigmaGraph\graphml\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\GDO\GDO.csproj">
       <Project>{4a27f694-1d9a-420a-a3a6-62521eaa047e}</Project>

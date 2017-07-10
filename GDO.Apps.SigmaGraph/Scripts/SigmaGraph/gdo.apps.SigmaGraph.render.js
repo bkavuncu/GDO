@@ -4,7 +4,6 @@
 
 gdo.epsilon = 1E-6;
 gdo.basePath = "\\Web\\SigmaGraph\\graphmls\\";
-gdo.graphContainer = "app_frame";
 
 /**
  * 
@@ -16,9 +15,15 @@ gdo.net.app["SigmaGraph"].initInstanceGlobals = function () {
     gdo.nodeCol = gdo.net.node[gdo.clientId].sectionCol;
     gdo.numRows = gdo.net.section[gdo.clientId].rows;
     gdo.numCols = gdo.net.section[gdo.clientId].cols;
-    gdo.xhr = new XMLHttpRequest();
     gdo.graphMLParser = new gdo.graphml.GraphMLParser();
-    gdo.sigmaInstance = new sigma(gdo.graphContainer);
+    gdo.graphContainer = window.frames['app_frame'].children[0]
+        .contentDocument.getElementById('graphArea');
+    gdo.sigmaInstance = new sigma({
+        renderers: [{
+                type: 'canvas',
+                container: gdo.graphContainer
+        }]
+    });
 
     // Node global variables.
     gdo.xWidth = 1 / gdo.numCols;
@@ -30,39 +35,71 @@ gdo.net.app["SigmaGraph"].initInstanceGlobals = function () {
 /**
  * Renders the graph.
  */
-gdo.net.app["SigmaGraph"].renderGraph = function () {
+gdo.net.app["SigmaGraph"].renderGraph = async function () {
     gdo.consoleOut('.SIGMAGRAPHRENDERER', 1, 'Rendering graph...');
     // Get location of files containing objects to render.
     //const fileNames = gdo.net.app["SigmaGraph"].server.getFilesWithin(xCentroid, yCentroid, xWidth, yWidth);
-    const fileNames = ['marvel_heroes.graphml'];
+    const filePaths = [gdo.basePath + 'marvel_heroes.graphml'];
 
-    // Parse as sigma graph
-    const graphObjects = getGraphObjectsInFieldOfView(fileNames);
-    const nodes = graphObjects.nodes;
-    const edges = graphObjects.edges;
 
-    // Clear the sigma graph and add the nodes and edges.
-    sigmaInstance.clear();
-    nodes.forEach(sigmaInstance.addNode);
-    edges.forEach(sigmaInstance.addEdge);
+    // Get the nodes and edges
+    const filesGraphObjects = await Promise.all(filePaths.map(function(filePath) {
+        return httpGet(filePath).then(parseGraphML);
+    }));
+    console.log(filesGraphObjects);
+
+    // Clear the sigma graph
+    gdo.sigmaInstance.graph.clear();
+
+    // Filter and add the nodes and edges to the graph
+    //filesGraphObjects.forEach(function (fileGraphObjects) {
+    //    const fileNodesInFOV = fileGraphObjects.nodes.filter(nodeIsWithinFOV);
+    //    const fileEdgesInFOV = fileGraphObjects.edges.filter(edgeIsWithinFOV);
+
+    //    fileNodesInFOV.forEach(gdo.sigmaInstance.graph.addNode);
+    //    fileEdgesInFOV.forEach(gdo.sigmaInstance.graph.addEdges);
+    //});
+    // Then, let's add some data to display:
+    gdo.sigmaInstance.graph.addNode({
+        // Main attributes:
+        id: 'n0',
+        label: 'Hello',
+        // Display attributes:
+        x: .5,
+        y: .5,
+        size: 1,
+        color: '#f00'
+    }).addNode({
+        // Main attributes:
+        id: 'n1',
+        label: 'World !',
+        // Display attributes:
+        x: 1,
+        y: 1,
+        size: 1,
+        color: '#f00'
+    }).addEdge({
+        id: 'e0',
+        // Reference extremities:
+        source: 'n0',
+        target: 'n1'
+    });
+
 
     // Render the new graph
-    s.refresh();
+    gdo.sigmaInstance.refresh();
 }
 
 /**
- * Finds all nodes and edges in the file pointed to be fileNames that are
- * in the field of view.
- * @param {any} fileNames
+ * Finds all nodes and edges in the file at filePath that are in the
+ * field of view.
+ * @param {any} filePath
  * @return the nodes and edges in files that are in the field of view.
  */
-function getGraphObjectsInFieldOfView(fileNames) {
-    const nodes = [];
-    const edges = [];
-    fileNames.forEach(function (fileName) {
-        // Parse file for nodes and edges.
-        gdo.consoleOut('.SIGMAGRAPHRENDERER', 1, 'Getting nodes and edges in field of view...');
-        const fileGraphObjects = parseGraphMLForGraphObjects(fileName);
+function getGraphObjectsInFieldOfView(filePath) {
+    // Parse file for nodes and edges.
+    gdo.consoleOut('.SIGMAGRAPHRENDERER', 1, 'Getting nodes and edges in field of view...');
+    parseGraphMLForGraphObjects(filePath).then(function(fileGraphObjects) {
         const fileNodes = fileGraphObjects.nodes;
         const fileEdges = fileGraphObjects.edges;
         // Remove nodes and edges that aren't in the field of view.
@@ -70,7 +107,7 @@ function getGraphObjectsInFieldOfView(fileNames) {
         const edgesInFOV = fileEdges.filter(edgeIsWithinFOV);
         // TODO maybe not necessary if using camera
         // Convert node coordinates to sigma coordinates.
-        nodesInFOV.forEach(function(node) {
+        nodesInFOV.forEach(function (node) {
             const sigmaCoords = convertServerCoordsToSigmaCoords(node.x, node.y);
             node.x = sigmaCoords.x;
             node.y = sigmaCoords.y;
@@ -80,23 +117,36 @@ function getGraphObjectsInFieldOfView(fileNames) {
         nodesInFOV.forEach(nodes.push);
         edgesInFOV.forEach(edges.push);
     });
-    return {
-        nodes: nodes,
-        edges: edges
-    };
 }
 
 /**
  * 
- * @param {any} fileName
+ * @param {any} filePath
  */
-async function parseGraphMLForGraphObjects(fileName) {
+function parseGraphMLForGraphObjects(filePath) {
     gdo.consoleOut('.SIGMAGRAPHRENDERER', 1, 'Downloading graph objects file at ' + gdo.basePath + fileName + "...");
-    gdo.xhr.open("GET", gdo.basePath + fileName, false);
+    gdo.xhr.open("GET", filePath, true);
     gdo.xhr.send();
     gdo.consoleOut('.SIGMAGRAPHRENDERER', 1, 'Parsing graph objects file...');
-    const fileGraphObjects = await parseGraphML(gdo.xhr.responseText).then(graph => graph);
-    return fileGraphObjects;
+    return parseGraphML(gdo.xhr.responseText);
+}
+
+/**
+ * 
+ * @param {any} filePath
+ */
+function httpGet(filePath) {
+    // TODO handle errors
+    return new Promise(function (resolve, reject) {
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", filePath, true);
+        xhr.onload = function() {
+            if (this.status === 200) {
+                resolve(this.response);
+            }
+        }
+        xhr.send();
+    });
 }
 
 function parseGraphML(graphMLText) {
@@ -113,10 +163,10 @@ function parseGraphML(graphMLText) {
  * @param {any} node
  */
 function nodeIsWithinFOV(node) {
-    const xMin = xCentroid - xWidth / 2;
-    const xMax = xCentroid + xWidth / 2;
-    const yMin = yCentroid - yWidth / 2;
-    const yMax = yCentroid + yWidth / 2;
+    const xMin = gdo.xCentroid - gdo.xWidth / 2;
+    const xMax = gdo.xCentroid + gdo.xWidth / 2;
+    const yMin = gdo.yCentroid - gdo.yWidth / 2;
+    const yMax = gdo.yCentroid + gdo.yWidth / 2;
     return node.X >= xMin && node.X <= xMax
         && node.Y >= yMin && node.Y <= yMax;
 }
@@ -126,10 +176,10 @@ function nodeIsWithinFOV(node) {
  * @param {any} edge
  */
 function edgeIsWithinFOV(edge) {
-    const xMin = xCentroid - xWidth / 2;
-    const xMax = xCentroid + xWidth / 2;
-    const yMin = yCentroid - yWidth / 2;
-    const yMax = yCentroid + yWidth / 2;
+    const xMin = gdo.xCentroid - gdo.xWidth / 2;
+    const xMax = gdo.xCentroid + gdo.xWidth / 2;
+    const yMin = gdo.yCentroid - gdo.yWidth / 2;
+    const yMax = gdo.yCentroid + gdo.yWidth / 2;
 
     const fovContainsWholeLink = edge.source.x >= xMin && edge.target.x >= xMin
                                 && edge.source.x <= xMax && edge.target.x <= xMax
