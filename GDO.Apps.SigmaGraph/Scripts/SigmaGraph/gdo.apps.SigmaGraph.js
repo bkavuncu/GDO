@@ -4,10 +4,24 @@
 3. Render nodes & links
 */
 
-
-
 $(function () {
     gdo.consoleOut('.SIGMAGRAPHRENDERER', 1, 'Loaded Sigma Graph Renderer JS');
+
+    $.connection.sigmaGraphAppHub.client.renderGraph = gdo.net.app["SigmaGraph"].renderGraph;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // arrays to store data
     var links, nodes, allnodes, mostConnectedNodes = [];
@@ -54,6 +68,31 @@ $(function () {
     scroll_bottom = function (div) {
         if (div.scrollHeight > div.clientHeight)
             div.scrollTop = div.scrollHeight - div.clientHeight;
+    }
+
+    $.connection.sigmaGraphAppHub.client.setMessage = function (message) {
+        gdo.consoleOut('.SIGMAGRAPHRENDERER', 1, 'Message from server: ' + message);
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+
+            var logDom = $("iframe").contents().find("#message_from_server");
+            // append new "p" element for each msg, instead of replacing existing one
+            logDom.empty().append("<p>" + message + "</p>");
+
+            scroll_bottom(logDom[0]);
+
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            // do nothing
+        }
+    }
+
+
+    $.connection.sigmaGraphAppHub.client.logTime = function (message) {
+
+        var logDom = $("iframe").contents().find("#message_from_server");
+        // append new "p" element for each msg, instead of replacing existing one
+        logDom.empty().append("<p>" + message + "</p>");
+
+        scroll_bottom(logDom[0]);
     }
 
     $.connection.sigmaGraphAppHub.client.setFields = function (options, instanceId) {
@@ -377,11 +416,17 @@ $(function () {
 //gdo.net.app["Graph"].displayMode = 0;
 
 gdo.net.app["SigmaGraph"].initClient = function () {
+    gdo.net.app["SigmaGraph"].initInstanceGlobals();
+    gdo.net.app["SigmaGraph"].renderGraph();
+
     gdo.consoleOut('.SIGMAGRAPHRENDERER', 1, 'Initializing Graph Renderer App Client at Node ' + gdo.clientId);
     gdo.net.app["SigmaGraph"].server.requestRendering(gdo.net.node[gdo.clientId].appInstanceId);
 }
 
 gdo.net.app["SigmaGraph"].initControl = function () {
+    gdo.net.app["SigmaGraph"].initInstanceGlobals();
+    gdo.net.app["SigmaGraph"].renderGraph();
+
     gdo.controlId = parseInt(getUrlVar("controlId"));
     gdo.net.instance[gdo.clientId].graphFieldsLoaded = false;
     gdo.net.app["SigmaGraph"].server.requestRendering(gdo.controlId);
@@ -396,3 +441,9 @@ gdo.net.app["SigmaGraph"].terminateClient = function () {
 gdo.net.app["SigmaGraph"].ternminateControl = function () {
     gdo.consoleOut('.SIGMAGRAPHRENDERER', 1, 'Terminating Graph Renderer App Control at Instance ' + gdo.controlId);
 }
+
+gdo.loadScript('sigma.min', 'SigmaGraph', gdo.SCRIPT_TYPE.APP);
+gdo.loadScript('browserified.graphml', 'SigmaGraph', gdo.SCRIPT_TYPE.APP);
+gdo.loadScript('render', 'SigmaGraph', gdo.SCRIPT_TYPE.APP);
+//gdo.loadScript('logging', 'SigmaGraph', gdo.SCRIPT_TYPE.APP);
+

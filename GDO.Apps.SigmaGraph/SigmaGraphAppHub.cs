@@ -81,7 +81,7 @@ namespace GDO.Apps.SigmaGraph
                     Clients.Caller.setMessage("SigmaGraph is now being rendered.");
 
                     Clients.Caller.setMessage("Requesting fields...");
-                    Clients.Caller.setFields(((SigmaGraphApp)Cave.Apps["SigmaGraph"].Instances[instanceId]).graphinfo.NodeOtherFields.ToArray(), instanceId);
+                    //Clients.Caller.setFields(((SigmaGraphApp)Cave.Apps["SigmaGraph"].Instances[instanceId]).graphinfo.NodeOtherFields.ToArray(), instanceId);
                     Clients.Caller.setMessage("Graph fields requested and sent successfully!");
                 }
                 catch (WebException e)
