@@ -29,36 +29,6 @@ namespace GDO.Apps.SigmaGraph
             Groups.Remove(Context.ConnectionId, "" + groupId);
         }
 
-        public void GetFields(int instanceId)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-           
-                    ga = (SigmaGraphApp) Cave.Apps["SigmaGraph"].Instances[instanceId];
-                    Clients.Caller.setMessage("Requesting fields...");
-                    if (((SigmaGraphApp) Cave.Apps["SigmaGraph"].Instances[instanceId]).graphinfo.NodeOtherFields != null)
-                    {
-                        Clients.Caller.setFields(
-                            ((SigmaGraphApp) Cave.Apps["SigmaGraph"].Instances[instanceId]).graphinfo.NodeOtherFields.ToArray(),
-                            instanceId);
-                        Clients.Caller.setMessage("SigmaGraph fields requested and sent successfully!");
-                    }
-                    else
-                    {
-                        Clients.Caller.setMessage("No SigmaGraph Fields");
-                    }
-                  
-                }
-                catch (Exception e)
-                {
-                    Clients.Caller.setMessage(e.ToString());
-                    Debug.WriteLine(e);
-                }
-            }
-        }
-
         public void InitiateProcessing(int instanceId, string filename)
         {
             Debug.WriteLine("Debug: Server side InitiateProcessing is called.");
@@ -81,7 +51,6 @@ namespace GDO.Apps.SigmaGraph
                     Clients.Caller.setMessage("SigmaGraph is now being rendered.");
 
                     Clients.Caller.setMessage("Requesting fields...");
-                    //Clients.Caller.setFields(((SigmaGraphApp)Cave.Apps["SigmaGraph"].Instances[instanceId]).graphinfo.NodeOtherFields.ToArray(), instanceId);
                     Clients.Caller.setMessage("Graph fields requested and sent successfully!");
                 }
                 catch (WebException e)
@@ -94,28 +63,6 @@ namespace GDO.Apps.SigmaGraph
                     Clients.Caller.setMessage("Error: Processing of raw graph data failed to initiate.");
                     Clients.Caller.setMessage(e.ToString());
                     Debug.WriteLine(e);
-                }
-            }
-        }
-
-
-        // TODO: update method to adapt to zooming
-        public void RequestRendering(int instanceId)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    // with this if condition, node only gets painted when there is a graph; otherwise node will appear empty if it's loaded without any graph uploaded
-                    if (((SigmaGraphApp)Cave.Apps["SigmaGraph"].Instances[instanceId]).FolderNameDigit != null)
-                    {
-                        Clients.Caller.renderGraph(((SigmaGraphApp)Cave.Apps["SigmaGraph"].Instances[instanceId]).FolderNameDigit, false);
-                    }
-
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
                 }
             }
         }
@@ -236,8 +183,6 @@ namespace GDO.Apps.SigmaGraph
             }
         }
 
-
-
         public void TriggerPanning(int instanceId, string direction)
         {
             lock (Cave.AppLocks[instanceId])
@@ -306,7 +251,6 @@ namespace GDO.Apps.SigmaGraph
             }
         }
 
-
         public void TriggerRGB(int instanceId, string colourScheme)
         {
             lock (Cave.AppLocks[instanceId])
@@ -331,8 +275,6 @@ namespace GDO.Apps.SigmaGraph
                 }
             }
         }
-
-
 
         public void RenderMostConnectedNodes(int instanceId, int numLinks, string color)  //TODO add a default color
         {
@@ -391,7 +333,6 @@ namespace GDO.Apps.SigmaGraph
             }
         }
 
-
         public void LogTime(string message)
         {
             try
@@ -405,8 +346,6 @@ namespace GDO.Apps.SigmaGraph
                 Debug.WriteLine(e);
             }
         }
-
-
 
         public void InitiateSearch(int instanceId, string keywords, string field)
         {
@@ -488,6 +427,5 @@ namespace GDO.Apps.SigmaGraph
                 }
             }
         }
-
     }
 }

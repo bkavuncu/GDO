@@ -2,6 +2,7 @@
 * Functions for rendering the graph with sigma.js
 */
 
+// Initialize global static constants.
 gdo.epsilon = 1E-6;
 gdo.basePath = "\\Web\\SigmaGraph\\graphmls\\";
 

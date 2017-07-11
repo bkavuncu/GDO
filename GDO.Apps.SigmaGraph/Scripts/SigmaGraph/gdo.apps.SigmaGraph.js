@@ -9,20 +9,6 @@ $(function () {
 
     $.connection.sigmaGraphAppHub.client.renderGraph = gdo.net.app["SigmaGraph"].renderGraph;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     // arrays to store data
     var links, nodes, allnodes, mostConnectedNodes = [];
     var minLinks = 3;
@@ -85,7 +71,6 @@ $(function () {
         }
     }
 
-
     $.connection.sigmaGraphAppHub.client.logTime = function (message) {
 
         var logDom = $("iframe").contents().find("#message_from_server");
@@ -93,31 +78,6 @@ $(function () {
         logDom.empty().append("<p>" + message + "</p>");
 
         scroll_bottom(logDom[0]);
-    }
-
-    $.connection.sigmaGraphAppHub.client.setFields = function (options, instanceId) {
-        // !!If you add and gdo.controlId check here, it will break the Twitter applications!!
-        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-            gdo.consoleOut('.SIGMAGraph', 1, 'Set fields ');
-
-            gdo.net.instance[instanceId].graphFields = options;
-            gdo.net.instance[instanceId].graphFieldsLoaded = true;
-            //add fields in loaded graph to the appropriate droplists
-            var elem1 = $("iframe").contents().find("#select_label");
-            var elem2 = $("iframe").contents().find("#select_SearchFields");
-            var elem3 = $("iframe").contents().find("#select_SearchLabels");
-            var elem4 = $("iframe").contents().find("#select_mostConnectedLabels");
-            elem1.html();
-            elem2.html();
-            elem3.html();
-            elem4.html();
-            $.each(options, function () {
-                elem1.append($("<option />").val(this).text(this));
-                elem2.append($("<option />").val(this).text(this));
-                elem3.append($("<option />").val(this).text(this));
-                elem4.append($("<option />").val(this).text(this));
-            });
-        } 
     }
 
     $.connection.sigmaGraphAppHub.client.renderLabels = function (field, color) {
@@ -147,7 +107,6 @@ $(function () {
             }
         }
     }
-
 
     $.connection.sigmaGraphAppHub.client.renderSearch = function (searchquery, field) {
 
@@ -276,7 +235,6 @@ $(function () {
         }
     }
 
-
     $.connection.sigmaGraphAppHub.client.setRGB = function (colourScheme) {
         gdo.consoleOut('.GRAPHRENDERER', 1, 'Setting colour scheme to: ' + colourScheme);
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
@@ -292,7 +250,6 @@ $(function () {
         }
     }
 
-
     $.connection.sigmaGraphAppHub.client.hideHighlight = function () {
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
 
@@ -302,7 +259,6 @@ $(function () {
             }
         }
     }
-
 
     $.connection.sigmaGraphAppHub.client.renderMostConnectedNodes = function (numLinks, color) {
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
@@ -342,7 +298,6 @@ $(function () {
             });
         }
     }
-
 
     $.connection.sigmaGraphAppHub.client.setNodeSize = function(nodeSize) {
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
@@ -413,24 +368,14 @@ $(function () {
     }
 });
 
-//gdo.net.app["Graph"].displayMode = 0;
-
 gdo.net.app["SigmaGraph"].initClient = function () {
     gdo.net.app["SigmaGraph"].initInstanceGlobals();
     gdo.net.app["SigmaGraph"].renderGraph();
 
     gdo.consoleOut('.SIGMAGRAPHRENDERER', 1, 'Initializing Graph Renderer App Client at Node ' + gdo.clientId);
-    gdo.net.app["SigmaGraph"].server.requestRendering(gdo.net.node[gdo.clientId].appInstanceId);
 }
 
 gdo.net.app["SigmaGraph"].initControl = function () {
-    gdo.net.app["SigmaGraph"].initInstanceGlobals();
-    gdo.net.app["SigmaGraph"].renderGraph();
-
-    gdo.controlId = parseInt(getUrlVar("controlId"));
-    gdo.net.instance[gdo.clientId].graphFieldsLoaded = false;
-    gdo.net.app["SigmaGraph"].server.requestRendering(gdo.controlId);
-    gdo.net.app["SigmaGraph"].server.getFields(gdo.controlId);
     gdo.consoleOut('.SIGMAGRAPHRENDERER', 1, 'Initializing Graph Renderer App Control at Instance ' + gdo.controlId);
 }
 
@@ -445,5 +390,3 @@ gdo.net.app["SigmaGraph"].ternminateControl = function () {
 gdo.loadScript('sigma.min', 'SigmaGraph', gdo.SCRIPT_TYPE.APP);
 gdo.loadScript('browserified.graphml', 'SigmaGraph', gdo.SCRIPT_TYPE.APP);
 gdo.loadScript('render', 'SigmaGraph', gdo.SCRIPT_TYPE.APP);
-//gdo.loadScript('logging', 'SigmaGraph', gdo.SCRIPT_TYPE.APP);
-
