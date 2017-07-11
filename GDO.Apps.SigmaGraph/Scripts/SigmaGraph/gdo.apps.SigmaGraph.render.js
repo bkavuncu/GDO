@@ -58,16 +58,14 @@ gdo.net.app["SigmaGraph"].renderGraph = async function () {
 
     // Filter and add the nodes and edges to the graph
     filesGraphObjects.forEach(function (fileGraphObjects) {
-        const fileNodesInFOV = fileGraphObjects.nodes
-            .map(function(node) {
-                return {
-                    id: node.id,
-                    x: node._attributes.x,
-                    y: node._attributes.y,
-                    color: node._attributes.label
-                }
-            })
-            .map(convertServerCoordsToSigmaCoords);    // TODO .filter(nodeIsWithinFOV)
+        const fileNodesInFOV = fileGraphObjects.nodes;
+        fileNodesInFOV.forEach(node => {
+            node.x = node.attributes.x;
+            node.y = node.attributes.y;
+            convertServerCoordsToSigmaCoords(node);
+            node.color = node.attributes.label;
+            node.size = 3;
+        });                                            // TODO .filter(nodeIsWithinFOV)
         const fileEdgesInFOV = fileGraphObjects.edges; // TODO .filter(edgeIsWithinFOV);
 
         fileNodesInFOV.forEach(node => {
@@ -193,15 +191,11 @@ function intersectsVerticalSegment(edge, x, yMin, yMax) {
 
 /**
  * Converts the node in the server coordinate system to the same
- * node in the sigma coordinate system. 
+ * node in the sigma coordinate system. Mutates the given node.
  * @param {any} node the node in the server coordinate system
  * @return the node in the sigma coordinate system
  */
 function convertServerCoordsToSigmaCoords(node) {
-    return {
-        id: node.id,
-        x: (node.x - gdo.xCentroid) * gdo.canvasWidthInPx * 1 / (gdo.xWidth / 2),
-        y: -(-node.y + gdo.yCentroid) * gdo.canvasHeightInPx * 1 / (gdo.yWidth / 2),
-        color: node.color
-    }
+    node.x = (node.x - gdo.xCentroid) * gdo.canvasWidthInPx * 1 / (gdo.xWidth / 2);
+    node.y = -(-node.y + gdo.yCentroid) * gdo.canvasHeightInPx * 1 / (gdo.yWidth / 2);
 }
