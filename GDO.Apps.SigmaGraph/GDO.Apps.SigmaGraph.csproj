@@ -111,6 +111,7 @@
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
+    <Content Include="Web\SigmaGraph\graphmls\test.graphml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Scripts\SigmaGraph\gdo.apps.SigmaGraph.browserified.graphml.js" />
