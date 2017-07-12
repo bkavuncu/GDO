@@ -111,6 +111,7 @@
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
+    <Content Include="Scripts\SigmaGraph\gdo.apps.SigmaGraph.changeFieldOfView.js" />
     <Content Include="Web\SigmaGraph\graphmls\oneDiagonalEdge.graphml" />
   </ItemGroup>
   <ItemGroup>
