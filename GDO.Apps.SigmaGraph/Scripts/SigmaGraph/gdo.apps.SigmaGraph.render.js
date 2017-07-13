@@ -3,7 +3,7 @@
 */
 
 // Initialize global static constants.
-gdo.epsilon = 1E-6;
+gdo.epsilon = 1E-9;
 gdo.basePath = "\\Web\\SigmaGraph\\graphmls\\";
 
 /**
@@ -37,7 +37,7 @@ gdo.net.app["SigmaGraph"].initInstanceGlobals = function () {
     gdo.yWidth = 1 / gdo.numRows;
     gdo.xCentroid = gdo.xWidth * gdo.nodeCol + gdo.xWidth / 2;
     gdo.yCentroid = gdo.yWidth * gdo.nodeRow + gdo.yWidth / 2;
-}
+};
 
 /**
  * Renders the graph.
@@ -46,7 +46,7 @@ gdo.net.app["SigmaGraph"].renderGraph = async function () {
     gdo.consoleOut('.SIGMAGRAPHRENDERER', 1, 'Rendering graph...');
     // Get location of files containing objects to render.
     //const fileNames = gdo.net.app["SigmaGraph"].server.getFilesWithin(xCentroid, yCentroid, xWidth, yWidth);
-    const filePaths = [gdo.basePath + 'oneDiagonalEdge.graphml'];
+    const filePaths = [gdo.basePath + "fourEdges.graphml"]; //[gdo.basePath + 'oneDiagonalEdge.graphml']
 
     // Get the nodes and edges
     const filesGraphObjects = await Promise.all(filePaths.map(function(filePath) {
@@ -62,23 +62,30 @@ gdo.net.app["SigmaGraph"].renderGraph = async function () {
         fileNodesInFOV.forEach(node => {
             node.x = node.attributes.x;
             node.y = node.attributes.y;
-            convertServerCoordsToSigmaCoords(node);
-            node.color = node.attributes.label;
-            node.size = 3;
-        });                                            // TODO .filter(nodeIsWithinFOV)
-        const fileEdgesInFOV = fileGraphObjects.edges; // TODO .filter(edgeIsWithinFOV);
-
+            node.color = node.attributes.color || "#f00";
+            node.size = node.attributes.size || 3;
+        });
         fileNodesInFOV.forEach(node => {
             gdo.sigmaInstance.graph.addNode(node);
         });
+
+        const fileEdgesInFOV = fileGraphObjects.edges.filter(edgeIsWithinFOV);
         fileEdgesInFOV.forEach(edge => {
             gdo.sigmaInstance.graph.addEdge(edge);
+        });
+
+        gdo.sigmaInstance.graph.nodes().forEach(node => {
+            if (gdo.sigmaInstance.graph.degree(node.id) === 0) {
+                gdo.sigmaInstance.graph.dropNode(node.id);
+            } else {
+                convertServerCoordsToSigmaCoords(node);
+            }
         });
     });
 
     // Render the new graph
     gdo.sigmaInstance.refresh();
-}
+};
 
 /**
  * Returns a promise that fullfulls with the file contents of the
@@ -94,7 +101,7 @@ function httpGet(filePath) {
             if (this.status === 200) {
                 resolve(this.response);
             }
-        }
+        };
         xhr.send();
     });
 }
@@ -141,10 +148,15 @@ function edgeIsWithinFOV(edge) {
     const yMin = gdo.yCentroid - gdo.yWidth / 2;
     const yMax = gdo.yCentroid + gdo.yWidth / 2;
 
-    const fovContainsWholeLink = edge.source.x >= xMin && edge.target.x >= xMin
-                                && edge.source.x <= xMax && edge.target.x <= xMax
-                                && edge.source.y >= yMin && edge.target.y >= yMin
-                                && edge.source.y <= yMax && edge.target.y <= yMax;
+    const xSource = gdo.sigmaInstance.graph.nodes(edge.source).x;
+    const ySource = gdo.sigmaInstance.graph.nodes(edge.source).y;
+    const xTarget = gdo.sigmaInstance.graph.nodes(edge.target).x;
+    const yTarget = gdo.sigmaInstance.graph.nodes(edge.target).y;
+
+    const fovContainsWholeLink = xSource >= xMin && xTarget >= xMin
+                                && xSource <= xMax && xTarget <= xMax
+                                && ySource >= yMin && yTarget >= yMin
+                                && ySource <= yMax && yTarget <= yMax;
 
     return fovContainsWholeLink
         || intersectsHorizontalSegment(edge, yMax, xMin, xMax)
@@ -155,37 +167,47 @@ function edgeIsWithinFOV(edge) {
 
 /**
  * Determines whether or not the edge intersects the horizontal
- * line segment between (minX, y) and (maxX, y).
+ * line segment between (xMin, y) and (xMax, y).
  * @param {any} edge
  * @param {any} y
  * @param {any} xMin
  * @param {any} xMax
  */
 function intersectsHorizontalSegment(edge, y, xMin, xMax) {
-    if (edge.targetX - edge.sourceX <= gdo.epsilon) {
-        return edge.sourceX >= minX && edge.sourceX <= maxX;
+    const xSource = gdo.sigmaInstance.graph.nodes(edge.source).x;
+    const ySource = gdo.sigmaInstance.graph.nodes(edge.source).y;
+    const xTarget = gdo.sigmaInstance.graph.nodes(edge.target).x;
+    const yTarget = gdo.sigmaInstance.graph.nodes(edge.target).y;
+
+    if (Math.abs(xTarget - xSource) <= gdo.epsilon) {
+        return xSource >= xMin && xSource <= xMax;
     }
     // The lines intersect at (x = 1/m (y-y_o) + x_0, y = y)
-    const slope = (edge.targetY - edge.sourceY) / (edge.targetX - edge.sourceY);
-    const xIntersect = 1 / slope * (y - edge.sourceY) + edge.sourceX;
+    const slope = (yTarget - ySource) / (xTarget - ySource);
+    const xIntersect = 1 / slope * (y - ySource) + xSource;
     return xIntersect >= xMin && xIntersect <= xMax;
 }
 
 /**
  * Determines whether or not the edge intersects the vertical
- * line segment between (x, minY) and (x, maxY).
+ * line segment between (x, yMin) and (x, yMax).
  * @param {any} edge
  * @param {any} x
  * @param {any} yMin
  * @param {any} yMax
  */
 function intersectsVerticalSegment(edge, x, yMin, yMax) {
-    if (edge.targetX - edge.sourceX <= gdo.epsilon) {
-        return edge.sourceX - x <= gdo.epsilon;
+    const xSource = gdo.sigmaInstance.graph.nodes(edge.source).x;
+    const ySource = gdo.sigmaInstance.graph.nodes(edge.source).y;
+    const xTarget = gdo.sigmaInstance.graph.nodes(edge.target).x;
+    const yTarget = gdo.sigmaInstance.graph.nodes(edge.target).y;
+
+    if (Math.abs(xTarget - xSource) <= gdo.epsilon) {
+        return Math.abs(xSource - x) <= gdo.epsilon;
     }
     // The lines intersect at (x = x, y = m(x-x_0) + y_0)
-    const slope = (edge.targetY - edge.sourceY) / (edge.targetX - edge.sourceX);
-    const yIntersect = slope * (x - edge.sourceX) + edge.sourceY;
+    const slope = (yTarget - ySource) / (xTarget - xSource);
+    const yIntersect = slope * (x - xSource) + ySource;
     return yIntersect >= yMin && yIntersect <= yMax;
 }
 
