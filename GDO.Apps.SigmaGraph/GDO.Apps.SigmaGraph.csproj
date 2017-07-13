@@ -113,6 +113,7 @@
     </None>
     <Content Include="Scripts\SigmaGraph\gdo.apps.SigmaGraph.changeFieldOfView.js" />
     <Content Include="Web\SigmaGraph\graphmls\oneDiagonalEdge.graphml" />
+    <Content Include="Web\SigmaGraph\graphmls\fourEdges.graphml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Scripts\SigmaGraph\gdo.apps.SigmaGraph.browserified.graphml.js" />

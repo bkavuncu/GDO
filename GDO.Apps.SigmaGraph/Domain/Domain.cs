@@ -1,4 +1,5 @@
-﻿using GDO.Apps.SigmaGraph.QuadTree;
+﻿using System;
+using GDO.Apps.SigmaGraph.QuadTree;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
@@ -127,7 +128,7 @@ namespace GDO.Apps.SigmaGraph.Domain
         /// <returns></returns> true if they intersect and false otherwise
         private bool IntersectsHorizontalSegment(double y, double minX, double maxX)
         {
-            if (EndPos.X - StartPos.X <= Epsilon)
+            if (Math.Abs(EndPos.X - StartPos.X) <= Epsilon)
             {
                 return StartPos.X >= minX && StartPos.X <= maxX;
             }
@@ -147,9 +148,9 @@ namespace GDO.Apps.SigmaGraph.Domain
         /// <returns></returns> true if they intersect or if and false otherwise
         private bool IntersectsVerticalSegment(double x, double minY, double maxY)
         {
-            if (EndPos.X - StartPos.X <= Epsilon)
+            if (Math.Abs(EndPos.X - StartPos.X) <= Epsilon)
             {
-                return StartPos.X - x <= Epsilon;
+                return Math.Abs(StartPos.X - x) <= Epsilon || Math.Abs(EndPos.X - x) <= Epsilon;
             }
             // The lines intersect at (x = x, y = m(x-x_0) + y_0)
             double slope = (EndPos.Y - StartPos.Y) / (EndPos.X - StartPos.X);

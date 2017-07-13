@@ -27,6 +27,9 @@ namespace GDO.Apps.SigmaGraph.Domain.Tests
         /// 
         /// Additionally cover cases where link lies directly on  one of the
         /// vertical or horizontal quadrant boundaries
+        /// 
+        /// Regression Test: Edge going from left to right that is not in the
+        ///                     quadrant
         /// </summary>
 
         private const double EqualWidthsXCentroid = 0.3;
@@ -118,6 +121,22 @@ namespace GDO.Apps.SigmaGraph.Domain.Tests
             float yWidth = (float)NotEqualWidthYWidth;
             Position startPos = new Position { X = centroid, Y = centroid - yWidth / (float)0.5 };
             Position endPos = new Position { X = centroid + xWidth / (float)0.5, Y = centroid };
+            GraphLink link = new GraphLink { StartPos = startPos, EndPos = endPos };
+
+            Assert.IsFalse(link.IsWithin(_notEqualWidths));
+        }
+
+        // This test covers
+        // Regression Test: Edge going from right to left that is not in the
+        //                     quadrant
+        [TestMethod()]
+        public void IsWithinTestEdgeLeftToRightNotInQuadrant()
+        {
+            float centroid = (float)NotEqualWidthsCentroid;
+            float xWidth = (float)NotEqualWidthsXWidth;
+            float yWidth = (float)NotEqualWidthYWidth;
+            Position startPos = new Position { X = centroid, Y = centroid - yWidth / (float)0.5 };
+            Position endPos = new Position { X = centroid - xWidth / (float)0.5, Y = centroid };
             GraphLink link = new GraphLink { StartPos = startPos, EndPos = endPos };
 
             Assert.IsFalse(link.IsWithin(_notEqualWidths));
