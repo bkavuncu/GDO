@@ -72,8 +72,8 @@ namespace GDO.Apps.SigmaGraph
             var graph = GraphDataReader.ReadGraphMLData(graphMLfile);
 
 
-            SigmaGraphProcessor.ProcessGraph(graph, filename, zoomed, folderName,  indexFile, FolderNameDigit,Section);
-            //SigmaGraphQuadProcesor.ProcessGraph(graph, filename, folderName, indexFile, FolderNameDigit);
+            //SigmaGraphProcessor.ProcessGraph(graph, filename, zoomed, folderName,  indexFile, FolderNameDigit,Section);
+            SigmaGraphQuadProcesor.ProcessGraph(graph, filename, folderName, indexFile, FolderNameDigit);
 
             return this.FolderNameDigit;
             }

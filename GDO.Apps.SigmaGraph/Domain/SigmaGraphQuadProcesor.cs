@@ -10,7 +10,7 @@ namespace GDO.Apps.SigmaGraph.Domain {
 
        //     graph.RescaleTo(0, 1, 0, 1);
             
-            var factory = new ConcurrentQuadTreeFactory<GraphObject>(new QuadCentroid(graph.RectDim.Width, graph.RectDim.Height),maxbags: 1, maxobjectPerBag: 5000);
+            var factory = new ConcurrentQuadTreeFactory<GraphObject>(new QuadCentroid(graph.RectDim.Width, graph.RectDim.Height),maxbags: 1, maxobjectPerBag: 10000);
 
 
            var total =  graph.Nodes.BatchListCast<GraphNode, GraphObject>(500).Reverse().Aggregate(0, (acc, next) => acc + next.Count);
@@ -34,7 +34,7 @@ namespace GDO.Apps.SigmaGraph.Domain {
 
 
             addData = new List<IEnumerable<List<GraphObject>>>() {
-                graph.Links.Take(25000).BatchListCast<GraphLink, GraphObject>(1000)
+                graph.Links.BatchListCast<GraphLink, GraphObject>(1000)
 
             };
 
