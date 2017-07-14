@@ -1026,6 +1026,7 @@
     <Content Include="Web\ScenariosLauncher.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\Apps\IHubLog.cs" />
     <Compile Include="Core\Scenarios\Element.cs" />
     <Compile Include="Core\Apps\ICompositeAppHub.cs" />
     <Compile Include="Core\Modules\IModuleHub.cs" />
