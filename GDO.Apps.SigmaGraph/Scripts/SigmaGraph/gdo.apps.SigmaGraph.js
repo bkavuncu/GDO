@@ -388,6 +388,5 @@ gdo.net.app["SigmaGraph"].ternminateControl = function () {
 }
 
 gdo.loadScript('sigma.min', 'SigmaGraph', gdo.SCRIPT_TYPE.APP);
-gdo.loadScript('browserified.graphml', 'SigmaGraph', gdo.SCRIPT_TYPE.APP);
 gdo.loadScript('render', 'SigmaGraph', gdo.SCRIPT_TYPE.APP);
 gdo.loadScript('changeFieldOfView', 'SigmaGraph', gdo.SCRIPT_TYPE.APP);

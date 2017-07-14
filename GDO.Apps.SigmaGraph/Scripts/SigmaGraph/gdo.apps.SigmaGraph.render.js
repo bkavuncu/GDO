@@ -46,12 +46,15 @@ gdo.net.app["SigmaGraph"].renderGraph = async function () {
     gdo.consoleOut('.SIGMAGRAPHRENDERER', 1, 'Rendering graph...');
     // Get location of files containing objects to render.
     //const fileNames = gdo.net.app["SigmaGraph"].server.getFilesWithin(xCentroid, yCentroid, xWidth, yWidth);
-    const filePaths = [gdo.basePath + "fourEdges.graphml"]; //[gdo.basePath + 'oneDiagonalEdge.graphml']
-
+    const filePaths = [gdo.basePath + 'fourEdges.graphml'];
+    const timeBeforeParse = window.performance.now();
     // Get the nodes and edges
     const filesGraphObjects = await Promise.all(filePaths.map(function(filePath) {
         return httpGet(filePath).then(parseGraphML);
     }));
+    console.log(filesGraphObjects);
+    console.log("Time to parse...");
+    console.log(window.performance.now() - timeBeforeParse);
 
     // Clear the sigma graph
     gdo.sigmaInstance.graph.clear();
@@ -60,10 +63,10 @@ gdo.net.app["SigmaGraph"].renderGraph = async function () {
     filesGraphObjects.forEach(function (fileGraphObjects) {
         const fileNodesInFOV = fileGraphObjects.nodes;
         fileNodesInFOV.forEach(node => {
-            node.x = node.attributes.x;
-            node.y = node.attributes.y;
-            node.color = node.attributes.color || "#f00";
-            node.size = node.attributes.size || 3;
+            node.x = parseFloat(node.x);
+            node.y = parseFloat(node.y);
+            node.color = node.color || "#f00";
+            node.size = node.size || 3;
         });
         fileNodesInFOV.forEach(node => {
             gdo.sigmaInstance.graph.addNode(node);
@@ -83,6 +86,7 @@ gdo.net.app["SigmaGraph"].renderGraph = async function () {
         });
     });
 
+    addDebugGrid();
     // Render the new graph
     gdo.sigmaInstance.refresh();
 };
@@ -97,6 +101,8 @@ function httpGet(filePath) {
     return new Promise(function (resolve, reject) {
         const xhr = new XMLHttpRequest();
         xhr.open("GET", filePath, true);
+        xhr.responseType = 'document';
+        xhr.overrideMimeType('text/xml');
         xhr.onload = function() {
             if (this.status === 200) {
                 resolve(this.response);
@@ -111,13 +117,51 @@ function httpGet(filePath) {
  * representation of the contents of graphMLText.
  * @param {any} graphMLText the contents of a graphml file
  */
-function parseGraphML(graphMLText) {
+function parseGraphML(xml) {
     return new Promise(function (resolve, reject) {
-        const parser = new gdo.graphml.GraphMLParser();
-        parser.parse(graphMLText, function(err, graph) {
-            if (err !== null) return reject(err);
-            resolve(graph);
-        });
+        function resolver() {
+            return 'http://graphml.graphdrawing.org/xmlns';
+        }
+        const nodes = [];
+        const nodesPath = "myns:graphml/myns:graph/myns:node";
+        const xmlNodes = xml.evaluate(nodesPath, xml, resolver, XPathResult.ANY_TYPE, null);
+        let xmlNode = xmlNodes.iterateNext();
+        while (xmlNode) {
+            const node = {};
+            node.id = xmlNode.getAttribute('id');
+            for (let index = 0; index < xmlNode.children.length; index++) {
+                const child = xmlNode.children[index];
+                node[child.getAttribute('key')] = child.innerHTML;
+            }
+            nodes.push(node);
+
+            xmlNode = xmlNodes.iterateNext();
+        }
+
+        const edges = [];
+        const edgesPath = "myns:graphml/myns:graph/myns:edge";
+        const xmlEdges = xml.evaluate(edgesPath, xml, resolver, XPathResult.ANY_TYPE, null);
+        let xmlEdge = xmlEdges.iterateNext();
+        let edgeCount = 0;
+        while (xmlEdge) {
+            const edge = {};
+            edge.id = 'E' + edgeCount;
+            edge.source = xmlEdge.getAttribute('source');
+            edge.target = xmlEdge.getAttribute('target');
+            for (let index = 0; index < xmlEdge.children.length; index++) {
+                const child = xmlEdge.children[index];
+                edge[child.getAttribute('key')] = child.innerHTML;
+            }
+            edges.push(edge);
+
+            edgeCount += 1;
+            xmlEdge = xmlEdges.iterateNext();
+        }
+
+        const graph = {};
+        graph.nodes = nodes;
+        graph.edges = edges;
+        resolve(graph);
     });
 }
 
@@ -220,4 +264,22 @@ function intersectsVerticalSegment(edge, x, yMin, yMax) {
 function convertServerCoordsToSigmaCoords(node) {
     node.x = (node.x - gdo.xCentroid) * gdo.canvasWidthInPx * 1 / (gdo.xWidth / 2);
     node.y = -(-node.y + gdo.yCentroid) * gdo.canvasHeightInPx * 1 / (gdo.yWidth / 2);
+}
+
+/**
+ * Adds nodes to the sigma graph arranged as a rectangular grid.
+ * For debugging purposes.
+ */
+function addDebugGrid() {
+    let count = 100;
+    [...Array(11).keys()].forEach(function (x) {
+        x /= 10;
+        [...Array(11).keys()].forEach(function(y) {
+            y /= 10;
+            count += 1;
+            const gridNode = { id: "N" + count, x: x, y: y, color: "#00f", size: 4 };
+            convertServerCoordsToSigmaCoords(gridNode);
+            gdo.sigmaInstance.graph.addNode(gridNode);
+        });
+    });
 }
