@@ -10,7 +10,7 @@ using GDO.Core.Apps;
 namespace GDO.Apps.RayMarching
 {
     [Export(typeof(IAppHub))]
-    public class RayMarchingAppHub : Hub, IBaseAppHub
+    public class RayMarchingAppHub : GDOHub, IBaseAppHub
     {
         public string Name { get; set; } = "RayMarching";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.None;
@@ -18,7 +18,7 @@ namespace GDO.Apps.RayMarching
 
         public void JoinGroup(string groupId)
         {
-            Cave.Apps[Name].Hub.Clients = Clients;
+            Cave.Deployment.Apps[Name].Hub.Clients = Clients;
             Groups.Add(Context.ConnectionId, "" + groupId);
         }
         public void ExitGroup(string groupId)
@@ -32,7 +32,7 @@ namespace GDO.Apps.RayMarching
         {
             try
             {
-                RayMarchingApp FA = ((RayMarchingApp)Cave.Apps["RayMarching"].Instances[instanceId]);
+                RayMarchingApp FA = ((RayMarchingApp)Cave.Deployment.Apps["RayMarching"].Instances[instanceId]);
                 if (!FA.Sync)
                 {
                     string Json = Newtonsoft.Json.JsonConvert.SerializeObject(FA, JsonSettings);
@@ -52,7 +52,7 @@ namespace GDO.Apps.RayMarching
             {
                 try
                 {
-                    RayMarchingApp FA = ((RayMarchingApp)Cave.Apps["RayMarching"].Instances[instanceId]);
+                    RayMarchingApp FA = ((RayMarchingApp)Cave.Deployment.Apps["RayMarching"].Instances[instanceId]);
                     FA.JoystickInit(this, instanceId);
                 }
                 catch (Exception e)
@@ -68,7 +68,7 @@ namespace GDO.Apps.RayMarching
             {
                 try
                 {
-                    RayMarchingApp FA = ((RayMarchingApp)Cave.Apps["RayMarching"].Instances[instanceId]);
+                    RayMarchingApp FA = ((RayMarchingApp)Cave.Deployment.Apps["RayMarching"].Instances[instanceId]);
                     FA.JoystickUpdateParamsRot(angle, magnitude);
                 }
                 catch (Exception e)
@@ -84,7 +84,7 @@ namespace GDO.Apps.RayMarching
             {
                 try
                 {
-                    RayMarchingApp FA = ((RayMarchingApp)Cave.Apps["RayMarching"].Instances[instanceId]);
+                    RayMarchingApp FA = ((RayMarchingApp)Cave.Deployment.Apps["RayMarching"].Instances[instanceId]);
                     FA.JoystickUpdateParamsMove(angle, magnitude);
                 }
                 catch (Exception e)
@@ -100,7 +100,7 @@ namespace GDO.Apps.RayMarching
             {
                 try
                 {
-                    RayMarchingApp FA = ((RayMarchingApp)Cave.Apps["RayMarching"].Instances[instanceId]);
+                    RayMarchingApp FA = ((RayMarchingApp)Cave.Deployment.Apps["RayMarching"].Instances[instanceId]);
                     FA.JoystickTerminate();
                 }
                 catch (Exception e)
@@ -116,7 +116,7 @@ namespace GDO.Apps.RayMarching
             {
                 try
                 {
-                    RayMarchingApp FA = ((RayMarchingApp)Cave.Apps["RayMarching"].Instances[instanceId]);
+                    RayMarchingApp FA = ((RayMarchingApp)Cave.Deployment.Apps["RayMarching"].Instances[instanceId]);
                     FA.HeightSliderUpdateParamsMove(val);
                 }
                 catch (Exception e)
@@ -132,7 +132,7 @@ namespace GDO.Apps.RayMarching
             {
                 try
                 {
-                    RayMarchingApp FA = ((RayMarchingApp)Cave.Apps["RayMarching"].Instances[instanceId]);
+                    RayMarchingApp FA = ((RayMarchingApp)Cave.Deployment.Apps["RayMarching"].Instances[instanceId]);
                     FA.SyncTime = val;
                 }
                 catch (Exception e)
@@ -148,7 +148,7 @@ namespace GDO.Apps.RayMarching
             {
                 try
                 {
-                    RayMarchingApp FA = ((RayMarchingApp)Cave.Apps["RayMarching"].Instances[instanceId]);
+                    RayMarchingApp FA = ((RayMarchingApp)Cave.Deployment.Apps["RayMarching"].Instances[instanceId]);
                     FA.Sync = !FA.Sync;
                     string Json = Newtonsoft.Json.JsonConvert.SerializeObject(FA, JsonSettings);
                     Clients.Group("" + instanceId).updateParams(instanceId, Json, FA.Sync);
@@ -167,7 +167,7 @@ namespace GDO.Apps.RayMarching
             {
                 try
                 {
-                    RayMarchingApp FA = ((RayMarchingApp)Cave.Apps["RayMarching"].Instances[instanceId]);
+                    RayMarchingApp FA = ((RayMarchingApp)Cave.Deployment.Apps["RayMarching"].Instances[instanceId]);
 
                     // Ack frames
                     if (FA.RenderedFrameNodesAcked[clientId-1] == 0)
@@ -208,7 +208,7 @@ namespace GDO.Apps.RayMarching
             {
                 try
                 {
-                    RayMarchingApp FA = ((RayMarchingApp)Cave.Apps["RayMarching"].Instances[instanceId]);
+                    RayMarchingApp FA = ((RayMarchingApp)Cave.Deployment.Apps["RayMarching"].Instances[instanceId]);
 
                         // Ack frames
                         if (FA.SwapFrameNodesAcked[clientId-1] == 0)
@@ -253,7 +253,7 @@ namespace GDO.Apps.RayMarching
             if (instanceId == -1) return;
                 try
                 {
-                    RayMarchingApp FA = ((RayMarchingApp)Cave.Apps["RayMarching"].Instances[instanceId]);
+                    RayMarchingApp FA = ((RayMarchingApp)Cave.Deployment.Apps["RayMarching"].Instances[instanceId]);
                     Clients.Caller.renderNextFrame(instanceId, FA.CurrentFrame, FA.Sync);
 
                 }

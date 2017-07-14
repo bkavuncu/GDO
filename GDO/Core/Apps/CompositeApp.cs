@@ -32,7 +32,7 @@ namespace GDO.Core.Apps
             {
                 return -1;
             }
-            int instanceId = Utilities.GetAvailableSlot(Cave.Instances);
+            int instanceId = Utilities.GetAvailableSlot(Cave.Deployment.Instances);
             ICompositeAppInstance instance = (ICompositeAppInstance) Activator.CreateInstance(AppClassType, new object[0]);
             AppConfiguration conf;
             Configurations.TryGetValue(configName, out conf);
@@ -44,7 +44,7 @@ namespace GDO.Core.Apps
             instance.Configuration = conf;
             instance.Init();
             Instances.TryAdd(instanceId, instance);
-            Cave.Instances.TryAdd(instanceId, instance);
+            Cave.Deployment.Instances.TryAdd(instanceId, instance);
             return instanceId;
         }
     }

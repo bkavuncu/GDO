@@ -60,7 +60,7 @@ namespace GDO.Core
             this.AggregatedConnectionHealth = 0;
             this.P2PMode = Cave.DefaultP2PMode;
             this.ConnectedNodeList = new List<int>();
-            Cave.Sections.TryGetValue(0, out this.Section); //When a node is created it deploys it to section 0 (pool of free nodes)
+            Cave.Deployment.Sections.TryGetValue(0, out this.Section); //When a node is created it deploys it to section 0 (pool of free nodes)
         }
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace GDO.Core
             this.SectionId = 0;
             this.AppInstanceId = -1;
             this.P2PMode = Cave.DefaultP2PMode;
-            Cave.Sections.TryGetValue(0,out this.Section);
+            Cave.Deployment.Sections.TryGetValue(0,out this.Section);
         }
 
         /// <summary>
@@ -118,7 +118,7 @@ namespace GDO.Core
             }
             switch (P2PMode) {
                 case (int) Cave.P2PModes.Cave:
-                    if (Cave.Nodes.Any(nodeEntry => !ConnectedNodeList.Contains(nodeEntry.Value.Id) && nodeEntry.Value.Id != Id)) {
+                    if (Cave.Layout.Nodes.Any(nodeEntry => !ConnectedNodeList.Contains(nodeEntry.Value.Id) && nodeEntry.Value.Id != Id)) {
                         AggregatedConnectionHealth = 3;
                         return;
                     }
@@ -135,7 +135,7 @@ namespace GDO.Core
                     {
                         if (!ConnectedNodeList.Contains(neighbourId) && neighbourId != Id && neighbourId > 0)
                         {
-                            if (Cave.Nodes[neighbourId].SectionId == SectionId)
+                            if (Cave.Layout.Nodes[neighbourId].SectionId == SectionId)
                             {
                                 AggregatedConnectionHealth = 3;
                                 return;

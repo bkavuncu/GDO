@@ -39,11 +39,8 @@ namespace GDO.Core
         public static string ConsoleId { get; set; }
         public static System.Timers.Timer SyncTimer { get; set; }
         public static bool InitializedSync { get; set; }
-        public static ConcurrentDictionary<string, App> Apps { get; set; }
-        public static ConcurrentDictionary<string, IModule> Modules { get; set; }
-        public static ConcurrentDictionary<int, IAppInstance> Instances { get; set; }
-        public static ConcurrentDictionary<int, Node> Nodes { get; set; }
-        public static ConcurrentDictionary<int, Section> Sections { get; set; }
+        public static CaveLayout Layout { get; set; }
+        public static CaveDeployment Deployment { get; set; }
         public static ConcurrentDictionary<int, State> States { get; set; }
         public static ConcurrentDictionary<string, Scenario> Scenarios { get; set; }
 
@@ -54,12 +51,6 @@ namespace GDO.Core
             Section = 2,
             Neighbours = 3
         };
-        public enum AppTypes
-        {
-            None = -1,
-            Base = 1,
-            Composite = 2
-        };
         /// <summary>
         /// Initializes a new instance of the <see cref="Cave"/> class.
         /// </summary>
@@ -69,11 +60,9 @@ namespace GDO.Core
             //MaximumHeartbeat = 1000000;
             MaintenanceMode = true;
             BlankMode = false;
-            Apps = new ConcurrentDictionary<string, App>();
-            Modules = new ConcurrentDictionary<string, IModule>();
-            Instances = new ConcurrentDictionary<int, IAppInstance>();
-            Nodes = new ConcurrentDictionary<int, Node>();
-            Sections = new ConcurrentDictionary<int, Section>();
+            
+            Layout = new CaveLayout();
+            Deployment = new CaveDeployment();
             States = new ConcurrentDictionary<int, State>();
             Scenarios = new ConcurrentDictionary<string, Scenario>();
             Cols = int.Parse(ConfigurationManager.AppSettings["numCols"]);
@@ -100,10 +89,10 @@ namespace GDO.Core
                 string[] s = ConfigurationManager.AppSettings["node" + id].Split(',');
                 int col = int.Parse(s[0]);
                 int row = int.Parse(s[1]);
-                CreateNode(id, col, row);
+                Layout.CreateNode(id, col, row, NodeWidth, NodeHeight, Rows * Cols);
                 AppLocks.Add(new object());
             }
-            CreateSection(0, 0, Cols - 1, Rows - 1); //Free Nodes Pool , id=0
+            Deployment.CreateSection(0, 0, Cols - 1, Rows - 1); //Free Nodes Pool , id=0
             LoadScenarios();
             Log.Info("Created new CAVE object");
         }
@@ -139,188 +128,6 @@ namespace GDO.Core
             }
         }
 
-        /// <summary>
-        /// Creates the node.
-        /// </summary>
-        /// <param name="nodeId">The node identifier.</param>
-        /// <param name="col">The col.</param>
-        /// <param name="row">The row.</param>
-        public static void CreateNode(int nodeId, int col, int row)
-        {
-            Node node = new Node(nodeId, col, row, NodeWidth, NodeHeight, Rows * Cols);
-            Nodes.TryAdd(nodeId, node);
-        }
-
-        /// <summary>
-        /// Gets the node with connectionId.
-        /// </summary>
-        /// <param name="connectionId">The connection identifier.</param>
-        /// <returns></returns>
-        public static Node GetNode(string connectionId) {
-            return
-                (from nodeEntry in Nodes
-                    where connectionId == nodeEntry.Value.ConnectionId
-                    select nodeEntry.Value)
-                    .FirstOrDefault();
-        }
-
-
-        /// <summary>
-        /// Deploys the node to a section.
-        /// </summary>
-        /// <param name="sectionId">The section identifier.</param>
-        /// <param name="nodeId">The node identifier.</param>
-        /// <param name="col">The col.</param>
-        /// <param name="row">The row.</param>
-        /// <returns></returns>
-        public static Node DeployNode(int sectionId, int nodeId, int col, int row) {
-            if (Sections.ContainsKey(sectionId) && Nodes.ContainsKey(nodeId)) {
-                if (!Nodes[nodeId].IsDeployed) {
-                    Nodes[nodeId].Deploy(Sections[sectionId], col, row);
-                    Sections[sectionId].Nodes[col, row] = Nodes[nodeId];
-                    return Nodes[nodeId];
-                }
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// Frees the node.
-        /// </summary>
-        /// <param name="nodeId">The node identifier.</param>
-        /// <returns></returns>
-        public static Node FreeNode(int nodeId) {
-            if (Nodes.ContainsKey(nodeId)) {
-                Nodes[nodeId].Free();
-                return Nodes[nodeId];
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// Sets the node P2P mode.
-        /// </summary>
-        /// <param name="nodeId">The node identifier.</param>
-        /// <param name="p2pmode">The p2pmode.</param>
-        /// <returns></returns>
-        public static Node SetNodeP2PMode(int nodeId, int p2pmode)
-        {
-            Nodes[nodeId].P2PMode = p2pmode;
-            return Nodes[nodeId];
-        }
-
-        /// <summary>
-        /// Creates a section.
-        /// </summary>
-        /// <param name="colStart">The col start.</param>
-        /// <param name="rowStart">The row start.</param>
-        /// <param name="colEnd">The col end.</param>
-        /// <param name="rowEnd">The row end.</param>
-        /// <returns></returns>
-        public static List<Node> CreateSection(int colStart, int rowStart, int colEnd, int rowEnd)
-        {
-            List<Node> deployedNodes = new List<Node>();
-            if (IsSectionFree(colStart, rowStart, colEnd, rowEnd))
-            {
-                int sectionId = Utilities.GetAvailableSlot<Section>(Sections);
-                Section section = new Section(sectionId, colStart, rowStart, colEnd - colStart + 1, rowEnd - rowStart + 1);
-                Sections.TryAdd(sectionId, section);
-                    
-                foreach (KeyValuePair<int, Node> nodeEntry in Nodes)
-                {
-                    Node node = nodeEntry.Value;
-                    if (node.Col <= colEnd && node.Col >= colStart && node.Row <= rowEnd && node.Row >= rowStart)
-                    {
-                        deployedNodes.Add(DeployNode(section.Id, node.Id, node.Col - colStart, node.Row - rowStart));
-                    }
-                }
-                section.CalculateDimensions();
-            }
-            return deployedNodes;
-        }
-        /// <summary>
-        /// Closes the section.
-        /// </summary>
-        /// <param name="sectionId">The section identifier.</param>
-        /// <returns></returns>
-        public static List<Node> CloseSection(int sectionId)
-        {
-            List<Node> freedNodes = new List<Node>();
-            if (ContainsSection(sectionId))
-            {
-                if (!Sections[sectionId].IsDeployed())
-                {
-                    foreach (Node node in Sections[sectionId].Nodes)
-                    {
-                        freedNodes.Add(FreeNode(node.Id));
-                    }
-                    Sections[sectionId].Nodes = null;
-                    Section section;
-                    Sections.TryRemove(sectionId, out section);
-                }
-            }
-            return freedNodes;
-        }
-
-        /// <summary>
-        /// Determines whether [is section free] [the specified col start].
-        /// </summary>
-        /// <param name="colStart">The col start.</param>
-        /// <param name="rowStart">The row start.</param>
-        /// <param name="colEnd">The col end.</param>
-        /// <param name="rowEnd">The row end.</param>
-        /// <returns></returns>
-        public static bool IsSectionFree(int colStart, int rowStart, int colEnd, int rowEnd) {
-            foreach (KeyValuePair<int, Node> nodeEntry in Nodes) {
-                Node node = nodeEntry.Value;
-                if (colStart > colEnd || rowStart > rowEnd) {
-                    return false;
-                }
-                if (node.Col <= colEnd && node.Col >= colStart && node.Row <= rowEnd && node.Row >= rowStart) {
-                    if (node.IsDeployed) {
-                        return false;
-                    }
-                }
-            }
-            return true;
-        }
-
-        /// <summary>
-        /// Determines whether the specified node identifier contains node.
-        /// </summary>
-        /// <param name="nodeId">The node identifier.</param>
-        /// <returns></returns>
-        public static bool ContainsNode(int nodeId) {
-            return Nodes.ContainsKey(nodeId);
-        }
-
-        /// <summary>
-        /// Determines whether the specified section identifier contains section.
-        /// </summary>
-        /// <param name="sectionId">The section identifier.</param>
-        /// <returns></returns>
-        public static bool ContainsSection(int sectionId) {
-            return Sections.ContainsKey(sectionId);
-        }
-
-        public static bool ContainsModule(string moduleName)
-        {
-            return Modules.ContainsKey(moduleName);
-        }
-
-        public static bool ContainsApp(string appName) {
-            return Apps.ContainsKey(appName);
-        }
-
-        /// <summary>
-        /// Determines whether the specified instance identifier contains instance.
-        /// </summary>
-        /// <param name="instanceId">The instance identifier.</param>
-        /// <returns></returns>
-        public static bool ContainsInstance(int instanceId) {
-            return Apps.Any(appEntry => appEntry.Value.Instances.ContainsKey(instanceId));
-        }
-
         public static bool ContainsState(int stateId)
         {
             return States.ContainsKey(stateId);
@@ -338,7 +145,7 @@ namespace GDO.Core
         /// <param name="row">The row.</param>
         /// <returns></returns>
         public static int GetSectionId(int col, int row) {
-            return Nodes[GetNodeId(col, row)].SectionId;
+            return Layout.Nodes[GetNodeId(col, row)].SectionId;
         }
         /// <summary>
         /// Gets the node identifier.
@@ -348,7 +155,7 @@ namespace GDO.Core
         /// <returns></returns>
         public static int GetNodeId(int col, int row)
         {
-            foreach (KeyValuePair<int, Node> nodeEntry in Nodes)
+            foreach (KeyValuePair<int, Node> nodeEntry in Layout.Nodes)
             {
                 if (nodeEntry.Value.Col == col && nodeEntry.Value.Row == row)
                 {
@@ -359,33 +166,13 @@ namespace GDO.Core
         }
 
         /// <summary>
-        /// Sets the section p2p mode.
-        /// </summary>
-        /// <param name="sectionId">The section identifier.</param>
-        /// <param name="p2pmode">The p2pmode.</param>
-        /// <returns></returns>
-        public static List<Node> SetSectionP2PMode(int sectionId, int p2pmode)
-        {
-            List<Node> affectedNodes = new List<Node>();
-            if (ContainsSection(sectionId))
-            {
-                //close app
-                foreach (Node node in Sections[sectionId].Nodes)
-                {
-                    affectedNodes.Add(SetNodeP2PMode(node.Id, p2pmode));
-                }
-            }
-            return affectedNodes;
-        }
-
-        /// <summary>
         /// Gets the node map (Matrix of NodeIds in the Cave).
         /// </summary>
         /// <returns></returns>
         public static int[,] GetNodeMap()
         {
             int[,] nodeMap = new int[Cols, Rows];
-            foreach (KeyValuePair<int, Node> nodeEntry in Nodes)
+            foreach (KeyValuePair<int, Node> nodeEntry in Layout.Nodes)
             {
                 nodeMap[nodeEntry.Value.Col, nodeEntry.Value.Row] = nodeEntry.Value.Id;
             }
@@ -400,10 +187,10 @@ namespace GDO.Core
         public static int[,] GetSectionMap(int sectionId)
         {
             int[,] sectionMap = null;
-            if (ContainsSection(sectionId))
+            if (Deployment.ContainsSection(sectionId))
             {
-                sectionMap = new int[Sections[sectionId].Cols, Sections[sectionId].Rows];
-                foreach (var nodeEntry in Nodes)
+                sectionMap = new int[Deployment.Sections[sectionId].Cols, Deployment.Sections[sectionId].Rows];
+                foreach (var nodeEntry in Layout.Nodes)
                 {
                     if (nodeEntry.Value.SectionId == sectionId)
                     {
@@ -422,7 +209,7 @@ namespace GDO.Core
         public static int[,] GetNeighbourMap(int nodeId)
         {
             int[,] neighbours = null;
-            if (ContainsNode(nodeId))
+            if (Layout.ContainsNode(nodeId))
             {
                 int[,] nodeMap = GetNodeMap();
                 neighbours = new int[3, 3];
@@ -430,8 +217,9 @@ namespace GDO.Core
                 {
                     for (int j = -1; j < 2; j++)
                     {
-                        int col = Nodes[nodeId].Col + i;
-                        int row = Nodes[nodeId].Row + j;
+                        Node node = Layout.Nodes[nodeId];
+                        int col = node.Col + i;
+                        int row = node.Row + j;
                         if (col >= 0 && row >= 0 && col < Cols && row < Rows)
                         {
                             neighbours[i + 1, j + 1] = nodeMap[col, row];
@@ -444,39 +232,6 @@ namespace GDO.Core
                 }
             }
             return neighbours;
-        }
-
-
-        public static bool RegisterApp(string name, IAppHub appHub, Type appClassType, bool isComposite, List<string> supportedApps, int p2pmode) {
-            if (!Apps.ContainsKey(name))
-            {
-                var app = isComposite 
-                    ? new CompositeApp(name, appClassType, (int)AppTypes.Composite, supportedApps, p2pmode) 
-                    : new App(name, appClassType, (int)AppTypes.Base, p2pmode);
-                Apps.TryAdd(name, app);
-                List<AppConfiguration> configurations = LoadAppConfigurations(name);
-                foreach (var configuration in configurations)
-                {
-                    Log.Info("registering an app configuration for app " + name + " called " + configuration.Name);
-                    Apps[name].Configurations.TryAdd(configuration.Name, configuration);
-                }
-                Apps[name].Hub = appHub;
-                return true;
-            }
-            return false;
-        }
-
-        public static bool RegisterModule(string name, Type moduleClassType)
-        {
-            if (!Modules.ContainsKey(name))
-            {
-                IModule module = (IModule)Activator.CreateInstance(moduleClassType, new object[0]);
-                module.Init();
-                Modules.TryAdd(module.Name, module);
-                ModuleLocks.Add(module.Name, new object());
-                return true;
-            }
-            return false;
         }
 
         public static bool LoadScenarios()
@@ -577,7 +332,7 @@ namespace GDO.Core
                         string configurationName = Utilities.RemoveString(filePath, path + "\\");
                         configurationName = Utilities.RemoveString(configurationName, ".json");
                         Log.Info("Found config called "+configurationName+" for app "+appName+" about to load");
-                        Apps[appName].Configurations.TryAdd(configurationName, new AppConfiguration(configurationName, json));
+                        Deployment.Apps[appName].Configurations.TryAdd(configurationName, new AppConfiguration(configurationName, json));
                     }
                 }
             }
@@ -599,170 +354,61 @@ namespace GDO.Core
                         string configurationName = Utilities.RemoveString(filePath, path + "\\");
                         configurationName = Utilities.RemoveString(configurationName, ".json");
                         Log.Info("Found config called " + configurationName + " for app " + appName + " about to load");
-                        if (Apps[appName].Configurations.ContainsKey(configurationName))
+                        if (Deployment.Apps[appName].Configurations.ContainsKey(configurationName))
                         {
-                            Apps[appName].Configurations[configurationName] = new AppConfiguration(configurationName,json);
+                            Deployment.Apps[appName].Configurations[configurationName] = new AppConfiguration(configurationName,json);
                         }
                         else
                         {
-                            Apps[appName].Configurations.TryAdd(configurationName, new AppConfiguration(configurationName, json));
+                            Deployment.Apps[appName].Configurations.TryAdd(configurationName, new AppConfiguration(configurationName, json));
                         }
 
                     }
                 }
             }
-            var configurationList = Apps[appName].GetConfigurationList();
+            var configurationList = Deployment.Apps[appName].GetConfigurationList();
             return configurationList;
         }
 
         public static List<string> UnloadAppConfiguration(string appName, string configName)
         {
-            if (Apps[appName].Configurations.ContainsKey(configName))
+            if (Deployment.Apps[appName].Configurations.ContainsKey(configName))
             {
                 AppConfiguration config;
-                Apps[appName].Configurations.TryRemove(configName, out config);
+                Deployment.Apps[appName].Configurations.TryRemove(configName, out config);
                 Utilities.RemoveJsonFile(configName, "Configurations\\" + appName);
             }
-            var configurationList = Apps[appName].GetConfigurationList();
+            var configurationList = Deployment.Apps[appName].GetConfigurationList();
             return configurationList;
         }
 
-
         public static List<string> GetModuleList()
         {
-            List<string> moduleList = Modules.Select(moduleEntry => moduleEntry.Value.Name).ToList();
-            moduleList.Sort();
-            return moduleList;
+            return Layout.GetModuleList();
         }
 
-        /// <summary>
-        /// Gets the application list.
-        /// </summary>
-        /// <returns></returns>
         public static List<string> GetAppList()
         {
-            List<string> appList = Apps.Select(appEntry => appEntry.Value.Name).ToList();
-            appList.Sort();
-            return appList;
+            return Deployment.GetAppList();
         }
 
-        public static int CreateBaseAppInstance(int sectionId, string appName, string configName)
+        public static bool RegisterModule(string name, Type moduleClassType)
         {
-            Log.Info($"Creating App instance {appName} {configName} on section {sectionId}");
-            if (!Sections[sectionId].IsDeployed() && Apps.ContainsKey(appName))
-            {
-                if (Apps[appName].Configurations.ContainsKey(configName))
-                {
-                    int instanceId =  Apps[appName].CreateAppInstance(configName, sectionId, false, -1);
-                    if (instanceId >= 0)
-                    {
-                        ((IBaseAppInstance)Apps[appName].Instances[instanceId]).Section.DeploySection(instanceId);
-                    }
-                    return instanceId;
-                }
-            }
-            return -1;
+            return Layout.RegisterModule(name, moduleClassType);
         }
 
-        public static int CreateChildAppInstance(int sectionId, string appName, string configName, bool integrationMode, int parentId)
+        public static bool RegisterApp(string name, IAppHub appHub, Type appClassType, bool isComposite, List<string> supportedApps, int p2pmode)
         {
-            Log.Info($"Creating App instance {appName} {configName} on section {sectionId}");
-            if (!Sections[sectionId].IsDeployed() && Apps.ContainsKey(appName))
-            {
-                if (Apps[appName].Configurations.ContainsKey(configName))
-                {
-                    int instanceId = Apps[appName].CreateAppInstance(configName, sectionId, integrationMode, parentId);
-                    if (instanceId >= 0)
-                    {
-                        ((IBaseAppInstance)Apps[appName].Instances[instanceId]).Section.DeploySection(instanceId);
-                    }
-                    return instanceId;
-                }
-            }
-            return -1;
+            return Deployment.RegisterApp(name, appHub, appClassType, isComposite, supportedApps, p2pmode);
         }
 
-        /// <summary>
-        /// Creates an composite application instance.
-        /// </summary>
-        /// <returns></returns>
-        public static int CreateCompositeAppInstance(List<int> instanceIds, string appName, string configName)
-        {
-            //TODO
-            /*if (!Cave.Sections[sectionId].IsDeployed() && Cave.Apps.ContainsKey(appName))
-            {
-                if (Cave.Apps[appName].Configurations.ContainsKey(configName))
-                {
-                    int instanceId = Apps[appName].CreateAppInstance(configName, sectionId);
-                    if (instanceId >= 0)
-                    {
-                        Apps[appName].Instances[instanceId].Section.DeploySection(instanceId);
-                    }
-                    return instanceId;
-                }
-            }*/
-            return -1;
-        }
-
-        /// <summary>
-        /// Disposes an application instance.
-        /// </summary>
-        /// <param name="appName">Name of the application.</param>
-        /// <param name="instanceId">The instance identifier.</param>
-        /// <returns></returns>
-        public static bool DisposeAppInstance(string appName, int instanceId)
-        {
-            if (Apps.ContainsKey(appName))
-            {
-                if (Apps[appName].Instances.ContainsKey(instanceId))
-                {
-                    if (Apps[appName].AppType == (int)AppTypes.Base)
-                    {
-                        Section section = ((IBaseAppInstance)Apps[appName].Instances[instanceId]).Section;
-                        if (Apps[appName].DisposeAppInstance(instanceId))
-                        {
-                            section.FreeSection();
-                            return true;
-                        }
-                    }
-                    else if (Apps[appName].AppType == (int)AppTypes.Composite)
-                    {
-                        if (Apps[appName].DisposeAppInstance(instanceId))
-                        {
-                            return true;
-                        }
-                    }
-                    else
-                    {
-                        throw new Exception("Unknown App Type");
-                    }
-                }
-            }
-            return false;
-        }
         /// <summary>
         /// Gets the name of the application.
         /// </summary>
         /// <param name="instanceId">The instance identifier.</param>
         /// <returns></returns>
         public static string GetAppName(int instanceId) {
-            var app = Apps.Values.FirstOrDefault(a => a.Instances.ContainsKey(instanceId));
-            if (app != null) {
-                return app.Name;
-            }
-            Log.Error("unable to find app for instanceID "+instanceId);
-            return "unknown";
-        }
-
-        public static App GetApp(string name)
-        {
-            App app = Apps[name];
-            if (app != null)
-            {
-                return app;
-            }
-            Log.Error("unable to find app for name " + name);
-            return null;
+            return Deployment.GetAppName(instanceId);
         }
 
         public static int SaveCaveState(string name)
@@ -772,7 +418,7 @@ namespace GDO.Core
             State caveState = new State(slot, name);
             States.TryAdd(slot, caveState);
             //TODO Add support composite app
-            foreach(KeyValuePair<int,IAppInstance> instaKeyValuePair in Instances)
+            foreach(KeyValuePair<int,IAppInstance> instaKeyValuePair in Deployment.Instances)
             {
                 IBaseAppInstance instance = (IBaseAppInstance)instaKeyValuePair.Value;
                 Section section = instance.Section;
