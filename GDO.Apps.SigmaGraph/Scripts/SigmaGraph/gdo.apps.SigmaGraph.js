@@ -376,11 +376,12 @@ gdo.net.app["SigmaGraph"].initClient = function () {
 }
 
 gdo.net.app["SigmaGraph"].initControl = function () {
+    gdo.controlId = gdo.net.node[gdo.clientId].appInstanceId;
     gdo.consoleOut('.SIGMAGRAPHRENDERER', 1, 'Initializing Graph Renderer App Control at Instance ' + gdo.controlId);
 }
 
 gdo.net.app["SigmaGraph"].terminateClient = function () {
-    gdo.consoleOut('.SIGMAGRAPHRENDERER', 1, 'Terminating Graph Renderer App Client at Node ' + clientId);
+    gdo.consoleOut('.SIGMAGRAPHRENDERER', 1, 'Terminating Graph Renderer App Client at Node ' + gdo.clientId);
 }
 
 gdo.net.app["SigmaGraph"].ternminateControl = function () {
