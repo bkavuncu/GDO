@@ -42,14 +42,14 @@ gdo.net.app["SigmaGraph"].initInstanceGlobals = function () {
 /**
  * Renders the graph.
  */
-gdo.net.app["SigmaGraph"].renderGraph = async function () {
+gdo.net.app["SigmaGraph"].renderGraph = async function () {//todo note this is an experimental feature
     gdo.consoleOut('.SIGMAGRAPHRENDERER', 1, 'Rendering graph...');
     // Get location of files containing objects to render.
     //const fileNames = gdo.net.app["SigmaGraph"].server.getFilesWithin(xCentroid, yCentroid, xWidth, yWidth);
     const filePaths = [gdo.basePath + 'fourEdges.graphml'];
     const timeBeforeParse = window.performance.now();
     // Get the nodes and edges
-    const filesGraphObjects = await Promise.all(filePaths.map(function(filePath) {
+    const filesGraphObjects = await Promise.all(filePaths.map(function(filePath) { //todo note this is an experimental feature
         return httpGet(filePath).then(parseGraphML);
     }));
     console.log(filesGraphObjects);
