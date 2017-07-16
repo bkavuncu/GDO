@@ -31,6 +31,9 @@ gdo.net.app["SigmaGraph"].initInstanceGlobals = function () {
             autoRescale: false
         }
     });
+    gdo.sigmaInstance.renderers[0].bind('render', function(e) {
+        gdo.consoleOut('.RENDERER', 1, 'Time to render: ' + (window.performance.now() - gdo.stopWatch));
+    });
 
     // Node global variables.
     gdo.xWidth = 1 / gdo.numCols;
@@ -43,24 +46,27 @@ gdo.net.app["SigmaGraph"].initInstanceGlobals = function () {
  * Renders the graph.
  */
 gdo.net.app["SigmaGraph"].renderGraph = async function () {
-    gdo.consoleOut('.SIGMAGRAPHRENDERER', 1, 'Rendering graph...');
+    gdo.consoleOut('.RENDERER', 1, 'Begin rendering graph...');
+
     // Get location of files containing objects to render.
+    gdo.stopWatch = window.performance.now();
     //const fileNames = gdo.net.app["SigmaGraph"].server.getFilesWithin(xCentroid, yCentroid, xWidth, yWidth);
     const filePaths = [gdo.basePath + 'fourEdges.graphml'];
-    const timeBeforeParse = window.performance.now();
+    gdo.consoleOut('.RENDERER', 1, 'Time to get graph object file paths: ' + (window.performance.now() - gdo.stopWatch));
+
     // Get the nodes and edges
+    gdo.stopWatch = window.performance.now();
     const filesGraphObjects = await Promise.all(filePaths.map(function(filePath) {
         return httpGet(filePath).then(parseGraphML);
     }));
-    console.log(filesGraphObjects);
-    console.log("Time to parse...");
-    console.log(window.performance.now() - timeBeforeParse);
+    gdo.consoleOut('.RENDERER', 1, 'Time to download and parse graph object files: ' + (window.performance.now() - gdo.stopWatch));
 
     // Clear the sigma graph
     gdo.sigmaInstance.graph.clear();
 
     // Filter and add the nodes and edges to the graph
     filesGraphObjects.forEach(function (fileGraphObjects) {
+        gdo.stopWatch = window.performance.now();
         const fileNodesInFOV = fileGraphObjects.nodes;
         fileNodesInFOV.forEach(node => {
             node.x = parseFloat(node.x);
@@ -68,15 +74,23 @@ gdo.net.app["SigmaGraph"].renderGraph = async function () {
             node.color = node.color || "#f00";
             node.size = node.size || 3;
         });
+        gdo.consoleOut('.RENDERER', 1, 'Time to convert nodes into sigma nodes: ' + (window.performance.now() - gdo.stopWatch));
+        gdo.stopWatch = window.performance.now();
         fileNodesInFOV.forEach(node => {
             gdo.sigmaInstance.graph.addNode(node);
         });
+        gdo.consoleOut('.RENDERER', 1, 'Time to add nodes to sigma graph: ' + (window.performance.now() - gdo.stopWatch));
 
+        gdo.stopWatch = window.performance.now();
         const fileEdgesInFOV = fileGraphObjects.edges.filter(edgeIsWithinFOV);
+        gdo.consoleOut('.RENDERER', 1, 'Time to filter edges: ' + (window.performance.now() - gdo.stopWatch));
+        gdo.stopWatch = window.performance.now();
         fileEdgesInFOV.forEach(edge => {
             gdo.sigmaInstance.graph.addEdge(edge);
         });
+        gdo.consoleOut('.RENDERER', 1, 'Time to add edges to sigma graph: ' + (window.performance.now() - gdo.stopWatch));
 
+        gdo.stopWatch = window.performance.now();
         gdo.sigmaInstance.graph.nodes().forEach(node => {
             if (gdo.sigmaInstance.graph.degree(node.id) === 0) {
                 gdo.sigmaInstance.graph.dropNode(node.id);
@@ -84,11 +98,13 @@ gdo.net.app["SigmaGraph"].renderGraph = async function () {
                 convertServerCoordsToSigmaCoords(node);
             }
         });
+        gdo.consoleOut('.RENDERER', 1, 'Time to filter and convert node coordinates: ' + (window.performance.now() - gdo.stopWatch));
     });
 
     addDebugGrid();
     // Render the new graph
-    gdo.sigmaInstance.refresh();
+    gdo.stopWatch = window.performance.now();
+    gdo.sigmaInstance.refresh({ skipIndexation: true });
 };
 
 /**
