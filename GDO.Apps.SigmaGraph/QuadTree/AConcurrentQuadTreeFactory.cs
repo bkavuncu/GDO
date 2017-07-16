@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using GDO.Apps.SigmaGraph.Domain;
 using GDO.Apps.SigmaGraph.QuadTree.Utilities;
 
 namespace GDO.Apps.SigmaGraph.QuadTree
@@ -300,5 +301,6 @@ namespace GDO.Apps.SigmaGraph.QuadTree
         }
 
         public abstract QuadTreeBag<T>[] GetBagsForQuad(QuadTreeNode<T> quad);
+        public abstract Dictionary<string, QuadTreeNode<T>> SelectLeafs();
     }
 }

@@ -42,19 +42,20 @@ namespace GDO.Apps.SigmaGraph
         
         // @param: name of data file (TODO: change it to folder name, that stores nodes and links files)
         // return name of folder that stores processed data
-        public  string ProcessGraph(string filename, bool zoomed, string folderName, int sectionWidth, int sectionHeight)
-        {
-        
+        public string ProcessGraph(string filename, bool zoomed, string folderName, int sectionWidth,
+            int sectionHeight) {
+
 
             String indexFile = System.Web.HttpContext.Current.Server.MapPath("~/Web/SigmaGraph/graph/Database.txt");
-            
+
             // see if we have seen this before 
             if (File.Exists(indexFile)) {
                 try {
                     var digitsdict = File.ReadAllLines(indexFile).Where(s => !string.IsNullOrWhiteSpace(s))
                         .Select(l => l.Split(new[] {"|"}, StringSplitOptions.None))
                         .Where(l => l.Length == 4)
-                        .ToDictionary(l => l[0], l => new {id = l[1], width = int.Parse(l[2]), height = int.Parse(l[3])});
+                        .ToDictionary(l => l[0],
+                            l => new {id = l[1], width = int.Parse(l[2]), height = int.Parse(l[3])});
 
                     if (digitsdict.ContainsKey(filename) && digitsdict[filename].width == sectionWidth
                         && digitsdict[filename].height == sectionHeight) {
@@ -71,17 +72,31 @@ namespace GDO.Apps.SigmaGraph
 
             var graph = GraphDataReader.ReadGraphMLData(graphMLfile);
 
+            String basePath = System.Web.HttpContext.Current.Server.MapPath("~/Web/SigmaGraph/QuadTrees/");
+            FolderNameDigit = CreateTemporyFolderId(folderName, basePath);
+
 
             //SigmaGraphProcessor.ProcessGraph(graph, filename, zoomed, folderName,  indexFile, FolderNameDigit,Section);
-            SigmaGraphQuadProcesor.ProcessGraph(graph, filename, folderName, indexFile, FolderNameDigit);
+            SigmaGraphQuadProcesor.ProcessGraph(graph, basePath+FolderNameDigit);
 
             return this.FolderNameDigit;
+        }
+
+        private static string CreateTemporyFolderId(string folderName, string basePath) {
+            var folderNameDigit = "10001";
+            if (folderName == null) {
+                // Generate random numbers as folder name
+                Random randomDigitGenerator = new Random();
+                while (Directory.Exists(basePath + folderNameDigit)) {
+                    folderNameDigit = randomDigitGenerator.Next(10000, 99999).ToString();
+                }
+                Directory.CreateDirectory(basePath + folderNameDigit);
+            } else {
+                folderNameDigit = folderName;
             }
+            return folderNameDigit;
+        }
 
-
-        /** 
-        * Auxiliar function to compute the neighbours of each node and store that information within the Node objects themselves
-        */
 
         public void UpdateZoomVar(bool zoomed) {
             throw new NotImplementedException();

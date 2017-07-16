@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using GDO.Apps.SigmaGraph.Domain;
 
 namespace GDO.Apps.SigmaGraph.QuadTree
 {
@@ -135,6 +137,10 @@ namespace GDO.Apps.SigmaGraph.QuadTree
                 return res.ToArray();
             }
             return new QuadTreeBag<T>[0];
+        }
+
+        public override Dictionary<string, QuadTreeNode<T>> SelectLeafs() {
+            return this.Quads.Where(q => q.Value.IsLeaf()).ToDictionary(q => q.Key, q => q.Value);
         }
     }
 }

@@ -70,6 +70,7 @@ namespace GDO.Apps.SigmaGraph.Domain
         {
             double xCentroid = quadTreeNode.centroid.xCentroid;
             double yCentroid = quadTreeNode.centroid.yCentroid;
+            //todo do you think it would be better to move these flops to be computed once within the centroid class - it costs memory but will be faster! 
             double xWidth = quadTreeNode.centroid.xWidth/2.0;
             double yWidth = quadTreeNode.centroid.yWidth/2.0;
 
@@ -98,6 +99,7 @@ namespace GDO.Apps.SigmaGraph.Domain
         {
             double xCentroid = quadTreeNode.centroid.xCentroid;
             double yCentroid = quadTreeNode.centroid.yCentroid;
+            //todo do you think it would be better to move these flops to be computed once within the centroid class - it costs memory but will be faster! 
             double xWidth = quadTreeNode.centroid.xWidth/2.0;
             double yWidth = quadTreeNode.centroid.yWidth/2.0;
 
