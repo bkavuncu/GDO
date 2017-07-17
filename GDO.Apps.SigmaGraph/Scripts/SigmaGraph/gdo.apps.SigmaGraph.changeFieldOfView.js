@@ -28,6 +28,6 @@ gdo.net.app["SigmaGraph"].zoom = function (zoomXCenter, zoomYCenter, ratio) {
  */
 gdo.net.app["SigmaGraph"].pan = function (xShift, yShift) {
     gdo.xCentroid = gdo.xCentroid - xShift;
-    gdo.yCentroid = gdo.yCentroid + yShift;
+    gdo.yCentroid = gdo.yCentroid - yShift;
     gdo.net.app["SigmaGraph"].renderGraph();
 }
