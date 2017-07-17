@@ -75,9 +75,9 @@ dd3.defineEase()
 4. Upload the project into the VM.
 5. Find the project directory and input "npm install" in the console.
 6. Lauch the nodejs server via "node server.js".
-7. Open the control Pannel via http://serverpublicIP:8080/Web/DD3/Control.html?confId=0&controlId=3&numClients=2
-8. Open client one via http://serverpublicIP:8080/Web/DD3/App.html?confId=0&controlId=3&clientId=1&row=1&column=1&numClients=2
-9. Open client two via http://serverpublicIP:8080/Web/DD3/App.html?confId=0&controlId=3&clientId=2&row=1&column=1&numClients=2
+7. Open the control Pannel via http://serverpublicIPofVM:8080/Web/DD3/Control.html?confId=0&controlId=3&numClients=2
+8. Open client one via http://serverpublicIPofVM:8080/Web/DD3/App.html?confId=0&controlId=3&clientId=1&row=1&column=1&numClients=2
+9. Open client two via http://serverpublicIPofVM:8080/Web/DD3/App.html?confId=0&controlId=3&clientId=2&row=1&column=1&numClients=2
 10. You will find the transition application (confId = 0) will be launched successfully.
 
 ## GOD Performance Test
