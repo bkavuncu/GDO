@@ -96,7 +96,7 @@ dd3.defineEase()
 9. Click the ```Save``` button to save this new command.
 10. Open the control Pannel via http://serverpublicIPofVM:8080/Web/DD3/Control.html?confId=0&controlId=3&numClients=64. (Replace the ```serverpublicIPofVM``` part of the URL with the server public IP of the VM. This control pannel could be open in your own PC as it is easy to control the applications on GDO.)
 11. Go back to the command list page and find the new added command. Click the ```Execute``` button on the rightmost side of the page.
-12. You will find the transition application with 64 browsers (clients) will be launched in GDO as well as the control panel in you own PC.
+12. You will find the transition application with 64 browsers (clients) will be launched in GDO as well as the control panel in you own PC. After running the application, click ```Save FPS``` button in the control panel to save the CSV file to local. Then the analysis could be done based on all the performance results.
 13. In order to test different numbers of the clients. You could add different commands by repeating ```Step 7 to Step 9```. The difference for the ```Commands``` textarea is to set different numbers for the ```numClients=``` item. The ```numClients=``` item in the control panel URL should be the same with the ```Commands``` textarea.
 
 
