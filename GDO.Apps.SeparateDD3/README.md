@@ -71,7 +71,7 @@ dd3.defineEase()
 ## Set up nodejs server in VM
 1. Connect to the VM.
 2. Install the nodejs via https://nodejs.org/en/download/.
-3. Install the mongodb via https://www.mongodb.com/download-center#community.
+3. Install the mongodb via https://www.mongodb.com/download-center#community. (Xiaoping will be in charge of setting up the MongoDB service.)
 4. Upload the project into the VM.
 5. Find the project directory and input "npm install" in the console.
 6. Lauch the nodejs server via "node server.js".
