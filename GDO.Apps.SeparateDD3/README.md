@@ -72,7 +72,8 @@ dd3.defineEase()
 1. Connect to the VM.
 2. Install the nodejs via https://nodejs.org/en/download/.
 3. Install the mongodb via https://www.mongodb.com/download-center#community. (Xiaoping will be in charge of setting up the MongoDB service.)
-4. Upload the project into the VM.
+4. Download the project in Github (Only the ""). Find "gdo.apps.dd3.socketio.js" file and change socket server IP "http://localhost:8080" to "http://serverpublicIPofVM:8080"; Find "controlInit.js" file and change socket server IP "http://localhost:8080" to "http://serverpublicIPofVM:8080".
+4. Upload the edited project into the VM.
 5. Find the project directory and input "npm install" in the console.
 6. Lauch the nodejs server via "node server.js".
 7. Open the control Pannel via http://serverpublicIPofVM:8080/Web/DD3/Control.html?confId=0&controlId=3&numClients=2
