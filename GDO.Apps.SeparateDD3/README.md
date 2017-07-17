@@ -81,7 +81,9 @@ dd3.defineEase()
 10. You will find the transition application (confId = 0) will be launched successfully.
 
 ## GOD Performance Test
-1. Visit http://dsimanagement.doc.ic.ac.uk. (If you have no access to this service, please ask David for help.)
+1. Login http://dsimanagement.doc.ic.ac.uk. (If you have no access to this service, please ask David for help.)
+2. Click "Cluster Commands" in the nav bar on the top.
+3. Find a DD3 demo command in the command list: Project name is DD3. Owner: David. Name: Launch Test. Description: dd3 test. 
 
 
 ## License (BAI)
