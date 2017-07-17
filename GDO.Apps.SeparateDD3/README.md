@@ -91,7 +91,7 @@ dd3.defineEase()
 4. Click the ```Edit``` button on the rightmost side of this page.
 5. Copy all the content in the ```Commands``` textarea.
 6. Go back to the command list page and click the ```Create New``` button on the top part of the page.
-7. Edit the corresponding items ```Project name```, ```Owner```, ```Name```, ```Description``` and paste the commands you have already copied in the demo command into the ```Commands``` textarea.
+7. Edit the corresponding items ```Project name```, ```Owner```, ```Name```, ```Description``` and paste the commands you have already copied in the demo command into this new ```Commands``` textarea.
 8. In the ```Commands``` textarea, replace the ```serverpublicIPofVM``` part of the URL with the server public IP of the VM.
 9. Click the ```Save``` button to save this new command.
 10. Open the control Pannel via http://serverpublicIPofVM:8080/Web/DD3/Control.html?confId=0&controlId=3&numClients=64. (Replace the ```serverpublicIPofVM``` part of the URL with the server public IP of the VM. This control pannel could be open in your own PC as it is easy to control the applications on GDO.)
