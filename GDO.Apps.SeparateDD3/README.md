@@ -89,7 +89,7 @@ dd3.defineEase()
 - ```Name:``` Launch Test
 - ```Description:``` dd3 test
 4. Click the ```Edit``` button on the rightmost side of this page.
-5. Copy all the content in the ```Commands``` textarea to create you own command.
+5. Copy all the content in the ```Commands``` textarea.
 6. Go back to the command list page and click the ```Create New``` button on the top part of the page.
 7. Edit the corresponding items ```Project name```, ```Owner```, ```Name```, ```Description``` and paste the commands you have already copied in the demo command into the ```Commands``` textarea.
 8. In the ```Commands``` textarea, replace the ```serverpublicIPofVM``` part of the URL with the server public IP of the VM.
