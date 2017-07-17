@@ -72,14 +72,14 @@ dd3.defineEase()
 1. Connect to the VM.
 2. Install the nodejs via https://nodejs.org/en/download/.
 3. Install the mongodb via https://www.mongodb.com/download-center#community. (Xiaoping will be in charge of setting up the MongoDB service.)
-4. Download the project in Github (Only the folder "GDO.Apps.SeparateDD3" in the ""). Find "gdo.apps.dd3.socketio.js" file and change socket server IP "http://localhost:8080" to "http://serverpublicIPofVM:8080"; Find "controlInit.js" file and change socket server IP "http://localhost:8080" to "http://serverpublicIPofVM:8080".
-4. Upload the edited project into the VM.
-5. Find the project directory and input "npm install" in the console.
-6. Lauch the nodejs server via "node server.js".
-7. Open the control Pannel via http://serverpublicIPofVM:8080/Web/DD3/Control.html?confId=0&controlId=3&numClients=2
-8. Open client one via http://serverpublicIPofVM:8080/Web/DD3/App.html?confId=0&controlId=3&clientId=1&row=1&column=1&numClients=2
-9. Open client two via http://serverpublicIPofVM:8080/Web/DD3/App.html?confId=0&controlId=3&clientId=2&row=1&column=1&numClients=2
-10. You will find the transition application (confId = 0) will be launched successfully.
+4. Download the project in Github (The project only needs the folder "GDO.Apps.SeparateDD3" in the "separate-dd3" branch). Find "gdo.apps.dd3.socketio.js" file and change socket server IP "http://localhost:8080" to "http://serverpublicIPofVM:8080"; Find "controlInit.js" file and change socket server IP "http://localhost:8080" to "http://serverpublicIPofVM:8080".
+5. Upload the edited project into the VM.
+6. Find the project directory and input ```npm install``` in the console.
+7. Lauch the nodejs server via ```node server.js```.
+8. Open the control Pannel via http://serverpublicIPofVM:8080/Web/DD3/Control.html?confId=0&controlId=3&numClients=2
+9. Open client one via http://serverpublicIPofVM:8080/Web/DD3/App.html?confId=0&controlId=3&clientId=1&row=1&column=1&numClients=2
+10. Open client two via http://serverpublicIPofVM:8080/Web/DD3/App.html?confId=0&controlId=3&clientId=2&row=1&column=1&numClients=2
+11. You will find the transition application (confId = 0) will be launched successfully.
 
 ## GOD Performance Test
 1. Login http://dsimanagement.doc.ic.ac.uk. (If you have no access to this service, please ask David for help.)
