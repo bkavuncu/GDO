@@ -210,14 +210,8 @@ namespace GDO.Apps.SigmaGraph
                 {
                     Clients.Caller.setMessage("Triggering rendering of zoomed-in graph.");
 
-                    // updated zoomedIn variable within ga object
-                    ga.UpdateZoomVar(true);
-
-                    Clients.Group("" + instanceId).renderGraph(((SigmaGraphApp)Cave.Apps["SigmaGraph"].Instances[instanceId]).FolderNameDigit, true);
+                    Clients.Group("" + instanceId).zoom(0.5,0.5,1.25);
                     Clients.Caller.setMessage("Zoomed-in graph is now being rendered.");
-
-                    Clients.Group("" + instanceId).renderBuffer(((SigmaGraphApp)Cave.Apps["SigmaGraph"].Instances[instanceId]).FolderNameDigit);
-                    Clients.Caller.setMessage("Buffer for zoomed-in graph is now being rendered.");
                 }
                 catch (Exception e)
                 {
@@ -236,10 +230,7 @@ namespace GDO.Apps.SigmaGraph
                 {
                     Clients.Caller.setMessage("Triggering rendering of zoomed-out graph.");
 
-                    // updated zoomedIn variable within ga object
-                    ga.UpdateZoomVar(false);
-
-                    Clients.Group("" + instanceId).renderGraph(((SigmaGraphApp)Cave.Apps["SigmaGraph"].Instances[instanceId]).FolderNameDigit, false);
+                    Clients.Group("" + instanceId).zoom(0.5, 0.5, 1/1.25);
                     Clients.Caller.setMessage("Zoomed-out graph is now being rendered.");
                 }
                 catch (Exception e)

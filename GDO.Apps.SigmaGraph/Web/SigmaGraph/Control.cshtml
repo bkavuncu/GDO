@@ -233,15 +233,13 @@
 
         */
 
-        /* //TODO zooming functionality removed
         $("#zoomIn").click(function () {
-            gdo.net.app["Graph"].server.triggerZoomIn(gdo.controlId);
+            gdo.net.app["SigmaGraph"].server.triggerZoomIn(gdo.controlId);
         });
 
         $("#zoomOut").click(function () {
-            gdo.net.app["Graph"].server.triggerZoomOut(gdo.controlId);
+            gdo.net.app["SigmaGraph"].server.triggerZoomOut(gdo.controlId);
         });
-        */
 
         $("#blue").click(function () {
             gdo.net.app["SigmaGraph"].server.triggerRGB(gdo.controlId, "blue");
@@ -451,14 +449,13 @@
                                                 </tr>
                                             </table>
 
-                                            <!-- //TODO zooming functionality removed
                                             <label> Toggle zooming </label>
                                             <br/>
                                             <button class='btn btn-default' id="zoomIn"><i class='fa  fa-plus-circle  fa-fw'></i>&nbsp;Zoom in</button>
                                             <button class='btn btn-default' id="zoomOut"><i class='fa  fa-minus-circle  fa-fw'></i>&nbsp;Zoom out</button>
                                             <br/>
                                             <br/>
-                                            <br/> -->
+                                            <br/>
 
                                         </td>
                                         <td style="width: 60%;">

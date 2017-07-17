@@ -27,6 +27,8 @@ $(function () {
         }
     };
 
+    $.connection.sigmaGraphAppHub.client.zoom = gdo.net.app["SigmaGraph"].zoom;
+
     // arrays to store data
     var links, nodes, allnodes, mostConnectedNodes = [];
     var minLinks = 3;

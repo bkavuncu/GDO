@@ -40,6 +40,9 @@ gdo.net.app["SigmaGraph"].initInstanceGlobals = function () {
     gdo.yWidth = 1 / gdo.numRows;
     gdo.xCentroid = gdo.xWidth * gdo.nodeCol + gdo.xWidth / 2;
     gdo.yCentroid = gdo.yWidth * gdo.nodeRow + gdo.yWidth / 2;
+    gdo.totalRatio = 1;
+    gdo.xTotalShift = 0;
+    gdo.yTotalShift = 0;
 };
 
 /**
