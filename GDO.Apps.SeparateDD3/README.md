@@ -79,7 +79,9 @@ dd3.defineEase()
 8. Open client one via http://serverpublicIP:8080/Web/DD3/App.html?confId=0&controlId=3&clientId=1&row=1&column=1&numClients=2
 9. Open client two via http://serverpublicIP:8080/Web/DD3/App.html?confId=0&controlId=3&clientId=2&row=1&column=1&numClients=2
 10. You will find the transition application (confId = 0) will be launched successfully.
-11. In order to do the GDO test, visit http://dsimanagement.doc.ic.ac.uk. (Make suer you have the access to this service.)
+
+## GOD Performance Test
+1. Visit http://dsimanagement.doc.ic.ac.uk. (If you have no access to this service, please ask David for help.)
 
 
 ## License (BAI)
