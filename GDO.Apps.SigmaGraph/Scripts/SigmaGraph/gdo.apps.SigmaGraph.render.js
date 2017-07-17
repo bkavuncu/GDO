@@ -4,7 +4,7 @@
 
 // Initialize global static constants.
 gdo.epsilon = 1E-9;
-gdo.basePath = "\\Web\\SigmaGraph\\graphmls\\";
+gdo.basePath = "\\Web\\SigmaGraph\\graphmls\\";// todo note that you will NOT be able to reply upon this. 
 
 /**
  * Initialize global constants and variables of this rendering
