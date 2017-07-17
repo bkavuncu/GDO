@@ -83,7 +83,11 @@ dd3.defineEase()
 ## GOD Performance Test
 1. Login http://dsimanagement.doc.ic.ac.uk. (If you have no access to this service, please ask David for help.)
 2. Click "Cluster Commands" in the nav bar on the top.
-3. Find a DD3 demo command in the command list: Project name is DD3. Owner: David. Name: Launch Test. Description: dd3 test. 
+3. Find the DD3 demo command in the command list. The demo command has the specific items below:
+- ```Project name:``` DD3 
+- ```Owner:``` David
+- ```Name:``` Launch Test
+- ```Description:``` dd3 test
 
 
 ## License (BAI)
