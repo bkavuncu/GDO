@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 
 // ReSharper disable InconsistentNaming matching MongoDb
@@ -9,10 +8,6 @@ namespace GDO.Apps.SigmaGraph.QuadTree
 {
 
     public class QuadTreeBag<T> {
-
-
-        public Guid _id { get; set; }
-
         // Critical
         public string treeId { get; set; }
 

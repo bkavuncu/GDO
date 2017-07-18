@@ -1,32 +1,31 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using GDO.Apps.SigmaGraph.Domain;
 
 namespace GDO.Apps.SigmaGraph.QuadTree
 {
     public class QuadTree<T> where T : IQuadable<double>
     {
-        public readonly int MaxBagsBeforeSplit;
-        public readonly int MaxObjectsPerBag;
+        private readonly int _maxBagsBeforeSplit;
+        private readonly int _maxObjectsPerBag;
 
         public readonly QuadTreeNode<T> Root;
-        internal readonly Action<QuadTreeBag<T>> ShedObjects;
-        internal readonly Action<string> MarkObjectsForRework;
-        internal readonly Action<string, QuadTreeNode<T>> RegisterQuadTree;
+        private readonly Action<QuadTreeBag<T>> _shedObjects;
+        private readonly Action<string> _markObjectsForRework;
+        private readonly Action<string, QuadTreeNode<T>> _registerQuadTree;
 
         //Critical
-        internal string treeId = System.Guid.NewGuid().ToString();
+        public string TreeId { get; set; } = Guid.NewGuid().ToString();
 
         public QuadTree(QuadCentroid centroid, Action<QuadTreeBag<T>> shedObjects, Action<string> markObjectsForRework, Action<string, QuadTreeNode<T>> registerQuadTree, int maxBagsBeforeSplit = 10, int maxObjectsPerBag = 500)
         {
             // Critical
-            this.Root = new QuadTreeNode<T>(centroid, treeId);
-            this.ShedObjects = shedObjects;
-            this.MarkObjectsForRework = markObjectsForRework;
-            this.RegisterQuadTree = registerQuadTree;
-            MaxBagsBeforeSplit = maxBagsBeforeSplit;
-            MaxObjectsPerBag = maxObjectsPerBag;
+            this.Root = new QuadTreeNode<T>(centroid, TreeId);
+            this._shedObjects = shedObjects;
+            this._markObjectsForRework = markObjectsForRework;
+            this._registerQuadTree = registerQuadTree;
+            _maxBagsBeforeSplit = maxBagsBeforeSplit;
+            _maxObjectsPerBag = maxObjectsPerBag;
             registerQuadTree(this.Root.Guid, this.Root);
         }
 
@@ -74,16 +73,16 @@ namespace GDO.Apps.SigmaGraph.QuadTree
 
                 // Shed objects if we have more than Max inside, and erase the local objects - this avoids memory intensity 
                 bool madechildren = false;
-                if (quad.ObjectsInside.Count >= MaxObjectsPerBag) {
+                if (quad.ObjectsInside.Count >= _maxObjectsPerBag) {
                     ShedObjectsToExternalStore(quad);
                     // if we've pushed sufficient bags then make children and mark all of those bags for rework 
-                    if (quad.Counters.GetOrAdd("BagsPushedToMongo", 0) >= MaxBagsBeforeSplit) {
+                    if (quad.Counters.GetOrAdd("BagsPushedToMongo", 0) >= _maxBagsBeforeSplit) {
                         // note that this locks on the object
-                        madechildren = quad.TryGenerateChildren(RegisterQuadTree);
+                        madechildren = quad.TryGenerateChildren(_registerQuadTree);
 
                         // we are now full so we should turn into a node - to do this we must retreive objects from Mongo and add them to the worklsit 
                         // If we are turning into a node, then we need to put back the objects inside the worklist, by setting the flag on the guid objects to true
-                        if (madechildren) MarkObjectsForRework(quad.Guid);
+                        if (madechildren) _markObjectsForRework(quad.Guid);
                     }
                 }
 
@@ -140,10 +139,10 @@ namespace GDO.Apps.SigmaGraph.QuadTree
 
         private void ShedObjectsToExternalStore(QuadTreeNode<T> quad)
         {
-            Console.WriteLine("---- ShedObjectsToExternalStore ---- quad.treeId: " + quad.treeId);
+            Console.WriteLine("---- ShedObjectsToExternalStore ---- quad.treeId: " + quad.TreeId);
             // extract objects and shed them
             var quadTreeBag = ExtractObjectsFromQuad(quad);
-            ShedObjects(quadTreeBag);
+            _shedObjects(quadTreeBag);
             // log global # objects shed - for debug only 
             quad.Counters.AddOrUpdate("ObjectsShed", k => quadTreeBag.Objects.Count, (k, v) => v + quadTreeBag.Objects.Count);
             // count the # bags this quad has shed. 
@@ -158,7 +157,7 @@ namespace GDO.Apps.SigmaGraph.QuadTree
                 objsToShed.Add(t);
             }
             // then shed them
-            var quadTreeBag = new QuadTreeBag<T>(quad.Guid, objsToShed, quad.treeId);
+            var quadTreeBag = new QuadTreeBag<T>(quad.Guid, objsToShed, quad.TreeId);
             //var quadTreeBag = new QuadTreeBag<T>(quad.Guid, objsToShed);
             return quadTreeBag;
         }

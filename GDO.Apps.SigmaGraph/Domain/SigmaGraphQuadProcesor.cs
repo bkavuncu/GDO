@@ -41,8 +41,16 @@ namespace GDO.Apps.SigmaGraph.Domain {
 
             ExportLeafNodes(factory, leafs, graph.Nodes, outputfolder);
 
+            //todo now export the whole quadtree so it can be reloaded again later... 
+
+            ExportQuadTree(factory.QuadTree, Path.Combine(outputfolder,"\\quad.xml"));
+
             Console.WriteLine(results + Environment.NewLine + tree);
 
+        }
+
+        private static void ExportQuadTree(QuadTree<GraphObject> factoryQuadTree, string filename) {
+            throw new NotImplementedException();
         }
 
         private static void ExportLeafNodes(ConcurrentQuadTreeFactory<GraphObject> factory, Dictionary<string, QuadTreeNode<GraphObject>> leafs, List<GraphNode> graphNodes, string outputfolder) {

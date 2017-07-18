@@ -130,6 +130,7 @@
     <Content Include="Web\SigmaGraph\Control.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Domain\GraphMlUtilities.cs" />
     <Compile Include="Domain\Domain.cs" />
     <Compile Include="Domain\GraphMlUtilities.cs" />
     <Compile Include="Domain\SigmaGraphProcessor.cs" />

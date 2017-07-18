@@ -39,7 +39,7 @@ namespace GDO.Apps.SigmaGraph.QuadTree.Utilities
             node.Add(new XAttribute("itemsInThisTree", itemsInThisTree));
             node.Add(new XAttribute("localItems", localitems));
             node.Add(new XAttribute("itemsshed", itemsShed));
-            node.Add(new XAttribute("c", quad.centroid.ToString()));
+            node.Add(new XAttribute("c", quad.Centroid.ToString()));
             node.Add(new XAttribute("Items", factory.GetBagsForQuad(quad).Aggregate(0,(acc,next) => acc+next.Objects.Count)));
             root.Add(node);
            

@@ -97,11 +97,11 @@ namespace GDO.Apps.SigmaGraph.Domain
 
         public override bool IsWithin<T>(QuadTreeNode<T> quadTreeNode)
         {
-            double xCentroid = quadTreeNode.centroid.xCentroid;
-            double yCentroid = quadTreeNode.centroid.yCentroid;
+            double xCentroid = quadTreeNode.Centroid.xCentroid;
+            double yCentroid = quadTreeNode.Centroid.yCentroid;
             //todo do you think it would be better to move these flops to be computed once within the centroid class - it costs memory but will be faster! 
-            double xWidth = quadTreeNode.centroid.xWidth/2.0;
-            double yWidth = quadTreeNode.centroid.yWidth/2.0;
+            double xWidth = quadTreeNode.Centroid.xWidth/2.0;
+            double yWidth = quadTreeNode.Centroid.yWidth/2.0;
 
             double minX = xCentroid - xWidth;
             double maxX = xCentroid + xWidth;
@@ -158,11 +158,11 @@ namespace GDO.Apps.SigmaGraph.Domain
 
         public override bool IsWithin<T>(QuadTreeNode<T> quadTreeNode)
         {
-            double xCentroid = quadTreeNode.centroid.xCentroid;
-            double yCentroid = quadTreeNode.centroid.yCentroid;
+            double xCentroid = quadTreeNode.Centroid.xCentroid;
+            double yCentroid = quadTreeNode.Centroid.yCentroid;
             //todo do you think it would be better to move these flops to be computed once within the centroid class - it costs memory but will be faster! 
-            double xWidth = quadTreeNode.centroid.xWidth/2.0;
-            double yWidth = quadTreeNode.centroid.yWidth/2.0;
+            double xWidth = quadTreeNode.Centroid.xWidth/2.0;
+            double yWidth = quadTreeNode.Centroid.yWidth/2.0;
 
             double minX = xCentroid - xWidth;
             double maxX = xCentroid + xWidth;
