@@ -34,6 +34,10 @@ gdo.net.app["SigmaGraph"].initInstanceGlobals = function () {
     gdo.sigmaInstance.renderers[0].bind('render', function(e) {
         gdo.consoleOut('.RENDERER', 1, 'Time to render: ' + (window.performance.now() - gdo.stopWatch));
     });
+    gdo.numParseWorkers = 2;
+    gdo.parseWorkers = [...Array(gdo.numParseWorkers)].map(function() {
+        return new Worker("../Scripts/SigmaGraph/parseWorker.js");
+    });
 
     // Node global variables.
     gdo.xWidth = 1 / gdo.numCols;
@@ -53,13 +57,12 @@ gdo.net.app["SigmaGraph"].renderGraph = async function () {//todo note this is a
     // Get location of files containing objects to render.
     gdo.stopWatch = window.performance.now();
     //const fileNames = gdo.net.app["SigmaGraph"].server.getFilesWithin(xCentroid, yCentroid, xWidth, yWidth);
-    const filePaths = [gdo.basePath + 'fourEdges.graphml'];
+    const filePaths = [gdo.basePath + 'marvel_heroes.graphml', gdo.basePath + 'marvel_heroes.graphml'];
     gdo.consoleOut('.RENDERER', 1, 'Time to get graph object file paths: ' + (window.performance.now() - gdo.stopWatch));
 
     // Get the nodes and edges
-    const filesGraphObjects = await Promise.all(filePaths.map(function(filePath) { //todo note this is an experimental feature
-        return httpGet(filePath).then(parseGraphML);
-    }));
+    let filesGraphObjects = await parseFilesToGraphObjects(filePaths);
+    filesGraphObjects = filesGraphObjects.reduce((a, b) => a.concat(b), []);
     gdo.consoleOut('.RENDERER', 1, 'Time to download and parse graph object files: ' + (window.performance.now() - gdo.stopWatch));
 
     // Clear the sigma graph
@@ -70,34 +73,45 @@ gdo.net.app["SigmaGraph"].renderGraph = async function () {//todo note this is a
         gdo.stopWatch = window.performance.now();
         const fileNodesInFOV = fileGraphObjects.nodes;
         fileNodesInFOV.forEach(node => {
-            node.x = parseFloat(node.x);
-            node.y = parseFloat(node.y);
-            node.color = node.color || "#f00";
-            node.size = node.size || 3;
+            node.id = node._id;
+            node.x = node._attributes.x;
+            node.y = node._attributes.y;
+            node.color = node._attributes.color || "#f00";
+            node.size = node._attributes.size || 3;
         });
         gdo.consoleOut('.RENDERER', 1, 'Time to convert nodes into sigma nodes: ' + (window.performance.now() - gdo.stopWatch));
         gdo.stopWatch = window.performance.now();
         fileNodesInFOV.forEach(node => {
-            gdo.sigmaInstance.graph.addNode(node);
+            try {
+                gdo.sigmaInstance.graph.addNode(node);
+            } catch (err) {}
         });
         gdo.consoleOut('.RENDERER', 1, 'Time to add nodes to sigma graph: ' + (window.performance.now() - gdo.stopWatch));
 
         gdo.stopWatch = window.performance.now();
-        const fileEdgesInFOV = fileGraphObjects.edges.filter(edgeIsWithinFOV);
+        let fileEdgesInFOV = fileGraphObjects.edges;
+        fileEdgesInFOV.forEach(edge => {
+            edge.id = edge._id;
+            edge.source = edge._source;
+            edge.target = edge._target;
+        });
+        fileEdgesInFOV = fileEdgesInFOV.filter(edgeIsWithinFOV);
         gdo.consoleOut('.RENDERER', 1, 'Time to filter edges: ' + (window.performance.now() - gdo.stopWatch));
         gdo.stopWatch = window.performance.now();
         fileEdgesInFOV.forEach(edge => {
-            gdo.sigmaInstance.graph.addEdge(edge);
+            try {
+                gdo.sigmaInstance.graph.addEdge(edge);
+            } catch (err) {}
         });
         gdo.consoleOut('.RENDERER', 1, 'Time to add edges to sigma graph: ' + (window.performance.now() - gdo.stopWatch));
 
         gdo.stopWatch = window.performance.now();
         gdo.sigmaInstance.graph.nodes().forEach(node => {
-            if (gdo.sigmaInstance.graph.degree(node.id) === 0) {
-                gdo.sigmaInstance.graph.dropNode(node.id);
-            } else {
+            //if (gdo.sigmaInstance.graph.degree(node.id) === 0) {
+            //    gdo.sigmaInstance.graph.dropNode(node.id);
+            //} else {
                 convertServerCoordsToSigmaCoords(node);
-            }
+            //}
         });
         gdo.consoleOut('.RENDERER', 1, 'Time to filter and convert node coordinates: ' + (window.performance.now() - gdo.stopWatch));
     });
@@ -109,77 +123,31 @@ gdo.net.app["SigmaGraph"].renderGraph = async function () {//todo note this is a
 };
 
 /**
- * Returns a promise that fullfulls with the file contents of the
- * file pointed to be filePath.
- * @param {any} filePath the location of the file
+ * Returns a promise that resolves with the graph objects contained
+ * in the files pointed to by filePaths.
+ * @param {any} filePaths
+ * @return the promise
  */
-function httpGet(filePath) {
-    // TODO handle errors
-    return new Promise(function (resolve, reject) {
-        const xhr = new XMLHttpRequest();
-        xhr.open("GET", filePath, true);
-        xhr.responseType = 'document';
-        xhr.overrideMimeType('text/xml');
-        xhr.onload = function() {
-            if (this.status === 200) {
-                resolve(this.response);
-            }
-        };
-        xhr.send();
+function parseFilesToGraphObjects(filePaths) {
+    const filePathsSplit = [...Array(gdo.numParseWorkers)].map(() => []);
+    filePaths.forEach(function(filePath, index) {
+        index = index % gdo.numParseWorkers;
+        filePathsSplit[index].push(filePath);
     });
-}
 
-/**
- * Returns a promise that fulfulls with a javascript object
- * representation of the contents of graphMLText.
- * @param {any} graphMLText the contents of a graphml file
- */
-function parseGraphML(xml) {
-    return new Promise(function (resolve, reject) {
-        function resolver() {
-            return 'http://graphml.graphdrawing.org/xmlns';
-        }
-        const nodes = [];
-        const nodesPath = "myns:graphml/myns:graph/myns:node";
-        const xmlNodes = xml.evaluate(nodesPath, xml, resolver, XPathResult.ANY_TYPE, null);
-        let xmlNode = xmlNodes.iterateNext();
-        while (xmlNode) {
-            const node = {};
-            node.id = xmlNode.getAttribute('id');
-            for (let index = 0; index < xmlNode.children.length; index++) {
-                const child = xmlNode.children[index];
-                node[child.getAttribute('key')] = child.innerHTML;
-            }
-            nodes.push(node);
-
-            xmlNode = xmlNodes.iterateNext();
-        }
-
-        const edges = [];
-        const edgesPath = "myns:graphml/myns:graph/myns:edge";
-        const xmlEdges = xml.evaluate(edgesPath, xml, resolver, XPathResult.ANY_TYPE, null);
-        let xmlEdge = xmlEdges.iterateNext();
-        let edgeCount = 0;
-        while (xmlEdge) {
-            const edge = {};
-            edge.id = 'E' + edgeCount;
-            edge.source = xmlEdge.getAttribute('source');
-            edge.target = xmlEdge.getAttribute('target');
-            for (let index = 0; index < xmlEdge.children.length; index++) {
-                const child = xmlEdge.children[index];
-                edge[child.getAttribute('key')] = child.innerHTML;
-            }
-            edges.push(edge);
-
-            edgeCount += 1;
-            xmlEdge = xmlEdges.iterateNext();
-        }
-
-        const graph = {};
-        graph.nodes = nodes;
-        graph.edges = edges;
-        resolve(graph);
+    gdo.parseWorkers.forEach(function (worker, index) {
+        worker.postMessage(filePathsSplit[index]);
     });
+
+    return Promise.all(gdo.parseWorkers.map(function (worker) {
+        return new Promise(function (resolve, reject) {
+            worker.addEventListener('message',
+                function (e) {
+                    const filesGraphObjects = e.data;
+                    resolve(filesGraphObjects);
+                });
+        });
+    }));
 }
 
 /**
@@ -294,7 +262,7 @@ function addDebugGrid() {
         [...Array(11).keys()].forEach(function(y) {
             y /= 10;
             count += 1;
-            const gridNode = { id: "N" + count, x: x, y: y, color: "#00f", size: 4 };
+            const gridNode = { id: "n" + count, x: x, y: y, color: "#00f", size: 4 };
             convertServerCoordsToSigmaCoords(gridNode);
             gdo.sigmaInstance.graph.addNode(gridNode);
         });
