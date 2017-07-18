@@ -39,25 +39,57 @@ namespace GDO.Apps.SigmaGraph.Domain {
 
             Dictionary<string, QuadTreeNode<GraphObject>> leafs = factory.SelectLeafs();
 
-            ExportLeafNodes(factory, leafs, outputfolder);
+            ExportLeafNodes(factory, leafs, graph.Nodes, outputfolder);
 
             Console.WriteLine(results + Environment.NewLine + tree);
 
         }
 
-        private static void ExportLeafNodes(ConcurrentQuadTreeFactory<GraphObject> factory,
-            Dictionary<string, QuadTreeNode<GraphObject>> leafs, string outputfolder) {
-            Parallel.ForEach(leafs, l => ProcessLeafGraphML(l.Key, factory.GetBagsForQuad(l.Value), outputfolder));
+        private static void ExportLeafNodes(ConcurrentQuadTreeFactory<GraphObject> factory, Dictionary<string, QuadTreeNode<GraphObject>> leafs, List<GraphNode> graphNodes, string outputfolder) {
+            Parallel.ForEach(leafs, l => ProcessLeafGraphML(l.Key, factory.GetBagsForQuad(l.Value), graphNodes, outputfolder));
         }
 
-        private static void ProcessLeafGraphML(string key, QuadTreeBag<GraphObject>[] quadTreeBag, string outputfolder) {
+        private static void ProcessLeafGraphML(string key, QuadTreeBag<GraphObject>[] quadTreeBag, List<GraphNode> graphNodes, string outputfolder) {
             /*  
-             * todo 
+             * todo     
              
              * split objects into nodes & edges
              * for the edges retrive the nodes connected
              * dump it all to text file. 
              */
+            Dictionary<string, GraphNode> nodes = new Dictionary<string, GraphNode>();
+            List<GraphLink> edges = new List<GraphLink>();
+
+
+            //split objects into nodes & edges
+            foreach (var graphObject in quadTreeBag.SelectMany(b => b.Objects)) {
+                if (graphObject is GraphLink) {
+                    edges.Add(graphObject as GraphLink);
+                } else if (graphObject is GraphNode) {
+                    var graphNode = graphObject as GraphNode;
+                    nodes.Add(graphNode.ID,graphNode);
+                }
+                else {
+                    throw new ArgumentException("unknown graph object type");
+                }
+            }
+
+            // for the edges retrive the nodes connected
+            foreach (var edge in edges) {
+                if (!nodes.ContainsKey(edge.Source)) {
+                    var node = graphNodes.First(n => n.ID == edge.Source);
+                    nodes.Add(node.ID, node);
+                }
+                if (!nodes.ContainsKey(edge.Target)) {
+                    var node = graphNodes.First(n => n.ID == edge.Target);
+                    nodes.Add(node.ID, node);
+                }
+            }
+
+            // dump them all to a text file 
+            string outputfile = Path.Combine(outputfolder, "\\graphmls\\", key + ".graphml");
+
+            GraphMlUtilities.SaveGraph(nodes,edges,outputfile);
 
         }
 
