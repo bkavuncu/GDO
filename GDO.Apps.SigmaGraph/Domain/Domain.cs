@@ -54,7 +54,36 @@ namespace GDO.Apps.SigmaGraph.Domain
         public abstract bool IsWithin<T>(QuadTreeNode<T> q) where T : IQuadable<double>;
     }
 
-    public class GraphNode : GraphObject {
+    public class GraphNode : GraphObject, IEquatable<GraphNode> {
+
+        #region equality
+        public bool Equals(GraphNode other) {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return string.Equals(ID, other.ID);
+        }
+
+        public override bool Equals(object obj) {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((GraphNode) obj);
+        }
+
+        public override int GetHashCode() {
+            return (ID != null ? ID.GetHashCode() : 0);
+        }
+
+        public static bool operator ==(GraphNode left, GraphNode right) {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(GraphNode left, GraphNode right) {
+            return !Equals(left, right);
+        }
+
+        #endregion
+
         public string ID { get; set; }
         public Position Pos { get; set; }
         public string Label { get; set; }
@@ -83,7 +112,39 @@ namespace GDO.Apps.SigmaGraph.Domain
         }
     }
 
-    public class GraphLink : GraphObject {
+    public class GraphLink : GraphObject, IEquatable<GraphLink> {
+
+        #region equality
+
+        public bool Equals(GraphLink other) {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return string.Equals(Source, other.Source) && string.Equals(Target, other.Target);
+        }
+
+        public override bool Equals(object obj) {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((GraphLink) obj);
+        }
+
+        public override int GetHashCode() {
+            unchecked {
+                return ((Source != null ? Source.GetHashCode() : 0) * 397) ^ (Target != null ? Target.GetHashCode() : 0);
+            }
+        }
+
+        public static bool operator ==(GraphLink left, GraphLink right) {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(GraphLink left, GraphLink right) {
+            return !Equals(left, right);
+        }
+
+        #endregion
+
         public string Source { get; set; }
         public string Target { get; set; }
         public Position StartPos { get; set; }
