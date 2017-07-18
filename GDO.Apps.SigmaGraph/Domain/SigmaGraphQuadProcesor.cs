@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml;
+using System.Xml.Serialization;
 using GDO.Apps.SigmaGraph.QuadTree;
 using GDO.Apps.SigmaGraph.QuadTree.Utilities;
 
@@ -50,7 +52,15 @@ namespace GDO.Apps.SigmaGraph.Domain {
         }
 
         private static void ExportQuadTree(QuadTree<GraphObject> factoryQuadTree, string filename) {
-            throw new NotImplementedException();
+            XmlSerializer xsSubmit = new XmlSerializer(typeof(QuadTreeNode<GraphObject>));
+
+            using (var sww = new StringWriter()) {
+                using (XmlWriter writer = XmlWriter.Create(sww)) {
+                    xsSubmit.Serialize(writer, factoryQuadTree.Root);
+                    var xml = sww.ToString();
+                    File.WriteAllText(filename,xml);
+                }
+            }
         }
 
         private static void ExportLeafNodes(ConcurrentQuadTreeFactory<GraphObject> factory, Dictionary<string, QuadTreeNode<GraphObject>> leafs, List<GraphNode> graphNodes, string outputfolder) {
