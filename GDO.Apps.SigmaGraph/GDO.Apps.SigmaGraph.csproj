@@ -132,7 +132,6 @@
   <ItemGroup>
     <Compile Include="Domain\GraphMlUtilities.cs" />
     <Compile Include="Domain\Domain.cs" />
-    <Compile Include="Domain\GraphMlUtilities.cs" />
     <Compile Include="Domain\SigmaGraphProcessor.cs" />
     <Compile Include="Domain\SigmaGraphQuadProcesor.cs" />
     <Compile Include="QuadTree\AConcurrentQuadTreeFactory.cs" />
