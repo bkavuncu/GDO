@@ -4,14 +4,21 @@
  */
 
 const gdo = {};
-importScripts("browserifiedParser.js");
 
 self.onmessage = async function (e) {
+    gdo.stopWatch = self.performance.now();
     const filePaths = e.data;
     const filesGraphObjects = await Promise.all(filePaths.map(function (filePath) {
-        return httpGet(filePath).then(parseGraphML);
+        return httpGet(filePath).then((fileText) => {
+            const graph = JSON.parse(fileText);
+            return graph;
+        });
     }));
+    console.log('Time to download and parse...' + (self.performance.now() - gdo.stopWatch));
+
+    gdo.stopWatch = self.performance.now();
     self.postMessage(filesGraphObjects);
+    console.log('Time to post message...' + (self.performance.now() - gdo.stopWatch));
 };
 
 /**
@@ -30,20 +37,5 @@ function httpGet(filePath) {
             }
         };
         xhr.send();
-    });
-}
-
-/**
- * Returns a promise that fulfulls with a javascript object
- * representation of the contents of graphMLText.
- * @param {any} graphMLText the contents of a graphml file
- */
-function parseGraphML(graphMLText) {
-    return new Promise(function (resolve, reject) {
-        const parser = new gdo.graphml.GraphMLParser();
-        parser.parse(graphMLText, function (err, graph) {
-            if (err !== null) return reject(err);
-            resolve(graph);
-        });
     });
 }

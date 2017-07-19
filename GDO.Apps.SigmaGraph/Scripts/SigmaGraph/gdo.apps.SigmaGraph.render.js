@@ -34,7 +34,7 @@ gdo.net.app["SigmaGraph"].initInstanceGlobals = function () {
     gdo.sigmaInstance.renderers[0].bind('render', function(e) {
         gdo.consoleOut('.RENDERER', 1, 'Time to render: ' + (window.performance.now() - gdo.stopWatch));
     });
-    gdo.numParseWorkers = 2;
+    gdo.numParseWorkers = 1;
     gdo.parseWorkers = [...Array(gdo.numParseWorkers)].map(function() {
         return new Worker("../Scripts/SigmaGraph/parseWorker.js");
     });
@@ -47,6 +47,7 @@ gdo.net.app["SigmaGraph"].initInstanceGlobals = function () {
     gdo.totalRatio = 1;
     gdo.xTotalShift = 0;
     gdo.yTotalShift = 0;
+    gdo.parallelParse = false;
 };
 
 /**
@@ -61,9 +62,12 @@ gdo.net.app["SigmaGraph"].renderGraph = async function () {//todo note this is a
     gdo.consoleOut('.RENDERER', 1, 'Time to get graph object file paths: ' + (window.performance.now() - gdo.stopWatch));
 
     // Get the nodes and edges
+    gdo.stopWatch = window.performance.now();
     let filesGraphObjects = await parseFilesToGraphObjects(filePaths);
-    filesGraphObjects = filesGraphObjects.reduce((a, b) => a.concat(b), []);
     gdo.consoleOut('.RENDERER', 1, 'Time to download and parse graph object files: ' + (window.performance.now() - gdo.stopWatch));
+    gdo.stopWatch = window.performance.now();
+    filesGraphObjects = filesGraphObjects.reduce((a, b) => a.concat(b), []);
+    gdo.consoleOut('.RENDERER', 1, 'Time to combine web worker results: ' + (window.performance.now() - gdo.stopWatch));
 
     // Clear the sigma graph
     gdo.sigmaInstance.graph.clear();
@@ -107,11 +111,10 @@ gdo.net.app["SigmaGraph"].renderGraph = async function () {//todo note this is a
 
         gdo.stopWatch = window.performance.now();
         gdo.sigmaInstance.graph.nodes().forEach(node => {
-            //if (gdo.sigmaInstance.graph.degree(node.id) === 0) {
-            //    gdo.sigmaInstance.graph.dropNode(node.id);
-            //} else {
+            if (!node.converted) {
                 convertServerCoordsToSigmaCoords(node);
-            //}
+                node.converted = true;
+            }
         });
         gdo.consoleOut('.RENDERER', 1, 'Time to filter and convert node coordinates: ' + (window.performance.now() - gdo.stopWatch));
     });
@@ -129,25 +132,51 @@ gdo.net.app["SigmaGraph"].renderGraph = async function () {//todo note this is a
  * @return the promise
  */
 function parseFilesToGraphObjects(filePaths) {
-    const filePathsSplit = [...Array(gdo.numParseWorkers)].map(() => []);
-    filePaths.forEach(function(filePath, index) {
-        index = index % gdo.numParseWorkers;
-        filePathsSplit[index].push(filePath);
-    });
-
-    gdo.parseWorkers.forEach(function (worker, index) {
-        worker.postMessage(filePathsSplit[index]);
-    });
-
-    return Promise.all(gdo.parseWorkers.map(function (worker) {
-        return new Promise(function (resolve, reject) {
-            worker.addEventListener('message',
-                function (e) {
-                    const filesGraphObjects = e.data;
-                    resolve(filesGraphObjects);
-                });
+    if (gdo.parallelParse) {
+        const filePathsSplit = [...Array(gdo.numParseWorkers)].map(() => []);
+        filePaths.forEach(function(filePath, index) {
+            index = index % gdo.numParseWorkers;
+            filePathsSplit[index].push(filePath);
         });
-    }));
+
+        gdo.parseWorkers.forEach(function(worker, index) {
+            worker.postMessage(filePathsSplit[index]);
+        });
+
+        return Promise.all(gdo.parseWorkers.map(function(worker) {
+            return new Promise(function(resolve, reject) {
+                const startTime = window.performance.now();
+                worker.onmessage = function(e) {
+                        const filesGraphObjects = e.data;
+                        console.log('Time to resolve worker promise: ' + (window.performance.now() - startTime));
+                        resolve(filesGraphObjects);
+                };
+            });
+        }));
+    } else {
+        return Promise.all(filePaths.map(function(filePath) {
+            return httpGet(filePath).then((jsonString)=> JSON.parse(jsonString));
+        }));
+    }
+}
+
+/**
+* Returns a promise that fullfulls with the file contents of the
+* file pointed to be filePath.
+* @param {any} filePath the location of the file
+*/
+function httpGet(filePath) {
+    // TODO handle errors
+    return new Promise(function (resolve, reject) {
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", filePath, true);
+        xhr.onload = function () {
+            if (this.status === 200) {
+                resolve(this.response);
+            }
+        };
+        xhr.send();
+    });
 }
 
 /**
