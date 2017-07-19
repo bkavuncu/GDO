@@ -42,7 +42,7 @@ namespace GDO.Apps.SigmaGraph.Domain {
 
             Dictionary<string, QuadTreeNode<GraphObject>> leafs = factory.SelectLeafs();
 
-            //ExportLeafNodes(factory, leafs, graph.Nodes, outputfolder);
+            ExportLeafNodes(factory, leafs, graph.Nodes, outputfolder);
 
             //todo now export the whole quadtree so it can be reloaded again later... 
 
