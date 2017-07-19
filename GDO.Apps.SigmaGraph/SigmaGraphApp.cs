@@ -7,9 +7,12 @@ using System.Threading.Tasks;
 using GDO.Core;
 using Newtonsoft.Json;
 using GDO.Apps.SigmaGraph.Domain;
+using GDO.Apps.SigmaGraph.QuadTree;
 using GDO.Core.Apps;
 using log4net;
 
+// TODO cleanup this file
+// TODO inconsistent style: first method curly brace on same or next line
 namespace GDO.Apps.SigmaGraph
 {
 
@@ -27,6 +30,8 @@ namespace GDO.Apps.SigmaGraph
         public GraphInfo graphinfo = new GraphInfo();
        
         public string FolderNameDigit;
+        // TODO change to support multiple factories
+        private AConcurrentQuadTreeFactory<GraphObject> currentFactory;
 
         public void Init()
         {
@@ -77,7 +82,7 @@ namespace GDO.Apps.SigmaGraph
 
 
             //SigmaGraphProcessor.ProcessGraph(graph, filename, zoomed, folderName,  indexFile, FolderNameDigit,Section);
-            SigmaGraphQuadProcesor.ProcessGraph(graph, basePath+FolderNameDigit);
+            this.currentFactory = SigmaGraphQuadProcesor.ProcessGraph(graph, basePath+FolderNameDigit);
 
             return this.FolderNameDigit;
         }
@@ -97,6 +102,13 @@ namespace GDO.Apps.SigmaGraph
             return folderNameDigit;
         }
 
+        public IEnumerable<string> GetFilesWithin(double x, double y, double xWidth, double yWidth) {
+            List<QuadTreeNode<GraphObject>> listResult = new List<QuadTreeNode<GraphObject>>();
+            this.currentFactory.QuadTree.Root.ReturnLeafs(x, y, xWidth, yWidth, listResult);
+            IEnumerable<string> filePaths = listResult
+                .Select(quadTreeNode => this.FolderNameDigit + "/" + quadTreeNode.Guid + ".json");
+            return filePaths;
+        }
 
         public void UpdateZoomVar(bool zoomed) {
             throw new NotImplementedException();

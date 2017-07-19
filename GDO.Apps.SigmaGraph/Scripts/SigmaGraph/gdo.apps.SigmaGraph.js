@@ -7,7 +7,10 @@
 $(function () {
     gdo.consoleOut('.SIGMAGRAPHRENDERER', 1, 'Loaded Sigma Graph Renderer JS');
 
-    $.connection.sigmaGraphAppHub.client.renderGraph = gdo.net.app["SigmaGraph"].renderGraph;
+    $.connection.sigmaGraphAppHub.client.renderGraph = function () {
+        gdo.net.app["SigmaGraph"].renderGraph();
+    };
+
     $.connection.sigmaGraphAppHub.client.pan = function (direction) {
         switch(direction) {
             case 'left':
@@ -390,7 +393,6 @@ $(function () {
 
 gdo.net.app["SigmaGraph"].initClient = function () {
     gdo.net.app["SigmaGraph"].initInstanceGlobals();
-    gdo.net.app["SigmaGraph"].renderGraph();
 
     gdo.consoleOut('.SIGMAGRAPHRENDERER', 1, 'Initializing Graph Renderer App Client at Node ' + gdo.clientId);
 }

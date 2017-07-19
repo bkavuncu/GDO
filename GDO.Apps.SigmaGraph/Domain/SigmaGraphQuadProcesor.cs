@@ -9,7 +9,7 @@ using GDO.Apps.SigmaGraph.QuadTree.Utilities;
 
 namespace GDO.Apps.SigmaGraph.Domain {
     public static class SigmaGraphQuadProcesor {
-        public static void ProcessGraph(GraphInfo graph, string outputfolder) {
+        public static AConcurrentQuadTreeFactory<GraphObject> ProcessGraph(GraphInfo graph, string outputfolder) {
 
             var factory =
                 new ConcurrentQuadTreeFactory<GraphObject>(new QuadCentroid(graph.RectDim.Width, graph.RectDim.Height),
@@ -43,13 +43,14 @@ namespace GDO.Apps.SigmaGraph.Domain {
 
             Console.WriteLine(results + Environment.NewLine + tree);
 
+            return factory;
         }
 
         private static void ExportLeafNodes(ConcurrentQuadTreeFactory<GraphObject> factory, Dictionary<string, QuadTreeNode<GraphObject>> leafs, List<GraphNode> graphNodes, string outputfolder) {
-            Parallel.ForEach(leafs, l => ProcessLeafGraphML(l.Key, factory.GetBagsForQuad(l.Value), graphNodes, outputfolder));
+            Parallel.ForEach(leafs, l => ProcessLeafJSON(l.Key, factory.GetBagsForQuad(l.Value), graphNodes, outputfolder));
         }
 
-        private static void ProcessLeafGraphML(string key, QuadTreeBag<GraphObject>[] quadTreeBag, List<GraphNode> graphNodes, string outputfolder) {
+        private static void ProcessLeafJSON(string key, QuadTreeBag<GraphObject>[] quadTreeBag, List<GraphNode> graphNodes, string outputfolder) {
             /*  
              * todo     
              
@@ -87,9 +88,9 @@ namespace GDO.Apps.SigmaGraph.Domain {
             }
 
             // dump them all to a text file 
-            string outputfile = Path.Combine(outputfolder, "\\graphmls\\", key + ".graphml");
+            string outputfile = Path.Combine(outputfolder, key + ".json");
 
-            GraphMlUtilities.SaveGraph(nodes,edges,outputfile);
+            JSONUtilities.SaveGraph(nodes,edges,outputfile);
 
         }
 

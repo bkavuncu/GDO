@@ -113,7 +113,6 @@
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
-    <Content Include="Scripts\SigmaGraph\browserifiedParser.js" />
     <Content Include="Scripts\SigmaGraph\parseWorker.js" />
     <Content Include="Scripts\SigmaGraph\gdo.apps.SigmaGraph.changeFieldOfView.js" />
     <Content Include="Web\SigmaGraph\graphmls\oneDiagonalEdge.graphml" />
@@ -131,7 +130,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Domain\Domain.cs" />
-    <Compile Include="Domain\GraphMlUtilities.cs" />
+    <Compile Include="Domain\JSONUtilities.cs" />
     <Compile Include="Domain\SigmaGraphProcessor.cs" />
     <Compile Include="Domain\SigmaGraphQuadProcesor.cs" />
     <Compile Include="QuadTree\AConcurrentQuadTreeFactory.cs" />

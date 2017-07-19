@@ -1,12 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.Linq;
 using Microsoft.AspNet.SignalR;
 using GDO.Core;
 using GDO.Core.Apps;
 
-
+// TODO cleanup this file
 namespace GDO.Apps.SigmaGraph
 {
     [Export(typeof(IAppHub))]
@@ -47,7 +49,7 @@ namespace GDO.Apps.SigmaGraph
                     Clients.Caller.setMessage("Processing of raw graph data is completed.");
 
                     // Clients.Group to broadcast and get all clients to update graph
-                    Clients.Group("" + instanceId).renderGraph(folderNameDigit, false);
+                    Clients.Group("" + instanceId).renderGraph();
                     Clients.Caller.setMessage("SigmaGraph is now being rendered.");
 
                     Clients.Caller.setMessage("Requesting fields...");
@@ -64,6 +66,17 @@ namespace GDO.Apps.SigmaGraph
                     Clients.Caller.setMessage(e.ToString());
                     Debug.WriteLine(e);
                 }
+            }
+        }
+
+        public List<string> GetFilesWithin(int instanceId, double x, double y, double xWidth, double yWidth)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                ga = (SigmaGraphApp)Cave.Apps["SigmaGraph"].Instances[instanceId];
+                IEnumerable<string> filePaths = ga.GetFilesWithin(x, y, xWidth, yWidth)
+                    .Select(filePath => "Web/SigmaGraph/QuadTrees/" + filePath);
+                return filePaths.ToList();
             }
         }
 

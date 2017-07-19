@@ -13,6 +13,7 @@ gdo.basePath = "\\Web\\SigmaGraph\\graphmls\\";// todo note that you will NOT be
 gdo.net.app["SigmaGraph"].initInstanceGlobals = function () {
     gdo.consoleOut('.SIGMAGRAPHRENDERER', 1, 'Initializing instance globals');
     // Node global constants.
+    gdo.controlId = gdo.net.node[gdo.clientId].appInstanceId;
     gdo.nodeRow = gdo.net.node[gdo.clientId].sectionRow;
     gdo.nodeCol = gdo.net.node[gdo.clientId].sectionCol;
     gdo.numRows = gdo.net.section[gdo.net.node[gdo.clientId].sectionId].rows;
@@ -57,8 +58,7 @@ gdo.net.app["SigmaGraph"].renderGraph = async function () {//todo note this is a
     gdo.consoleOut('.SIGMAGRAPHRENDERER', 1, 'Rendering graph...');
     // Get location of files containing objects to render.
     gdo.stopWatch = window.performance.now();
-    //const fileNames = gdo.net.app["SigmaGraph"].server.getFilesWithin(xCentroid, yCentroid, xWidth, yWidth);
-    const filePaths = [gdo.basePath + 'marvel_heroes.graphml', gdo.basePath + 'marvel_heroes.graphml'];
+    const filePaths = await getFilesWithin();
     gdo.consoleOut('.RENDERER', 1, 'Time to get graph object file paths: ' + (window.performance.now() - gdo.stopWatch));
 
     // Get the nodes and edges
@@ -77,11 +77,10 @@ gdo.net.app["SigmaGraph"].renderGraph = async function () {//todo note this is a
         gdo.stopWatch = window.performance.now();
         const fileNodesInFOV = fileGraphObjects.nodes;
         fileNodesInFOV.forEach(node => {
-            node.id = node._id;
-            node.x = node._attributes.x;
-            node.y = node._attributes.y;
-            node.color = node._attributes.color || "#f00";
-            node.size = node._attributes.size || 3;
+            node.x = node.pos.x;
+            node.y = node.pos.y;
+            node.color = node.color || "#f00";
+            node.size = node.size || 3;
         });
         gdo.consoleOut('.RENDERER', 1, 'Time to convert nodes into sigma nodes: ' + (window.performance.now() - gdo.stopWatch));
         gdo.stopWatch = window.performance.now();
@@ -95,9 +94,8 @@ gdo.net.app["SigmaGraph"].renderGraph = async function () {//todo note this is a
         gdo.stopWatch = window.performance.now();
         let fileEdgesInFOV = fileGraphObjects.edges;
         fileEdgesInFOV.forEach(edge => {
-            edge.id = edge._id;
-            edge.source = edge._source;
-            edge.target = edge._target;
+            edge.id = edge.source + " to " + edge.target;
+            edge.color = edge.color || "#f00";
         });
         fileEdgesInFOV = fileEdgesInFOV.filter(edgeIsWithinFOV);
         gdo.consoleOut('.RENDERER', 1, 'Time to filter edges: ' + (window.performance.now() - gdo.stopWatch));
@@ -124,6 +122,20 @@ gdo.net.app["SigmaGraph"].renderGraph = async function () {//todo note this is a
     gdo.stopWatch = window.performance.now();
     gdo.sigmaInstance.refresh({ skipIndexation: true });
 };
+
+/**
+ * Returns a list of locations of JSON files which contain graph objects
+ * in this field of view.
+ */
+async function getFilesWithin() {
+    const filePaths = await new Promise((resolve, reject) => {
+        gdo.net.app["SigmaGraph"].server.getFilesWithin(gdo.controlId, gdo.xCentroid, gdo.yCentroid, gdo.xWidth, gdo.yWidth)
+            .done(function(filePaths) {
+                resolve(filePaths);
+            });
+    });
+    return filePaths.map((filePath) => "../../" + filePath);
+}
 
 /**
  * Returns a promise that resolves with the graph objects contained
