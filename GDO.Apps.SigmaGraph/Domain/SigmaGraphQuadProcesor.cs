@@ -45,35 +45,11 @@ namespace GDO.Apps.SigmaGraph.Domain {
 
             //todo now export the whole quadtree so it can be reloaded again later... 
 
-            ExportQuadTree(factory.QuadTree, Path.Combine(outputfolder,"\\quad.xml"));
+            //ExportQuadTree(factory.QuadTree, Path.Combine(outputfolder,"\\quad.xml"));
 
             Console.WriteLine(results + Environment.NewLine + tree);
 
             return factory;
-        }
-
-        private static void ExportQuadTree(QuadTree<GraphObject> factoryQuadTree, string filename) {
-            XmlSerializer xsSubmit = new XmlSerializer(typeof(QuadTreeNode<GraphObject>));
-
-            using (var sww = new StringWriter()) {
-                using (XmlWriter writer = XmlWriter.Create(sww)) {
-                    xsSubmit.Serialize(writer, factoryQuadTree.Root);
-                    var xml = sww.ToString();
-                    File.WriteAllText(filename,xml);
-                }
-            }
-        }
-
-        private static void ExportQuadTree(QuadTree<GraphObject> factoryQuadTree, string filename) {
-            XmlSerializer xsSubmit = new XmlSerializer(typeof(QuadTreeNode<GraphObject>));
-
-            using (var sww = new StringWriter()) {
-                using (XmlWriter writer = XmlWriter.Create(sww)) {
-                    xsSubmit.Serialize(writer, factoryQuadTree.Root);
-                    var xml = sww.ToString();
-                    File.WriteAllText(filename,xml);
-                }
-            }
         }
 
         private static void ExportQuadTree(QuadTree<GraphObject> factoryQuadTree, string filename) {
