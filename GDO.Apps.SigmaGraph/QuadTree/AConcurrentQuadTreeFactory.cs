@@ -210,7 +210,7 @@ namespace GDO.Apps.SigmaGraph.QuadTree
                             while (Worklist.Count <= MaxWorklistSize && foundobj)
                             {
                                 QuadTreeBag<T> bag;
-                                if (GetReworkBag(out bag, QuadTree.treeId))
+                                if (GetReworkBag(out bag, QuadTree.TreeId))
                                 {
                                     Worklist.Enqueue(new Tuple<string, List<T>>(bag.quadId, bag.Objects));
                                     Log("Found a bag to rework");

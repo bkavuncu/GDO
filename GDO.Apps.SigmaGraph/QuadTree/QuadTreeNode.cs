@@ -11,28 +11,28 @@ namespace GDO.Apps.SigmaGraph.QuadTree {
     /// <typeparam name="T">type held within the quadtree</typeparam>
     
     public class QuadTreeNode<T> where T : IQuadable<double> {
-        public string Guid = System.Guid.NewGuid().ToString();
-        public string CreationTime;
-        public QuadCentroid centroid;
+        public string Guid { get; set; }= System.Guid.NewGuid().ToString();
+        public string CreationTime { get; set; }
+        public QuadCentroid Centroid { get; set; }
         public QuadTreeNode<T>[] SubQuads { get; set; }
         //internal QuadTreeNode<T>[] SubQuads { get; set; }
+        [NonSerialized]
         public readonly ConcurrentBag<T> ObjectsInside = new ConcurrentBag<T>();
+        [NonSerialized]
         public readonly ConcurrentDictionary<string, int> Counters = new ConcurrentDictionary<string, int>();
 
-        public string treeId;
-
-        public string nameNode { get; set; }
+        public string TreeId { get; set; }
 
         public QuadTreeNode(double xCentroid, double yCentroid, double xWidth, double yWidth) : this(new QuadCentroid(xCentroid, yCentroid, xWidth,yWidth)) {}
-        public QuadTreeNode(QuadCentroid centroid) { this.centroid = centroid; CreationTime = DateTime.Now.ToString("s/m/H/dd/M/yyyy"); }
+        public QuadTreeNode(QuadCentroid centroid) { this.Centroid = centroid; CreationTime = DateTime.Now.ToString("s/m/H/dd/M/yyyy"); }
 
         // Critical
         public QuadTreeNode(QuadCentroid centroid, string treeId) {
-            this.centroid = centroid;
-            this.treeId = treeId; 
+            this.Centroid = centroid;
+            this.TreeId = treeId; 
         }
         public QuadTreeNode(double xCentroid, double yCentroid, double xWidth, double yWidth, string treeId) : this(new QuadCentroid(xCentroid, yCentroid, xWidth,yWidth)) {
-            this.treeId = treeId;
+            this.TreeId = treeId;
         }
 
         public List<QuadTreeNode<T>> ReturnMatchingQuadrants(T o) {//todo we need to change IQuadable to have methods to be able to work out which quad its in 
@@ -66,8 +66,8 @@ namespace GDO.Apps.SigmaGraph.QuadTree {
 
             for (var j = 0; j < this.SubQuads.Length; j++) {
 
-                var pointInX = SubQuads[j].centroid.xCentroid >= cornersCamera[0] && SubQuads[j].centroid.xCentroid <= cornersCamera[1];
-                var pointInY = SubQuads[j].centroid.yCentroid >= cornersCamera[2] && SubQuads[j].centroid.yCentroid <= cornersCamera[3];
+                var pointInX = SubQuads[j].Centroid.xCentroid >= cornersCamera[0] && SubQuads[j].Centroid.xCentroid <= cornersCamera[1];
+                var pointInY = SubQuads[j].Centroid.yCentroid >= cornersCamera[2] && SubQuads[j].Centroid.yCentroid <= cornersCamera[3];
 
                 if (pointInX && pointInY) {
                     if (indexOfPointed.All(item => item != j)) {
@@ -77,19 +77,19 @@ namespace GDO.Apps.SigmaGraph.QuadTree {
                 } else {
                     var borderInBetweenX =
                     // Touching left border
-                        SubQuads[j].centroid.xCentroid - SubQuads[j].centroid.xWidth / 2 <=  cornersCamera[0]  
-                        && SubQuads[j].centroid.xCentroid + SubQuads[j].centroid.xWidth / 2 >= cornersCamera[0] 
+                        SubQuads[j].Centroid.xCentroid - SubQuads[j].Centroid.xWidth / 2 <=  cornersCamera[0]  
+                        && SubQuads[j].Centroid.xCentroid + SubQuads[j].Centroid.xWidth / 2 >= cornersCamera[0] 
                     // Touching right border
-                    || SubQuads[j].centroid.xCentroid - SubQuads[j].centroid.xWidth / 2 <= cornersCamera[1]
-                        && SubQuads[j].centroid.xCentroid + SubQuads[j].centroid.xWidth / 2 >= cornersCamera[1]
+                    || SubQuads[j].Centroid.xCentroid - SubQuads[j].Centroid.xWidth / 2 <= cornersCamera[1]
+                        && SubQuads[j].Centroid.xCentroid + SubQuads[j].Centroid.xWidth / 2 >= cornersCamera[1]
                         ;
                     var borderInBetweenY =
                         // Touching left border
-                        SubQuads[j].centroid.yCentroid - SubQuads[j].centroid.yWidth / 2 <= cornersCamera[2]
-                        && SubQuads[j].centroid.yCentroid + SubQuads[j].centroid.yWidth / 2 >= cornersCamera[2]
+                        SubQuads[j].Centroid.yCentroid - SubQuads[j].Centroid.yWidth / 2 <= cornersCamera[2]
+                        && SubQuads[j].Centroid.yCentroid + SubQuads[j].Centroid.yWidth / 2 >= cornersCamera[2]
                     // Touching right border
-                    || SubQuads[j].centroid.yCentroid - SubQuads[j].centroid.yWidth / 2 <= cornersCamera[3]
-                        && SubQuads[j].centroid.yCentroid + SubQuads[j].centroid.yWidth / 2 >= cornersCamera[3]
+                    || SubQuads[j].Centroid.yCentroid - SubQuads[j].Centroid.yWidth / 2 <= cornersCamera[3]
+                        && SubQuads[j].Centroid.yCentroid + SubQuads[j].Centroid.yWidth / 2 >= cornersCamera[3]
                         ;
 
             // todo removed for json       Debug.WriteLine("Guid: " + this.Guid + ", cornersCamera: " + cornersCamera() +
@@ -227,15 +227,15 @@ namespace GDO.Apps.SigmaGraph.QuadTree {
                         var cptSubTree = 0;
                         for (var i = 0; i < 2; i++) {
                             for (var j = 0; j < 2; j++) {
-                                double newXCentroid = this.centroid.xCentroid +
-                                                      (i == 0 ? (-this.centroid.xWidth / 4) : this.centroid.xWidth / 4);
-                                double newYCentroid = this.centroid.yCentroid +
-                                                      (j == 0 ? (-this.centroid.yWidth / 4) : this.centroid.yWidth / 4);
-                                double newCentroidWidthX = this.centroid.xWidth / 2;
-                                double newCentroidWidthY = this.centroid.yWidth / 2;
+                                double newXCentroid = this.Centroid.xCentroid +
+                                                      (i == 0 ? (-this.Centroid.xWidth / 4) : this.Centroid.xWidth / 4);
+                                double newYCentroid = this.Centroid.yCentroid +
+                                                      (j == 0 ? (-this.Centroid.yWidth / 4) : this.Centroid.yWidth / 4);
+                                double newCentroidWidthX = this.Centroid.xWidth / 2;
+                                double newCentroidWidthY = this.Centroid.yWidth / 2;
 
                                 // Critical 
-                                newquads[cptSubTree] = new QuadTreeNode<T>(newXCentroid, newYCentroid, newCentroidWidthX, newCentroidWidthY, this.treeId);
+                                newquads[cptSubTree] = new QuadTreeNode<T>(newXCentroid, newYCentroid, newCentroidWidthX, newCentroidWidthY, this.TreeId);
                                 //newquads[cptSubTree] = new QuadTreeNode<T>(newXCentroid, newYCentroid, newCentroidWidth);
                                 registerQuadTree(newquads[cptSubTree].Guid, newquads[cptSubTree]);
                                 cptSubTree++;
