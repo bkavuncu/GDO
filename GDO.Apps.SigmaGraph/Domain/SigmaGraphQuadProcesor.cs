@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 
 namespace GDO.Apps.SigmaGraph.Domain {
     public static class SigmaGraphQuadProcesor {
-        public static ConcurrentQuadTreeFactory<GraphObject> ProcessGraph(GraphInfo graph, string outputfolder) {
+        public static QuadTree<GraphObject> ProcessGraph(GraphInfo graph, string outputfolder) {
 
             var factory =
                 new ConcurrentQuadTreeFactory<GraphObject>(new QuadCentroid(graph.RectDim.Width, graph.RectDim.Height),
@@ -50,7 +50,7 @@ namespace GDO.Apps.SigmaGraph.Domain {
 
             Console.WriteLine(results + Environment.NewLine + tree);
 
-            return factory;
+            return factory.QuadTree;
         }
 
         private static void ExportQuadTree(QuadTree<GraphObject> factoryQuadTree, string filename) {

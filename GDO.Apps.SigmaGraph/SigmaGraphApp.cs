@@ -32,7 +32,7 @@ namespace GDO.Apps.SigmaGraph
        
         public string FolderNameDigit;
         // TODO change to support multiple factories
-        private ConcurrentQuadTreeFactory<GraphObject> currentFactory;
+        private QuadTree<GraphObject> currentQuadTree;
 
         public void Init()
         {
@@ -56,12 +56,12 @@ namespace GDO.Apps.SigmaGraph
 
             if (Directory.Exists(pathToFolder)) {
                 string savedQuadTree = System.Web.HttpContext.Current.Server.MapPath("~/Web/SigmaGraph/QuadTrees/"+FolderNameDigit+"/quad.json");
-                this.currentFactory = JsonConvert.DeserializeObject<ConcurrentQuadTreeFactory<GraphObject>>(File.ReadAllText(savedQuadTree));
+                this.currentQuadTree = JsonConvert.DeserializeObject<QuadTree<GraphObject>>(File.ReadAllText(savedQuadTree));
             } else {
                 Directory.CreateDirectory(pathToFolder);
                 string graphMLfile = System.Web.HttpContext.Current.Server.MapPath("~/Web/SigmaGraph/graphmls/" + filename);
                 var graph = GraphDataReader.ReadGraphMLData(graphMLfile);
-                this.currentFactory = SigmaGraphQuadProcesor.ProcessGraph(graph, basePath + FolderNameDigit);
+                this.currentQuadTree = SigmaGraphQuadProcesor.ProcessGraph(graph, basePath + FolderNameDigit);
             }
         }
 
@@ -72,7 +72,7 @@ namespace GDO.Apps.SigmaGraph
 
         public IEnumerable<string> GetFilesWithin(double x, double y, double xWidth, double yWidth) {
             List<QuadTreeNode<GraphObject>> listResult = new List<QuadTreeNode<GraphObject>>();
-            this.currentFactory.QuadTree.Root.ReturnLeafs(x, y, xWidth, yWidth, listResult);
+            this.currentQuadTree.Root.ReturnLeafs(x, y, xWidth, yWidth, listResult);
             IEnumerable<string> filePaths = listResult
                 .Select(quadTreeNode => this.FolderNameDigit + "/" + quadTreeNode.Guid + ".json");
             return filePaths;
