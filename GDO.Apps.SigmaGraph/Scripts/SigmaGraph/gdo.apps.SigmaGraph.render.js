@@ -9,6 +9,7 @@ gdo.basePath = "\\Web\\SigmaGraph\\graphmls\\";// todo note that you will NOT be
 /**
  * Initialize global constants and variables of this rendering
  * instance.
+ * TODO should reintialize whenever a new graph is uploaded/loaded
  */
 gdo.net.app["SigmaGraph"].initInstanceGlobals = function () {
     console.log('Initializing instance globals');

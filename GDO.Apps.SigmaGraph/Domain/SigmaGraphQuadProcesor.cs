@@ -46,14 +46,14 @@ namespace GDO.Apps.SigmaGraph.Domain {
 
             //todo now export the whole quadtree so it can be reloaded again later... 
 
-            ExportQuadTree(factory.QuadTree, Path.Combine(outputfolder, "quad.json"));
+            ExportQuadTree(factory.QuadTree.Root, Path.Combine(outputfolder, "quad.json"));
 
             Console.WriteLine(results + Environment.NewLine + tree);
 
             return factory.QuadTree;
         }
 
-        private static void ExportQuadTree(QuadTree<GraphObject> factoryQuadTree, string filename) {
+        private static void ExportQuadTree(QuadTreeNode<GraphObject> factoryQuadTree, string filename) {
             string json = JsonConvert.SerializeObject(factoryQuadTree);
             System.IO.File.WriteAllText(@filename, json);
         }
