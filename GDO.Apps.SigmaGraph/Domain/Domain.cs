@@ -154,7 +154,7 @@ namespace GDO.Apps.SigmaGraph.Domain
         public int G { get; set; }
         public int B { get; set; }
         public Dictionary<string, string> Attrs { get; set; }
-        private const double Epsilon = 1E-9;
+        private const double Epsilon = 1E-6;
 
         public override bool IsWithin<T>(QuadTreeNode<T> quadTreeNode)
         {
@@ -191,9 +191,9 @@ namespace GDO.Apps.SigmaGraph.Domain
         /// <returns></returns> true if they intersect and false otherwise
         private bool IntersectsHorizontalSegment(double y, double minX, double maxX)
         {
-            if (Math.Abs(EndPos.X - StartPos.X) <= Epsilon)
+            if (Math.Abs(EndPos.Y - StartPos.Y) <= Epsilon)
             {
-                return StartPos.X >= minX && StartPos.X <= maxX;
+                return Math.Abs(StartPos.Y - y) <= Epsilon || Math.Abs(EndPos.Y - y) <= Epsilon;
             }
             // The lines intersect at (x = 1/m (y-y_o) + x_0, y = y)
             double slope = (EndPos.Y - StartPos.Y) / (EndPos.X - StartPos.X);

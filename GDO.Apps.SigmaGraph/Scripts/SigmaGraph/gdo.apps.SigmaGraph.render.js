@@ -98,8 +98,7 @@ gdo.net.app["SigmaGraph"].renderGraph = async function () {//todo note this is a
             edge.id = edge.source + " to " + edge.target;
             edge.color = edge.color || "#f00";
         });
-        fileEdgesInFOV = fileEdgesInFOV.filter(edgeIsWithinFOV);
-        console.log('Time to filter edges: ' + (window.performance.now() - gdo.stopWatch));
+        console.log('Time to convert edges into sigma edges: ' + (window.performance.now() - gdo.stopWatch));
         gdo.stopWatch = window.performance.now();
         fileEdgesInFOV.forEach(edge => {
             try {
@@ -115,7 +114,7 @@ gdo.net.app["SigmaGraph"].renderGraph = async function () {//todo note this is a
                 node.converted = true;
             }
         });
-        console.log('Time to filter and convert node coordinates: ' + (window.performance.now() - gdo.stopWatch));
+        console.log('Time to convert node coordinates: ' + (window.performance.now() - gdo.stopWatch));
     });
 
     addDebugGrid();
