@@ -104,13 +104,13 @@ fs.readFile(filename, function read(err, data) {
 
         function addLinkedNodes() {
             var linksArr = node.links;
-            linksArr.forEach(function (link) {
+            linksArr.forEach(function(link) {
                 if (link.fromId == node.id) {
                     linkedNodesArr.push(link.toId);
                 } else {
                     linkedNodesArr.push(link.fromId);
                 }
-            })
+            });
         }
 
         addLinkedNodes();
@@ -120,21 +120,22 @@ fs.readFile(filename, function read(err, data) {
             {
                 id: node.id,
                 pos: node.data.pos,
-                adj: node.links.length,    // to get length of connected nodes (adjacent nodes)   // delete
+                adj: node.links.length, // to get length of connected nodes (adjacent nodes)   // delete
                 links: node.links,
                 linkedNodes: linkedNodesArr
             }
-        )
+        );
 
         // for nodes.json
         nodesData.push(
             {
-                id: node.id,  // might be unnecessary (actually good to have it, so that if need to check through json data, could immediately identify which node it is, instead of counting from the start)
+                id:
+                    node.id, // might be unnecessary (actually good to have it, so that if need to check through json data, could immediately identify which node it is, instead of counting from the start)
                 label: node.data.label,
                 pos: node.data.pos,
                 adj: linkedNodesArr //connected nodes
             }
-        )
+        );
 
         // for labels.json
         labelsData.push(node.data.label);

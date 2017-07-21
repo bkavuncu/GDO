@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections;
-using System.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using GDO.Core;
 using Newtonsoft.Json;
 using GDO.Apps.SigmaGraph.Domain;
@@ -15,9 +12,7 @@ using System.Text;
 using Newtonsoft.Json.Linq;
 
 // TODO cleanup this file
-// TODO inconsistent style: first method curly brace on same or next line
-namespace GDO.Apps.SigmaGraph
-{
+namespace GDO.Apps.SigmaGraph {
 
     public class SigmaGraphApp : IBaseAppInstance {
         private static readonly ILog Log = LogManager.GetLogger(typeof(SigmaGraphApp));
@@ -31,18 +26,17 @@ namespace GDO.Apps.SigmaGraph
         public ICompositeAppInstance ParentApp { get; set; }
 
         public GraphInfo graphinfo = new GraphInfo();
-       
+
         public string FolderNameDigit;
         private QuadTreeNode<GraphObject> currentQuadTreeRoot;
 
-        public void Init()
-        {
+        public void Init() {
             try {
                 Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/Web/SigmaGraph/graph"));
                 Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/Web/SigmaGraph/graphmls"));
             }
             catch (Exception e) {
-                Log.Error("failed to launch the Graphs App",e);
+                Log.Error("failed to launch the Graphs App", e);
             }
         }
 
@@ -50,80 +44,76 @@ namespace GDO.Apps.SigmaGraph
         // @param: name of data file (TODO: change it to folder name, that stores nodes and links files)
         // return name of folder that stores processed data
         public void ProcessGraph(string filename, bool zoomed, string folderName, int sectionWidth,
-            int sectionHeight)
-        {
+            int sectionHeight) {
             String basePath = System.Web.HttpContext.Current.Server.MapPath("~/Web/SigmaGraph/QuadTrees/");
             FolderNameDigit = CreateTemporyFolderId(filename, basePath);
             String pathToFolder = basePath + FolderNameDigit;
 
-            if (Directory.Exists(pathToFolder))
-            {
-                string savedQuadTree = System.Web.HttpContext.Current.Server.MapPath("~/Web/SigmaGraph/QuadTrees/" + FolderNameDigit + "/quad.json");
+            if (Directory.Exists(pathToFolder)) {
+                string savedQuadTree =
+                    System.Web.HttpContext.Current.Server.MapPath("~/Web/SigmaGraph/QuadTrees/" + FolderNameDigit +
+                                                                  "/quad.json");
                 JsonSerializerSettings settings = new JsonSerializerSettings();
                 settings.Converters.Add(new QuadTreeNodeConverter());
-                this.currentQuadTreeRoot = JsonConvert.DeserializeObject<QuadTreeNode<GraphObject>>(File.ReadAllText(savedQuadTree), settings);
+                this.currentQuadTreeRoot =
+                    JsonConvert.DeserializeObject<QuadTreeNode<GraphObject>>(File.ReadAllText(savedQuadTree), settings);
             }
-            else
-            {
+            else {
                 Directory.CreateDirectory(pathToFolder);
-                string graphMLfile = System.Web.HttpContext.Current.Server.MapPath("~/Web/SigmaGraph/graphmls/" + filename);
+                string graphMLfile =
+                    System.Web.HttpContext.Current.Server.MapPath("~/Web/SigmaGraph/graphmls/" + filename);
                 var graph = GraphDataReader.ReadGraphMLData(graphMLfile);
                 this.currentQuadTreeRoot = SigmaGraphQuadProcesor.ProcessGraph(graph, basePath + FolderNameDigit).Root;
             }
         }
 
         // TODO: this can go into JSON utilities
-        class QuadTreeNodeConverter : JsonConverter
-        {
-            public override bool CanConvert(Type objectType)
-            {
+        class QuadTreeNodeConverter : JsonConverter {
+            public override bool CanConvert(Type objectType) {
                 return (objectType == typeof(QuadTreeNode<GraphObject>));
             }
 
-            public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-            {
+            public override object ReadJson(JsonReader reader, Type objectType, object existingValue,
+                JsonSerializer serializer) {
                 JObject quadTreeRoot = JObject.Load(reader);
                 QuadTreeNode<GraphObject> quadTreeRootNode = ConvertToQuadTreeNode(quadTreeRoot);
 
-                Stack<Tuple<QuadTreeNode<GraphObject>, JToken>> worklist = new Stack<Tuple<QuadTreeNode<GraphObject>,JToken>>();
+                Stack<Tuple<QuadTreeNode<GraphObject>, JToken>> worklist =
+                    new Stack<Tuple<QuadTreeNode<GraphObject>, JToken>>();
                 worklist.Push(new Tuple<QuadTreeNode<GraphObject>, JToken>(quadTreeRootNode, quadTreeRoot["SubQuads"]));
-                while (worklist.Any())
-                {
+                while (worklist.Any()) {
                     var workItem = worklist.Pop();
                     var parentNode = workItem.Item1;
                     var subQuads = workItem.Item2;
 
                     List<QuadTreeNode<GraphObject>> allSubQuads = new List<QuadTreeNode<GraphObject>>();
-                    foreach (JToken subQuad in subQuads)
-                    {
+                    foreach (JToken subQuad in subQuads) {
                         QuadTreeNode<GraphObject> subQuadNode = ConvertToQuadTreeNode(subQuad);
                         allSubQuads.Add(subQuadNode);
 
                         worklist.Push(new Tuple<QuadTreeNode<GraphObject>, JToken>(subQuadNode, subQuad["SubQuads"]));
                     }
-                    if (allSubQuads.Any())
-                    {
-                        parentNode.SubQuads = allSubQuads.ToArray(); 
+                    if (allSubQuads.Any()) {
+                        parentNode.SubQuads = allSubQuads.ToArray();
                     }
                 }
                 return quadTreeRootNode;
             }
 
-            private static QuadTreeNode<GraphObject> ConvertToQuadTreeNode(JToken quadTreeNodeToken)
-            {
-                double xCentroid = (double)quadTreeNodeToken["Centroid"]["xCentroid"];
-                double yCentroid = (double)quadTreeNodeToken["Centroid"]["yCentroid"];
-                double xWidth = (double)quadTreeNodeToken["Centroid"]["xWidth"];
-                double yWidth = (double)quadTreeNodeToken["Centroid"]["yWidth"];
-                QuadTreeNode<GraphObject> quadTreeNode = new QuadTreeNode<GraphObject>(xCentroid, yCentroid, xWidth, yWidth);
-                quadTreeNode.Guid = (string)quadTreeNodeToken["Guid"];
+            private static QuadTreeNode<GraphObject> ConvertToQuadTreeNode(JToken quadTreeNodeToken) {
+                double xCentroid = (double) quadTreeNodeToken["Centroid"]["xCentroid"];
+                double yCentroid = (double) quadTreeNodeToken["Centroid"]["yCentroid"];
+                double xWidth = (double) quadTreeNodeToken["Centroid"]["xWidth"];
+                double yWidth = (double) quadTreeNodeToken["Centroid"]["yWidth"];
+                QuadTreeNode<GraphObject> quadTreeNode =
+                    new QuadTreeNode<GraphObject>(xCentroid, yCentroid, xWidth, yWidth);
+                quadTreeNode.Guid = (string) quadTreeNodeToken["Guid"];
                 return quadTreeNode;
             }
 
             public override bool CanWrite => false;
 
-            public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-            {
+            public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer) {
                 throw new NotImplementedException();
             }
         }
@@ -146,4 +136,3 @@ namespace GDO.Apps.SigmaGraph
         }
     }
 }
-
