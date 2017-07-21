@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using System.Xml.Linq;
-using GDO.Apps.SigmaGraph.Domain;
 
 namespace GDO.Apps.SigmaGraph.QuadTree.Utilities
 {

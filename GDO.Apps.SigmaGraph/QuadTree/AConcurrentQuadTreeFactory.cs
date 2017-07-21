@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using GDO.Apps.SigmaGraph.Domain;
 using GDO.Apps.SigmaGraph.QuadTree.Utilities;
 
 namespace GDO.Apps.SigmaGraph.QuadTree
@@ -24,7 +23,7 @@ namespace GDO.Apps.SigmaGraph.QuadTree
         protected readonly ConcurrentDictionary<string, QuadTreeNode<T>> Quads =
             new ConcurrentDictionary<string, QuadTreeNode<T>>();
 
-        protected ConcurrentQueue<string> LogMessages = new ConcurrentQueue<string>();
+        private ConcurrentQueue<string> _logMessages = new ConcurrentQueue<string>();
 
         private int _addtasks;
         private int _worktasks;
@@ -77,7 +76,7 @@ namespace GDO.Apps.SigmaGraph.QuadTree
             // check nothing else is running
             if (!CurrentlyAdding.WaitAsync(1000).Result) return false; // todo test
 
-            LogMessages = new ConcurrentQueue<string>();
+            _logMessages = new ConcurrentQueue<string>();
             SetupCountersAndSemaphores(addObjects.Count, workthreads, reworkthreads);
             List<Task> addtasks = StartAddTasks(addObjects);
             List<Task> workertasks = StartWorkerTasks(_worktasks);
@@ -270,7 +269,7 @@ namespace GDO.Apps.SigmaGraph.QuadTree
 
         public string GetLog()
         {
-            return LogMessages.ToArray().Aggregate("", (next, acc) => acc + Environment.NewLine + next);
+            return _logMessages.ToArray().Aggregate("", (next, acc) => acc + Environment.NewLine + next);
         }
 
         /// <summary>

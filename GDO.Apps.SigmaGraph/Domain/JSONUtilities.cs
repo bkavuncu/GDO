@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Xml.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -18,16 +15,18 @@ namespace GDO.Apps.SigmaGraph.Domain {
         /// <param name="fileName">Name of the file  to generate</param>
         public static void SaveGraph(Dictionary<string, GraphNode> nodes, List<GraphLink> edges, string fileName)
         {
-            Dictionary<string, IEnumerable<GraphObject>> graphObjects = new Dictionary<string, IEnumerable<GraphObject>>();
-            graphObjects["nodes"] = nodes.Values;
-            graphObjects["edges"] = edges;
+            Dictionary<string, IEnumerable<GraphObject>> graphObjects =
+                new Dictionary<string, IEnumerable<GraphObject>> {
+                    ["nodes"] = nodes.Values,
+                    ["edges"] = edges
+                };
 
             JsonSerializerSettings settings = new JsonSerializerSettings()
             {
                 ContractResolver = CustomDataContractResolver.Instance
             };
             string json = JsonConvert.SerializeObject(graphObjects, settings);
-            System.IO.File.WriteAllText(@fileName, json);
+            File.WriteAllText(@fileName, json);
         }
 
         public class CustomDataContractResolver : DefaultContractResolver
