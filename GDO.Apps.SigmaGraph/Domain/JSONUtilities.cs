@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using GDO.Core;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -10,14 +12,15 @@ namespace GDO.Apps.SigmaGraph.Domain {
         /// <summary>
         /// Creates some JSON
         /// </summary>
-        /// <param name="nodes">The nodes. (id, name)</param>
+        /// <param name="nodesList">the actual nodes</param>
+        /// <param name="nodeDict">The nodes. (id, name)</param>
         /// <param name="edges">The arcs. id > id </param>
         /// <param name="fileName">Name of the file  to generate</param>
-        public static void SaveGraph(Dictionary<string, GraphNode> nodes, List<GraphLink> edges, string fileName)
+        public static void SaveGraph(List<string> nodesList, Dictionary<string, GraphNode> nodeDict, List<GraphLink> edges, string fileName)
         {
             Dictionary<string, IEnumerable<GraphObject>> graphObjects =
                 new Dictionary<string, IEnumerable<GraphObject>> {
-                    ["nodes"] = nodes.Values,
+                    ["nodes"] = nodesList.Select(n=> nodeDict[n]),
                     ["edges"] = edges
                 };
 
