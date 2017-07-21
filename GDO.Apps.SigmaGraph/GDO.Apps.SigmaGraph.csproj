@@ -131,6 +131,7 @@
   <ItemGroup>
     <Compile Include="Domain\Domain.cs" />
     <Compile Include="Domain\JSONUtilities.cs" />
+    <Compile Include="Domain\QuadTreeNodeConverter.cs" />
     <Compile Include="Domain\SigmaGraphProcessor.cs" />
     <Compile Include="Domain\SigmaGraphQuadProcesor.cs" />
     <Compile Include="QuadTree\AConcurrentQuadTreeFactory.cs" />
