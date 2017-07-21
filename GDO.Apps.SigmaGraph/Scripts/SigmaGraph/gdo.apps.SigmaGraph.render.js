@@ -3,17 +3,14 @@
 */
 
 // Initialize global static constants.
-gdo.epsilon = 1E-9;
+gdo.epsilon = 1E-6;
 gdo.basePath = "\\Web\\SigmaGraph\\graphmls\\";// todo note that you will NOT be able to reply upon this. 
 
 /**
- * Initialize global constants and variables of this rendering
- * instance.
- * TODO should reintialize whenever a new graph is uploaded/loaded
+ * Initialize global constants of this rendering instance.
  */
-gdo.net.app["SigmaGraph"].initInstanceGlobals = function () {
-    console.log('Initializing instance globals');
-    // Node global constants.
+gdo.net.app["SigmaGraph"].initInstanceGlobalConstants = function() {
+    console.log('Initializing instance global constants');
     gdo.controlId = gdo.net.node[gdo.clientId].appInstanceId;
     gdo.nodeRow = gdo.net.node[gdo.clientId].sectionRow;
     gdo.nodeCol = gdo.net.node[gdo.clientId].sectionCol;
@@ -25,23 +22,32 @@ gdo.net.app["SigmaGraph"].initInstanceGlobals = function () {
     gdo.canvasHeightInPx = positionInfo.height / 2;
     gdo.canvasWidthInPx = positionInfo.width / 2;
     gdo.sigmaInstance = new sigma({
-        renderers: [{
-            type: 'webgl',
-            container: gdo.graphContainer
-        }],
+        renderers: [
+            {
+                type: 'webgl',
+                container: gdo.graphContainer
+            }
+        ],
         settings: {
             autoRescale: false
         }
     });
-    gdo.sigmaInstance.renderers[0].bind('render', function(e) {
-        console.log('Time to render: ' + (window.performance.now() - gdo.stopWatch));
-    });
-    gdo.numParseWorkers = 1;
+    gdo.sigmaInstance.renderers[0].bind('render',
+        function(e) {
+            console.log('Time to render: ' + (window.performance.now() - gdo.stopWatch));
+        });
+    gdo.numParseWorkers = 2;
     gdo.parseWorkers = [...Array(gdo.numParseWorkers)].map(function() {
         return new Worker("../Scripts/SigmaGraph/parseWorker.js");
     });
+    gdo.parallelParse = false;
+}
 
-    // Node global variables.
+/**
+ * Initialize global variables of this rendering instance.
+ */
+gdo.net.app["SigmaGraph"].initInstanceGlobalVariables = function () {
+    console.log('Initializing instance global variables');
     gdo.xWidth = 1 / gdo.numCols;
     gdo.yWidth = 1 / gdo.numRows;
     gdo.xCentroid = gdo.xWidth * gdo.nodeCol + gdo.xWidth / 2;
@@ -49,8 +55,8 @@ gdo.net.app["SigmaGraph"].initInstanceGlobals = function () {
     gdo.totalRatio = 1;
     gdo.xTotalShift = 0;
     gdo.yTotalShift = 0;
-    gdo.parallelParse = false;
-};
+    gdo.sigmaInstance.graph.clear();
+}
 
 /**
  * Renders the graph.
@@ -121,7 +127,7 @@ gdo.net.app["SigmaGraph"].renderGraph = async function () {//todo note this is a
     // Render the new graph
     gdo.stopWatch = window.performance.now();
     gdo.sigmaInstance.refresh({ skipIndexation: true });
-};
+}
 
 /**
  * Returns a list of locations of JSON files which contain graph objects

@@ -7,9 +7,13 @@
 $(function () {
     gdo.consoleOut('.SIGMAGRAPHRENDERER', 1, 'Loaded Sigma Graph Renderer JS');
 
+    $.connection.sigmaGraphAppHub.client.initInstanceGlobalVariables = function() {
+        gdo.net.app["SigmaGraph"].initInstanceGlobalVariables();
+    }
+
     $.connection.sigmaGraphAppHub.client.renderGraph = function () {
         gdo.net.app["SigmaGraph"].renderGraph();
-    };
+    }
 
     $.connection.sigmaGraphAppHub.client.pan = function (direction) {
         switch(direction) {
@@ -28,7 +32,7 @@ $(function () {
             default:
                 console.log('cannot pan this way');
         }
-    };
+    }
 
     $.connection.sigmaGraphAppHub.client.zoom = gdo.net.app["SigmaGraph"].zoom;
 
@@ -392,8 +396,7 @@ $(function () {
 });
 
 gdo.net.app["SigmaGraph"].initClient = function () {
-    gdo.net.app["SigmaGraph"].initInstanceGlobals();
-
+    gdo.net.app["SigmaGraph"].initInstanceGlobalConstants();
     gdo.consoleOut('.SIGMAGRAPHRENDERER', 1, 'Initializing Graph Renderer App Client at Node ' + gdo.clientId);
 }
 

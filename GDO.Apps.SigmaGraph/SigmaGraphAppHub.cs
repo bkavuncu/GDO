@@ -41,6 +41,9 @@ namespace GDO.Apps.SigmaGraph
                     self = this;
                     this.ControllerId = Context.ConnectionId;
 
+                    // Tell clients to reset their field of view for a new graph
+                    Clients.Group("" + instanceId).initInstanceGlobalVariables();
+
                     // create SigmaGraphApp project and call its function to process graph
                     ga = (SigmaGraphApp)Cave.Apps["SigmaGraph"].Instances[instanceId];
                     
