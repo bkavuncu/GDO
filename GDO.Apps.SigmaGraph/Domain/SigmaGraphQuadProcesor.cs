@@ -67,7 +67,8 @@ namespace GDO.Apps.SigmaGraph.Domain {
              * for the edges retrive the nodes connected
              * dump it all to text file. 
              */
-            Dictionary<string, GraphNode> nodes = new Dictionary<string, GraphNode>();
+            Dictionary<string, GraphNode> nodeDict = new Dictionary<string, GraphNode>();
+         
             List<GraphLink> edges = new List<GraphLink>();
 
 
@@ -77,29 +78,20 @@ namespace GDO.Apps.SigmaGraph.Domain {
                     edges.Add(graphObject as GraphLink);
                 } else if (graphObject is GraphNode) {
                     var graphNode = graphObject as GraphNode;
-                    nodes.Add(graphNode.ID,graphNode);
+                    nodeDict.Add(graphNode.ID,graphNode);
                 }
                 else {
                     throw new ArgumentException("unknown graph object type");
                 }
             }
 
-            // for the edges retrive the nodes connected
-            foreach (var edge in edges) {
-                if (!nodes.ContainsKey(edge.Source)) {
-                    var node = graphNodes.First(n => n.ID == edge.Source);
-                    nodes.Add(node.ID, node);
-                }
-                if (!nodes.ContainsKey(edge.Target)) {
-                    var node = graphNodes.First(n => n.ID == edge.Target);
-                    nodes.Add(node.ID, node);
-                }
-            }
+            List<string> nodes = edges.Select(e => e.Source).Union(edges.Select(e => e.Target))
+                .Union(nodeDict.Keys).Distinct().ToList();
 
             // dump them all to a text file 
             string outputfile = Path.Combine(outputfolder, key + ".json");
 
-            JSONUtilities.SaveGraph(nodes,edges,outputfile);
+            JSONUtilities.SaveGraph(nodeDict,edges,outputfile);
 
         }
 
