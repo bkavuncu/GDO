@@ -49,74 +49,63 @@ namespace GDO.Apps.SigmaGraph.QuadTree {
             return this.GetSubQuads(indexOfPointed);*/
         }
 
-        public QuadTreeNode<T>[] ReturnQuadrants(double x, double y, double xWidth,double yWidth)
+        //TODO  rewriting this co-recursive function 
+        public QuadTreeNode<T>[] ReturnMatchingQuadrants(double xCentroid, double ycentroid, double xWidth,double yWidth)
         {
-            // A new filtering algorithm, using the xWidth, verifying for the 4 child of the nodesolo
-
-            List<double> cornersCamera = new List<double>();
-            cornersCamera.Add(x - xWidth/2 ); // xMin
-            cornersCamera.Add(x + xWidth/2 ); // xMax
-            cornersCamera.Add(y - yWidth/2 ); // yMin
-            cornersCamera.Add(y + yWidth/2 ); // yMax
-
-            List<int> indexOfPointed = new List<int>();
-            List<string> indexGuids = new List<string>();
-            // Naive algorithm, but seems ok
-            // for each corner, verify if coordinates within the centroids +- xWidth/2 and then add it to the list of matching sub quad trees
-
-            for (var j = 0; j < this.SubQuads.Length; j++) {
-
-                var pointInX = SubQuads[j].Centroid.xCentroid >= cornersCamera[0] && SubQuads[j].Centroid.xCentroid <= cornersCamera[1];
-                var pointInY = SubQuads[j].Centroid.yCentroid >= cornersCamera[2] && SubQuads[j].Centroid.yCentroid <= cornersCamera[3];
-
-                if (pointInX && pointInY) {
-                    if (indexOfPointed.All(item => item != j)) {
-                        indexOfPointed.Add(j);
-                        indexGuids.Add(SubQuads[j].Guid);
-                    }
-                } else {
-                    var borderInBetweenX =
-                    // Touching left border
-                        SubQuads[j].Centroid.xCentroid - SubQuads[j].Centroid.xWidth / 2 <=  cornersCamera[0]  
-                        && SubQuads[j].Centroid.xCentroid + SubQuads[j].Centroid.xWidth / 2 >= cornersCamera[0] 
-                    // Touching right border
-                    || SubQuads[j].Centroid.xCentroid - SubQuads[j].Centroid.xWidth / 2 <= cornersCamera[1]
-                        && SubQuads[j].Centroid.xCentroid + SubQuads[j].Centroid.xWidth / 2 >= cornersCamera[1]
-                        ;
-                    var borderInBetweenY =
-                        // Touching left border
-                        SubQuads[j].Centroid.yCentroid - SubQuads[j].Centroid.yWidth / 2 <= cornersCamera[2]
-                        && SubQuads[j].Centroid.yCentroid + SubQuads[j].Centroid.yWidth / 2 >= cornersCamera[2]
-                    // Touching right border
-                    || SubQuads[j].Centroid.yCentroid - SubQuads[j].Centroid.yWidth / 2 <= cornersCamera[3]
-                        && SubQuads[j].Centroid.yCentroid + SubQuads[j].Centroid.yWidth / 2 >= cornersCamera[3]
-                        ;
-
-            // todo removed for json       Debug.WriteLine("Guid: " + this.Guid + ", cornersCamera: " + cornersCamera() +
-            //                       ", SubQuads[j].centroid " + SubQuads[j].centroid.ToJson()
-            //                       + ", inBetweenX : " + borderInBetweenX + ", inBetweenY: " + borderInBetweenY);
-                    if (borderInBetweenX && borderInBetweenY) {
-                        Debug.WriteLine("InBetweenX && inBetweenY");
-                        // What was that for?
-                        if (indexOfPointed.All(item => item != j)) {
-                            indexOfPointed.Add(j);
-                            indexGuids.Add(SubQuads[j].Guid);
-                        }
-                    }
-                }
-            }
-            
-            return this.GetSubQuadss(indexOfPointed);
+            return this.SubQuads.Where(s => QuadMatchesRectangle(s, ComputeCorners(xCentroid, ycentroid, xWidth, yWidth))).ToArray();
         }
 
+        private static List<double> ComputeCorners(double xCentroid, double ycentroid, double xWidth, double yWidth) {
+            List<double> cornersCamera = new List<double>();
+            cornersCamera.Add(xCentroid - xWidth / 2); // xMin
+            cornersCamera.Add(xCentroid + xWidth / 2); // xMax
+            cornersCamera.Add(ycentroid - yWidth / 2); // yMin
+            cornersCamera.Add(ycentroid + yWidth / 2); // yMax
+            return cornersCamera;
+        }
 
+        /// <summary>
+        /// TODO this code does need to be unit tested to ensure that the math is correct 
+        /// </summary>
+        /// <param name="quad">The quad.</param>
+        /// <param name="cornersCamera">The corners camera.</param>
+        /// <returns>true upon match</returns>
+        private bool QuadMatchesRectangle(QuadTreeNode<T> quad, List<double> cornersCamera) {
 
-        private QuadTreeNode<T>[] GetSubQuadss(List<int> indexOfPointed) {
-            List<QuadTreeNode<T>> listNodes = new List<QuadTreeNode<T>>();
-            for (var i = 0; i < indexOfPointed.Count; i++) {
-                listNodes.Add(SubQuads[indexOfPointed[i]]);
+            // for each corner, verify if coordinates within the centroids +- xWidth/2 and then add it to the list of matching sub quad trees
+            var pointInX = quad.Centroid.xCentroid >= cornersCamera[0] &&
+                           quad.Centroid.xCentroid <= cornersCamera[1];
+            var pointInY = quad.Centroid.yCentroid >= cornersCamera[2] &&
+                           quad.Centroid.yCentroid <= cornersCamera[3];
+
+            if (pointInX && pointInY) {
+                return true;
             }
-            return listNodes.ToArray();
+
+            var borderInBetweenX =
+                    // Touching left border
+                    quad.Centroid.xCentroid - quad.Centroid.xWidth / 2 <= cornersCamera[0]
+                    && quad.Centroid.xCentroid + quad.Centroid.xWidth / 2 >= cornersCamera[0]
+                    // Touching right border
+                    || quad.Centroid.xCentroid - quad.Centroid.xWidth / 2 <= cornersCamera[1]
+                    && quad.Centroid.xCentroid + quad.Centroid.xWidth / 2 >= cornersCamera[1]
+                ;
+            var borderInBetweenY =
+                    // Touching left border
+                    quad.Centroid.yCentroid - quad.Centroid.yWidth / 2 <= cornersCamera[2]
+                    && quad.Centroid.yCentroid + quad.Centroid.yWidth / 2 >= cornersCamera[2]
+                    // Touching right border
+                    || quad.Centroid.yCentroid - quad.Centroid.yWidth / 2 <= cornersCamera[3]
+                    && quad.Centroid.yCentroid + quad.Centroid.yWidth / 2 >= cornersCamera[3]
+                ;
+
+
+            if (borderInBetweenX && borderInBetweenY) {
+                return true;;
+                    
+            }
+
+            return false; 
         }
 
         // todo check function to query through two different dimensions
@@ -131,7 +120,7 @@ namespace GDO.Apps.SigmaGraph.QuadTree {
             // Else, return the quadrants that match
             else
             {
-                QuadTreeNode<T>[] subQuads = ReturnQuadrants(x, y, xWidth,yWidth);
+                QuadTreeNode<T>[] subQuads = ReturnMatchingQuadrants(x, y, xWidth,yWidth);
                 foreach (var subQuad in subQuads)
                 {
                     //foreach (var returnLeaf in subQuad.ReturnLeafs(raVal, decVal, fovVal))
@@ -150,7 +139,7 @@ namespace GDO.Apps.SigmaGraph.QuadTree {
             // Else, return the quadrants that match
             else
             {
-                QuadTreeNode<T>[] subQuads = ReturnQuadrants(raVal, decVal, fovVal,fovVal);
+                QuadTreeNode<T>[] subQuads = ReturnMatchingQuadrants(raVal, decVal, fovVal,fovVal);
                 foreach (var subQuad in subQuads) {
                     //foreach (var returnLeaf in subQuad.ReturnLeafs(raVal, decVal, fovVal))
                     //    { yield return returnLeaf;}
@@ -193,7 +182,7 @@ namespace GDO.Apps.SigmaGraph.QuadTree {
             else
             {
                 // todo 
-                QuadTreeNode<T>[] subQuads = ReturnQuadrants(raVal, decVal, fovValX,fovValY);
+                QuadTreeNode<T>[] subQuads = ReturnMatchingQuadrants(raVal, decVal, fovValX,fovValY);
                 foreach (var subQuad in subQuads)
                 {
                     //foreach (var returnLeaf in subQuad.ReturnLeafs(raVal, decVal, fovVal))
@@ -275,5 +264,40 @@ namespace GDO.Apps.SigmaGraph.QuadTree {
             return rez;
         }
 
+        /// <summary>
+        /// work our way through the quadtree finding leaves which overlap with the defined rectangle 
+        /// </summary>
+        /// <param name="xcenter">The xcenter.</param>
+        /// <param name="ycenter">The ycenter.</param>
+        /// <param name="xWidth">Width of the x.</param>
+        /// <param name="yWidth">Width of the y.</param>
+        /// <returns></returns>
+        public List<string> ReturnMatchingLeaves(double xcenter, double ycenter, double xWidth, double yWidth) {
+
+            List<QuadTreeNode<T>> matchingleaves = new List<QuadTreeNode<T>>();
+            Stack<QuadTreeNode<T>> workList = new Stack<QuadTreeNode<T>>();// holds matching quadtree bits
+
+            if (QuadMatchesRectangle(this, ComputeCorners(xcenter, ycenter, xWidth, yWidth))) {
+                workList.Push(this);
+            }
+
+
+            while (workList.Any()) {
+                var q = workList.Pop();
+
+
+                if (q.IsLeaf()) {
+                    matchingleaves.Add(q);
+                }
+                else {
+                    foreach (var sq in q.ReturnMatchingQuadrants(xcenter, ycenter, xWidth, yWidth)) {
+                        workList.Push(sq);// only add things which match
+                    }
+                }
+            }
+
+            
+            return matchingleaves.Select(q=> q.Guid).ToList();
+        }
     }
 }
