@@ -398,112 +398,67 @@
                         </div>
                         <div class="panel-body">
                             <fieldset id="graph_UI">
+                                @* Cool Stuff
+                                    <input size="2" class="input_field" type="text" id="allNodeSize" value="3">
+                                    <input type="color" id="color_mostConnectedLabels" value="#ff0000" class="color_field">
+                                *@
                                 <table style="width: 100%; background: transparent">
                                     <tr>
-                                        <td style="width: 40%;">
-                                            <label> Colour Scheme </label>
-                                            <br />
-                                            <button class='btn btn-primary' id="blue">Blue</button>
-                                            <button class='btn btn-success' id="green">Green</button>
-                                            <button class='btn btn-warning' id="orange">Orange</button>
-                                            <button class='btn btn-danger' id="red">Red</button>
-                                            <br />
-                                            <br />
-                                            <br />
-                                            <label> for All nodes </label>
-                                            <br/>
-                                            <table style="border-collapse: separate; border-spacing: 1px;">
-                                                <tr>
-                                                    <td><button class='btn btn-default FLAG_ON' id="toggle_nodeSize"><i class='fa  fa-circle  fa-fw'></i>&nbsp;Same size</button></td>
-                                                    <td>&nbsp;Default size: &nbsp;</td>
-                                                    <td><input size="2" class="input_field" type="text" id="allNodeSize" value="3"/></td>
-                                                </tr>
-                                                <tr><td><button class='btn btn-default FLAG_ON' id="toggle_links"><i class='fa  fa-link  fa-fw'></i>&nbsp;Hide Links</button></td></tr>
-                                                <tr>
-                                                    <td><button class='btn btn-default FLAG_OFF' id="toggle_labels"><i class='fa  fa-tag  fa-fw'></i>&nbsp;Show</button></td>
-                                                    <td><select id="select_label" required class="input_field"></select></td>
-                                                    <td><span>&nbsp;as labels&nbsp;</span></td>
-                                                    <td><input type="color" id="color_Labels" value="#FFFFFF" class="color_field"></td>
-                                                </tr>
-                                            </table>
-                                            <br/>
-                                            <br/>
-                                            <br/>
-                                            <label> Toggle panning </label>
-                                            <br/>
-                                            <table style="border-collapse: separate; border-spacing: 1px;">
-                                                <tr>
-                                                    <td></td>
-                                                    <td><button class='btn btn-default' id="up"><i class='fa  fa-arrow-circle-up fa-fw'></i>&nbsp;</button></td>
-                                                    <td></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><button class='btn btn-default' id="left"><i class='fa  fa-arrow-circle-left  fa-fw'></i>&nbsp;</button></td>
-                                                    <td></td>
-                                                    <td><button class='btn btn-default' id="right"><i class='fa  fa-arrow-circle-right fa-fw'></i>&nbsp;</button></td>
-                                                </tr>
-                                                <tr>
-                                                    <td></td>
-                                                    <td><button class='btn btn-default' id="down"><i class='fa  fa-arrow-circle-down fa-fw'></i>&nbsp;</button></td>
-                                                    <td></td>
-                                                </tr>
-                                            </table>
-
-                                            <label> Toggle zooming </label>
-                                            <br/>
-                                            <button class='btn btn-default' id="zoomIn"><i class='fa  fa-plus-circle  fa-fw'></i>&nbsp;Zoom in</button>
-                                            <button class='btn btn-default' id="zoomOut"><i class='fa  fa-minus-circle  fa-fw'></i>&nbsp;Zoom out</button>
-                                            <br/>
-                                            <br/>
-                                            <br/>
-
+                                        <td style="width: 20%">
+                                            <label>Object</label>
                                         </td>
-                                        <td style="width: 60%;">
-                                            <label> Most connected </label>
-                                            <br />
+                                        <td style="width: 20%">
+                                            <label>Property</label>
+                                        </td>
+                                        <td style="width: 20%">
+                                            <label>Visual Attribute</label>
+                                        </td>
+                                        <td style="width: 20%">
+                                            <label>Value</label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 20%">
+                                            <select id="select_object" required="" class="input_field"></select>
+                                        </td>
+                                        <td style="width: 20%">
+                                            <select id="select_property" required="" class="input_field"></select>
+                                        </td>
+                                        <td style="width: 20%">
+                                            <select id="select_visual_attribute" required="" class="input_field"></select>
+                                        </td>
+                                        <td style="width: 20%">
+                                            <select id="select_value" required="" class="input_field"></select>
+                                        </td>
+                                        <td style="width: 20%">
+                                            <button class="btn btn-danger" id="red">Apply</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <label> Toggle panning </label> <br/>
                                             <table style="border-collapse: separate; border-spacing: 1px;">
-                                                <tr>
-                                                    <td><button class='btn btn-default' id="show_mostConnectedNodes">Highlight</button></td>
-                                                    <td><input type="color" id="color_mostConnectedNodes" value="#ffff00" class="color_field"></td>
-                                                    <td>&nbsp;nodes with more than&nbsp;</td>
-                                                    <td><input class="input_field" size="4" type="text" id="numLinks" value="5" /></td>
-                                                    <td>&nbsp;links</td>
+                                                <tbody><tr>
+                                                    <td></td>
+                                                    <td><button class="btn btn-default" id="up"><i class="fa  fa-arrow-circle-up fa-fw"></i>&nbsp;</button></td>
+                                                    <td></td>
                                                 </tr>
                                                 <tr>
-                                                    <td><button class='btn btn-default' id="toggle_mostConnectedLabels"><i class='fa  fa-tag  fa-fw'></i>&nbsp;Show</button></td>
-                                                    <td><select id="select_mostConnectedLabels" required class="input_field"></select></td>
-                                                    <td><span>&nbsp;as labels&nbsp;</span></td>
-                                                    <td><input type="color" id="color_mostConnectedLabels" value="#ff0000" class="color_field"></td>
+                                                    <td><button class="btn btn-default" id="left"><i class="fa  fa-arrow-circle-left  fa-fw"></i>&nbsp;</button></td>
+                                                    <td></td>
+                                                    <td><button class="btn btn-default" id="right"><i class="fa  fa-arrow-circle-right fa-fw"></i>&nbsp;</button></td>
                                                 </tr>
+                                                <tr>
+                                                    <td></td>
+                                                    <td><button class="btn btn-default" id="down"><i class="fa  fa-arrow-circle-down fa-fw"></i>&nbsp;</button></td>
+                                                    <td></td>
+                                                </tr>
+                                                </tbody>
                                             </table>
-                                            <button class='btn btn-default' id="hide_mostConnected">Hide all</button>
-                                            <br />
-                                            <br />
-                                            <br />
-                                            <br />
-                                            <label> Search </label>
-                                            <br />
-                                            <table style="border-collapse: separate; border-spacing: 1px;">
-                                                <tr>
-                                                    <td><button class='btn btn-default' id="startSearch">Search</button></td>
-                                                    <td><span>&nbsp;nodes with&nbsp;</span></td>
-                                                    <td><input class="input_field" size="60" type="text" id="searchKeywords"/></td>
-                                                    <td><span>&nbsp;in&nbsp;</span></td>
-                                                    <td><select id="select_SearchFields" required class="input_field"></select></td>
-                                                </tr>
-                                            </table>
-                                            <table style="border-collapse: separate; border-spacing: 1px;">
-                                                <tr>
-                                                    <td><button class='btn btn-default' id="toggle_searchLabels"><i class='fa  fa-tag  fa-fw'></i>&nbsp;Show</button></td>
-                                                    <td><select id="select_SearchLabels" required class="input_field"></select></td>
-                                                    <td><span>&nbsp;as labels&nbsp;</span></td>
-                                                    <!--  <td><input type="color" id="color_SearchLabels" value="#ff0000" class="color_field"></td>  -->
-                                                </tr>
-                                            </table>
-                                                <button class='btn btn-default' id="hide_sublinks">Hide links</button>
-                                                <button class='btn btn-default' id="hide_search">Hide all</button>
-                                            <br/>
-                                      </td>
+                                            <label> Toggle zooming </label> <br/>
+                                            <button class="btn btn-default" id="zoomIn"><i class="fa  fa-plus-circle  fa-fw"></i>&nbsp;Zoom in</button>
+                                            <button class="btn btn-default" id="zoomOut"><i class="fa  fa-minus-circle  fa-fw"></i>&nbsp;Zoom out</button>
+                                        </td>
                                     </tr>
                                 </table>
                             </fieldset>
