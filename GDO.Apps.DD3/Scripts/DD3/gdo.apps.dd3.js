@@ -71,7 +71,7 @@ dd3Net.onClientCallbackFunc();
 
 //BAI: this function is called in gdo "initClient" function.
 var initDD3App = function () {
-    
+
     //Retrieve the d3 library element
     //BAI: each test_bench (control.cshtml) will be regarded as an iframe and will be embedded into "Instances.cshtml" file which is defiend in the root GOD solution (GDO/Web/Instances.cshtml).
     //BAI: only the test_bench which is running will not be set "display:none" and it will be shown in the GDO environment (Instance panel in the GDO management website). 
@@ -109,7 +109,7 @@ var initDD3App = function () {
                 }
                 return false;
             },
-            
+
             /**Clamp a value between a min and a max */
 
             clamp: function (value, min, max) {
@@ -271,7 +271,6 @@ var initDD3App = function () {
                     var obj = {};
 
                     if (request._keys !== null) {
-                        if (!(request._keys instanceof Array)) utils.log("V4 Error: request._keys is a Map and handled as an array",4);
                         request._keys.forEach(function (k) {
                             obj[k] = d[k];
                         });
@@ -343,7 +342,7 @@ var initDD3App = function () {
                 if (isIn(data[i])) {
                     var d = utils.clamp(approx - counter, -approx, 0);
 
-                    for (var j = Math.max(i + d, 0); j <= i; j++) {
+                    for (var j = Math.max(i + d, 0) ; j <= i; j++) {
                         pts.push(data[j]);
                     }
 
@@ -445,7 +444,6 @@ var initDD3App = function () {
                     return false;
                 }
 
-                if (!(callbackListener[newState] instanceof Array)) utils.log("V4 Error: callbackListener[newState]  is a Map and handled as an array",4);
                 callbackListener[newState].forEach(function (f) { f(); });
                 return true;
             };
@@ -456,7 +454,7 @@ var initDD3App = function () {
             ready: [],
             fatal: []
         };
-   
+
         var dd3_data = {}, // Storing functions
             data = {}; // Storing data
 
@@ -504,7 +502,7 @@ var initDD3App = function () {
                 }
                 //console.log("before dd3Net new");
                 //dd3Net = new DD3Net();
-               // console.log("after dd3Net new", dd3Net);
+                // console.log("after dd3Net new", dd3Net);
                 //dd3Net.defineNet();
                 //console.log("define dd3Net.defineNet()", dd3Net);
                 state('connecting');
@@ -589,7 +587,7 @@ var initDD3App = function () {
                 //dd3Net = new DD3Net();
 
 
-                
+
                 //var netConfig = {
                 //    host: "129.31.194.142",
                 //    port: 33333, 
@@ -664,9 +662,9 @@ var initDD3App = function () {
                             console.log(objAry);
 
                             //init.connectToSignalRServer();
-                            
+
                             init.getCaveConfiguration(JSON.stringify(objAry));
-                            
+
                         });
                     };
 
@@ -675,7 +673,7 @@ var initDD3App = function () {
                     //setInterval(getList, 1000);     // wait until all nodes connected, may not need
 
                     //init.getCaveConfiguration(JSON.stringify(objAry));
-                    
+
                     // SignalR SWITCH
                     init.connectToSignalRServer();  // after 'open', because of peerid
 
@@ -776,7 +774,7 @@ var initDD3App = function () {
                 //signalR.server = dd3Server.server;
                 //signalR.client = dd3Server.client;
                 //signalR.sid = dd3Server.instanceId;
-                
+
                 // Define server interaction functions
                 //signalR_callback.receiveConfiguration = init.getCaveConfiguration;
                 //signalR_callback.receiveSynchronize = dd3NetS.receiveSynchronize;
@@ -785,7 +783,7 @@ var initDD3App = function () {
                 //dd3NetS.setClientCallbackFunc(init.getCaveConfiguration, {});
                 //dd3Net.setClientCallbackFunc(init.getCaveConfiguration, {}); 
 
-              
+
 
                 dd3Net.setClientCallbackFunc({ caveConfigurationObj: init.getCaveConfiguration });
                 console.log("dd3Net.signalR_callback", dd3Net.signalR_callback);
@@ -879,7 +877,7 @@ var initDD3App = function () {
                 //console.log('x_array', x_array);
                 //dd3Net.setConnection(d3.range(0, cave.rows).map(function() { return []; }));
                 dd3Net.connections = d3.range(0, cave.rows).map(function () { return []; });
-                
+
                 //console.log(dd3NetP.connections);
                 //peer.buffers is the buffer of the data sent from this node to another one
                 //dd3NetP.setBuffer(d3.range(0, cave.rows).map(function () { return []; }));
@@ -991,6 +989,7 @@ var initDD3App = function () {
             var pr = function (s) {
                 return "dd3_" + s;
             };
+
             //BAI: data and dd3_data are both arguments defined as the beginning.
             //BAI: data is retrieved by the responding functions like getBounds, getDimensions...
             dd3_data.data = data;
@@ -1225,11 +1224,11 @@ var initDD3App = function () {
                 orientation = orientation || "bottom";
 
 
-                var r=[],
+                var r = [],
                     toGlobal = slsg[orientation === "bottom" || orientation === "top" ? 'left' : 'top'],
                     limits = limit || {};
-                
-                for ( var ky in scale.domain()){
+
+                for (var ky in scale.domain()) {
                     r.push(scale(ky));
                 }
 
@@ -1261,7 +1260,7 @@ var initDD3App = function () {
                     else
                         dd3Net.net.server.getBarData(gdo_appInstanceId, request);
 
-                        
+
 
                     //console.log(JSON.stringify(request));
 
@@ -1308,7 +1307,7 @@ var initDD3App = function () {
                         else
                             //dd3Net.net.server.getData(gdo_appInstanceId, request);
 
-                        console.log("PIE: " + JSON.stringify(request));
+                            console.log("PIE: " + JSON.stringify(request));
 
                         // Shor. odata interface - pie data
                         var dataType = dataName;
@@ -1373,8 +1372,8 @@ var initDD3App = function () {
             //BAI: this function will be called when any this kind of data retrieval function "dd3NetS.net.server.getPointData(dd3NetS.sid, request);" get the data.
             dd3_data.receiveData = function (dataName, dataId, dataPoints) {
                 utils.log("Data received : " + dataName + " (" + dataId + ")", 1);
-                
-                if(utils.isJSON(dataPoints)) dataPoints = JSON.parse(dataPoints);
+
+                if (utils.isJSON(dataPoints)) dataPoints = JSON.parse(dataPoints);
 
                 if (dataPoints.error) {
                     utils.log("Error requesting data : " + dataPoints.error, 3);
@@ -1401,10 +1400,8 @@ var initDD3App = function () {
             //signalR_callback.receiveRemoteDataReady = dd3_data.receiveRemoteDataReady;
 
             //BAI: only used for signalR, the first parameter has been set when init caveconfiguration.
-            console.log("dd3Net.setClientCallbackFunc({}, dd3_data);");
             dd3Net.setClientCallbackFunc({ dd3DataObj: dd3_data });
 
-            
 
             /**
              * PEER FUNCTIONS
