@@ -163,6 +163,13 @@
                 }
             });
 
+            $('#centerDistributedCircles').click(function () {
+                if (dcircles) {
+                    controlTestBench.server.sendOrder(instanceId, controlTestBench.order("startCenterDistributedCircles", []), true);
+                    controlTestBench.eventLog.push([new Date().getTime(), "Centering Distributed Circles"]);
+                }
+            });
+
             // == Group Transition ==
 
             $('#createPolygon').click(function () {

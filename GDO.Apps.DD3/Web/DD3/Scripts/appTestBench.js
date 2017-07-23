@@ -153,17 +153,17 @@
                 .attr("dominant-baseline", "text-before-edge")
                 .attr("transform", 'translate(' + [p.left(0), p.top(0)] + ')');
 
-            dd3.defineEase("bounce", d3.easeBounceIn);
+            dd3.defineEase("easeCubicOut", d3.easeCubicOut);
 
             dd3.defineTween("myTween", function () {
                 var node = this;
                 return function (t) {
-                    node.setAttribute("width", t * 400 + 50);
+                    node.setAttribute("width", t * 400 + 100);
                 }
             });
 
             dd3.defineStyleTween("my3Tween", function (d, i) {
-                var i = d3.interpolate(this.style.fill, "#AAA");
+                var i = d3.interpolate(this.style.fill, "#999");
                 return function (t) {
                     return i(t);
                 }
@@ -183,7 +183,7 @@
                 rect = rectG.append('rect');
                 rect.attr("x", width / 10)
                     .attr("y", 4.5 * height / 10)
-                    .attr("width", width / 10)
+                    .attr("width", width / 5)
                     .attr("height", height / 10)
                     .attr("stroke", "black")
                     .style("fill", "#EEE")
@@ -227,7 +227,7 @@
                 nbdc += number || 10;
                 //console.log('I will create ' + nbdc + ' circles.');
                 //console.log('number is ' + number);
-                circleGroupDistributed.selectAll(".new").data(d3.range(number || 10)).enter()//.append('g')
+                circleGroupDistributed.selectAll(".new").data(d3.range(number || 10)).enter()
                     .append('circle')
                     .attr("class", "c new");
 
@@ -276,19 +276,19 @@
                 rect.transition(t)
                     .attr('x', 8 * width / 10)
                     .text("test")
-                    .ease("bounce")
+                    .ease("easeCubicOut")
                     .tween('name', 'myTween')
                     .styleTween('fill', 'my3Tween')
                     .transition()
                     .duration(5000)
-                    .ease(d3.easeCubicOut)
+                    .ease(d3.easeCubicOut) // easeLinear
                     .style("fill", "#EEE")
                     .attr('x', width / 10)
                     .on("start", function () {
                         dd3.active(this, name)
                             .transition()
                             .duration(1000)
-                            .attr("width", width / 10);
+                            .attr("width", width / 5);
                     })
                    .on("end", sendFPSAvg);
 
@@ -300,7 +300,7 @@
                 rect.transition(name)
                     .duration(10000)
                     .attr('y', 8 * height / 10)
-                    .transition(name)
+                    .transition()
                     .duration(5000)
                     .attr('y', 4.5 * height / 10)
                     .on("end", sendFPSAvg);
@@ -344,6 +344,18 @@
                     .precision(0.05)
                     .attr("cx", function () { return width * Math.random(); })
                     .attr("cy", function () { return height * Math.random(); })
+                    .attr("r", function () { return 30 * Math.random() + 20; })
+                    .on("end", sendFPSAvg);
+            };
+
+            appTestBench.orderController.orders['startCenterDistributedCircles'] = function (name) {
+                fpss = [];
+                triggered = false;
+                circleGroupDistributed.selectAll(".c")
+                    .transition()
+                    .duration(5000)
+                    .precision(0.05)
+                    .attr("cx", function () { return width / 2; })
                     .attr("r", function () { return 30 * Math.random() + 20; })
                     .on("end", sendFPSAvg);
             };
@@ -698,8 +710,8 @@
             };
 
             appTestBench.orderController.orders['delRect'] = function (id) {
-                svg.select("g").remove();
-                //svg.select("#" + id).remove();
+                //svg.select("g").remove();
+                svg.select("#r" + id).remove();
             };
 
             appTestBench.orderController.orders['delAllRect'] = function () {
