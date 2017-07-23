@@ -1419,64 +1419,64 @@ var initDD3App = function () {
             //If data is an array: peer.reveive will be called recursively on each elements of the array.
             //BAI: comments peer.flush function and move it to the dd3NetP Modul
             var receiveDataHandler = {
-                    //BAI: all the following handler functions are called in the above "peer.receive" function.
-                    //Handler to be called upon the reception of a shape from peerjs.
-                    // Create the element from the data received (data.sendId), add it to the group (data.containers) in the proper ordering.
-                    dataPreProcess: function (data) {
-                        //var _self = this;
-                            if (data instanceof Array) {
-                                data.forEach(receiveDataHandler.dataPreProcess);
-                                return;
-                            }
-                     
-                        switch (data.type) {
-                            
-                            case 'shape':
-                                utils.log("Receiving a new shape...");
-                                receiveDataHandler._dd3_shapeHandler(data);
-                                break;
+                //BAI: all the following handler functions are called in the above "peer.receive" function.
 
-                            case 'property':
-                                utils.log("Receiving a property [" +
-                                    data.function +
-                                    (data.property ? (":" + data.property) : "") +
-                                    "] update...");
-                                receiveDataHandler._dd3_propertyHandler(data);
-                                break;
+                dataPreProcess: function (data) {
+                    //var _self = this;
+                    if (data instanceof Array) {
+                        data.forEach(receiveDataHandler.dataPreProcess);
+                        return;
+                    }
 
-                            case 'remove':
-                                utils.log("Receiving an exiting shape...");
-                                receiveDataHandler._dd3_removeHandler(data);
-                                break;
+                    switch (data.type) {
 
-                            case 'transition':
-                                utils.log("Receiving a transition... ");
-                                receiveDataHandler._dd3_transitionHandler(data);
-                                break;
+                        case 'shape':
+                            utils.log("Receiving a new shape...");
+                            receiveDataHandler._dd3_shapeHandler(data);
+                            break;
 
-                            case 'endTransition':
-                                utils.log("Receiving a end transition event...");
-                                receiveDataHandler._dd3_endTransitionHandler(data);
-                                break;
+                        case 'property':
+                            utils.log("Receiving a property [" +
+                                data.function +
+                                (data.property ? (":" + data.property) : "") +
+                                "] update...");
+                            receiveDataHandler._dd3_propertyHandler(data);
+                            break;
 
-                            default:
-                                utils.log("Receiving an unsupported data : Aborting !", 2);
-                                utils.log(data, 2);
-                                return false;
-                        }
+                        case 'remove':
+                            utils.log("Receiving an exiting shape...");
+                            receiveDataHandler._dd3_removeHandler(data);
+                            break;
 
-                    },
+                        case 'transition':
+                            utils.log("Receiving a transition... ");
+                            receiveDataHandler._dd3_transitionHandler(data);
+                            break;
 
-                    //BAI: all the following handler functions are called in the above "peer.receive" function.
-                    //Handler to be called upon the reception of a shape from peerjs.
-                    //Create the element from the data received (data.sendId), add it to the group (data.containers) in the proper ordering.
-                    _dd3_shapeHandler: function (data) {
+                        case 'interruptTransition':
+                            utils.log("Receiving a interrupt transition event...");
+                            receiveDataHandler._dd3_interruptTransitionHandler(data);
+                            break;
+
+                        default:
+                            utils.log("Receiving an unsupported data : Aborting !", 2);
+                            utils.log(data, 2);
+                            return false;
+                    }
+
+                },
+
+                //Handler to be called upon the reception of a shape from peerjs.
+                //Create the element from the data received (data.sendId), add it to the group (data.containers) in the proper ordering.
+                _dd3_shapeHandler: function (data) {
+                    var obj = d3.select("#" + data.sendId);
+
+                    // 1 - Recreate local dom
+
+                    if (data.containers !== null) {
                         var mainId = data.containers.shift(),
-                            obj = d3.select("#" + data.sendId),
                             g1 = d3.select("#" + mainId),
-                            g2,
-                            c = false; // Whether the object was changed of group since last time
-
+                            g2;
 
                         if (g1.empty()) {
                             utils.log("The group with id '" + mainId +
@@ -1484,165 +1484,162 @@ var initDD3App = function () {
                             return;
                         }
 
-                        if (!(data.containers instanceof Array))
-                            utils.log("V4 Error: data.containers is a Map and handled as an array", 4);
                         data.containers.forEach(function (o) {
                             g2 = g1.select_("#" + o.id);
-                            if (g2.empty()) {
-                                c = true;
-                                g1 = g1.insert_('g', function () { return _dd3_getOrderFollower(g1, o.order); });
-                            } else {
-                                g1 = g2;
-                            }
+                            g1 = g2.empty() ? g1.insert_('g', function () { return _dd3_getOrderFollower(g1, o.order); }) : g2;
 
-                            //g1.attr_(o); // TODO v4: this does NOT actually work : http://stackoverflow.com/questions/20822466/how-to-set-multiple-attributes-with-one-value-function/38209449#38209449
-                            //g1.attrs_(o); // Not supported yet... thus hack below 
+                            //g1.attrs_(o); // Not supported yet... thus hack below (v4)
                             for (var a in o) {
                                 if (o[a]) g1.attr_(a, o[a]);
                             }
 
                             if (o.transition)
-                                //BAI: change from peer.receive to dd3Net.receive
                                 dd3Net.receive(o.transition);
                         });
 
-                        // Here we create an absolute ordering in one group
-                        if (obj.empty() || c) {
+                        // Here we add the object if it didnt exist or if it moved, and insert it with the absolute ordering
+                        if (obj.empty() || g1.select("#" + data.sendId).empty()) {
                             obj.remove_();
                             obj = g1.insert_(data.name, function () { return _dd3_getOrderFollower(g1, data.attr.order); });
                         }
-
-                        if (data.name === "image") {
-                            obj.attr_("xlink:href", data.attr.href);
-                            delete data.attr.href;
-                        }
-
-                        // obj.attrs_(data.attr)  // Not supported yet... thus hack below EVANN -> MAKE helper fct
-                        for (var a in data.attr) {
-                            if (data.attr[a]) obj.attr_(a, data.attr[a]);
-                        }
-
-                        obj.html_(data.html)
-                            .classed_('dd3_received', true)
-                            .attr_("id", data.sendId); // Here because attr can contain id
-
-                    },
-
-                    //Handler to be called upon the reception of a remove request from peerjs.
-                    // removes the corresponding element (data.sendId) and all its children from the DOM
-                    _dd3_removeHandler: function (data) {
-                        var el = d3.select('#' + data.sendId).node();
-                        while (el && _dd3_isReceived(el.parentElement) && el.parentElement.childElementCount == 1)
-                            el = el.parentElement;
-                        d3.select(el).remove();
-                    },
-
-
-                    //Handler to be called upon the reception of a property from peerjs.
-                    //find the object and set the properties to their values
-                    _dd3_propertyHandler: function (data) {
-                        var obj = d3.select("#" + data.sendId);
-                        if (!obj.empty()) {
-                            var args = typeof data.property !== "undefined" ? [data.property, data.value] : [data.value];
-                            obj[data.function].apply(obj, args)
-                                .classed_('dd3_received', true)
-                                .attr_("id", data.sendId);
-                        }
-                    },
-
-                    //Handler to be called upon the reception of a transition from peerjs.
-                    //TODO: v4: d3.ease implementation changed radically
-                    _dd3_transitionHandler: function (data) {
-
-                        //TODO v4: reread to handle all edge cases
-                        var launchTransition = function (data) {
-                            utils.log(data)
-                            var obj = d3.select("#" + data.sendId);
-                            //interrupt any ongoing animation
-                            obj.interrupt(data.name);
-                            var trst = _dd3_hook_selection_transition.call(obj, data.name);
-
-                            for (var a in data.start.attr) {
-                                if (data.start.attr[a]) obj.attr_(a, data.start.attr[a]);
-                            }
-
-                            for (var a in data.start.style) {
-                                if (data.start.style[a]) obj.style_(a, data.start.style[a]);
-                            }
-
-                            for (var a in data.end.attr) {
-                                if (data.end.attr[a]) trst.attr(a, data.end.attr[a]);
-                            }
-
-                            for (var a in data.end.style) {
-                                if (data.end.style[a]) trst.style(a, data.end.style[a]);
-                            }
-
-                            trst.duration(data.duration);
-
-                            if (data.tweens) {
-                                data.tweens.forEach(function (o) {
-                                    if (_dd3_tweens[o.value]) {
-                                        trst.tween(o.key, _dd3_tweens[o.value]);
-                                    }
-                                });
-                            }
-
-
-                            if (data.attrTweens) {
-                                data.attrTweens.forEach(function (o) {
-                                    if (_dd3_tweens[o.value]) {
-                                        trst.attrTween(o.key, _dd3_tweens[o.value]);
-                                    }
-                                });
-                            }
-                            
-
-                            if (data.styleTweens) {
-                                data.styleTweens.forEach(function (o) {
-                                    if (_dd3_tweens[o.value[0]]) {
-                                        var args = typeof o.value[1] !== "undefined"
-                                            ? [o.key, _dd3_tweens[o.value[0]], o.value[1]]
-                                            : [o.key, _dd3_tweens[o.value[0]]];
-                                        trst.styleTween.apply(trst, args);
-                                    }
-                                });
-                            }
-
-
-                            if (_dd3_timeTransitionRelative) {
-                                trst.delay(data.delay + (syncTime + data.elapsed - Date.now()));
-                            } else {
-                                trst.delay(data.delay + (data.elapsed - Date.now())); // EVANN v4 handle time problem (cf performance vs Date !)
-                            }
-
-
-                            if (data.ease) {
-                                if (_dd3_eases[data.ease]) {
-                                    trst.ease(_dd3_eases[data.ease]);
-                                } else if (d3[data.ease]) {
-                                    trst.ease(d3[data.ease]);
-                                } else {
-                                    utils.log("Warning! Ease not found: " + data.ease.toString(), 4);
-                                }
-                            }
-
-                        };
-
-                        launchTransition(data);
-
-                    },
-
-
-                    //Handler to be called upon the reception of an end transition from peerjs.
-                    //Interrupt the transition and remove element if data.remove is true.
-                    _dd3_endTransitionHandler: function (data) {
-                        var obj = d3.select("#" + data.sendId);
-                        obj.interrupt(data.name);
-                        if (data.remove)
-                            receiveDataHandler._dd3_removeHandler(data);
                     }
+
+                    // 2 - Copy attributes
+
+                    if (data.name === "image") {
+                        obj.attr_("xlink:href", data.attr.href);
+                        delete data.attr.href;
+                    }
+
+                    // obj.attrs_(data.attr)  // Not supported yet... thus hack below
+                    for (var a in data.attr) {
+                        if (data.attr[a]) obj.attr_(a, data.attr[a]);
+                    }
+
+                    obj.html_(data.html)
+                        .classed_('dd3_received', true)
+                        .attr_("id", data.sendId); // Here because data.attr can contain an id
+
+                },
+
+                //Handler to be called upon the reception of a remove request from peerjs.
+                // removes the corresponding element (data.sendId) and all its children from the DOM
+                _dd3_removeHandler: function (data) {
+                    var el = d3.select('#' + data.sendId).node();
+                    while (el && _dd3_isReceived(el.parentElement) && el.parentElement.childElementCount == 1)
+                        el = el.parentElement;
+                    d3.select(el).remove();
+                },
+
+
+                //Handler to be called upon the reception of a property from peerjs.
+                //find the object and set the properties to their values
+                _dd3_propertyHandler: function (data) {
+                    var obj = d3.select("#" + data.sendId);
+                    if (obj.empty())
+                        return
+
+                    var args = typeof data.property !== "undefined" ? [data.property, data.value] : [data.value];
+
+                    obj[data.function]
+                        .apply(obj, args)
+                        .classed_('dd3_received', true)
+                        .attr_("id", data.sendId);
+
+                    if (data.property === 'order') {
+                        var node = obj.node();
+                        node.parentElement.insertBefore(node, _dd3_getOrderFollower(d3.select(node.parentElement), data.value));
+                    }
+                },
+
+                //Handler to be called upon the reception of a transition from peerjs.
+                _dd3_transitionHandler: function (data) {
+
+                    var launchTransition = function (data) {
+                        var obj = d3.select("#" + data.sendId);
+                        //interrupt any ongoing animation
+                        obj.interrupt(data.name);
+                        var trst = _dd3_hook_selection_transition.call(obj, data.name);
+
+                        for (var a in data.start.attr) {
+                            if (data.start.attr[a]) obj.attr_(a, data.start.attr[a]);
+                        }
+
+                        for (var a in data.start.style) {
+                            if (data.start.style[a]) obj.style_(a, data.start.style[a]);
+                        }
+
+                        for (var a in data.end.attr) {
+                            if (data.end.attr[a]) trst.attr(a, data.end.attr[a]);
+                        }
+
+                        for (var a in data.end.style) {
+                            if (data.end.style[a]) trst.style(a, data.end.style[a]);
+                        }
+
+                        trst.duration(data.duration);
+
+                        if (data.tweens) {
+                            data.tweens.forEach(function (o) {
+                                if (_dd3_tweens[o.value]) {
+                                    trst.tween(o.key, _dd3_tweens[o.value]);
+                                }
+                            });
+                        }
+
+
+                        if (data.attrTweens) {
+                            data.attrTweens.forEach(function (o) {
+                                if (_dd3_tweens[o.value]) {
+                                    trst.attrTween(o.key, _dd3_tweens[o.value]);
+                                }
+                            });
+                        }
+
+
+                        if (data.styleTweens) {
+                            data.styleTweens.forEach(function (o) {
+                                if (_dd3_tweens[o.value[0]]) {
+                                    var args = typeof o.value[1] !== "undefined"
+                                        ? [o.key, _dd3_tweens[o.value[0]], o.value[1]]
+                                        : [o.key, _dd3_tweens[o.value[0]]];
+                                    trst.styleTween.apply(trst, args);
+                                }
+                            });
+                        }
+
+
+                        if (_dd3_timeTransitionRelative) {
+                            trst.delay(data.delay + (syncTime + data.elapsed - Date.now()));
+                        } else {
+                            trst.delay(data.delay + (data.elapsed - Date.now())); // EVANN v4 handle time problem (cf performance vs Date !)
+                        }
+
+
+                        if (data.ease) {
+                            if (_dd3_eases[data.ease]) {
+                                trst.ease(_dd3_eases[data.ease]);
+                            } else if (d3[data.ease]) {
+                                trst.ease(d3[data.ease]);
+                            } else {
+                                utils.log("Warning! Ease not found: " + data.ease.toString(), 2);
+                            }
+                        }
+
+                    };
+
+                    launchTransition(data);
+
+                },
+
+
+                //Handler to be called upon the reception of an end transition from peerjs.
+                //Interrupt the transition and remove element if data.remove is true.
+                _dd3_interruptTransitionHandler: function (data) {
+                    var obj = d3.select("#" + data.sendId);
+                    obj.interrupt(data.name);
                 }
+            }
 
             /**
              *  Hook helper functions for d3
@@ -1751,7 +1748,7 @@ var initDD3App = function () {
                         _();
                     };
                     dd3Net.setClientCallbackFunc({ syncObj: syncCallback });
-         
+
                     setTimeout(function () {
                         dd3Net.net.server.synchronize(gdo_appInstanceId);
                     }, t || 0);
@@ -1803,7 +1800,7 @@ var initDD3App = function () {
                 return function () {
                     if (arguments.length < expectedArg && typeof arguments[0] !== 'object') // TODO v4 : Second part after && should be removed as unuseful with v4
                         return original.apply(this, arguments);
-                    
+
                     original.apply(this, arguments);
 
                     //e is the property  of changes that have yet to be received and that we are watching for
@@ -1811,7 +1808,7 @@ var initDD3App = function () {
 
                     //If there are properties to change on watched and unreceived, send them
                     if (!e.empty())
-                        _dd3_selection_send.call(e, 'property', { 'function': funcName, 'property': arguments[0] });
+                        _dd3_selection_send(e, 'property', { 'function': funcName, 'property': arguments[0] });
 
                     return this;
                 };
@@ -1984,8 +1981,8 @@ var initDD3App = function () {
                         topLeft = _dd3_findBrowserAt(f.left(rect.left), f.top(rect.top), 'html'),
                         bottomRight = _dd3_findBrowserAt(f.left(rect.right), f.top(rect.bottom), 'html');
 
-                    for (var i = Math.max(topLeft[0], 0), maxR = Math.min(bottomRight[0], cave.rows - 1); i <= maxR; i++) {
-                        for (var j = Math.max(topLeft[1], 0), maxC = Math.min(bottomRight[1], cave.columns - 1); j <= maxC; j++) { // Check to simplify
+                    for (var i = Math.max(topLeft[0], 0), maxR = Math.min(bottomRight[0], cave.rows - 1) ; i <= maxR; i++) {
+                        for (var j = Math.max(topLeft[1], 0), maxC = Math.min(bottomRight[1], cave.columns - 1) ; j <= maxC; j++) { // Check to simplify
                             if (i != browser.row || j != browser.column) {
                                 rcpt.push([i, j]);
                             }
@@ -2041,29 +2038,29 @@ var initDD3App = function () {
 
             /** Behaviour when a shape is sent. Can be used manually.  */
             _dd3.selection.prototype.send = function () {
-                _dd3_selection_createProperties(this);
-                return _dd3_selection_send.call(this, 'shape');
+                var selection = _dd3_selection_createProperties(_dd3_selection_filterWatched(this));
+                _dd3_selection_send(selection, 'shape');
+                return this;
             };
 
             /** Sends each elements of an array based on its type.*/
-            var _dd3_selection_send = function (type, args) {
-                var counter = 0, formerRcpts, rcpt, rcpts = [], objs, selections;
+            var _dd3_selection_send = function (selection, type, args) {
+                var nbMessagesSent = 0, rcpts = [];
 
-                this.each(function () {
+                selection.each(function () {
                     if (this.nodeName === 'g')
-                        counter += _dd3_sendGroup.call(this, type, args, rcpts);
+                        nbMessagesSent += _dd3_sendGroup.call(this, type, args, rcpts);
                     else
-                        counter += _dd3_sendElement.call(this, type, args, rcpts);
+                        nbMessagesSent += _dd3_sendElement.call(this, type, args, rcpts);
                 });
 
                 // We buffered so we need to flush buffer of recipients !
-                rcpts.forEach(function (d) { dd3Net.flush(d[0], d[1]); });
+                rcpts.forEach(function (rcpt) { dd3Net.flush(rcpt[0], rcpt[1]); });
 
+                if (nbMessagesSent > 0)
+                    utils.log("Sending " + selection.size() + " " + type + " to " + rcpts.length + " recipients... (" + nbMessagesSent + " messages sent)");
 
-                if (counter > 0)
-                    utils.log("Sending " + type + " to " + counter + " recipients...");
-
-                return this;
+                return selection;
             };
 
             /** send an element to its recipients
@@ -2071,9 +2068,9 @@ var initDD3App = function () {
              * args: 
              * rcpts: array of recipients for this send
              */
-            
+
             var _dd3_sendElement = function (type, args, rcpts) {
-                var active = this.__dd3_transitions__.size() > 0, rcpt, formerRcpts, selections, objs;
+                var active = this.__dd3_transitions__.size() > 0, rcpt, formerRcpts, selections, objs, nbMessagesSent = 0;
                 // Get former recipients list saved in the __recipients__ variable to send them 'exit' message
                 formerRcpts = this.__recipients__;
                 // Get current recipients
@@ -2087,17 +2084,18 @@ var initDD3App = function () {
                     // Create the object to send
                     objs = _dd3_dataFormatter(this, true, type, selections, args, active);
                     // Send it to all who may have to plot it
-                    rcpt = _dd3_dataSender(objs, selections);
+                    nbMessagesSent = _dd3_dataSender(objs, selections);
                     // Save all recipients to flush buffer for them afterwards
-                    _dd3_mergeRecipientsIn(rcpt, rcpts);
+                    _dd3_mergeRecipientsIn(d3.merge(selections), rcpts);
                 }
-                return rcpt.length;
+
+                return nbMessagesSent;
             };
 
             /** Send group of elements to their recipients */
             var _dd3_sendGroup = function (type, args, rcpts) {
 
-                var active = this.__dd3_transitions__.size() > 0, rcpt, objs;
+                var active = this.__dd3_transitions__.size() > 0, rcpt, objs, nbMessagesSent = 0;
 
                 // Get current recipients
                 rcpt = _dd3_getChildrenRcpts.call(this, []);
@@ -2111,69 +2109,74 @@ var initDD3App = function () {
                     // Create the object to send
                     objs = _dd3_dataFormatter(this, false, type, [rcpt], args, active);
                     // Send it to all who may have to plot it
-                    rcpt = _dd3_dataSender(objs, [rcpt]);
+                    nbMessagesSent = _dd3_dataSender(objs, [rcpt]);
                     // Save all recipients to flush buffer for them afterwards
                     _dd3_mergeRecipientsIn(rcpt, rcpts);
                 }
 
-                return rcpt.length;
+                return nbMessagesSent;
             };
 
-            /**Format the data before sending it*/
+            /** Format the data before sending it */
             var _dd3_dataFormatter = (function () {
-                var sendId = 1;
+                var sendId = 1,
+                    ENTER = 0,
+                    UPDATE = 1,
+                    EXIT = 2;
 
                 //- Functions for creating objects to be send
 
-                var createShapeObject = function (obj, elem, onSend) {
-                    var groups = getParentGroups(elem, onSend);
+                var createShapeObject = function (sendIdElem, elem, active, onlyAttr) {
+                    var groups = onlyAttr ? null : getParentGroups(elem),
+                        obj = {
+                            sendId: sendIdElem,
+                            type: 'shape',
+                            attr: utils.getAttr(elem),
+                            name: elem.nodeName,
+                            html: elem.innerHTML,
+                            containers: groups // Remember the container to keep the drawing order (superposition)
+                        };
 
-                    obj.type = 'shape';
-                    obj.attr = utils.getAttr(elem);
-                    obj.name = elem.nodeName;
-                    //BAI: send the HTML dom
-                    obj.html = elem.innerHTML;
-                    // Remember the container to keep the drawing order (superposition)
-                    obj.containers = groups;
+                    if (active)
+                        return [obj, createTransitionsObject(sendIdElem, elem)];
+                    else
+                        return obj;
                 };
 
-                // Not used in v4
-                var createPropertiesObject = function (obj, elem, f, props) {
-                    var array = [];
-                    for (var prop in props) {
-                        var objTemp = utils.clone(obj);
-                        createPropertyObject(objTemp, elem, f, prop);
-                        array.push(objTemp);
+                var createPropertyObject = function (sendIdElem, elem, func, prop) {
+                    if (func === "remove") {
+                        return createRemoveObject(sendIdElem);
                     }
-                    return array;
-                };
 
-                //BAI: this function will be called by the above function "createPropertiesObject"
-                var createPropertyObject = function (obj, elem, f, p) {
-                    if (f !== "remove") {
-                        obj.type = 'property';
-                        obj.function = f;
+                    var obj = {
+                        sendId: sendIdElem,
+                        type: 'property',
+                        function: func
+                    };
 
-                        if (f !== "text" && f !== "html") {
-                            obj.value = d3.select(elem)[f + '_'](obj.property = p);
-                        } else {
-                            obj.value = d3.select(elem)[f + '_']();
-                        }
+                    if (func !== "text" && func !== "html") {
+                        obj.value = d3.select(elem)[func + '_'](prop);
+                        obj.property = prop;
+                    } else {
+                        obj.value = d3.select(elem)[func + '_']();
                     }
+
+                    return obj;
                 };
 
-                var createTransitionsObject = function (obj, elem, onSend) {
-                    return [].slice.call(elem.__dd3_transitions__.values().map(function (v) {
-                        var objTemp = utils.clone(obj);
-                        createTransitionObject(objTemp, v, onSend);
-                        return objTemp;
+                var createTransitionsObject = function (sendIdElem, elem) {
+                    return [].slice.call(elem.__dd3_transitions__.values().map(function (args) {
+                        return createTransitionObject(sendIdElem, args);
                     }));
-                    // Needed for integration into GDO framework as it seems that constructor are different !
+                    // [].slice.call is needed for integration into GDO framework as it seems that constructor are different !
                     // And peer.js test equality with constructors to send data !
                 };
-                //BAI: this function will be called by the above function "createTransitionsObject"
-                var createTransitionObject = function (obj, args, onSend) {
-                    obj.type = 'transition';
+
+                var createTransitionObject = function (sendIdElem, args) {
+                    var obj = {
+                        sendId: sendIdElem,
+                        type: 'transition',
+                    };
 
                     obj.name = args.name;
                     obj.duration = args.duration;
@@ -2187,9 +2190,6 @@ var initDD3App = function () {
                     obj.start = { attr: {}, style: {} };
                     obj.end = { attr: {}, style: {} };
 
-                    //TODO v4: it seems oe of the thing we send is a function
-
-                    if (!(args.properties instanceof Array)) utils.log("V4 Error: args.properties  is a Map  and handled as an array",4);
                     args.properties.forEach(function (p, i) {
                         var d = p.split('.');
                         if (d[0] !== "tween") {
@@ -2198,41 +2198,42 @@ var initDD3App = function () {
                         }
                     });
 
-                    //*
-                    onSend.push(function (rcpt) {
+                    return obj;
+
+                    /*
+                    obj ... .onSend.push(function (rcpt) {
                         obj.min = rcpt.min;
                         obj.max = rcpt.max;
                     });
                     //*/
                 };
 
-                var createEndTransitionsObject = function (obj, elem, remove) {
-                    return [].slice.call(elem.__dd3_transitions__.values().map(function (v) {
-                        var objTemp = utils.clone(obj);
-                        createEndTransitionObject(objTemp, v.name, remove);
-                        return objTemp;
-                    }));
-                    // Needed for integration into GDO framework as it seems that constructor are different !
-                    // And peer.js test equality with constructors to send data !
+                var createInterruptTransitionObject = function (sendIdElem, name) {
+                    return {
+                        sendId: sendIdElem,
+                        type: 'interruptTransition',
+                        name: name
+                    };
                 };
-                //BAI: this function will be called by the above function "createEndTransitionsObject"
-                var createEndTransitionObject = function (obj, name, remove) {
-                    obj.type = 'endTransition';
-                    obj.name = name;
-                    obj.remove = remove;
+
+                var createRemoveObject = function (sendIdElem) {
+                    return {
+                        sendId: sendIdElem,
+                        type: 'remove'
+                    };
                 };
 
                 //- Helper functions
 
-                var getParentGroups = function (elem, onSend) {
+                var getParentGroups = function (elem) {
                     var containers = [], g = elem.parentNode, obj, sdId;
 
                     do {
                         if (!g.id.startsWith("dd3_")) {
                             sdId = getSendId(g.__sendId__ = g.__sendId__ || sendId++);
                             obj = { 'id': sdId, 'transform': g.getAttribute("transform"), 'class': (g.getAttribute("class") || "") + ' dd3_received', 'order': g.getAttribute('order') };
-                            if (g.__dd3_transitions__.size() > 0)
-                                obj.transition = createTransitionsObject({ 'sendId': sdId }, g, onSend);
+                            if (!g.__dd3_transitions__.empty())
+                                obj.transition = createTransitionsObject({ 'sendId': sdId }, g);
                         } else {
                             obj = g.id;
                         }
@@ -2246,107 +2247,64 @@ var initDD3App = function () {
                     return ("dd3_" + browser.row + '-' + browser.column + "_" + id);
                 };
 
-                var formatElem = function (s, i, elem, type, selections, args, active, objs, obj) {
-                    if (s.length === 0) {
-                        objs.push(false);
-                        return;
+                var formatElem = function (selectionType, elem, type, args, sendIdElem, active) {
+                    var obj;
+
+                    if (selectionType === EXIT) {
+                        obj = createRemoveObject(sendIdElem);
+                    }
+                    else if (selectionType === ENTER || type === 'shape') {
+                        obj = createShapeObject(sendIdElem, elem, active);
+                    }
+                    else if (type === 'property') {
+                        obj = createPropertyObject(sendIdElem, elem, args.function, args.property);
+                    }
+                    else if (type === 'interruptTransition') {
+                        var objInterrupt = createInterruptTransitionObject(sendIdElem, args.name);
+                        var objShape = createShapeObject(sendIdElem, elem, false, true); // active = false : we don't want to send transitions
+                        obj = [objInterrupt, objShape];
+                    }
+                    else if (type === 'transitions') {
+                        obj = createTransitionObject(sendIdElem, elem.__dd3_transitions__.get(args.ns));
+                    }
+                    else if (type === 'updateContainer' || type === 'endTransition') {
+                        obj = false;
                     }
 
-                    var objTemp = utils.clone(obj);
-                    var onSend = [];
-
-                    switch (i) {
-                        case 0:  // If enter, in all cases we send a new shape
-                            createShapeObject(objTemp, elem, onSend);
-
-                            if (active) {
-                                objTemp = [objTemp, createTransitionsObject(utils.clone(obj), elem, onSend)];
-                            }
-                            break;
-
-                        case 1: // If update...
-
-                            if (type === 'shape') { // If we want to send the shape...
-                                createShapeObject(objTemp, elem, onSend);
-                            } else if (type === 'property') { // Otherwise, if we just want to update a property ...
-                                if (typeof args.property === 'object') { // If we gave object as { property -> value, ... } // v4: This is not supposed to be used
-                                    var func = ({ "attrs": "attr", "properties": "property", "styles": "style" })[args.function]
-                                    objTemp = createPropertiesObject(objTemp, elem, func, args.property);
-                                    console.warn("DD3 v4: You shouldn't be here... (sending properties change as an object)")
-                                } else {
-                                    createPropertyObject(objTemp, elem, args.function, args.property);
-                                }
-                            } else if (type === "endTransition") {
-                                createEndTransitionObject(objTemp, args.name, false);
-                            } else if (type === "transitions") {
-                                createTransitionObject(objTemp, elem.__dd3_transitions__.get(args.ns), onSend);
-                            } else if (type === "updateContainer") {
-                                objTemp = false;
-                            }
-
-                            break;
-
-                        case 2:
-
-                            if (type === "transitions") {
-                                createEndTransitionsObject(objTemp, elem, true);
-                            } else if (type === "endTransition") {
-                                createEndTransitionObject(objTemp, args.name, true);
-                            } else if (active && type === "updateContainer") {
-                                createEndTransitionsObject(objTemp, elem, true);
-                            }
-                            break;
-                    }
-
-                    if (objTemp) {
-                        objTemp.onSend = onSend;
-                    }
-                    objs.push(objTemp);
+                    return obj;
                 };
 
-                var formatGroup = function (elem, type, selections, args, active, objs, obj) {
-                    var onSend = [];
+                var formatGroup = function (i, elem, type, args, sendIdElem) {
+                    var obj;
+
                     if (type === 'property') {
-                        if (typeof args.property === 'object') { // If we gave object as { property -> value, ... }
-                            obj = createPropertiesObject(obj, elem, args.function, args.property);
-                        } else {
-                            createPropertyObject(obj, elem, args.function, args.property);
-                        }
+                        obj = createPropertyObject(sendIdElem, elem, args.function, args.property);
                     } else if (type === 'transitions') {
-                        var objTemp = utils.clone(obj);
-                        obj = createTransitionsObject(objTemp, elem, onSend);
+                        obj = createTransitionsObject(sendIdElem, elem);
+                    } else if (type === 'interruptTransition') {
+                        obj = createInterruptTransitionObject(sendIdElem, args.name);
+                        // EVANN SEND group attributes too => send the transform attribute (check is could be sent as a property)
                     } else if (type === 'endTransition') {
-                        createEndTransitionObject(obj, args.name, false);
+                        obj = false;
                     } else {
-                        objs.push(false);
+                        obj = false;
                         utils.log('Not handling : type is ' + type);
-                        return;
                     }
-                    if (obj) {
-                        obj.onSend = onSend;
-                    }
-                    objs.push(obj);
+
+                    return obj;
                 };
 
                 return function (elem, isElem, type, selections, args, active) {
-
                     // Bound sendId to the sent shape to be able to retrieve it later in recipients' dom
                     elem.__sendId__ = elem.__sendId__ || sendId++;
 
-                    var objs = [],
-                        obj = {
-                            type: 'remove',
-                            sendId: getSendId(elem.__sendId__)
-                        };
+                    var objs,
+                        sendIdElem = getSendId(elem.__sendId__);
 
-
-                    if (!(selections instanceof Array)) utils.log("V4 Error: selections  is a Map and handled as an array",4);
-                    selections.forEach(function (s, i) {
-                        if (isElem) {
-                            formatElem(s, i, elem, type, selections, args, active, objs, obj);
-                        } else {
-                            formatGroup(elem, type, selections, args, active, objs, obj);
-                        }
+                    objs = selections.map(function (s, i) {
+                        if (s.length === 0)
+                            return false;
+                        return (isElem ? formatElem : formatGroup)(i, elem, type, args, sendIdElem, active);
                     });
 
                     return objs;
@@ -2356,71 +2314,63 @@ var initDD3App = function () {
 
             //BAI: this function use the peer to send data.
             var _dd3_dataSender = function (objs, selections) {
+                var countMessage = 0;
                 // Allow to do something special for each selection (enter, update, exit) of recipients
-                if (!(selections instanceof Array)) utils.log("V4 Error: selections  is a Map and handled as an array",4);
                 selections.forEach(function (s, i) {
-                    if (objs[i]) {
-                        if (!(s instanceof Array)) utils.log("V4 Error: s is a Map and handled as an array",4);
-                        s.forEach(function (d) {
-                            var obj = objs[i];
-                            if (obj.onSend.length > 0) {
-                                obj.onSend.forEach(function (f) { f(d); });
-                                obj = utils.clone(obj);
-                                delete obj.onSend;
-                            }
-                            //BAI: use peer to send data.
-                            //BAI: change from peer.sendTo to dd3Net.sendTo
-                            //console.log(dd3Net);
-                            //console.log('before send property');
-                            dd3Net.sendTo(d[0], d[1], obj, true); // true for buffering 
-                            //console.log('after send property');
-                        });
-                    }
+                    if (!objs[i]) return;
+
+                    s.forEach(function (d) {
+                        var obj = objs[i];
+                        if (obj.onSend && obj.onSend.length > 0) {
+                            obj.onSend.forEach(function (f) { f(d); });
+                            obj = utils.clone(obj);
+                            delete obj.onSend;
+                        }
+
+                        countMessage++;
+                        dd3Net.sendTo(d[0], d[1], obj, true); // true for buffering 
+                    });
                 });
 
-                return d3.merge(selections);
+                return countMessage;
             };
 
             /**
             *  Watch methods
             */
 
-            // To go to helpers
-            var _dd3_funct = function (f, args) {
-                return function () {
-                    f.apply(this, args);
-                };
+            var forEach = function (array, func) {
+                [].forEach.call(array, func);
             };
 
-            _dd3.selection.prototype.watch = function (spread) {
-                spread = typeof spread === "undefined" ? false : spread;
-
-                this.each(_dd3_funct(_dd3_watch, [spread]));
-                return this;
+            _dd3.selection.prototype.watch = function () {
+                return this.each(_dd3_watch);
             };
 
             var _dd3_watch = function () {
-                if (this.__unwatch__) delete this.__unwatch__;
+                if (this.__unwatch__) {
+                    delete this.__unwatch__;
+                    this.setAttribute('order', getOrder(this))
+                }
                 if (this.nodeName === 'g')
-                    [].forEach.call(this.childNodes, function (_) { _dd3_watch.call(_); });
+                    forEach(this.childNodes, function (_) { _dd3_watch.call(_); });
             };
 
             _dd3.selection.prototype.unwatch = function () {
-
                 this.each(_dd3_unwatch);
                 return this;
             };
 
             var _dd3_unwatch = function () {
                 this.__unwatch__ = true;
+                this.removeAttribute('order');
                 if (this.nodeName === 'g')
-                    [].forEach.call(this.childNodes, function (_) { _dd3_unwatch.call(_); });
+                    forEach(this.childNodes, function (_) { _dd3_unwatch.call(_); });
             };
 
             /** calls _dd3_createProperties for each element in the input*/
-            var _dd3_selection_createProperties = function (elem) {
-                elem.each(function () { _dd3_createProperties.call(this); });
-                return elem;
+            var _dd3_selection_createProperties = function (selection) {
+                return selection.each(function () { _dd3_createProperties.call(this); });
             };
 
             /** Create dd3 specific properties on the object: recipient list, transitions and ordering  */
@@ -2432,7 +2382,7 @@ var initDD3App = function () {
                 }
 
                 if (this.nodeName === 'g')
-                    [].forEach.call(this.childNodes, function (_) { _dd3_createProperties.call(_); });
+                    forEach(this.childNodes, function (_) { _dd3_createProperties.call(_); });
             };
 
             //Filter elements from a d3 selection to keep only  
@@ -2451,7 +2401,7 @@ var initDD3App = function () {
             var _dd3_isEnterNode = function (node) {
                 return node.constructor.name == "EnterNode"
             };
-            
+
             var _dd3_isReceived = function (e) {
                 return [].indexOf.call(e.classList || [], 'dd3_received') >= 0;
             };
@@ -2472,16 +2422,17 @@ var initDD3App = function () {
                 if (this.__unwatch__ || ([].indexOf.call(this.classList, 'dd3_received') >= 0))
                     return;
 
-                //TODO v4: apparently this thing is supposed to add shape
                 if (this.nodeName === 'g')
-                    [].forEach.call(this.childNodes, function (_) { _dd3_notifyChildren.call(_, name); });
+                    forEach(this.childNodes, function (_) { _dd3_notifyChildren.call(_, name); });
                 else
-                    _dd3_selection_send.call(_dd3.select_(this), name);
+                    _dd3_selection_send(_dd3.select_(this), name);
             };
 
             var _dd3_getChildrenRcpts = function (array) {
-                if (this.nodeName === 'g')
-                    return [].forEach.call(this.childNodes, function (_) { _dd3_mergeRecipientsIn(_dd3_getChildrenRcpts.call(_, array), array); }), array;
+                if (this.nodeName === 'g') {
+                    forEach(this.childNodes, function (_) { _dd3_mergeRecipientsIn(_dd3_getChildrenRcpts.call(_, array), array); });
+                    return array;
+                }
                 else
                     return this.__recipients__ || (log("No recipients"), []);
             };
@@ -2535,8 +2486,6 @@ var initDD3App = function () {
 
             var _dd3_precision = 0.01;
 
-            var _dd3_idTransition = 1;
-
             //Contain tween functions for transitions. Prevents having to send tween function definition through peerjs
             //BAI: we do not need to send the whole tween defination between peers, and we define all the names of different tweens. Then we only need to 
             //send the name of tween effect.
@@ -2554,7 +2503,7 @@ var initDD3App = function () {
                 if (name.startsWith("ease")) return name;
                 return "ease" + name[0].toUpperCase() + name.substring(1);
             };
-            
+
 
             var _dd3_findTransitionsRecipients = function (elem) {
                 if (!elem || !elem.parentNode) {
@@ -2570,12 +2519,12 @@ var initDD3App = function () {
                     start = Date.now(),
                     max = now,
                     precision = 1;
-                
+
                 // Build dom from 'elem' up to 'dd3_rootGroup'
                 do {
                     containers.unshift(g);
                 } while (g.id !== "dd3_rootGroup" && (g = g.parentNode));
-                
+
                 // Keep in containers parents who are moving (i.e. transitionning or having transitionning ancestor)
                 var c1;
                 while ((c1 = containers[0]) && c1.__dd3_transitions__.empty()) {
@@ -2640,59 +2589,9 @@ var initDD3App = function () {
                     }
                 });
 
-
-                // utils.log("Computed in " + (Date.now() - now)/1000 + "s probable recipients: [" + rcpts.join('],[') + ']', 2);
-                utils.log("Computed in " + (Date.now() - start)/1000. + " sec", 2);
+                //utils.log("Computed in " + (Date.now() - start)/1000. + " sec", 2);
 
                 return rcpts;
-            };
-
-            var _dd3_retrieveTransitionSettings_old = function (elem, args, data, index, group_d3) {
-                var node = elem.cloneNode(false),
-                    group = utils.getContainingGroup(elem),
-                    tween = args.transition.tween,
-                    tweened = [],
-                    properties = [],
-                    startValues = [],
-                    endValues = [];
-                
-                group.appendChild(node);
-                var d3_node = d3.select(node);
-
-                tween.forEach(function (obj) {
-                    var value = obj.value;
-                    var type = value.type;
-                    if (value = value.call(node, data, index, group_d3)) {
-                        properties.push(type || obj.name);
-                        tweened.push(value);
-                    }
-                });
-                
-
-                tweened.forEach(function (f, j) {
-                    var ps = properties[j].split('.'),
-                        p0 = ps[0],
-                        p1 = typeof ps[1] !== "undefined" ? [ps[1]] : [];
-
-                    if (p0 === "tween") {
-                        startValues.push(null);
-                        endValues.push(null);
-                    } else {
-                        f.call(null, 0);
-                        startValues.push(d3_node[p0].apply(d3_node, p1));
-
-                        f.call(null, 1);
-                        endValues.push(d3_node[p0].apply(d3_node, p1));
-                    }
-                });
-                
-                group.removeChild(node);
-
-                args.startValues = startValues;
-                args.endValues = endValues;
-                args.tweened = tweened;
-                args.node_tweened = node
-                args.properties = properties;
             };
 
             var _dd3_retrieveTransitionSettings = function (elem, args, data, index, group_d3) {
@@ -2726,7 +2625,7 @@ var initDD3App = function () {
                         tweened.push(tween_func);
                     }
                 });
-                
+
                 args.startValues = startValues;
                 args.endValues = endValues;
                 args.tweened = tweened;
@@ -2737,13 +2636,28 @@ var initDD3App = function () {
 
             var _dd3_hook_transition_transition = d3.transition.prototype.transition; //TODO: v4 still exists?
 
-            var _dd3_set_dd3Transition = function (tr, ns, args) {
-                tr.each(function () {
-                    this.__dd3_transitions__.set(ns, args);
+            var _dd3_setTween = function (transition, type, name, dd3_name) {
+                transition.each(function () {
+                    var schedule = this.__transition[transition._id];
+                    schedule.customTween = schedule.customTween || {};
+                    schedule.customTween[type] = schedule.customTween[type] || d3.map();
+                    schedule.customTween[type].set(name, dd3_name);
                 });
-            }; // FOR NOW NOT USED ANYMORE ... SOON TODEL
+            };
 
-            _dd3.transition = function () {
+            var _dd3_removeTween = function (transition, type, name) {
+                transition.each(function () {
+                    var schedule = this.__transition[transition._id];
+                    schedule.customTween && schedule.customTween[type] && schedule.customTween[type].remove(name);
+                });
+            };
+
+            var _dd3_getTween = function (transition, type, name) {
+                var customTween = transition.node().__transition[transition._id].customTween;
+                return (customTween && customTween[type] && customTween[type].get(name)) || null;
+            };
+
+            _dd3.transition = function () { // EVANN CHECK _dd3_selection_createProperties used without filterWatched
                 var t = _dd3_selection_createProperties(_dd3_hook_selection_transition.apply(d3.selection(), arguments));
                 return _dd3_initialize_transition(t, _dd3_precision, false);
             };
@@ -2762,8 +2676,7 @@ var initDD3App = function () {
             };
 
             var _dd3_initialize_transition = function (t, precision, listen) {
-                var tweens = d3.map(), attrTweens = d3.map(), styleTweens = d3.map();
-                var name = t._name, ns = _dd3_transitionNamespace(name);
+                var name = t._name, ns = _dd3_transitionNamespace(name), id = t._id;
 
                 // EVANN TODO : Hook the 'on' event and make that all on('start') events happen before start.dd3
                 // Two ways :  1. Don't register them in d3 but in dd3, and launch them in on('start.dd3')
@@ -2774,93 +2687,86 @@ var initDD3App = function () {
                     t.on("start.dd3", function (data, index, group) {
                         if (!this.parentNode || _dd3_isReceived(this) || this.__unwatch__)
                             return;
-                        
-                        for (var uid in this.__transition) {
-                            var transition = this.__transition[uid]
-                            if (transition.name == name && transition.state == 2) // 2 <==> STARTING
-                                break;
+
+                        var transition = this.__transition[id];
+
+                        //for (var uid in this.__transition) {
+                        //    var transition = this.__transition[uid];
+                        //    if (transition.name == name && transition.state == 2) { // 2 <==> STARTING
+                        //        console.log("transition check : ", uid == id);
+                        //        break;
+                        //    }
+                        //}
+
+                        if (!transition) {
+                            utils.log("Warning: No transition on the object", 4);
+                            return;
                         }
 
-                        if (!transition)
-                            utils.log("V4 Warning: No transition on the object", 4);
+                        var c = transition.customTween,
+                            tweenFunctions = (c && c.tween && c.tween.entries()) || [],
+                            attrTweenFunctions = (c && c.attrTween && c.attrTween.entries()) || [],
+                            styleTweenFunctions = (c && c.styleTween && c.styleTween.entries()) || [];
 
 
                         // Needed for integration into GDO framework as it seems that constructor are different !
                         // And peer.js test equality with constructors to send data !
-
-                        var tweenFunctions = [].slice.call(tweens.entries());
-                        if (!(tweenFunctions instanceof Array)) utils.log("V4 Error: tweenFunctions  is a Map  and handled as an array", 4);
-                        tweenFunctions.forEach(function (d) {
-                            Object.defineProperty(d, 'constructor', {
-                                enumerable: false,
-                                configurable: false,
-                                writable: false,
-                                value: Object
+                        [tweenFunctions, attrTweenFunctions, styleTweenFunctions].forEach(function (tweens) {
+                            tweens.__proto__.constructor = [].constructor;
+                            tweens.forEach(function (tween) {
+                                tween.__proto__.constructor = Object;
                             });
                         });
 
-                        var attrTweenFunctions = [].slice.call(attrTweens.entries());
-                        if (!(attrTweenFunctions instanceof Array)) utils.log("V4 Error: attrTweenFunctions  is a Map and handled as an array", 4);
-                        attrTweenFunctions.forEach(function (d) {
-                            Object.defineProperty(d, 'constructor', {
-                                enumerable: false,
-                                configurable: false,
-                                writable: false,
-                                value: Object
-                            });
-                        });
-
-                        var styleTweenFunctions = [].slice.call(styleTweens.entries());
-                        if (!(styleTweenFunctions instanceof Array)) utils.log("V4 Error: styleTweenFunctions  is a Map and handled as an array", 4);
-                        styleTweenFunctions.forEach(function (d) {
-                            Object.defineProperty(d, 'constructor', {
-                                enumerable: false,
-                                configurable: false,
-                                writable: false,
-                                value: Object
-                            });
-                        });
+                        //var attrTweenFunctions = [].slice.call(attrTweens.entries());
+                        //tween.forEach(function (d) {
+                        //    Object.defineProperty(d, 'constructor', {
+                        //        enumerable: false,
+                        //        configurable: false,
+                        //        writable: false,
+                        //        value: Object
+                        //    });
+                        //});
 
                         // EVANN - TODO : Add data to args ? yes but later ... OR send only data along with the tweens !
                         var args = {
+                            startValues: [],
                             endValues: [],
                             properties: [],
                             tweened: [],
                             tweens: tweenFunctions,
                             attrTweens: attrTweenFunctions,
                             styleTweens: styleTweenFunctions,
-                            ns: ns,
+                            ns: ns, // EVANN : both name and ns are not needed i guess ?
                             name: name,
                             delay: transition.delay,
                             duration: transition.duration,
                             time: transition.time,
-                            transition: transition, // EVANN : IS THIS USED
-                            precision: precision,
+                            transition: transition,
+                            precision: precision, // EVANN: Maybe remove ? or improve
                             ease: transition.ease.dd3_name || _dd3_transitionEaseName(transition.ease.name),
-                            id: _dd3_idTransition++
                         };
                         args.elapsed = _dd3_timeTransitionRelative ? args.time - syncTime : args.time;
 
                         _dd3_retrieveTransitionSettings(this, args, data, index, group);
-                        console.log(args.startValues)
-                        console.log(args.endValues)
                         this.__dd3_transitions__.set(ns, args);
 
-                        _dd3_selection_send.call(d3.select(this), 'transitions', { 'ns': ns });
+                        _dd3_selection_send(d3.select(this), 'transitions', { 'ns': ns });
                     });
 
                     t.on("interrupt.dd3", function () {
+                        console.warn("interrupt");
                         if (_dd3_isReceived(this) || this.__unwatch__)
                             return;
                         this.__dd3_transitions__.remove(ns);
-                        _dd3_selection_send.call(d3.select(this), 'endTransition', { name: name });
+                        _dd3_selection_send(d3.select(this), 'interruptTransition', { name: name });
                     });
 
                     t.on("end.dd3", function () {
                         if (_dd3_isReceived(this) || this.__unwatch__)
                             return;
                         this.__dd3_transitions__.remove(ns);
-                        _dd3_selection_send.call(d3.select(this), 'endTransition', { name: name });
+                        _dd3_selection_send(d3.select(this), 'endTransition', { name: name });
                     });
 
                 }
@@ -2874,10 +2780,10 @@ var initDD3App = function () {
                     }
                 };
 
-                t.select = _dd3_hook_initTrans(d3.transition.prototype.select);
-                t.selectAll = _dd3_hook_initTrans(d3.transition.prototype.selectAll);
-                t.filter = _dd3_hook_initTrans(d3.transition.prototype.filter);
-                t.merge = _dd3_hook_initTrans(d3.transition.prototype.merge);
+                t.select = _dd3_hook_initTrans(d3.transition.prototype.select, true);
+                t.selectAll = _dd3_hook_initTrans(d3.transition.prototype.selectAll, true);
+                t.filter = _dd3_hook_initTrans(d3.transition.prototype.filter, true);
+                t.merge = _dd3_hook_initTrans(d3.transition.prototype.merge, true);
                 t.transition = _dd3_hook_initTrans(_dd3_hook_transition_transition, true);
 
                 t.ease = function (e) {
@@ -2894,21 +2800,22 @@ var initDD3App = function () {
                 };
 
                 t.tween = function (name, tween) {
-                    if (arguments.length < 2) return tweens.get(name);
+                    if (arguments.length < 2) return _dd3_getTween(this, 'tween', name);
 
                     if (tween == null) {
-                        tweens.remove(name);
-                        return d3.transition.prototype.tween.call(this, name, null);
+                        _dd3_removeTween(this, 'tween', name);
                     } else if (typeof tween !== "string") {
                         utils.log("The tween function should be provided as a string\nCustom tween functions have to be defined with dd3.defineTween", 2);
                         return this;
                     } else if (!_dd3_tweens['dd3_' + tween]) {
                         utils.log("The function " + tween + " was not defined with dd3.defineTween\nCustom tween functions have to be defined with dd3.defineTween", 2);
                         return this;
+                    } else {
+                        _dd3_setTween(this, 'tween', name, 'dd3_' + tween);
+                        tween = _dd3_tweens['dd3_' + tween];
                     }
 
-                    tweens.set(name, 'dd3_' + tween);
-                    return d3.transition.prototype.tween.call(this, name, _dd3_tweens['dd3_' + tween]);
+                    return d3.transition.prototype.tween.call(this, name, tween);
                 };
 
                 // In v4, d3.transition.attr uses attrTween, which we don't want.
@@ -2946,10 +2853,10 @@ var initDD3App = function () {
 
                 t.attrTween = function (attr, tween) {
                     var temp, trst;
-                    if (arguments.length < 2) return _dd3_tweens[attrTweens.get(attr)];
+                    if (arguments.length < 2) return _dd3_getTween(this, 'attrTween', attr);
 
                     if (tween == null) {
-                        attrTweens.remove(attr);
+                        _dd3_removeTween(this, 'attrTween', attr);
                     } else if (typeof tween !== "string") {
                         utils.log("The tween function should be provided as a string\nCustom tween functions have to be defined with dd3.defineTween", 2);
                         return this;
@@ -2957,8 +2864,8 @@ var initDD3App = function () {
                         utils.log("The function " + tween + " was not defined with dd3.defineTween\nCustom tween functions have to be defined with dd3.defineTween", 2);
                         return this;
                     } else {
-                        attrTweens.set(attr, 'dd3_' + tween);
-                        tween = _dd3_tweens['dd3_' + tween]
+                        _dd3_setTween(this, 'attrTween', attr, 'dd3_' + tween);
+                        tween = _dd3_tweens['dd3_' + tween];
                     }
 
                     temp = this.tween;
@@ -2970,12 +2877,12 @@ var initDD3App = function () {
                 };
 
                 t.styleTween = function (style, tween, priority) {
-                    if (arguments.length < 2) return _dd3_tweens[styleTweens.get(style)];
+                    if (arguments.length < 2) return (tween = _dd3_getTween(this, 'styleTween', style)) && tween[0];
                     var temp, trst;
                     var args = [].slice.call(arguments);
 
                     if (tween == null) {
-                        styleTweens.remove(style);
+                        _dd3_removeTween(this, 'styleTween', style)
                     } else if (typeof tween !== "string") {
                         utils.log("The tween function should be provided as a string\nCustom tween functions have to be defined with dd3.defineTween", 2);
                         return this;
@@ -2983,7 +2890,7 @@ var initDD3App = function () {
                         utils.log("The function " + tween + " was not defined with dd3.defineTween\nCustom tween functions have to be defined with dd3.defineTween", 2);
                         return this;
                     } else {
-                        styleTweens.set(style, ['dd3_' + tween, priority]);
+                        _dd3_setTween(this, 'styleTween', style, ['dd3_' + tween, priority]);
                         args[1] = _dd3_tweens['dd3_' + tween];
                     }
 
