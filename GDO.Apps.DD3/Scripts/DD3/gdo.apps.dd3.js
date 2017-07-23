@@ -1648,9 +1648,8 @@ var initDD3App = function () {
             // Return the next HTML element in an ordered group.
             // g: Current element in the ordered group.
             // order: current 'position' of in the ordered group
-            //TODO v4: the selector can't find the order. Is that a problem?
             //BAI: this function is only used in the function "_dd3_shapeHandler" in receiveDataHandler Obj.
-            var _dd3_getOrderFollower = function (g, order) {
+            var _dd3_getOrderFollowerOld = function (g, order) {
                 var s = order.split("_");
                 var elems = g.selectAll_("#" + g.node().id + " > [order^='" + s[0] + "']"), // Give all the elements whose order starts with s[0] and directly contained by g
                     follower,
@@ -1688,6 +1687,14 @@ var initDD3App = function () {
 
                 return follower;
             }
+
+            var _dd3_getOrderFollower = function (g, order) {
+                var elems = g.selectAll_("#" + g.node().id + " > [order]").nodes(); // Give all the elements which have an order and directly contained by g
+
+                return elems.find(function (elem) {
+                    return (elem.getAttribute('order') > order);
+                });
+            };
 
             //TODEL: used once by a function which is never used
             var _dd3_hook_d3 = function (hook, newObj) {
@@ -1820,29 +1827,27 @@ var initDD3App = function () {
                 return function (what, beforeWhat) {
                     if (funcName === 'append') {
                         beforeWhat = function () {
-                            var parent = this;
-                            if (_dd3_isEnterNode(this)) {
-                                if (this._next !== null)
-                                    return this._next;
-                                else
-                                    parent = this._parent;
-                            }
-
-                            var a = _dd3_selection_filterUnreceived(d3.selectAll(parent.childNodes));
-                            if (!a.empty())
-                                return a.nodes().pop().nextElementSibling;
-                            else if (a.empty() && parent.childNodes.length > 0)
-                                return _dd3_getOrderFollower(d3.select(parent), browser.row + '-' + browser.column + '_0');
+                            if (_dd3_isEnterNode(this))
+                                return this._next;
                             else
                                 return null;
                         };
                     }
 
-                    return _dd3.selection.prototype.insert_.call(this, what, beforeWhat).each(function () {   // EVANN : problem with insert if element to insert will be last (ie. beforeWhat is or returns null) ... can't see why anymore ??
-                        _dd3_createProperties.call(this);
+                    var selection = _dd3.selection.prototype.insert_.call(this, what, beforeWhat).each(function () {
                         if (this.parentNode.__unwatch__)
                             _dd3_unwatch.call(this);
+                        else
+                            _dd3_createProperties.call(this);
                     });
+
+                    if (typeof (what) == "function") {
+                        var newSelection = _dd3_selection_filterWatched(selection);
+                        _dd3_selection_updateOrder(newSelection);
+                        _dd3_selection_send(newSelection, 'shape');
+                    }
+
+                    return selection;
                 };
             };
 
@@ -1857,6 +1862,24 @@ var initDD3App = function () {
                 };
             };
 
+            // Called when elements are reorder
+            var _dd3_watchReorder = function (original) {
+                return function () {
+                    // Hack below needed because dd3...merge function is calling dd3...order
+                    var tmp_order = _dd3.selection.prototype.order
+                    _dd3.selection.prototype.order = _dd3.selection.prototype.order_
+                    var selection = original.call(this);
+                    _dd3.selection.prototype.order = tmp_order;
+
+                    var newSelection = _dd3_selection_updateOrder(_dd3_selection_createProperties(_dd3_selection_filterWatched(selection)));
+
+                    // Send the reordering
+                    if (!newSelection.empty())
+                        _dd3_selection_send(newSelection, 'property', { 'function': 'attr', 'property': 'order' });
+
+                    return selection;
+                };
+            };
 
             //Called when no operation is performed ... or an insert call in some remote circumstances
             var _dd3_watchNoOperation = function (original) {
@@ -1891,10 +1914,6 @@ var initDD3App = function () {
 
             _dd3.selection.prototype.remove = _dd3_watchFactory(_dd3_watchChange, d3.selection.prototype.remove, 'remove', 0);
 
-
-            //_dd3.selection.enter={};
-            //_dd3.selection.enter.prototype={};
-            //_dd3.selection.enter.prototype.insert = _dd3_watchEnterFactory(_dd3_watchNoOperation, d3.selection.enter.prototype.insert, 'insert');
             _dd3.selection.prototype.enter.prototype.insert = _dd3_watchEnterFactory(_dd3_watchAdd, d3.selection.prototype.insert, 'insert');//warning: used to be d3.selection.prototype.enter.prototype.insert
             //PREVIOUSLY: _dd3.selection.enter.prototype.insert = _dd3_watchEnterFactory(_dd3_watchNop, d3.selection.enter.prototype.insert, 'insert');
 
@@ -1902,13 +1921,19 @@ var initDD3App = function () {
 
             _dd3.selection.prototype.enter.prototype.append = _dd3_watchEnterFactory(_dd3_watchAdd, d3.selection.prototype.append, 'append');
 
-            _dd3.selection.prototype.append = _dd3_watchFactory(_dd3_watchAdd, d3.selection.prototype.append, 'append');//v4
+            _dd3.selection.prototype.append = _dd3_watchFactory(_dd3_watchAdd, d3.selection.prototype.append, 'append');
 
             _dd3.selection.prototype.selectAll = _dd3_watchFactory(_dd3_watchSelect, d3.selection.prototype.selectAll, 'selectAll');
 
             _dd3.selection.prototype.select = _dd3_watchFactory(_dd3_watchSelect, d3.selection.prototype.select, 'select');
 
-            //watchFactory since D3 functions under d3
+            _dd3.selection.prototype.lower = _dd3_watchFactory(_dd3_watchReorder, d3.selection.prototype.lower, 'lower');
+
+            _dd3.selection.prototype.raise = _dd3_watchFactory(_dd3_watchReorder, d3.selection.prototype.raise, 'raise');
+
+            _dd3.selection.prototype.sort = _dd3_watchFactory(_dd3_watchReorder, d3.selection.prototype.sort, 'sort');
+
+            _dd3.selection.prototype.order = _dd3_watchFactory(_dd3_watchReorder, d3.selection.prototype.order, 'order');
 
             _dd3.selectAll = _dd3_watchSelectFactory(_dd3_watchSelect, d3.selectAll, 'selectAll');
 
@@ -2437,27 +2462,35 @@ var initDD3App = function () {
                     return this.__recipients__ || (log("No recipients"), []);
             };
 
-            var getOrder = function (elem) {
-                var s, prev = elem, prevOrder = 0, next = elem, nextOrder, o = browser.row + '-' + browser.column;
+            var getOrder = (function () {
+                var previousOrderTime = 0, counter = 0;
+                var format = d3.format("0>6");
+                return function (elem) {
+                    var s, prev = elem, prevOrder = 0, next = elem, nextOrder, o = browser.row + '-' + browser.column;
+                    var time = Date.now(), count = counter;
 
-                prev = getPreviousElemOrdered(elem);
-                if (prev) {
-                    s = prev.getAttribute("order").split("_");
-                    if (s[0] === o)
-                        prevOrder = +s[1];
-                }
+                    // Check if an object is after:
+                    // IF NOT: check if time is more than previous if so, use time and reset counter, else use time and ++counter
+                    // IF YES: get time of previous element and update counter
 
-                next = getNextElemOrdered(elem);
-                if (next) {
-                    s = next.getAttribute("order").split("_");
-                    if (s[0] === o)
-                        nextOrder = +s[1];
-                }
+                    if (!(next = getNextElemOrdered(elem))) {
+                        count = previousOrderTime == time ? ++counter : (counter = 0);
+                        previousOrderTime = time;
+                    } else {
+                        if (prev = getPreviousElemOrdered(elem)) {
+                            var args = prev.getAttribute("order").split("_");
+                            time = args[0];
+                            count = parseInt(args[1]) + 1;
+                        } else {
+                            var args = next.getAttribute("order").split("_");
+                            time = parseInt(args[0]) - 1;
+                            count = 0;
+                        }
+                    }
 
-                o += "_" + (nextOrder ? (prevOrder + nextOrder) / 2 : prevOrder + 1);
-
-                return o;
-            };
+                    return [time, format(count), browser.number].join("_");
+                };
+            })();
 
             var getPreviousElemOrdered = function (elem) {
                 elem = elem.previousElementSibling;
@@ -2475,6 +2508,10 @@ var initDD3App = function () {
                         return elem;
                     elem = elem.nextElementSibling;
                 }
+            };
+
+            var _dd3_selection_updateOrder = function (selection) {
+                return selection.attr_("order", null).attr_("order", function () { return getOrder(this); });
             };
 
             /**
