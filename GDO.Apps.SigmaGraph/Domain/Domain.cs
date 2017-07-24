@@ -196,8 +196,8 @@ namespace GDO.Apps.SigmaGraph.Domain
                 return Math.Abs(StartPos.Y - y) <= Epsilon || Math.Abs(EndPos.Y - y) <= Epsilon;
             }
             // The lines intersect at (x = 1/m (y-y_o) + x_0, y = y)
-            double slope = (EndPos.Y - StartPos.Y) / (EndPos.X - StartPos.X);
-            double xIntersect = 1 / slope * (y - StartPos.Y) + StartPos.X;
+            double reciprocalSlope = (EndPos.X - StartPos.X) / (EndPos.Y - StartPos.Y);
+            double xIntersect = reciprocalSlope * (y - StartPos.Y) + StartPos.X;
             return xIntersect >= minX && xIntersect <= maxX;
         }
 

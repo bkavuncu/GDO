@@ -303,13 +303,13 @@ function convertServerCoordsToSigmaCoords(node) {
  * For debugging purposes.
  */
 function addDebugGrid() {
-    let count = 100;
+    let count = 0;
     [...Array(11).keys()].forEach(function (x) {
         x /= 10;
         [...Array(11).keys()].forEach(function(y) {
             y /= 10;
             count += 1;
-            const gridNode = { id: "n" + count, x: x, y: y, color: "#00f", size: 4 };
+            const gridNode = { id: "debug" + count, x: x, y: y, color: "#00f", size: 4 };
             convertServerCoordsToSigmaCoords(gridNode);
             gdo.sigmaInstance.graph.addNode(gridNode);
         });

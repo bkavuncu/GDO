@@ -38,8 +38,9 @@ namespace GDO.Apps.SigmaGraph.Domain {
 
 
             Dictionary<string, QuadTreeNode<GraphObject>> leafs = factory.SelectLeafs();
+            Dictionary<string, GraphNode> graphNodes = graph.Nodes.ToDictionary(n => n.ID, n => n);
 
-            ExportLeafNodes(factory, leafs, graph.Nodes, outputfolder);
+            ExportLeafNodes(factory, leafs, graphNodes, outputfolder);
 
             //todo now export the whole quadtree so it can be reloaded again later... 
 
@@ -55,20 +56,18 @@ namespace GDO.Apps.SigmaGraph.Domain {
             System.IO.File.WriteAllText(@filename, json);
         }
 
-        private static void ExportLeafNodes(ConcurrentQuadTreeFactory<GraphObject> factory, Dictionary<string, QuadTreeNode<GraphObject>> leafs, List<GraphNode> graphNodes, string outputfolder) {
+        private static void ExportLeafNodes(ConcurrentQuadTreeFactory<GraphObject> factory, Dictionary<string, QuadTreeNode<GraphObject>> leafs, Dictionary<string, GraphNode> graphNodes, string outputfolder) {
             Parallel.ForEach(leafs, l => ProcessLeafJSON(l.Key, factory.GetBagsForQuad(l.Value), graphNodes, outputfolder));
         }
 
-        private static void ProcessLeafJSON(string key, QuadTreeBag<GraphObject>[] quadTreeBag, List<GraphNode> graphNodes, string outputfolder) {
+        private static void ProcessLeafJSON(string key, QuadTreeBag<GraphObject>[] quadTreeBag, Dictionary<string, GraphNode> graphNodes, string outputfolder) {
             /*  
              * todo     
              
              * split objects into nodes & edges
              * for the edges retrive the nodes connected
              * dump it all to text file. 
-             */
-            Dictionary<string, GraphNode> nodeDict = new Dictionary<string, GraphNode>();
-         
+             */         
             List<GraphLink> edges = new List<GraphLink>();
 
 
@@ -77,21 +76,18 @@ namespace GDO.Apps.SigmaGraph.Domain {
                 if (graphObject is GraphLink) {
                     edges.Add(graphObject as GraphLink);
                 } else if (graphObject is GraphNode) {
-                    var graphNode = graphObject as GraphNode;
-                    nodeDict.Add(graphNode.ID,graphNode);
-                }
-                else {
+                } else {
                     throw new ArgumentException("unknown graph object type");
                 }
             }
 
             List<string> nodes = edges.Select(e => e.Source).Union(edges.Select(e => e.Target))
-                .Union(nodeDict.Keys).Distinct().ToList();
+                .Union(graphNodes.Keys).ToList();
 
             // dump them all to a text file 
             string outputfile = Path.Combine(outputfolder, key + ".json");
 
-            JSONUtilities.SaveGraph(nodeDict,edges,outputfile);
+            JSONUtilities.SaveGraph(nodes,graphNodes,edges,outputfile);
 
         }
 
