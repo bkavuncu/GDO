@@ -330,7 +330,7 @@ function addDebugGrid() {
  * Show a box for each leaf of the quad tree being rendered.
  * For debugging purposes.
  */
-function addLeafBoxes() {
+async function addLeafBoxes() {
     let leafBoxes = await getLeafBoxes();
     leafBoxes = leafBoxes.map(function (leafBox) {
         return eval('({' + leafBox + '})');

@@ -37,7 +37,7 @@
 <script src="../../Scripts/jquery.signalR-2.2.1.min.js"></script>
 <script>
     $(function() {
-        $(document).ready(function() {
+        $(window).ready(function() {
             var gdo = parent.gdo;
             console.log("Start time: " + window.performance.now());
             gdo.net.app["SigmaGraph"].initClient();
