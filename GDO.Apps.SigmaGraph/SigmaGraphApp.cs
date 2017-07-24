@@ -85,7 +85,13 @@ namespace GDO.Apps.SigmaGraph {
 
 
             return this.currentQuadTreeRoot.ReturnMatchingLeaves(x, y, xWidth, yWidth)
-                .Select(guid => this.FolderNameDigit + "/" + guid + ".json").ToList();
+                .Select(graphNode => this.FolderNameDigit + "/" + graphNode.Guid + ".json").ToList();
+        }
+
+        public IEnumerable<string> GetLeafBoxes(double x, double y, double xWidth, double yWidth)
+        {
+            return this.currentQuadTreeRoot.ReturnMatchingLeaves(x, y, xWidth, yWidth)
+                .Select(graphNode => graphNode.Centroid.ToString()).ToList();
         }
 
         public void UpdateZoomVar(bool zoomed) {

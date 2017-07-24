@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using GDO.Apps.SigmaGraph.Domain;
 
 namespace GDO.Apps.SigmaGraph.QuadTree {
     /// <summary>
@@ -66,13 +67,12 @@ namespace GDO.Apps.SigmaGraph.QuadTree {
 
         /// <summary>
         /// TODO this code does need to be unit tested to ensure that the math is correct 
+        /// TODO REGRESSION TEST: Quad crosses rectangle x border, and is completely between y borders
         /// </summary>
         /// <param name="quad">The quad.</param>
         /// <param name="cornersCamera">The corners camera.</param>
         /// <returns>true upon match</returns>
         private bool QuadMatchesRectangle(QuadTreeNode<T> quad, List<double> cornersCamera) {
-
-            // for each corner, verify if coordinates within the centroids +- xWidth/2 and then add it to the list of matching sub quad trees
             var pointInX = quad.Centroid.xCentroid >= cornersCamera[0] &&
                            quad.Centroid.xCentroid <= cornersCamera[1];
             var pointInY = quad.Centroid.yCentroid >= cornersCamera[2] &&
@@ -89,22 +89,24 @@ namespace GDO.Apps.SigmaGraph.QuadTree {
                     // Touching right border
                     || quad.Centroid.xCentroid - quad.Centroid.xWidth / 2 <= cornersCamera[1]
                     && quad.Centroid.xCentroid + quad.Centroid.xWidth / 2 >= cornersCamera[1]
+                    // Between left and right border
+                    || quad.Centroid.xCentroid - quad.Centroid.xWidth / 2 >= cornersCamera[0]
+                    && quad.Centroid.xCentroid + quad.Centroid.xWidth / 2 <= cornersCamera[1]
                 ;
             var borderInBetweenY =
-                    // Touching left border
+                    // Touching upper border
                     quad.Centroid.yCentroid - quad.Centroid.yWidth / 2 <= cornersCamera[2]
                     && quad.Centroid.yCentroid + quad.Centroid.yWidth / 2 >= cornersCamera[2]
-                    // Touching right border
+                    // Touching lower border
                     || quad.Centroid.yCentroid - quad.Centroid.yWidth / 2 <= cornersCamera[3]
                     && quad.Centroid.yCentroid + quad.Centroid.yWidth / 2 >= cornersCamera[3]
+                    // Between upper and lower border
+                    || quad.Centroid.yCentroid - quad.Centroid.yWidth / 2 >= cornersCamera[2]
+                    && quad.Centroid.yCentroid + quad.Centroid.yWidth / 2 <= cornersCamera[3]
                 ;
-
-
             if (borderInBetweenX && borderInBetweenY) {
-                return true;;
-                    
+                return true;
             }
-
             return false; 
         }
 
@@ -272,7 +274,7 @@ namespace GDO.Apps.SigmaGraph.QuadTree {
         /// <param name="xWidth">Width of the x.</param>
         /// <param name="yWidth">Width of the y.</param>
         /// <returns></returns>
-        public List<string> ReturnMatchingLeaves(double xcenter, double ycenter, double xWidth, double yWidth) {
+        public List<QuadTreeNode<T>> ReturnMatchingLeaves(double xcenter, double ycenter, double xWidth, double yWidth) {
 
             List<QuadTreeNode<T>> matchingleaves = new List<QuadTreeNode<T>>();
             Stack<QuadTreeNode<T>> workList = new Stack<QuadTreeNode<T>>();// holds matching quadtree bits
@@ -297,7 +299,7 @@ namespace GDO.Apps.SigmaGraph.QuadTree {
             }
 
             
-            return matchingleaves.Select(q=> q.Guid).ToList();
+            return matchingleaves;
         }
     }
 }

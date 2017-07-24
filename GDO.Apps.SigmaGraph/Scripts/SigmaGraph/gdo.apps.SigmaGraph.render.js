@@ -86,7 +86,7 @@ gdo.net.app["SigmaGraph"].renderGraph = async function () {//todo note this is a
         fileNodesInFOV.forEach(node => {
             node.x = node.pos.x;
             node.y = node.pos.y;
-            node.color = node.color || "#f00";
+            node.color = node.color || "#00f";
             node.size = node.size || 3;
         });
         console.log('Time to convert nodes into sigma nodes: ' + (window.performance.now() - gdo.stopWatch));
@@ -126,7 +126,7 @@ gdo.net.app["SigmaGraph"].renderGraph = async function () {//todo note this is a
     addDebugGrid();
     // Render the new graph
     gdo.stopWatch = window.performance.now();
-    gdo.sigmaInstance.refresh({ skipIndexation: true });
+    gdo.sigmaInstance.refresh({ skipIndexation: false });
 }
 
 /**
@@ -141,6 +141,16 @@ async function getFilesWithin() {
             });
     });
     return filePaths.map((filePath) => "../../" + filePath);
+}
+
+async function getLeafBoxes() {
+    const boxes = await new Promise((resolve, reject) => {
+        gdo.net.app["SigmaGraph"].server.getLeafBoxes(gdo.controlId, gdo.xCentroid, gdo.yCentroid, gdo.xWidth, gdo.yWidth)
+            .done(function (boxes) {
+                resolve(boxes);
+            });
+    });
+    return boxes;
 }
 
 /**
@@ -313,5 +323,57 @@ function addDebugGrid() {
             convertServerCoordsToSigmaCoords(gridNode);
             gdo.sigmaInstance.graph.addNode(gridNode);
         });
+    });
+}
+
+/**
+ * Show a box for each leaf of the quad tree being rendered.
+ * For debugging purposes.
+ */
+function addLeafBoxes() {
+    let leafBoxes = await getLeafBoxes();
+    leafBoxes = leafBoxes.map(function (leafBox) {
+        return eval('({' + leafBox + '})');
+    });
+    leafBoxes.forEach((leafBox, index) => {
+        const upperLeft = {
+            id: "debugUpperLeft - " + index,
+            x: leafBox.xCentroid - leafBox.xWidth / 2,
+            y: leafBox.yCentroid - leafBox.yWidth / 2,
+            color: "#0f0"
+        };
+        const upperRight = {
+            id: "debugUpperRight - " + index,
+            x: leafBox.xCentroid + leafBox.xWidth / 2,
+            y: leafBox.yCentroid - leafBox.yWidth / 2,
+            color: "#0f0"
+        };
+        const lowerLeft = {
+            id: "debugLowerLeft - " + index,
+            x: leafBox.xCentroid - leafBox.xWidth / 2,
+            y: leafBox.yCentroid + leafBox.yWidth / 2,
+            color: "#0f0"
+        };
+        const lowerRight = {
+            id: "debugLowerRight - " + index,
+            x: leafBox.xCentroid + leafBox.xWidth / 2,
+            y: leafBox.yCentroid + leafBox.yWidth / 2,
+            color: "#0f0"
+        };
+        convertServerCoordsToSigmaCoords(upperLeft);
+        convertServerCoordsToSigmaCoords(upperRight);
+        convertServerCoordsToSigmaCoords(lowerLeft);
+        convertServerCoordsToSigmaCoords(lowerRight);
+        gdo.sigmaInstance.graph
+            .addNode(upperLeft)
+            .addNode(upperRight)
+            .addNode(lowerLeft)
+            .addNode(lowerRight)
+            .addEdge({ id: "debugE1 - " + index, source: upperLeft.id, target: upperRight.id, color: "#0f0", size: 20 })
+            .addEdge({ id: "debugE2 - " + index, source: upperRight.id, target: lowerRight.id, color: "#0f0", size: 20 })
+            .addEdge({ id: "debugE3 - " + index, source: lowerRight.id, target: lowerLeft.id, color: "#0f0", size: 20 })
+            .addEdge({ id: "debugE4 - " + index, source: lowerLeft.id, target: upperLeft.id, color: "#0f0", size: 20 })
+            .addEdge({ id: "debugE5 - " + index, source: lowerLeft.id, target: upperRight.id, color: "#0f0", size: 20 })
+            .addEdge({ id: "debugE6 - " + index, source: upperLeft.id, target: lowerRight.id, color: "#0f0", size: 20 });
     });
 }

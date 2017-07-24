@@ -83,6 +83,16 @@ namespace GDO.Apps.SigmaGraph
             }
         }
 
+        public IEnumerable<string> GetLeafBoxes(int instanceId, double x, double y, double xWidth, double yWidth)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                ga = (SigmaGraphApp)Cave.Apps["SigmaGraph"].Instances[instanceId];
+                IEnumerable<string> boxes = ga.GetLeafBoxes(x, y, xWidth, yWidth);
+                return boxes.ToList();
+            }
+        }
+
         public void setAllNodesSize(int instanceId, int nodeSize)
         {
             lock (Cave.AppLocks[instanceId])
