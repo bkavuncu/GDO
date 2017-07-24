@@ -18,6 +18,8 @@ gdo.net.app["SigmaGraph"].initInstanceGlobalConstants = function() {
     gdo.numCols = gdo.net.section[gdo.net.node[gdo.clientId].sectionId].cols;
     gdo.graphContainer = window.frames['app_frame'].children[0]
         .contentDocument.getElementById('graphArea');
+    gdo.loader = window.frames['app_frame'].children[0]
+        .contentDocument.getElementById('loaderContainer');
     const positionInfo = gdo.graphContainer.getBoundingClientRect();
     gdo.canvasHeightInPx = positionInfo.height / 2;
     gdo.canvasWidthInPx = positionInfo.width / 2;
@@ -63,6 +65,7 @@ gdo.net.app["SigmaGraph"].initInstanceGlobalVariables = function () {
  */
 gdo.net.app["SigmaGraph"].renderGraph = async function () {//todo note this is an experimental feature
     console.log('Rendering graph...');
+    gdo.loader.style.display = "block";
     // Get location of files containing objects to render.
     gdo.stopWatch = window.performance.now();
     const filePaths = await getFilesWithin();
@@ -86,8 +89,8 @@ gdo.net.app["SigmaGraph"].renderGraph = async function () {//todo note this is a
         fileNodesInFOV.forEach(node => {
             node.x = node.pos.x;
             node.y = node.pos.y;
-            node.color = node.color || "#00f";
-            node.size = node.size || 3;
+            node.color = node.color || "#89f";
+            node.size = Math.min(12, node.size) || 3;
         });
         console.log('Time to convert nodes into sigma nodes: ' + (window.performance.now() - gdo.stopWatch));
         gdo.stopWatch = window.performance.now();
@@ -102,7 +105,7 @@ gdo.net.app["SigmaGraph"].renderGraph = async function () {//todo note this is a
         let fileEdgesInFOV = fileGraphObjects.edges;
         fileEdgesInFOV.forEach(edge => {
             edge.id = edge.source + " to " + edge.target;
-            edge.color = edge.color || "#f00";
+            edge.color = edge.color || "#339";
         });
         console.log('Time to convert edges into sigma edges: ' + (window.performance.now() - gdo.stopWatch));
         gdo.stopWatch = window.performance.now();
@@ -125,8 +128,9 @@ gdo.net.app["SigmaGraph"].renderGraph = async function () {//todo note this is a
 
     addDebugGrid();
     // Render the new graph
+    gdo.loader.style.display = "none";
     gdo.stopWatch = window.performance.now();
-    gdo.sigmaInstance.refresh({ skipIndexation: false });
+    gdo.sigmaInstance.refresh({ skipIndexation: true });
 }
 
 /**
