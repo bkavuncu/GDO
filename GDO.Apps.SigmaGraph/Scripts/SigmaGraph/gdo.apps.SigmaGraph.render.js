@@ -7,6 +7,7 @@
  */
 gdo.net.app["SigmaGraph"].renderGraph = async function () {//todo note this is an experimental feature
     console.log('Rendering graph...');
+    // TODO this shouldn't really be in this function...
     gdo.loader.style.display = "block";
     // Get location of files containing objects to render.
     gdo.stopWatch = window.performance.now();

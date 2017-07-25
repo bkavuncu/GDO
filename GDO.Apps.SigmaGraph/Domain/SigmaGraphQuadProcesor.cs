@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -67,7 +68,8 @@ namespace GDO.Apps.SigmaGraph.Domain {
              * split objects into nodes & edges
              * for the edges retrive the nodes connected
              * dump it all to text file. 
-             */         
+             */
+            HashSet<string> leafNodes = new HashSet<string>();
             List<GraphLink> edges = new List<GraphLink>();
 
 
@@ -76,19 +78,23 @@ namespace GDO.Apps.SigmaGraph.Domain {
                 if (graphObject is GraphLink) {
                     edges.Add(graphObject as GraphLink);
                 } else if (graphObject is GraphNode) {
+                    GraphNode node = graphObject as GraphNode;
+                    leafNodes.Add(node.ID);
                 } else {
                     throw new ArgumentException("unknown graph object type");
                 }
             }
 
             List<string> nodes = edges.Select(e => e.Source).Union(edges.Select(e => e.Target))
-                .Union(graphNodes.Keys).ToList();
+                .Union(leafNodes).ToList();
+            Debug.WriteLine("Node Count: " + leafNodes.Count 
+                          + " New Node Count: " + nodes.Count 
+                          + " Edge Count: " + edges.Count);
 
             // dump them all to a text file 
             string outputfile = Path.Combine(outputfolder, key + ".json");
 
             JSONUtilities.SaveGraph(nodes,graphNodes,edges,outputfile);
-
         }
 
     }
