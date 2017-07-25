@@ -2,6 +2,7 @@
 using GDO.Apps.SigmaGraph.QuadTree;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using Newtonsoft.Json.Linq;
 
 namespace GDO.Apps.SigmaGraph.Domain
 {
@@ -191,8 +192,10 @@ namespace GDO.Apps.SigmaGraph.Domain
         /// <returns></returns> true if they intersect and false otherwise
         private bool IntersectsHorizontalSegment(double y, double minX, double maxX)
         {
-            if (Math.Abs(EndPos.Y - StartPos.Y) <= Epsilon)
-            {
+            if (y < Math.Min(StartPos.Y, EndPos.Y) || y > Math.Max(StartPos.Y, EndPos.Y)) {
+                return false;
+            }
+            if (Math.Abs(EndPos.Y - StartPos.Y) <= Epsilon) {
                 return Math.Abs(StartPos.Y - y) <= Epsilon || Math.Abs(EndPos.Y - y) <= Epsilon;
             }
             // The lines intersect at (x = 1/m (y-y_o) + x_0, y = y)
@@ -211,8 +214,10 @@ namespace GDO.Apps.SigmaGraph.Domain
         /// <returns></returns> true if they intersect or if and false otherwise
         private bool IntersectsVerticalSegment(double x, double minY, double maxY)
         {
-            if (Math.Abs(EndPos.X - StartPos.X) <= Epsilon)
-            {
+            if (x < Math.Min(StartPos.X, EndPos.X) || x > Math.Max(StartPos.X, EndPos.X)) {
+                return false;
+            }
+            if (Math.Abs(EndPos.X - StartPos.X) <= Epsilon) {
                 return Math.Abs(StartPos.X - x) <= Epsilon || Math.Abs(EndPos.X - x) <= Epsilon;
             }
             // The lines intersect at (x = x, y = m(x-x_0) + y_0)

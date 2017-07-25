@@ -32,7 +32,9 @@ gdo.net.app["SigmaGraph"].renderGraph = async function () {//todo note this is a
         fileNodesInFOV.forEach(node => {
             node.x = node.pos.x;
             node.y = node.pos.y;
-            node.color = node.color || "#89f";
+            node.color = "#" + toPaddedHexString(node.r, 2)
+                             + toPaddedHexString(node.g, 2)
+                             + toPaddedHexString(node.b, 2);
             node.size = Math.min(12, node.size) || 3;
         });
         console.log('Time to convert nodes into sigma nodes: ' + (window.performance.now() - gdo.stopWatch));
@@ -323,4 +325,9 @@ async function addLeafBoxes() {
             .addEdge({ id: "debugE5 - " + index, source: lowerLeft.id, target: upperRight.id, color: "#0f0", size: 20 })
             .addEdge({ id: "debugE6 - " + index, source: upperLeft.id, target: lowerRight.id, color: "#0f0", size: 20 });
     });
+}
+
+function toPaddedHexString(num, len) {
+    const str = num.toString(16);
+    return "0".repeat(len - str.length) + str;
 }
