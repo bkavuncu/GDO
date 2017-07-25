@@ -40,7 +40,8 @@ namespace GDO.Apps.SigmaGraph.Domain {
             Dictionary<string, QuadTreeNode<GraphObject>> leafs = factory.SelectLeafs();
             Dictionary<string, GraphNode> graphNodes = graph.Nodes.ToDictionary(n => n.ID, n => n);
 
-            ExportLeafNodes(factory, leafs, graphNodes, outputfolder);
+
+            ExportLeafNodes(factory, leafs, graph.Nodes.ToDictionary(d=> d.ID,d=>d), outputfolder);
 
             //todo now export the whole quadtree so it can be reloaded again later... 
 
@@ -67,7 +68,9 @@ namespace GDO.Apps.SigmaGraph.Domain {
              * split objects into nodes & edges
              * for the edges retrive the nodes connected
              * dump it all to text file. 
-             */         
+             */
+            Dictionary<string, GraphNode> nodeDict = new Dictionary<string, GraphNode>();
+         
             List<GraphLink> edges = new List<GraphLink>();
 
 
@@ -76,18 +79,22 @@ namespace GDO.Apps.SigmaGraph.Domain {
                 if (graphObject is GraphLink) {
                     edges.Add(graphObject as GraphLink);
                 } else if (graphObject is GraphNode) {
-                } else {
+                    var graphNode = graphObject as GraphNode;
+                    nodeDict.Add(graphNode.ID,graphNode);
+                }
+                else {
                     throw new ArgumentException("unknown graph object type");
                 }
             }
 
             List<string> nodes = edges.Select(e => e.Source).Union(edges.Select(e => e.Target))
-                .Union(graphNodes.Keys).ToList();
+                .Union(nodeDict.Keys).ToList();
 
+      
             // dump them all to a text file 
             string outputfile = Path.Combine(outputfolder, key + ".json");
 
-            JSONUtilities.SaveGraph(nodes,graphNodes,edges,outputfile);
+            JSONUtilities.SaveGraph(nodes,nodeDict,edges,outputfile);
 
         }
 

@@ -136,6 +136,7 @@
     <Compile Include="Domain\QuadTreeNodeConverter.cs" />
     <Compile Include="Domain\SigmaGraphProcessor.cs" />
     <Compile Include="Domain\SigmaGraphQuadProcesor.cs" />
+    <Compile Include="Domain\QuadTreeNodeConverter.cs" />
     <Compile Include="QuadTree\AConcurrentQuadTreeFactory.cs" />
     <Compile Include="QuadTree\ConcurrentQuadTreeFactory.cs" />
     <Compile Include="QuadTree\IQuadable.cs" />
