@@ -39,11 +39,8 @@ namespace GDO.Apps.SigmaGraph.Domain {
 
 
             Dictionary<string, QuadTreeNode<GraphObject>> leafs = factory.SelectLeafs();
-            Dictionary<string, GraphNode> graphNodes = graph.Nodes.ToDictionary(n => n.ID, n => n);
 
-            ExportLeafNodes(factory, leafs, graphNodes, outputfolder);
-
-            //todo now export the whole quadtree so it can be reloaded again later... 
+            ExportLeafNodes(factory, leafs, graph.Nodes.ToDictionary(n => n.ID, n => n), outputfolder);
 
             ExportQuadTree(factory.QuadTree.Root, Path.Combine(outputfolder, "quad.json"));
 
@@ -62,13 +59,6 @@ namespace GDO.Apps.SigmaGraph.Domain {
         }
 
         private static void ProcessLeafJSON(string key, QuadTreeBag<GraphObject>[] quadTreeBag, Dictionary<string, GraphNode> graphNodes, string outputfolder) {
-            /*  
-             * todo     
-             
-             * split objects into nodes & edges
-             * for the edges retrive the nodes connected
-             * dump it all to text file. 
-             */
             HashSet<string> leafNodes = new HashSet<string>();
             List<GraphLink> edges = new List<GraphLink>();
 
@@ -90,13 +80,12 @@ namespace GDO.Apps.SigmaGraph.Domain {
             Debug.WriteLine("Node Count: " + leafNodes.Count 
                           + " New Node Count: " + nodes.Count 
                           + " Edge Count: " + edges.Count);
-
+      
             // dump them all to a text file 
             string outputfile = Path.Combine(outputfolder, key + ".json");
 
             JSONUtilities.SaveGraph(nodes,graphNodes,edges,outputfile);
         }
-
     }
 
     public static class LinqBatch {
