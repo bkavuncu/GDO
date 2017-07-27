@@ -26,50 +26,32 @@ gdo.net.app["SigmaGraph"].renderGraph = async function () {//todo note this is a
     gdo.sigmaInstance.graph.clear();
 
     // Filter and add the nodes and edges to the graph
+    gdo.stopWatch = window.performance.now();
     filesGraphObjects.forEach(function (fileGraphObjects) {
-        gdo.stopWatch = window.performance.now();
-        const fileNodesInFOV = fileGraphObjects.nodes;
-        fileNodesInFOV.forEach(node => {
+        fileGraphObjects.nodes.forEach(node => {
             node.x = node.pos.x;
             node.y = node.pos.y;
             node.color = "#" + toPaddedHexString(node.r, 2)
                              + toPaddedHexString(node.g, 2)
                              + toPaddedHexString(node.b, 2);
             node.size = Math.min(12, node.size) || 3;
-        });
-        console.log('Time to convert nodes into sigma nodes: ' + (window.performance.now() - gdo.stopWatch));
-        gdo.stopWatch = window.performance.now();
-        fileNodesInFOV.forEach(node => {
             try {
                 gdo.sigmaInstance.graph.addNode(node);
-            } catch (err) {}
+            } catch (err) { }
         });
-        console.log('Time to add nodes to sigma graph: ' + (window.performance.now() - gdo.stopWatch));
 
-        gdo.stopWatch = window.performance.now();
-        let fileEdgesInFOV = fileGraphObjects.edges;
-        fileEdgesInFOV.forEach(edge => {
+        fileEdgesInFOV = fileGraphObjects.edges.forEach(edge => {
             edge.id = edge.source + " to " + edge.target;
             edge.color = edge.color || "#339";
-        });
-        console.log('Time to convert edges into sigma edges: ' + (window.performance.now() - gdo.stopWatch));
-        gdo.stopWatch = window.performance.now();
-        fileEdgesInFOV.forEach(edge => {
             try {
                 gdo.sigmaInstance.graph.addEdge(edge);
-            } catch (err) {}
+            } catch (err) { }
         });
-        console.log('Time to add edges to sigma graph: ' + (window.performance.now() - gdo.stopWatch));
-
-        gdo.stopWatch = window.performance.now();
-        gdo.sigmaInstance.graph.nodes().forEach(node => {
-            if (!node.converted) {
-                convertServerCoordsToSigmaCoords(node);
-                node.converted = true;
-            }
-        });
-        console.log('Time to convert node coordinates: ' + (window.performance.now() - gdo.stopWatch));
     });
+    gdo.sigmaInstance.graph.nodes().forEach(node => {
+            convertServerCoordsToSigmaCoords(node);
+    });
+    console.log("Time to add objects: " + (window.performance.now() - gdo.stopWatch));
 
     addDebugGrid();
     // Render the new graph
