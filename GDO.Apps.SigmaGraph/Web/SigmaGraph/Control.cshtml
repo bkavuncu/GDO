@@ -135,6 +135,83 @@
         });
     });
 
+    $(window).ready(function () {
+        const gdo = parent.gdo;
+
+        // Setup canvas
+        const canvas = document.getElementById("field_of_view");
+        canvas.width = 800;
+        canvas.height = 300;
+        const ctx = canvas.getContext('2d');
+
+        // Setup object to plot
+        let currentX = 0;
+        let currentY = 0;
+        let currentWidth = 150;
+        let currentHeight = 100;
+        ctx.fillStyle = "#FF0000";
+        ctx.fillRect(currentX, currentY, currentWidth, currentHeight);
+
+        // Handle panning
+        let lastPanPos;
+        let totalPanXShift;
+        let totalPanYShift;
+        canvas.addEventListener("touchstart", handleStartPan, false);
+        canvas.addEventListener("touchmove", handleMovePan, false);
+        canvas.addEventListener("touchend", handleEndPan, false);
+
+        function handleStartPan(ev) {
+            console.log('start pan');
+            if (ev.touches.length === 1) {
+                lastPanPos = getMousePos(canvas, ev.touches[0]);
+                totalPanXShift = 0;
+                totalPanYShift = 0;
+            }
+        }
+
+        function handleMovePan(ev) {
+            console.log('move pan');
+            if (ev.touches.length === 1) {
+                const currentPanPos = getMousePos(canvas, ev.touches[0]);
+                currentX += currentPanPos.x - lastPanPos.x;
+                currentY += currentPanPos.y - lastPanPos.y;
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillRect(currentX, currentY, currentWidth, currentHeight);
+
+                totalPanXShift += currentPanPos.x - lastPanPos.x;
+                totalPanYShift += currentPanPos.y - lastPanPos.y;
+                lastPanPos = currentPanPos;
+            }
+        }
+
+        function handleEndPan(ev) {
+            console.log("end pan");
+            gdo.net.app["SigmaGraph"].server.pan(gdo.controlId, totalPanXShift/800, totalPanYShift/300);
+        }
+
+        // Helper functions
+        function getMousePos(canvasDom, touchEvent) {
+            const rect = canvas.getBoundingClientRect();
+            return {
+                x: touchEvent.clientX - rect.left,
+                y: touchEvent.clientY - rect.top
+            };
+        }
+
+        function midpoint(points) {
+            return {
+                x: (points[0].x + points[1].x) / 2, 
+                y: (points[0].y + points[1].y) / 2
+            };
+        }
+
+        function distance(points) {
+            return Math.sqrt((points[0].x - points[1].x) ** 2 +
+                             (points[0].y - points[1].y) ** 2);
+        }
+    });
+
     $(function () {
 
         var gdo = parent.gdo;
@@ -461,6 +538,7 @@
                                         </td>
                                     </tr>
                                 </table>
+                                <canvas id="field_of_view" style="width: 800px; height: 300px; touch-action: none"></canvas>
                             </fieldset>
                         </div>
                     </div>

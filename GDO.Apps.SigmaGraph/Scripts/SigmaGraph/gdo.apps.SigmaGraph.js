@@ -15,24 +15,27 @@ $(function () {
         gdo.net.app["SigmaGraph"].renderGraph();
     }
 
-    $.connection.sigmaGraphAppHub.client.pan = function (direction) {
-        switch(direction) {
-            case 'left':
-                gdo.net.app["SigmaGraph"].pan(-.1, 0);
-                break;
-            case 'right':
-                gdo.net.app["SigmaGraph"].pan(.1, 0);
-                break;
-            case 'up':
-                gdo.net.app["SigmaGraph"].pan(0, -.1);
-                break;
-            case 'down':
-                gdo.net.app["SigmaGraph"].pan(0, .1);
-                break;
-            default:
-                console.log('cannot pan this way');
-        }
+    $.connection.sigmaGraphAppHub.client.pan = function(x, y) {
+        gdo.net.app["SigmaGraph"].pan(x, y);
     }
+    // = function (direction) {
+    //    switch(direction) {
+    //        case 'left':
+    //            gdo.net.app["SigmaGraph"].pan(-.1, 0);
+    //            break;
+    //        case 'right':
+    //            gdo.net.app["SigmaGraph"].pan(.1, 0);
+    //            break;
+    //        case 'up':
+    //            gdo.net.app["SigmaGraph"].pan(0, -.1);
+    //            break;
+    //        case 'down':
+    //            gdo.net.app["SigmaGraph"].pan(0, .1);
+    //            break;
+    //        default:
+    //            console.log('cannot pan this way');
+    //    }
+    //}
 
     $.connection.sigmaGraphAppHub.client.zoom = gdo.net.app["SigmaGraph"].zoom;
 

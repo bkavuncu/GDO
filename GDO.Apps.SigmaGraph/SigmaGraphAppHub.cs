@@ -228,6 +228,25 @@ namespace GDO.Apps.SigmaGraph
             }
         }
 
+        public void Pan(int instanceId, double x, double y)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Triggering panning action.");
+                    Clients.Group("" + instanceId).pan(x,y);
+                    Clients.Caller.setMessage("Triggered panning action.");
+                }
+                catch (Exception e)
+                {
+                    Clients.Caller.setMessage("Error: Failed to trigger panning action.");
+                    Clients.Caller.setMessage(e.ToString());
+                    Debug.WriteLine(e);
+                }
+            }
+        }
+
         public void TriggerZoomIn(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])
