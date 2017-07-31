@@ -1,5 +1,5 @@
 {
-  "name": "DD3 OData",
+  "name": "dd3-odata",
   "version": "1.0.0",
   "dependencies": {
     "node-odata": "^0.7.16"
