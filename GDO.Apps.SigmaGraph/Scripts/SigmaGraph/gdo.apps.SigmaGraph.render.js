@@ -74,6 +74,10 @@ async function getFilesWithin() {
     return filePaths.map((filePath) => "../../" + filePath);
 }
 
+/**
+ * Returns a list of objects representing the centroids of all quadtree
+ * leaves matching this nodes field of view.
+ */
 async function getLeafBoxes() {
     const boxes = await new Promise((resolve, reject) => {
         gdo.net.app["SigmaGraph"].server.getLeafBoxes(gdo.controlId, gdo.xCentroid, gdo.yCentroid, gdo.xWidth, gdo.yWidth)
@@ -309,6 +313,14 @@ async function addLeafBoxes() {
     });
 }
 
+/**
+ * Converts a number from 0 to 255 inclusive to its hexadecimal
+ * reprensentation and zero pads it to len digits.
+ * https://stackoverflow.com/questions/9909038/formatting-hexadecimal-number-in-javascript
+ * @param {any} num
+ * @param {any} len
+ * @return num as a hexadecimal string zero padded to len digits
+ */
 function toPaddedHexString(num, len) {
     const str = num.toString(16);
     return "0".repeat(len - str.length) + str;
