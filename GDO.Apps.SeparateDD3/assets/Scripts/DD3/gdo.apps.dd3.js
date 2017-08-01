@@ -105,6 +105,7 @@ var initDD3App = function () {
             //seperate version changed: changed this function and make it more easy to be used
             getUrlVar: function (name, url) {
                 if (!url) url = window.location.href;
+                url = decodeURIComponent(url);  // for testing 
                 name = name.replace(/[\[\]]/g, "\\$&");
                 var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
                     results = regex.exec(url);
