@@ -645,13 +645,22 @@ var initDD3App = function () {
 
                         } else {
                             // @@ non-master
-                            console.log("@Non-master", conn);
+                            console.log("@Non-master", conn);   
 
-                            conn.on('open', function() {
+                            if (conn.open == false) {
+                                console.log("@Non-master open false trapped");  
+                                
+                                conn.open = true;   // a peerjs bug
+
+                                console.log("@Non-master after fix", conn);
+                            } 
+
+
+                            //conn.on('open', function() { 
 
                                 var thisNode = { gdo_appInstanceId, thisInfo };
 
-                                this.send(thisNode);
+                                conn.send(thisNode);
 
                                 conn.on('data', function(data) {
 
@@ -687,7 +696,8 @@ var initDD3App = function () {
 
                                     // this.send("from non-master: data received!");
                                 });
-                            });
+
+                            //});
 
                             conn.on('close', function() {
                                 console.log("@Non-master master disconnected");

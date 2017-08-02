@@ -420,6 +420,7 @@ PeerNet.prototype.onClientCallbackFunc = function () {
 
                                         conns.push(conn);
 
+                                        console.log("@PN 1 connection", conn);
                                         conn.on('open', function() {
                                             console.log("@PN 1", this.peer + " is connected");
 
@@ -430,7 +431,8 @@ PeerNet.prototype.onClientCallbackFunc = function () {
                                                 infos.push(info.thisInfo);
 
                                                 // broadcast to all
-                                                console.log("@PN 1 check same", infos.length, numClients)
+                                                console.log("@PN 1 info array", infos);
+                                                console.log("@PN 1 check same", infos.length, numClients);
                                                 if (infos.length == numClients) {
 
                                                     // convert objects to an array
