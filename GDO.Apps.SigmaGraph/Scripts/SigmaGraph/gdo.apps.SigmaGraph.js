@@ -7,9 +7,8 @@
 $(function () {
     gdo.consoleOut('.SIGMAGRAPHRENDERER', 1, 'Loaded Sigma Graph Renderer JS');
 
-    $.connection.sigmaGraphAppHub.client.initInstanceGlobalVariables = function() {
-        gdo.net.app["SigmaGraph"].initInstanceGlobalVariables();
-    }
+    $.connection.sigmaGraphAppHub.client.initInstanceGlobalVariables =
+        gdo.net.app["SigmaGraph"].initInstanceGlobalVariables;
 
     $.connection.sigmaGraphAppHub.client.renderGraph = function () {
         gdo.net.app["SigmaGraph"].renderGraph();
@@ -22,6 +21,9 @@ $(function () {
     $.connection.sigmaGraphAppHub.client.showSpinner = gdo.net.app["SigmaGraph"].showSpinner;
 
     $.connection.sigmaGraphAppHub.client.hideSpinner = gdo.net.app["SigmaGraph"].hideSpinner;
+
+    $.connection.sigmaGraphAppHub.client.savePartialGraphImageToServer =
+        gdo.net.app["SigmaGraph"].savePartialGraphImageToServer;
 
     // arrays to store data
     var links, nodes, allnodes, mostConnectedNodes = [];
@@ -404,3 +406,4 @@ gdo.loadScript('sigma.min', 'SigmaGraph', gdo.SCRIPT_TYPE.APP);
 gdo.loadScript('initializeGlobals', 'SigmaGraph', gdo.SCRIPT_TYPE.APP);
 gdo.loadScript('render', 'SigmaGraph', gdo.SCRIPT_TYPE.APP);
 gdo.loadScript('changeFieldOfView', 'SigmaGraph', gdo.SCRIPT_TYPE.APP);
+gdo.loadScript('updateModel', 'SigmaGraph', gdo.SCRIPT_TYPE.APP);

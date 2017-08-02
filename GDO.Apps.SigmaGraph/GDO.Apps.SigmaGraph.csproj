@@ -118,6 +118,7 @@
     </Content>
     <Content Include="Configurations\SigmaGraph\Default.json" />
     <Content Include="Scripts\SigmaGraph\gdo.apps.SigmaGraph.initializeGlobals.js" />
+    <Content Include="Scripts\SigmaGraph\gdo.apps.SigmaGraph.updateModel.js" />
     <Content Include="Web\SigmaGraph\styles\style.css" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
