@@ -8,7 +8,7 @@
     this.peerOption = {
         //There is no response from the peerJS server if adding the whole arguments below. Maybe we should check the peerjs set-up
         //key: this.config.key || '',
-        host: this.config.host || "146.169.32.109",
+        host: this.config.host || "146.169.32.196",
         port: this.config.port || 55555,
         //path: this.config.path || '/',
         //secure: this.config.secure || false,
