@@ -135,22 +135,28 @@
         });
     });
 
+    class CanvasImage {
+        constructor(initialX, initialY, initialWidth, initialHeight) {
+            this.currentX = initialX;
+            this.currentY = initialY;
+            this.currentWidth = initialWidth;
+            this.currentHeight = initialHeight;
+        }
+    }
+
     $(window).ready(function () {
         const gdo = parent.gdo;
 
         // Setup canvas
         const canvas = document.getElementById("field_of_view");
-        canvas.width = 500;
+        canvas.width = 1428;
         canvas.height = 500;
         const ctx = canvas.getContext('2d');
 
         // Setup object to plot
-        let currentX = 0;
-        let currentY = 0;
-        let currentWidth = 150;
-        let currentHeight = 100;
-        ctx.fillStyle = "#FF0000";
-        ctx.fillRect(currentX, currentY, currentWidth, currentHeight);
+        const imagesToPlot = [];
+        imagesToPlot.push(new CanvasImage(0, 0, 150, 100));
+        plotImages(ctx, imagesToPlot);
 
         // Handle movement type
         let type;
@@ -185,11 +191,12 @@
                 console.log('move pan');
 
                 const currentPanPos = getMousePos(canvas, ev.touches[0]);
-                currentX += currentPanPos.x - lastPanPos.x;
-                currentY += currentPanPos.y - lastPanPos.y;
+                imagesToPlot.forEach(function(image) {
+                    image.currentX += currentPanPos.x - lastPanPos.x;
+                    image.currentY += currentPanPos.y - lastPanPos.y;
+                });
 
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.fillRect(currentX, currentY, currentWidth, currentHeight);
+                plotImages();
 
                 totalPanXShift += currentPanPos.x - lastPanPos.x;
                 totalPanYShift += currentPanPos.y - lastPanPos.y;
@@ -232,18 +239,18 @@
                 const zoomRatioRelativeToLastMove = zoomRatioRelativeToStart / lastZoomRatio;
                 const ratio = zoomRatioRelativeToLastMove;
                 // Calculate the new position of image UL and LR
-                let currentXLowerRight = currentX + currentWidth;
-                let currentYLowerRight = currentY + currentHeight;
-                currentX = currentX * ratio + originalZoomCenter.x * (1 - ratio);
-                currentY = currentY * ratio + originalZoomCenter.y * (1 - ratio);
-                currentXLowerRight = currentXLowerRight * ratio + originalZoomCenter.x * (1 - ratio);
-                currentYLowerRight = currentYLowerRight * ratio + originalZoomCenter.y * (1 - ratio);
-                currentWidth = currentXLowerRight - currentX;
-                currentHeight = currentYLowerRight - currentY;
+                imagesToPlot.forEach(function(image) {
+                    let currentXLowerRight = image.currentX + image.currentWidth;
+                    let currentYLowerRight = image.currentY + image.currentHeight;
+                    image.currentX = image.currentX * ratio + originalZoomCenter.x * (1 - ratio);
+                    image.currentY = image.currentY * ratio + originalZoomCenter.y * (1 - ratio);
+                    currentXLowerRight = currentXLowerRight * ratio + originalZoomCenter.x * (1 - ratio);
+                    currentYLowerRight = currentYLowerRight * ratio + originalZoomCenter.y * (1 - ratio);
+                    image.currentWidth = currentXLowerRight - image.currentX;
+                    image.currentHeight = currentYLowerRight - image.currentY;
+                });
                 // Plot the object
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.fillStyle = "#FF0000";
-                ctx.fillRect(currentX, currentY, currentWidth, currentHeight);
+                plotImages();
                 ctx.fillStyle = "#000000";
                 ctx.fillRect(originalZoomCenter.x, originalZoomCenter.y, 3, 3);
 
@@ -281,6 +288,14 @@
         function distance(points) {
             return Math.sqrt((points[0].x - points[1].x) ** 2 +
                              (points[0].y - points[1].y) ** 2);
+        }
+
+        function plotImages() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            imagesToPlot.forEach(function (image) {
+                ctx.fillStyle = "#FF0000";
+                ctx.fillRect(image.currentX, image.currentY, image.currentWidth, image.currentHeight);
+            });
         }
     });
 
@@ -610,7 +625,7 @@
                                         </td>
                                     </tr>
                                 </table>
-                                <canvas id="field_of_view" style="width: 500px; height: 500px; touch-action: none; background: white"></canvas>
+                                <canvas id="field_of_view" style="width: 1428px; height: 500px; touch-action: none; background: white"></canvas>
                             </fieldset>
                         </div>
                     </div>

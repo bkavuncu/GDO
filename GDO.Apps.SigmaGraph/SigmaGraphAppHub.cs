@@ -139,13 +139,13 @@ namespace GDO.Apps.SigmaGraph
             {
                 try
                 {
-                    Clients.Caller.setMessage("Triggering panning action.");
+                    Clients.Caller.setMessage("Triggering zooming action.");
                     Clients.Group("" + instanceId).zoom(x, y, ratio);
-                    Clients.Caller.setMessage("Triggered panning action.");
+                    Clients.Caller.setMessage("Triggered zooming action.");
                 }
                 catch (Exception e)
                 {
-                    Clients.Caller.setMessage("Error: Failed to trigger panning action.");
+                    Clients.Caller.setMessage("Error: Failed to trigger zooming action.");
                     Clients.Caller.setMessage(e.ToString());
                     Debug.WriteLine(e);
                 }
