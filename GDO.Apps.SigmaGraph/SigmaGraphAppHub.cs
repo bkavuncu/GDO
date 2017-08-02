@@ -41,6 +41,9 @@ namespace GDO.Apps.SigmaGraph
                     Self = this;
                     this.ControllerId = Context.ConnectionId;
 
+                    // Indicate to clients that a graph is loading
+                    Clients.Group("" + instanceId).showSpinner();
+
                     // Tell clients to reset their field of view for a new graph
                     Clients.Group("" + instanceId).initInstanceGlobalVariables();
 
@@ -90,6 +93,23 @@ namespace GDO.Apps.SigmaGraph
                 ga = (SigmaGraphApp)Cave.Apps["SigmaGraph"].Instances[instanceId];
                 IEnumerable<string> boxes = ga.GetLeafBoxes(x, y, xWidth, yWidth);
                 return boxes.ToList();
+            }
+        }
+
+        public void DoneRendering(int instanceId, int clientId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.hideSpinner();
+                }
+                catch (Exception e)
+                {
+                    Clients.Caller.setMessage("Error: Failed finish rendering.");
+                    Clients.Caller.setMessage(e.ToString());
+                    Debug.WriteLine(e);
+                }
             }
         }
 

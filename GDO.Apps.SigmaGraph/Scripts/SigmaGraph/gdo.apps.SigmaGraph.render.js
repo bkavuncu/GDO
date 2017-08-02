@@ -7,8 +7,6 @@
  */
 gdo.net.app["SigmaGraph"].renderGraph = async function () {//todo note this is an experimental feature
     console.log('Rendering graph...');
-    // TODO this shouldn't really be in this function...
-    gdo.loader.style.display = "block";
     // Get location of files containing objects to render.
     gdo.stopWatch = window.performance.now();
     const filePaths = await getFilesWithin();
@@ -56,9 +54,24 @@ gdo.net.app["SigmaGraph"].renderGraph = async function () {//todo note this is a
 
     addDebugGrid();
     // Render the new graph
-    gdo.loader.style.display = "none";
     gdo.stopWatch = window.performance.now();
     gdo.sigmaInstance.refresh({ skipIndexation: true });
+
+    gdo.net.app["SigmaGraph"].server.doneRendering(gdo.controlId, gdo.clientId);
+}
+
+/**
+ * Show the spinning icon that indicates that the graph is loading.
+ */
+gdo.net.app["SigmaGraph"].showSpinner = function () {
+    gdo.loader.style.display = "block";
+}
+
+/**
+ * Hide the spinning icon that indicates that the graph is loading.
+ */
+gdo.net.app["SigmaGraph"].hideSpinner = function () {
+    gdo.loader.style.display = "none";
 }
 
 /**
