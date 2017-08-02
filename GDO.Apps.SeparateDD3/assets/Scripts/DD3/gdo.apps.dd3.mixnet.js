@@ -26,7 +26,7 @@
         console.log(this.syncCallback);
         this.syncCallback();
     }*/
-    this.socket = io.connect('http://localhost:8000');
+    this.socket = io.connect('http://146.169.32.196:8000');
 
 }
 

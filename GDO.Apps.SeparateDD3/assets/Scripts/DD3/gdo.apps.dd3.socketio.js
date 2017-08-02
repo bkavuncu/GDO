@@ -233,7 +233,7 @@ SocketioNet.prototype.onClientCallbackFunc = function () {
             }
             //这里只有这一个方程其余的都是在获取数据。应该由peer完成。
         },
-        client: io('http://localhost:8000')
+        client: io('http://146.169.32.196:8000')
     };
     
 

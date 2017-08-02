@@ -42,7 +42,7 @@ var control = {
         //confId is the application ID
         this.confId = parseInt(this.getUrlVar("confId"));
         this.numClients = parseInt(this.getUrlVar("numClients"));
-        this.socket = io('http://localhost:8000');
+        this.socket = io('http://146.169.32.196:8000');
 
         var _self = this;
        
