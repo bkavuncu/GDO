@@ -10,9 +10,8 @@ using GDO.Core.Apps;
 using log4net;
 using System.Text;
 
-// TODO cleanup this file
+// TODO write specs for all methods
 namespace GDO.Apps.SigmaGraph {
-
     public class SigmaGraphApp : IBaseAppInstance {
         private static readonly ILog Log = LogManager.GetLogger(typeof(SigmaGraphApp));
 
@@ -24,10 +23,8 @@ namespace GDO.Apps.SigmaGraph {
         public bool IntegrationMode { get; set; }
         public ICompositeAppInstance ParentApp { get; set; }
 
-        public GraphInfo graphinfo = new GraphInfo();
-
-        public string FolderNameDigit;
-        private QuadTreeNode<GraphObject> currentQuadTreeRoot;
+        private string _folderNameDigit;
+        private QuadTreeNode<GraphObject> _currentQuadTreeRoot;
 
         public void Init() {
             try {
@@ -39,22 +36,18 @@ namespace GDO.Apps.SigmaGraph {
             }
         }
 
-
-        // @param: name of data file (TODO: change it to folder name, that stores nodes and links files)
-        // return name of folder that stores processed data
-        public void ProcessGraph(string filename, bool zoomed, string folderName, int sectionWidth,
-            int sectionHeight) {
+        public void ProcessGraph(string filename) {
             String basePath = System.Web.HttpContext.Current.Server.MapPath("~/Web/SigmaGraph/QuadTrees/");
-            FolderNameDigit = CreateTemporyFolderId(filename, basePath);
-            String pathToFolder = basePath + FolderNameDigit;
+            _folderNameDigit = CreateTemporyFolderId(filename, basePath);
+            String pathToFolder = basePath + _folderNameDigit;
 
             if (Directory.Exists(pathToFolder)) {
                 string savedQuadTree =
-                    System.Web.HttpContext.Current.Server.MapPath("~/Web/SigmaGraph/QuadTrees/" + FolderNameDigit +
+                    System.Web.HttpContext.Current.Server.MapPath("~/Web/SigmaGraph/QuadTrees/" + _folderNameDigit +
                                                                   "/quad.json");
                 JsonSerializerSettings settings = new JsonSerializerSettings();
                 settings.Converters.Add(new QuadTreeNodeConverter());
-                this.currentQuadTreeRoot =
+                this._currentQuadTreeRoot =
                     JsonConvert.DeserializeObject<QuadTreeNode<GraphObject>>(File.ReadAllText(savedQuadTree), settings);
             }
             else {
@@ -62,11 +55,9 @@ namespace GDO.Apps.SigmaGraph {
                 string graphMLfile =
                     System.Web.HttpContext.Current.Server.MapPath("~/Web/SigmaGraph/graphmls/" + filename);
                 var graph = GraphDataReader.ReadGraphMLData(graphMLfile);
-                this.currentQuadTreeRoot = SigmaGraphQuadProcesor.ProcessGraph(graph, basePath + FolderNameDigit).Root;
+                this._currentQuadTreeRoot = SigmaGraphQuadProcesor.ProcessGraph(graph, basePath + _folderNameDigit).Root;
             }
         }
-
-       
 
         private static string CreateTemporyFolderId(string filename, string basePath) {
             byte[] folderNameBytes = Encoding.Default.GetBytes(filename);
@@ -74,29 +65,14 @@ namespace GDO.Apps.SigmaGraph {
         }
 
         public IEnumerable<string> GetFilesWithin(double x, double y, double xWidth, double yWidth) {
-          /*
-           * old code
-           *  List<QuadTreeNode<GraphObject>> listResult = new List<QuadTreeNode<GraphObject>>();
-            this.currentQuadTreeRoot.ReturnLeafs(x, y, xWidth, yWidth, listResult);
-
-            IEnumerable<string> filePaths = listResult
-                .Select(quadTreeNode => this.FolderNameDigit + "/" + quadTreeNode.Guid + ".json");
-                */
-
-
-            return this.currentQuadTreeRoot.ReturnMatchingLeaves(x, y, xWidth, yWidth)
-                .Select(graphNode => this.FolderNameDigit + "/" + graphNode.Guid + ".json").ToList();
+            return this._currentQuadTreeRoot.ReturnMatchingLeaves(x, y, xWidth, yWidth)
+                .Select(graphNode => this._folderNameDigit + "/" + graphNode.Guid + ".json").ToList();
         }
 
         public IEnumerable<string> GetLeafBoxes(double x, double y, double xWidth, double yWidth)
         {
-            return this.currentQuadTreeRoot.ReturnMatchingLeaves(x, y, xWidth, yWidth)
+            return this._currentQuadTreeRoot.ReturnMatchingLeaves(x, y, xWidth, yWidth)
                 .Select(graphNode => graphNode.Centroid.ToString()).ToList();
         }
-
-        public void UpdateZoomVar(bool zoomed) {
-            throw new NotImplementedException();
-        }
     }
-
  }

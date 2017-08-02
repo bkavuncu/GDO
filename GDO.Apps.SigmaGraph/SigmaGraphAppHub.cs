@@ -48,7 +48,7 @@ namespace GDO.Apps.SigmaGraph
                     ga = (SigmaGraphApp)Cave.Apps["SigmaGraph"].Instances[instanceId];
                     
                     Clients.Caller.setMessage("Initiating processing of graph data in file: " + filename);
-                    ga.ProcessGraph(filename, false, null, ga.Section.Width, ga.Section.Height);
+                    ga.ProcessGraph(filename);
                     Clients.Caller.setMessage("Processing of raw graph data is completed.");
 
                     // Clients.Group to broadcast and get all clients to update graph
