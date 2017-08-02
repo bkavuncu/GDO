@@ -31,9 +31,10 @@ gdo.net.app["SigmaGraph"].renderGraph = async function () {//todo note this is a
         fileGraphObjects.nodes.forEach(node => {
             node.x = node.pos.x;
             node.y = node.pos.y;
-            node.color = "#" + toPaddedHexString(node.r, 2)
-                             + toPaddedHexString(node.g, 2)
-                             + toPaddedHexString(node.b, 2);
+            node.color = "#89f";
+            //node.color = "#" + toPaddedHexString(node.r, 2)
+            //                 + toPaddedHexString(node.g, 2)
+            //                 + toPaddedHexString(node.b, 2);
             node.size = Math.min(12, node.size) || 3;
             try {
                 gdo.sigmaInstance.graph.addNode(node);

@@ -165,7 +165,7 @@ namespace GDO.Apps.SigmaGraph.Domain
 
             sw.Stop();
             Debug.WriteLine("Time to read the Graphml file: " + sw.ElapsedMilliseconds + "ms");
-            SigmaGraphAppHub.self.LogTime("Time to read the Graphml file: " + sw.ElapsedMilliseconds + "ms");
+            SigmaGraphAppHub.Self.LogTime("Time to read the Graphml file: " + sw.ElapsedMilliseconds + "ms");
 
             return graphinfo;
         }

@@ -64,7 +64,7 @@ namespace GDO.Apps.SigmaGraph.Domain {
 
             sw.Stop();
             Debug.WriteLine("Time to scale links & nodes: " + sw.ElapsedMilliseconds + "ms");
-            SigmaGraphAppHub.self.LogTime("Time to scale links & nodes: " + sw.ElapsedMilliseconds + "ms");
+            SigmaGraphAppHub.Self.LogTime("Time to scale links & nodes: " + sw.ElapsedMilliseconds + "ms");
 
             #endregion
 
@@ -79,7 +79,7 @@ namespace GDO.Apps.SigmaGraph.Domain {
             partitions = SigmaGraphPartitioning.DistributeNodesInPartitions(partitions, graphinfo.Nodes, section);
             sw.Stop();
             Debug.WriteLine("Time taken to distribute nodes across browsers: " + sw.ElapsedMilliseconds + "ms");
-            SigmaGraphAppHub.self.LogTime("Time taken to distribute nodes across browsers: " + sw.ElapsedMilliseconds + "ms");
+            SigmaGraphAppHub.Self.LogTime("Time taken to distribute nodes across browsers: " + sw.ElapsedMilliseconds + "ms");
 
             // 2. Distribute links
             sw.Restart();
@@ -89,12 +89,12 @@ namespace GDO.Apps.SigmaGraph.Domain {
                 SigmaGraphPartitioning.DistributeLinksInPartitions(partitions, graphinfo.Links, singleDisplayWidth, singleDisplayHeight,section);
             sw.Stop();
             Debug.WriteLine("Time taken to distribute links across browsers: " + sw.ElapsedMilliseconds + "ms");
-            SigmaGraphAppHub.self.LogTime("Time taken to distribute links across browsers: " + sw.ElapsedMilliseconds + "ms");
+            SigmaGraphAppHub.Self.LogTime("Time taken to distribute links across browsers: " + sw.ElapsedMilliseconds + "ms");
 
             // write to individual browser file
             // i. create sub-directories to store partition files
             Debug.WriteLine("Writing partition files");
-            SigmaGraphAppHub.self.LogTime("Writing partition files");
+            SigmaGraphAppHub.Self.LogTime("Writing partition files");
             String basePath = System.Web.HttpContext.Current.Server.MapPath("~/Web/SigmaGraph/graph/");
             CreateTempFolder(folderName, basePath,folderid);
 
@@ -169,7 +169,7 @@ namespace GDO.Apps.SigmaGraph.Domain {
             });
             sw.Stop();
             Debug.WriteLine("Time taken to write nodes file: " + sw.ElapsedMilliseconds + "ms");
-            SigmaGraphAppHub.self.LogTime("Time taken to write nodes file: " + sw.ElapsedMilliseconds + "ms");
+            SigmaGraphAppHub.Self.LogTime("Time taken to write nodes file: " + sw.ElapsedMilliseconds + "ms");
         }
 
         private static void WriteLinkFiles(int totalRows, int totalCols, string linksPath, Partition[,] partitions)
@@ -192,7 +192,7 @@ namespace GDO.Apps.SigmaGraph.Domain {
             });
             sw.Stop();
             Debug.WriteLine("Time taken to write links file: " + sw.ElapsedMilliseconds + "ms");
-            SigmaGraphAppHub.self.LogTime("Time taken to write links file: " + sw.ElapsedMilliseconds + "ms");
+            SigmaGraphAppHub.Self.LogTime("Time taken to write links file: " + sw.ElapsedMilliseconds + "ms");
         }
 
         private static void CreateTempFolder(string folderName, string basePath,string folderNameDigit)
@@ -228,12 +228,12 @@ namespace GDO.Apps.SigmaGraph.Domain {
                 catch (Exception e)
                 {
                     Debug.WriteLine(e + "Node '" + n.ID + "' already exists!");
-                    SigmaGraphAppHub.self.LogTime(e + "Node '" + n.ID + "' already exists!");
+                    SigmaGraphAppHub.Self.LogTime(e + "Node '" + n.ID + "' already exists!");
                 }
             }
             sw.Stop();
             Debug.WriteLine("Time taken to set up nodes dictionary: " + sw.ElapsedMilliseconds + "ms");
-            SigmaGraphAppHub.self.LogTime("Time taken to set up nodes dictionary: " + sw.ElapsedMilliseconds + "ms");
+            SigmaGraphAppHub.Self.LogTime("Time taken to set up nodes dictionary: " + sw.ElapsedMilliseconds + "ms");
 
             return _nodesDictionary;
         }
@@ -257,7 +257,7 @@ namespace GDO.Apps.SigmaGraph.Domain {
             }
             sw.Stop();
             Debug.WriteLine("Time taken to compute adjacencies: " + sw.ElapsedMilliseconds + "ms");
-            SigmaGraphAppHub.self.LogTime("Time taken to compute adjacencies: " + sw.ElapsedMilliseconds + "ms");
+            SigmaGraphAppHub.Self.LogTime("Time taken to compute adjacencies: " + sw.ElapsedMilliseconds + "ms");
         }
     }
 }

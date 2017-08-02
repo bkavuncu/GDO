@@ -8,15 +8,15 @@ using Microsoft.AspNet.SignalR;
 using GDO.Core;
 using GDO.Core.Apps;
 
-// TODO cleanup this file
+// TODO specs for all method
 namespace GDO.Apps.SigmaGraph
 {
     [Export(typeof(IAppHub))]
     public class SigmaGraphAppHub : Hub, IBaseAppHub
     {
-        public string ControllerId { get; set; }
-        public static SigmaGraphAppHub self;
-        public static SigmaGraphApp ga;
+        private string ControllerId { get; set; }
+        public static SigmaGraphAppHub Self;
+        private static SigmaGraphApp ga;
 
         public string Name { get; set; } = "SigmaGraph";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.Neighbours;
@@ -38,13 +38,13 @@ namespace GDO.Apps.SigmaGraph
             {
                 try
                 {
-                    self = this;
+                    Self = this;
                     this.ControllerId = Context.ConnectionId;
 
                     // Tell clients to reset their field of view for a new graph
                     Clients.Group("" + instanceId).initInstanceGlobalVariables();
 
-                    // create SigmaGraphApp project and call its function to process graph
+                    // Create SigmaGraphApp project and call its function to process graph
                     ga = (SigmaGraphApp)Cave.Apps["SigmaGraph"].Instances[instanceId];
                     
                     Clients.Caller.setMessage("Initiating processing of graph data in file: " + filename);
@@ -93,116 +93,38 @@ namespace GDO.Apps.SigmaGraph
             }
         }
 
-        public void setAllNodesSize(int instanceId, int nodeSize)
+        public void Pan(int instanceId, double x, double y)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    Clients.Caller.setMessage("Changing size of nodes.");
-                    Clients.Group("" + instanceId).setNodeSize(nodeSize);
-                    Clients.Caller.setMessage("Nodes are changing size.");
+                    Clients.Caller.setMessage("Triggering panning action.");
+                    Clients.Group("" + instanceId).pan(x, y);
+                    Clients.Caller.setMessage("Triggered panning action.");
                 }
                 catch (Exception e)
                 {
-                    Clients.Caller.setMessage("Error: Failed to change node size.");
+                    Clients.Caller.setMessage("Error: Failed to trigger panning action.");
                     Clients.Caller.setMessage(e.ToString());
                     Debug.WriteLine(e);
                 }
             }
         }
 
-        public void setOriginalSize(int instanceId)
+        public void Zoom(int instanceId, double x, double y, double ratio)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    Clients.Caller.setMessage("Sizing nodes to their original size.");
-                    Clients.Group("" + instanceId).setNodesOriginalSize();
-                    //Clients.Group("" + instanceId).hideNodes();
-                    //Clients.Group("" + instanceId).renderNodes();
-                    Clients.Caller.setMessage("Nodes are changing size.");
+                    Clients.Caller.setMessage("Triggering panning action.");
+                    Clients.Group("" + instanceId).zoom(x, y, ratio);
+                    Clients.Caller.setMessage("Triggered panning action.");
                 }
                 catch (Exception e)
                 {
-                    Clients.Caller.setMessage("Error: Failed to change node size.");
-                    Clients.Caller.setMessage(e.ToString());
-                    Debug.WriteLine(e);
-                }
-            }
-        }
-
-        public void HideLinks(int instanceId)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    Clients.Caller.setMessage("Hiding links.");
-                    Clients.Group("" + instanceId).hideLinks();
-                    Clients.Caller.setMessage("Links are now hidden.");
-                }
-                catch (Exception e)
-                {
-                    Clients.Caller.setMessage("Error: Failed to hide links.");
-                    Clients.Caller.setMessage(e.ToString());
-                    Debug.WriteLine(e);
-                }
-            }
-        }
-
-        public void ShowLinks(int instanceId)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    Clients.Caller.setMessage("Rendering links.");
-                    Clients.Group("" + instanceId).showLinks();
-                    Clients.Caller.setMessage("Links are now being rendered.");
-                }
-                catch (Exception e)
-                {
-                    Clients.Caller.setMessage("Error: Failed to render links.");
-                    Clients.Caller.setMessage(e.ToString());
-                    Debug.WriteLine(e);
-                }
-            }
-        }
-
-        public void HideLabels(int instanceId)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    Clients.Caller.setMessage("Hiding labels.");
-                    Clients.Group("" + instanceId).hideLabels();
-                    Clients.Caller.setMessage("Labels are now hidden.");
-                }
-                catch (Exception e)
-                {
-                    Clients.Caller.setMessage("Error: Failed to hide labels.");
-                    Clients.Caller.setMessage(e.ToString());
-                    Debug.WriteLine(e);
-                }
-            }
-        }
-
-        public void ShowLabels(int instanceId, string field, string color)  //TODO add a default color
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    Clients.Caller.setMessage("Rendering '" + field +"' field as labels.");
-                    Clients.Group("" + instanceId).renderLabels(field, color);
-                    Clients.Caller.setMessage("Labels are now being rendered.");
-                }
-                catch (Exception e)
-                {
-                    Clients.Caller.setMessage("Error: Failed to render labels.");
+                    Clients.Caller.setMessage("Error: Failed to trigger panning action.");
                     Clients.Caller.setMessage(e.ToString());
                     Debug.WriteLine(e);
                 }
@@ -217,25 +139,6 @@ namespace GDO.Apps.SigmaGraph
                 {
                     Clients.Caller.setMessage("Triggering panning action.");
                     Clients.Group("" + instanceId).pan(direction);
-                    Clients.Caller.setMessage("Triggered panning action.");
-                }
-                catch (Exception e)
-                {
-                    Clients.Caller.setMessage("Error: Failed to trigger panning action.");
-                    Clients.Caller.setMessage(e.ToString());
-                    Debug.WriteLine(e);
-                }
-            }
-        }
-
-        public void Pan(int instanceId, double x, double y)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    Clients.Caller.setMessage("Triggering panning action.");
-                    Clients.Group("" + instanceId).pan(x,y);
                     Clients.Caller.setMessage("Triggered panning action.");
                 }
                 catch (Exception e)
@@ -287,107 +190,6 @@ namespace GDO.Apps.SigmaGraph
             }
         }
 
-        public void Zoom(int instanceId, double x, double y, double ratio)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    Clients.Caller.setMessage("Triggering panning action.");
-                    Clients.Group("" + instanceId).zoom(x, y, ratio);
-                    Clients.Caller.setMessage("Triggered panning action.");
-                }
-                catch (Exception e)
-                {
-                    Clients.Caller.setMessage("Error: Failed to trigger panning action.");
-                    Clients.Caller.setMessage(e.ToString());
-                    Debug.WriteLine(e);
-                }
-            }
-        }
-
-        public void TriggerRGB(int instanceId, string colourScheme)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    Clients.Caller.setMessage("Setting colour scheme to: " + colourScheme);
-                    Clients.Group("" + instanceId).setRGB(colourScheme);
-                    Clients.Caller.setMessage("Colour scheme has been changed.");
-
-                    // hide nodes and render new nodes
-                    // TODO call hideHighlight
-                    Clients.Group("" + instanceId).hideNodes();
-                    Clients.Group("" + instanceId).renderNodes();
-                    Clients.Caller.setMessage("Nodes are now being rendered.");
-                }
-                catch (Exception e)
-                {
-                    Clients.Caller.setMessage("Error: Failed to render new colour scheme.");
-                    Clients.Caller.setMessage(e.ToString());
-                    Debug.WriteLine(e);
-                }
-            }
-        }
-
-        public void RenderMostConnectedNodes(int instanceId, int numLinks, string color)  //TODO add a default color
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    Clients.Caller.setMessage("Highlighting nodes with more than " + numLinks + " links.");
-                    Clients.Group("" + instanceId).renderMostConnectedNodes(numLinks, color);
-                    Clients.Caller.setMessage("Nodes with more than " + numLinks + " links are now being rendered.");
-                }
-                catch (Exception e)
-                {
-                    Clients.Caller.setMessage("Error: Failed to highlight nodes.");
-                    Clients.Caller.setMessage(e.ToString());
-                    Debug.WriteLine(e);
-                }
-            }
-        }
-
-        public void RenderMostConnectedLabels(int instanceId, int numLinks, string field, string color)  //TODO add a default color
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    Clients.Caller.setMessage("Showing labels for nodes with more than " + numLinks + " links.");
-                    Clients.Group("" + instanceId).renderMostConnectedLabels(numLinks, field, color);
-                    Clients.Caller.setMessage("Labels for nodes with more than " + numLinks + " links are now being rendered.");
-                }
-                catch (Exception e)
-                {
-                    Clients.Caller.setMessage("Error: Failed to show labels.");
-                    Clients.Caller.setMessage(e.ToString());
-                    Debug.WriteLine(e);
-                }
-            }
-        }
-
-        public void HideMostConnected(int instanceId)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    Clients.Caller.setMessage("Removing highlight for most connected nodes and labels.");
-                    Clients.Group("" + instanceId).hideHighlight();
-                    Clients.Caller.setMessage("Highlights for most connected nodes and labels are now hidden.");
-                }
-                catch (Exception e)
-                {
-                    Clients.Caller.setMessage("Error: Failed to remove highlights.");
-                    Clients.Caller.setMessage(e.ToString());
-                    Debug.WriteLine(e);
-                }
-            }
-        }
-
         public void LogTime(string message)
         {
             try
@@ -399,87 +201,6 @@ namespace GDO.Apps.SigmaGraph
                 Clients.Client(ControllerId).logTime("Error: Failed to log time.");
                 Clients.Client(ControllerId).logTime(e.ToString());
                 Debug.WriteLine(e);
-            }
-        }
-
-        public void InitiateSearch(int instanceId, string keywords, string field)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    Clients.Caller.setMessage("Initiating processing of search query: '" + keywords + "' at " + field);
-
-                    Clients.Group("" + instanceId).hideHighlight();
-                    Clients.Group("" + instanceId).hideLabels();
-                    Clients.Group("" + instanceId).hideLinks();
-
-                    Clients.Group("" + instanceId).renderSearch(keywords, field);
-                    Clients.Caller.setMessage("Search result is now being rendered.");
-                }
-                catch (Exception e)
-                {
-                    Clients.Caller.setMessage("Error: Processing of search query failed to initiate.");
-                    Clients.Caller.setMessage(e.ToString());
-                    Debug.WriteLine(e);
-                }
-            }
-        }
-
-        public void RenderSearchLabels(int instanceId, string field)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    Clients.Caller.setMessage("Rendering labels for selected nodes.");
-                    Clients.Group("" + instanceId).renderSearchLabels(field);
-                    Clients.Caller.setMessage("Labels for selected nodes are now being rendered.");
-                }
-                catch (Exception e)
-                {
-                    Clients.Caller.setMessage("Error: Failed to show labels.");
-                    Clients.Caller.setMessage(e.ToString());
-                    Debug.WriteLine(e);
-                }
-            }
-        }
-
-        public void HideSearch(int instanceId)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    Clients.Caller.setMessage("Removing highlight for selected nodes.");
-                    Clients.Group("" + instanceId).hideHighlight();
-                    Clients.Caller.setMessage("Highlights for selected nodes are now hidden.");
-                }
-                catch (Exception e)
-                {
-                    Clients.Caller.setMessage("Error: Failed to remove highlights.");
-                    Clients.Caller.setMessage(e.ToString());
-                    Debug.WriteLine(e);
-                }
-            }
-        }
-
-        public void HideSublinks(int instanceId)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    Clients.Caller.setMessage("Hiding sublinks.");
-                    Clients.Group("" + instanceId).hideSublinks();
-                    Clients.Caller.setMessage("Sublinks are now hidden.");
-                }
-                catch (Exception e)
-                {
-                    Clients.Caller.setMessage("Error: Failed to remove sublinks.");
-                    Clients.Caller.setMessage(e.ToString());
-                    Debug.WriteLine(e);
-                }
             }
         }
     }
