@@ -42,6 +42,16 @@ Client 1: http://146.169.32.196:8080/Web/DD3/App.html?confId=0&controlId=1&clien
 
 Client 2: http://146.169.32.196:8080/Web/DD3/App.html?confId=0&controlId=1&clientId=2&row=1&column=1&numClients=2
 
+---
+
+Control: http://146.169.32.196:8080/Web/DD3/Control.html?confId=0&controlId=1&numClients=3 
+
+Client 1: http://146.169.32.196:8080/Web/DD3/App.html?confId=0&controlId=1&clientId=1&row=1&column=1&numClients=3 
+
+Client 2: http://146.169.32.196:8080/Web/DD3/App.html?confId=0&controlId=1&clientId=2&row=1&column=1&numClients=3
+
+Client 3: http://146.169.32.196:8080/Web/DD3/App.html?confId=0&controlId=1&clientId=3&row=1&column=1&numClients=3
+
 ## Setup OData
 
 #### Prepare MongoDB
