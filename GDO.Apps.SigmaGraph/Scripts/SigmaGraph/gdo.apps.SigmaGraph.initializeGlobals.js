@@ -34,7 +34,9 @@ gdo.net.app["SigmaGraph"].initInstanceGlobalConstants = function () {
             }
         ],
         settings: {
-            autoRescale: false
+            autoRescale: false,
+            // TODO If clone is false, when is garbage collected?
+            clone: false
         }
     });
     gdo.sigmaInstance.renderers[0].bind('render',
