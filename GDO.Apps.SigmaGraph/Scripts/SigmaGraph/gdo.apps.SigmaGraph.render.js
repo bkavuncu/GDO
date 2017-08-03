@@ -122,17 +122,20 @@ function parseFilesToGraphObjects(filePaths) {
 function httpGet(filePath) {
     // TODO handle errors
     return new Promise(function (resolve, reject) {
-        const xhr = new XMLHttpRequest();
-        xhr.open("GET", filePath, true);
-        xhr.onload = function () {
-            if (this.status === 200) {
-                resolve(this.response);
-            } else {
-                console.log('failed to get files');
-                //resolve(httpGet(filePath));
-            }
-        };
-        xhr.send();
+        function infiniteRetry() {
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", filePath, true);
+            xhr.onload = function () {
+                if (this.status === 200) {
+                    resolve(this.response);
+                } else {
+                    console.log('Error Getting File: ' + this.status);
+                    setTimeout(infiniteRetry, 0);
+                }
+            };
+            xhr.send();
+        }
+        infiniteRetry();
     });
 }
 
