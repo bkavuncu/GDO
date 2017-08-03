@@ -29,10 +29,14 @@ gdo.net.app["SigmaGraph"].renderGraph = async function () {//todo note this is a
         fileGraphObjects.nodes.forEach(node => {
             node.x = node.pos.x;
             node.y = node.pos.y;
-            node.color = "#89f";
-            //node.color = "#" + toPaddedHexString(node.r, 2)
-            //                 + toPaddedHexString(node.g, 2)
-            //                 + toPaddedHexString(node.b, 2);
+            if (node.r) {
+                node.color = "#" +
+                    toPaddedHexString(node.r, 2) +
+                    toPaddedHexString(node.g, 2) +
+                    toPaddedHexString(node.b, 2);
+            } else {
+                node.color = "#89f";
+            }
             node.size = Math.min(12, node.size) || 3;
             try {
                 gdo.sigmaInstance.graph.addNode(node);
@@ -41,7 +45,14 @@ gdo.net.app["SigmaGraph"].renderGraph = async function () {//todo note this is a
 
         fileEdgesInFOV = fileGraphObjects.edges.forEach(edge => {
             edge.id = edge.source + " to " + edge.target;
-            edge.color = edge.color || "#339";
+            if (edge.r) {
+                edge.color = "#" +
+                    toPaddedHexString(edge.r, 2) +
+                    toPaddedHexString(edge.g, 2) +
+                    toPaddedHexString(edge.b, 2);
+            } else {
+                edge.color = "#339";
+            }
             try {
                 gdo.sigmaInstance.graph.addEdge(edge);
             } catch (err) { }
@@ -150,6 +161,9 @@ function httpGet(filePath) {
         xhr.onload = function () {
             if (this.status === 200) {
                 resolve(this.response);
+            } else {
+                console.log('failed to get files');
+                //resolve(httpGet(filePath));
             }
         };
         xhr.send();

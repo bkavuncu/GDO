@@ -120,6 +120,7 @@ namespace GDO.Apps.SigmaGraph
             {
                 try
                 {
+                    Clients.Group("" + instanceId).showSpinner();
                     Clients.Caller.setMessage("Triggering panning action.");
                     Clients.Group("" + instanceId).pan(x, y);
                     Clients.Caller.setMessage("Triggered panning action.");
@@ -139,6 +140,7 @@ namespace GDO.Apps.SigmaGraph
             {
                 try
                 {
+                    Clients.Group("" + instanceId).showSpinner();
                     Clients.Caller.setMessage("Triggering zooming action.");
                     Clients.Group("" + instanceId).zoom(x, y, ratio);
                     Clients.Caller.setMessage("Triggered zooming action.");

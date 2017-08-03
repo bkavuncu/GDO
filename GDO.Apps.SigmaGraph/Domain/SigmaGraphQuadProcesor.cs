@@ -25,7 +25,7 @@ namespace GDO.Apps.SigmaGraph.Domain {
                 graph.Nodes.BatchListCast<GraphNode, GraphObject>(500),
                 graph.Links.BatchListCast<GraphLink, GraphObject>(1000)
             };
-            factory.ConcurrentAdd(addData, workthreads: 2, reworkthreads: 2);
+            factory.ConcurrentAdd(addData, workthreads: 4, reworkthreads: 4);
             // two adders, two workers, two reworkers... not sure if optimal, depends on server
 
             factory.QuadTree.ShedAllObjects();
