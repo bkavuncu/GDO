@@ -25,42 +25,8 @@ gdo.net.app["SigmaGraph"].renderGraph = async function () {//todo note this is a
 
     // Filter and add the nodes and edges to the graph
     gdo.stopWatch = window.performance.now();
-    filesGraphObjects.forEach(function (fileGraphObjects) {
-        fileGraphObjects.nodes.forEach(node => {
-            node.x = node.pos.x;
-            node.y = node.pos.y;
-            if (node.r) {
-                node.color = "#" +
-                    toPaddedHexString(node.r, 2) +
-                    toPaddedHexString(node.g, 2) +
-                    toPaddedHexString(node.b, 2);
-            } else {
-                node.color = "#89f";
-            }
-            node.size = Math.min(12, node.size) || 3;
-            try {
-                gdo.sigmaInstance.graph.addNode(node);
-            } catch (err) { }
-        });
-
-        fileEdgesInFOV = fileGraphObjects.edges.forEach(edge => {
-            edge.id = edge.source + " to " + edge.target;
-            if (edge.r) {
-                edge.color = "#" +
-                    toPaddedHexString(edge.r, 2) +
-                    toPaddedHexString(edge.g, 2) +
-                    toPaddedHexString(edge.b, 2);
-            } else {
-                edge.color = "#339";
-            }
-            try {
-                gdo.sigmaInstance.graph.addEdge(edge);
-            } catch (err) { }
-        });
-    });
-    gdo.sigmaInstance.graph.nodes().forEach(node => {
-            convertServerCoordsToSigmaCoords(node);
-    });
+    filesGraphObjects.forEach(handleFileGraphObjects);
+    gdo.sigmaInstance.graph.nodes().forEach(convertServerCoordsToSigmaCoords);
     console.log("Time to add objects: " + (window.performance.now() - gdo.stopWatch));
 
     addDebugGrid();
@@ -171,96 +137,6 @@ function httpGet(filePath) {
 }
 
 /**
- * Determines whether or not the node is in this field of view.
- * @param {any} node
- * @return true if the node is in this field of view and false
- *          otherwise
- */
-function nodeIsWithinFOV(node) {
-    const xMin = gdo.xCentroid - gdo.xWidth / 2;
-    const xMax = gdo.xCentroid + gdo.xWidth / 2;
-    const yMin = gdo.yCentroid - gdo.yWidth / 2;
-    const yMax = gdo.yCentroid + gdo.yWidth / 2;
-    return node.X >= xMin && node.X <= xMax
-        && node.Y >= yMin && node.Y <= yMax;
-}
-
-/**
- * Determines whether or not the edge is in the field of view.
- * @param {any} edge
- * @return true if the edge is in the field of view and false
- *          otherwise
- */
-function edgeIsWithinFOV(edge) {
-    const xMin = gdo.xCentroid - gdo.xWidth / 2;
-    const xMax = gdo.xCentroid + gdo.xWidth / 2;
-    const yMin = gdo.yCentroid - gdo.yWidth / 2;
-    const yMax = gdo.yCentroid + gdo.yWidth / 2;
-
-    const xSource = gdo.sigmaInstance.graph.nodes(edge.source).x;
-    const ySource = gdo.sigmaInstance.graph.nodes(edge.source).y;
-    const xTarget = gdo.sigmaInstance.graph.nodes(edge.target).x;
-    const yTarget = gdo.sigmaInstance.graph.nodes(edge.target).y;
-
-    const fovContainsWholeLink = xSource >= xMin && xTarget >= xMin
-                                && xSource <= xMax && xTarget <= xMax
-                                && ySource >= yMin && yTarget >= yMin
-                                && ySource <= yMax && yTarget <= yMax;
-
-    return fovContainsWholeLink
-        || intersectsHorizontalSegment(edge, yMax, xMin, xMax)
-        || intersectsHorizontalSegment(edge, yMin, xMin, xMax)
-        || intersectsVerticalSegment(edge, xMin, yMin, yMax)
-        || intersectsVerticalSegment(edge, xMax, yMin, yMax);
-}
-
-/**
- * Determines whether or not the edge intersects the horizontal
- * line segment between (xMin, y) and (xMax, y).
- * @param {any} edge
- * @param {any} y
- * @param {any} xMin
- * @param {any} xMax
- */
-function intersectsHorizontalSegment(edge, y, xMin, xMax) {
-    const xSource = gdo.sigmaInstance.graph.nodes(edge.source).x;
-    const ySource = gdo.sigmaInstance.graph.nodes(edge.source).y;
-    const xTarget = gdo.sigmaInstance.graph.nodes(edge.target).x;
-    const yTarget = gdo.sigmaInstance.graph.nodes(edge.target).y;
-
-    if (Math.abs(xTarget - xSource) <= gdo.epsilon) {
-        return xSource >= xMin && xSource <= xMax;
-    }
-    // The lines intersect at (x = 1/m (y-y_o) + x_0, y = y)
-    const slope = (yTarget - ySource) / (xTarget - ySource);
-    const xIntersect = 1 / slope * (y - ySource) + xSource;
-    return xIntersect >= xMin && xIntersect <= xMax;
-}
-
-/**
- * Determines whether or not the edge intersects the vertical
- * line segment between (x, yMin) and (x, yMax).
- * @param {any} edge
- * @param {any} x
- * @param {any} yMin
- * @param {any} yMax
- */
-function intersectsVerticalSegment(edge, x, yMin, yMax) {
-    const xSource = gdo.sigmaInstance.graph.nodes(edge.source).x;
-    const ySource = gdo.sigmaInstance.graph.nodes(edge.source).y;
-    const xTarget = gdo.sigmaInstance.graph.nodes(edge.target).x;
-    const yTarget = gdo.sigmaInstance.graph.nodes(edge.target).y;
-
-    if (Math.abs(xTarget - xSource) <= gdo.epsilon) {
-        return Math.abs(xSource - x) <= gdo.epsilon;
-    }
-    // The lines intersect at (x = x, y = m(x-x_0) + y_0)
-    const slope = (yTarget - ySource) / (xTarget - xSource);
-    const yIntersect = slope * (x - xSource) + ySource;
-    return yIntersect >= yMin && yIntersect <= yMax;
-}
-
-/**
  * Converts the node in the server coordinate system to the same
  * node in the sigma coordinate system. Mutates the given node.
  * @param {any} node the node in the server coordinate system
@@ -269,6 +145,47 @@ function intersectsVerticalSegment(edge, x, yMin, yMax) {
 function convertServerCoordsToSigmaCoords(node) {
     node.x = (node.x - gdo.xCentroid) * gdo.canvasWidthInPx * 1 / (gdo.xWidth / 2);
     node.y = -(-node.y + gdo.yCentroid) * gdo.canvasHeightInPx * 1 / (gdo.yWidth / 2);
+}
+
+/**
+ * Modifies graph objects from quadtree leaf file to be sigma
+ * graph compatible, and adds these objects to the sigma instance.
+ * @param {any} fileGraphObjects
+ */
+function handleFileGraphObjects(fileGraphObjects) {
+    fileGraphObjects.nodes.forEach(node => {
+        node.x = node.pos.x;
+        node.y = node.pos.y;
+        if (node.r) {
+            node.color = "#" +
+                toPaddedHexString(node.r, 2) +
+                toPaddedHexString(node.g, 2) +
+                toPaddedHexString(node.b, 2);
+        } else {
+            node.color = "#89f";
+        }
+        node.size = Math.min(12, node.size) || 3;
+        try {
+            gdo.sigmaInstance.graph.addNode(node);
+        } catch (err) {
+        }
+    });
+
+    fileGraphObjects.edges.forEach(edge => {
+        edge.id = edge.source + " to " + edge.target;
+        if (edge.r) {
+            edge.color = "#" +
+                toPaddedHexString(edge.r, 2) +
+                toPaddedHexString(edge.g, 2) +
+                toPaddedHexString(edge.b, 2);
+        } else {
+            edge.color = "#339";
+        }
+        try {
+            gdo.sigmaInstance.graph.addEdge(edge);
+        } catch (err) {
+        }
+    });
 }
 
 /**
