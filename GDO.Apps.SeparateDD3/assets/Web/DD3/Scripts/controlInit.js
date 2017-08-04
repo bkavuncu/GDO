@@ -64,11 +64,17 @@ var control = {
         this.peerConn = new Peer(this.peerId, this.peerOption);
 
         this.peerConn.on('connection', function(conn) {
-            console.log("@Controller master found", conn.peer);
+            console.log("@Controller master found", conn.peer, conn);
+
+            if (conn.open == false) {    // a peerjs bug 
+                console.log("@Controller master open false trapped");
+                conn.open = true;
+            }
 
             ctrlConn = conn;
+            console.log("@Controller master after fix", conn);
 
-            conn.on('open', function(){
+            //conn.on('open', function() { 
 
                 conn.on('data', function(order){
                     console.log("@Controller received", order);
@@ -98,7 +104,7 @@ var control = {
                 });
 
                 // conn.send("message");
-            })
+            //})
 
         });
 

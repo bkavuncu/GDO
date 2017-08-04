@@ -378,7 +378,8 @@ PeerNet.prototype.onClientCallbackFunc = function () {
 
                     // });
                     
-                    function getList() {
+                    function getList(callback) {
+                        var getList_callback = callback;
                         var p = dd3Net.peer;
                         p.listAllPeers(function (list) {
                             console.log("@PN 1 list", list);
@@ -402,79 +403,84 @@ PeerNet.prototype.onClientCallbackFunc = function () {
                             console.log("@PN 1 Master list after", newList);
 
                             if (newList.length == numClients) {
-                                clearInterval(getListTimer);
                                 // console.log("@PN 1", list.length, numClients);
+                                getList_callback(p, newList);   // TODO ? is callback necessary
+                            } else {
 
-                                var conns = [];
-                                var infos = [ thisInfo ];  // add self info
-                                
-                                newList.forEach(function(id, i) {
-                                    // console.log("@PN 1", id);
-                                    var idAry = id.split("_");  // get all peer info
-                                    var idInt = parseInt(idAry[5].slice(4));
-                                    // console.log("@PN 1 Master self", thisInfo.browserNum, idInt);
-                                    
-                                    if (idInt != thisInfo.browserNum) {
-
-                                        var conn = p.connect(id);
-
-                                        conns.push(conn);
-
-                                        console.log("@PN 1 connection", conn);
-                                        conn.on('open', function() {
-                                            console.log("@PN 1", this.peer + " is connected");
-
-                                            conn.on('data', function(info) {
-                                                console.log("@PN 1 master received", info);
-
-                                                // collect other peers info
-                                                infos.push(info.thisInfo);
-
-                                                // broadcast to all
-                                                console.log("@PN 1 info array", infos);
-                                                console.log("@PN 1 check same", infos.length, numClients);
-                                                if (infos.length == numClients) {
-
-                                                    // convert objects to an array
-                                                    var infosAry = $.map(infos, function(value, index) { return [value]; });
-                                                    infosAry = [JSON.stringify(infosAry)];
-                                                    console.log("@PN 1 convert array", infosAry); 
-
-                                                    peerConns = conns;
-                                                    conns.forEach(function(c) {
-                                                        c.send({ functionName: 'receiveConfiguration', data: infosAry });
-                                                    }, this);
-
-                                                    // for master node
-
-                                                    dd3Net.net.test.dd3Receive({ functionName: 'receiveConfiguration', data: infosAry }); 
-
-                                                    dd3Net.net.test.receiveGDOConfiguration({ id: gdo_appInstanceId.applicationId });
-
-                                                    dd3Net.net.test.updateController({ show: true });
-
-                                                }
-
-                                            });
-                                        
-                                            conn.on('close', function(){
-                                                console.log("@PN 1 peer disconnected", this.peer);
-                                                location.reload();
-                                            });
-
-                                            // ^^ on 'close', to reconnect non-master
-                                            // search the non-master node id, re-connect
-
-                                        });
-                                    }
-                                });
+                                setTimeout(function(){ getList(updateInfo) }, 1000);
                             }
+                            
                         });
                     };
 
-                    getList();
+                    updateInfo = function(p, newList){
 
-                    var getListTimer = setInterval(getList, 1000);
+                        var conns = [];
+                        var infos = [ thisInfo ];  // add self info
+                        
+                        newList.forEach(function(id, i) {
+                            // console.log("@PN 1", id);
+                            var idAry = id.split("_");  // get all peer info
+                            var idInt = parseInt(idAry[5].slice(4));
+                            // console.log("@PN 1 Master self", thisInfo.browserNum, idInt);
+                            
+                            if (idInt != thisInfo.browserNum) {
+
+                                var conn = p.connect(id);
+
+                                conns.push(conn);
+
+                                console.log("@PN 1 connection", conn);
+                                conn.on('open', function() {
+                                    console.log("@PN 1", this.peer + " is connected");
+
+                                    conn.on('data', function(info) {
+                                        console.log("@PN 1 master received", info.thisInfo);
+
+                                        // collect other peers info
+                                        infos.push(info.thisInfo);
+
+                                        // broadcast to all
+                                        console.log("@PN 1 info array", infos);
+                                        console.log("@PN 1 check same", infos.length, numClients);
+                                        if (infos.length == numClients) {
+
+                                            // convert objects to an array
+                                            var infosAry = $.map(infos, function(value, index) { return [value]; });
+                                            infosAry = [JSON.stringify(infosAry)];
+                                            console.log("@PN 1 convert array", infosAry); 
+
+                                            peerConns = conns;
+                                            conns.forEach(function(c) {
+                                                c.send({ functionName: 'receiveConfiguration', data: infosAry });
+                                            }, this);
+
+                                            // for master node
+
+                                            dd3Net.net.test.dd3Receive({ functionName: 'receiveConfiguration', data: infosAry }); 
+
+                                            dd3Net.net.test.receiveGDOConfiguration({ id: gdo_appInstanceId.applicationId });
+
+                                            dd3Net.net.test.updateController({ show: true });
+
+                                        }
+
+                                    });
+                                
+                                    conn.on('close', function(){
+                                        console.log("@PN 1 peer disconnected", this.peer);
+                                        location.reload();
+                                    });
+
+                                    // ^^ on 'close', to reconnect non-master
+                                    // search the non-master node id, re-connect
+
+                                });
+                            }
+                        });
+                    }
+
+                    getList(updateInfo); 
 
                 }
 
