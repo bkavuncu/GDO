@@ -67,12 +67,25 @@ var control = {
             console.log("@Controller master found", conn.peer, conn);
 
             if (conn.open == false) {    // a peerjs bug 
-                console.log("@Controller master open false trapped");
+                console.log("@Controller open false trapped");
                 conn.open = true;
             }
 
             ctrlConn = conn;
-            console.log("@Controller master after fix", conn);
+            console.log("@Controller after fix", conn);
+
+            // ** display fix
+
+            main_callback();  
+            $("#wait").css("display", "none");
+            if (control.confId == '6' || control.confId == '7' || control.confId == '8' || control.confId == '9') { // all of these are Shangai LinkLoad, and should share the control menu
+                $("#control_6").css("display", "");
+            } else {
+                $("#control_" + control.confId).css("display", "");
+            } 
+            console.log("@Controller display fix");
+
+            // ** display end
 
             //conn.on('open', function() { 
 
@@ -82,7 +95,7 @@ var control = {
                     switch (order.functionName) {
                         case "updateController":
                             // console.log(order.data.show);
-                            if(order.data.show){
+                            if (order.data.show) {
                                 main_callback();
                                 $("#wait").css("display", "none");
                                 if (control.confId == '6' || control.confId == '7' || control.confId == '8' || control.confId == '9') { // all of these are Shangai LinkLoad, and should share the control menu
@@ -90,8 +103,6 @@ var control = {
                                 } else {
                                     $("#control_" + control.confId).css("display", "");
                                 } 
-                            }else{
-                                // location.reload();
                             }
                             break;
                     
@@ -104,7 +115,13 @@ var control = {
                 });
 
                 // conn.send("message");
+
             //})
+
+            // conn.on('close', function() {
+            //     console.log("@Controller master disconnected");
+            //     location.reload();
+            // });
 
         });
 

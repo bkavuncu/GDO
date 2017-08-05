@@ -316,7 +316,7 @@ PeerNet.prototype.onClientCallbackFunc = function () {
                                 ctrlConn.on('data', function(data) {
                                     switch (data.functionName) {
                                         case "sendOrder":
-                                            console.log("###PN 1", data);
+                                            console.log("@PN 1", data);
 
                                             if(data.data.all){
                                                 console.log("@PN 1 send to all")
@@ -524,9 +524,15 @@ PeerNet.prototype.onClientCallbackFunc = function () {
               console.log("@PeerNet 1 updateController", data);
               
               _self.net.init.ctrlNet(function(conn){
-                    conn.on('open', function(){
+                    console.log("@PeerNet 1 check control net", conn);
+                    if (conn.open == false) {
+                        conn.open = open;   // a peerjs bug
+                    }
+                    
+                    console.log("@PeerNet 1 after fix", conn);
+                    // conn.on('open', function(){
                         conn.send({ functionName: "updateController", data: data});
-                    });
+                    // });
               });
 
           },
