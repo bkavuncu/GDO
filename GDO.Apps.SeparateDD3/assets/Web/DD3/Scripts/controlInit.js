@@ -190,11 +190,10 @@ var control = {
 
 var peer = {
     // == FPS ==
-    peerObject: { host: "146.169.32.109", port: 55555 },
+    // peerObject: { host: "146.169.32.109", port: 55555 },
+    peerObject: { host: "127.0.0.1", port: 33333 },
 
     init: function () {
-        //{ host: "localhost", port: 55555 };
-        //{ host: "146.169.32.109", port: 55555 }
         var con_peer = new Peer("idofthecontrollerfordd3", this.peerObject);
         con_peer.on('open', function (conn) {
             //console.log("control.gdo before", control.gdo);
@@ -202,6 +201,7 @@ var peer = {
             //console.log("control.gdo after", control.gdo);
         });
         con_peer.on('connection', function(conn) {
+            // console.log("##############", conn);
             control.eventLog.push([new Date().getTime(), "Connecting with  "+ conn.label]);
             //BAI: "con_peer" is the controller peer connection object
             conn.on('data', function (data) {
@@ -233,7 +233,7 @@ $(document).ready(function () {
         //$("#error").css("display", "");
     
    
-        //peer.init();
+        peer.init();    // for testing
   
 
 });

@@ -44,16 +44,17 @@
 
             //var counter = 0;
             //BAI: TODO: connection should be a separate modeul.
-            var peerObject = { host: "146.169.32.109", port: 55555 };
-            //{ host: "localhost", port: 55555 };
-            //{ host: "146.169.32.109", port: 55555 }
+            // var peerObject = { host: "146.169.32.109", port: 55555 };
+            var peerObject = { host: "127.0.0.1", port: 33333 };
+
             var app_peer = new Peer(peerObject, { label: "(" + r + ", " + c + " ): " });
             var conn_to_controller;
             //BAI: this function will be called in most "orderController.orders" when it creates shapes.
             function connectToController() {
                 conn_to_controller = app_peer.connect('idofthecontrollerfordd3');
+                // console.log("@@@@@@@@@@@@", conn_to_controller);
                 conn_to_controller.on('open', function () {
-                    console.log("Connection with the controller established");
+                    console.log("[FPS] Connection with the controller established");
                 });
             }
             //BAI: DD3Q: This function will running all the time once it is called by "loop()" below. Maybe it cause the worse browser performace.
@@ -97,7 +98,7 @@
                 if (!triggered) {
                     console.log("Average FPS: " + avg);
                     console.log("Standard Deviation: " + std);
-                    // conn_to_controller.send(r + ";" + c + ";" + nbr + ";" + nbc + ";" + nbdc + ";" + new Date().getTime() + ";" + avg + ";" + std);
+                    conn_to_controller.send(r + ";" + c + ";" + nbr + ";" + nbc + ";" + nbdc + ";" + new Date().getTime() + ";" + avg + ";" + std);
                     triggered = true;
                 }
 
@@ -235,7 +236,7 @@
                     .attr("fill", "#FFF")
                     .classed("new", false);
 
-                // connectToController();
+                connectToController();  // for testing 
 
             };
 

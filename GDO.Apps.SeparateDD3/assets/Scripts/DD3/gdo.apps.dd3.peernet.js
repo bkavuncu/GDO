@@ -529,7 +529,7 @@ PeerNet.prototype.onClientCallbackFunc = function () {
                         conn.open = open;   // a peerjs bug
                     }
                     
-                    console.log("@PeerNet 1 after fix", conn);
+                    console.log("@PeerNet 1 control after fix", conn);
                     // conn.on('open', function(){
                         conn.send({ functionName: "updateController", data: data});
                     // });
