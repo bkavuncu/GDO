@@ -2190,10 +2190,10 @@ var initDD3App = function () {
                 };
 
                 var createTransitionsObject = function (sendIdElem, elem) {
-                    return [].slice.call(elem.__dd3_transitions__.values().map(function (args) {
+                    return Array.from(elem.__dd3_transitions__.values().map(function (args) {
                         return createTransitionObject(sendIdElem, args);
                     }));
-                    // [].slice.call is needed for integration into GDO framework as it seems that constructor are different !
+                    // Array.from is needed for integration into GDO framework as it seems that constructor are different !
                     // And peer.js test equality with constructors to send data !
                 };
 
@@ -2712,6 +2712,14 @@ var initDD3App = function () {
                 return _dd3_initialize_transition(t, _dd3_precision, false);
             };
 
+            var _dd3_isOnStart = function (name) {
+                return (name + "").trim().split(/^|\s+/).every(function (t) {
+                    var i = t.indexOf(".");
+                    if (i >= 0) t = t.slice(0, i);
+                    return !t || t === "start";
+                });
+            };
+
             var _dd3_initialize_transition = function (t, precision, listen) {
                 var name = t._name, ns = _dd3_transitionNamespace(name), id = t._id;
 
@@ -2822,6 +2830,21 @@ var initDD3App = function () {
                 t.filter = _dd3_hook_initTrans(d3.transition.prototype.filter, true);
                 t.merge = _dd3_hook_initTrans(d3.transition.prototype.merge, true);
                 t.transition = _dd3_hook_initTrans(_dd3_hook_transition_transition, true);
+
+                t.on = function (name, listener) {
+                    var returnValue = d3.transition.prototype.on.apply(this, arguments);
+                    if (arguments.length == 2 && _dd3_isOnStart(name)) {
+                        this.each(function () {
+                            var listeners = this.__transition[id].on._.start;
+                            if (listeners.length < 2)
+                                return;
+                            var idx = listeners.findIndex(function (obj) { return obj.name === "dd3"; });
+                            if (idx == -1)  utils.log("No index found for start.dd3", 3);
+                            listeners.push(listeners.splice(idx, 1)[0]);
+                        });
+                    }
+                    return returnValue;
+                };
 
                 t.ease = function (e) {
                     if (typeof e === "string" && _dd3_eases['dd3_' + e]) {
