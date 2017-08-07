@@ -172,6 +172,7 @@ PeerNet.prototype.setClientCallbackFunc = function (callBackObj) {
 PeerNet.prototype.onClientCallbackFunc = function () {
     var getUrlVar = function (name, url) {
         if (!url) url = window.location.href;
+        url = decodeURIComponent(url);  // for testing 
         name = name.replace(/[\[\]]/g, "\\$&");
         var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
             results = regex.exec(url);
