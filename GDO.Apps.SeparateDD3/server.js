@@ -59,7 +59,7 @@ io.on('connection',function(socket){
  
     
 
-    if(rooms[roomId] && rooms[roomId].clientLength == rooms[roomId].currentLength){
+    if(rooms[roomId].ready == false && rooms[roomId] && rooms[roomId].clientLength == rooms[roomId].currentLength){
         var browserInfoArray = [];
         for(i in rooms[roomId].browserInfo){
             browserInfoArray.push(rooms[roomId].browserInfo[i]);
