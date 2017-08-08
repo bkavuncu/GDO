@@ -969,7 +969,7 @@ var initDD3App = function () {
             //BAI: the argument "obj" in the following function is the "thisInfo" argument in the above function "init.connectToSignalServer"
             init.getCaveConfiguration = function (obj) {
 
-                console.log("@Main getCaveConfiguration", obj);
+                // console.log("@Main getCaveConfiguration", obj);
                 utils.log("Receiving connected browsers' ids from signalR server", 1);
 
                 //obj contains info about all browsers
