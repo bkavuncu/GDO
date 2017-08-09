@@ -17,8 +17,6 @@ gdo.net.app["SigmaGraph"].initInstanceGlobalConstants = function () {
     gdo.nodeCol = gdo.net.node[gdo.clientId].sectionCol;
     gdo.numRows = gdo.net.section[gdo.net.node[gdo.clientId].sectionId].rows;
     gdo.numCols = gdo.net.section[gdo.net.node[gdo.clientId].sectionId].cols;
-    gdo.xWidth = 1 / gdo.numCols;
-    gdo.yWidth = 1 / gdo.numRows;
     gdo.graphContainer = window.frames['app_frame'].children[0]
         .contentDocument.getElementById('graphArea');
     gdo.loader = window.frames['app_frame'].children[0]
@@ -42,6 +40,7 @@ gdo.net.app["SigmaGraph"].initInstanceGlobalConstants = function () {
     gdo.sigmaInstance.renderers[0].bind('render',
         function (e) {
             console.log('Time to render: ' + (window.performance.now() - gdo.stopWatch));
+            gdo.stopWatch = window.performance.now();
         });
     gdo.numParseWorkers = 2;
     gdo.parseWorkers = [...Array(gdo.numParseWorkers)].map(function () {
@@ -55,6 +54,8 @@ gdo.net.app["SigmaGraph"].initInstanceGlobalConstants = function () {
  */
 gdo.net.app["SigmaGraph"].initInstanceGlobalVariables = function () {
     console.log('Initializing instance global variables');
+    gdo.xWidth = 1 / gdo.numCols;
+    gdo.yWidth = 1 / gdo.numRows;
     gdo.xCentroid = gdo.xWidth * gdo.nodeCol + gdo.xWidth / 2;
     gdo.yCentroid = gdo.yWidth * gdo.nodeRow + gdo.yWidth / 2;
     gdo.totalRatio = 1;
