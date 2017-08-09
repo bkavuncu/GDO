@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.AccessControl;
 using GDO.Core;
 using Newtonsoft.Json;
 using GDO.Apps.SigmaGraph.Domain;
@@ -22,6 +23,7 @@ namespace GDO.Apps.SigmaGraph {
         public AppConfiguration Configuration { get; set; }
         public bool IntegrationMode { get; set; }
         public ICompositeAppInstance ParentApp { get; set; }
+        public string ControllerId { get; set; }
 
         private string _folderNameDigit;
         private QuadTreeNode<GraphObject> _currentQuadTreeRoot;

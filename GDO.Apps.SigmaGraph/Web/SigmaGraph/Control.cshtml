@@ -135,15 +135,6 @@
         });
     });
 
-    class CanvasImage {
-        constructor(initialX, initialY, initialWidth, initialHeight) {
-            this.currentX = initialX;
-            this.currentY = initialY;
-            this.currentWidth = initialWidth;
-            this.currentHeight = initialHeight;
-        }
-    }
-
     $(window).ready(function () {
         const gdo = parent.gdo;
 
@@ -152,11 +143,10 @@
         canvas.width = 1428;
         canvas.height = 500;
         const ctx = canvas.getContext('2d');
+        gdo.canvas = canvas;
 
         // Setup object to plot
-        const imagesToPlot = [];
-        imagesToPlot.push(new CanvasImage(0, 0, 150, 100));
-        plotImages(ctx, imagesToPlot);
+        gdo.imagesToPlot = new Map();
 
         // Handle movement type
         let type;
@@ -191,12 +181,10 @@
                 console.log('move pan');
 
                 const currentPanPos = getMousePos(canvas, ev.touches[0]);
-                imagesToPlot.forEach(function(image) {
+                gdo.imagesToPlot.forEach(function(image) {
                     image.currentX += currentPanPos.x - lastPanPos.x;
                     image.currentY += currentPanPos.y - lastPanPos.y;
                 });
-
-                plotImages();
 
                 totalPanXShift += currentPanPos.x - lastPanPos.x;
                 totalPanYShift += currentPanPos.y - lastPanPos.y;
@@ -208,6 +196,7 @@
             if (type === 'pan') {
                 console.log("end pan");
                 gdo.net.app["SigmaGraph"].server.pan(gdo.controlId, totalPanXShift / canvas.width, totalPanYShift / canvas.height);
+                type = 'none';
             }
         }
 
@@ -239,7 +228,7 @@
                 const zoomRatioRelativeToLastMove = zoomRatioRelativeToStart / lastZoomRatio;
                 const ratio = zoomRatioRelativeToLastMove;
                 // Calculate the new position of image UL and LR
-                imagesToPlot.forEach(function(image) {
+                gdo.imagesToPlot.forEach(function(image) {
                     let currentXLowerRight = image.currentX + image.currentWidth;
                     let currentYLowerRight = image.currentY + image.currentHeight;
                     image.currentX = image.currentX * ratio + originalZoomCenter.x * (1 - ratio);
@@ -249,10 +238,6 @@
                     image.currentWidth = currentXLowerRight - image.currentX;
                     image.currentHeight = currentYLowerRight - image.currentY;
                 });
-                // Plot the object
-                plotImages();
-                ctx.fillStyle = "#000000";
-                ctx.fillRect(originalZoomCenter.x, originalZoomCenter.y, 3, 3);
 
                 // Update state
                 lastZoomRatio = zoomRatioRelativeToStart;
@@ -266,6 +251,7 @@
                                                       originalZoomCenter.x / canvas.width,
                                                       originalZoomCenter.y / canvas.height,
                                                       lastZoomRatio);
+                type = 'none';
             }
         }
 
@@ -292,11 +278,15 @@
 
         function plotImages() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            imagesToPlot.forEach(function (image) {
-                ctx.fillStyle = "#FF0000";
-                ctx.fillRect(image.currentX, image.currentY, image.currentWidth, image.currentHeight);
+            gdo.imagesToPlot.forEach(function (canvasImage) {
+                ctx.drawImage(canvasImage.image, canvasImage.currentX, canvasImage.currentY, canvasImage.currentWidth, canvasImage.currentHeight);
             });
         }
+
+        (function animloop(){
+            requestAnimationFrame(animloop);
+            plotImages();
+        })();
     });
 
     $(function () {

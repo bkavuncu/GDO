@@ -25,6 +25,12 @@ $(function () {
     $.connection.sigmaGraphAppHub.client.savePartialGraphImageToServer =
         gdo.net.app["SigmaGraph"].savePartialGraphImageToServer;
 
+    $.connection.sigmaGraphAppHub.client.updateImagesToPlot = function (imagePath) {
+        if (gdo.clientMode === gdo.CLIENT_MODE.CONTROL) {
+            gdo.net.app["SigmaGraph"].updateImagesToPlot(imagePath);
+        }
+    }
+
     // arrays to store data
     var links, nodes, allnodes, mostConnectedNodes = [];
     var minLinks = 3;
@@ -390,7 +396,7 @@ gdo.net.app["SigmaGraph"].initClient = function () {
 }
 
 gdo.net.app["SigmaGraph"].initControl = function () {
-    gdo.controlId = gdo.net.node[gdo.clientId].appInstanceId;
+    gdo.controlId = parseInt(getUrlVar("controlId"));
     gdo.consoleOut('.SIGMAGRAPHRENDERER', 1, 'Initializing Graph Renderer App Control at Instance ' + gdo.controlId);
 }
 

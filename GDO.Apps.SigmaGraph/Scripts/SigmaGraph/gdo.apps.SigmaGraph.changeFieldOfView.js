@@ -35,10 +35,10 @@ gdo.net.app["SigmaGraph"].zoom = function (zoomXCenter, zoomYCenter, ratio) {
  * @param {} yShift the amount to shift down in control displacements
  */
 gdo.net.app["SigmaGraph"].pan = function (xShift, yShift) {
-    gdo.xCentroid = gdo.xCentroid - xShift;
-    gdo.yCentroid = gdo.yCentroid - yShift;
+    gdo.xCentroid -= xShift / gdo.totalRatio;
+    gdo.yCentroid -= yShift / gdo.totalRatio;
 
-    gdo.xTotalShift -= xShift;
-    gdo.yTotalShift -= yShift;
+    gdo.xTotalShift -= xShift / gdo.totalRatio;
+    gdo.yTotalShift -= yShift / gdo.totalRatio;
     gdo.net.app["SigmaGraph"].renderGraph();
 }

@@ -4,6 +4,7 @@ using System.Net;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using Microsoft.AspNet.SignalR;
 using GDO.Core;
 using GDO.Core.Apps;
@@ -48,8 +49,9 @@ namespace GDO.Apps.SigmaGraph
                     Clients.Group("" + instanceId).initInstanceGlobalVariables();
 
                     // Create SigmaGraphApp project and call its function to process graph
-                    ga = (SigmaGraphApp)Cave.Apps["SigmaGraph"].Instances[instanceId];
-                    
+                    ga = (SigmaGraphApp) Cave.Apps["SigmaGraph"].Instances[instanceId];
+                    ga.ControllerId = Context.ConnectionId;
+
                     Clients.Caller.setMessage("Initiating processing of graph data in file: " + filename);
                     ga.ProcessGraph(filename);
                     Clients.Caller.setMessage("Processing of raw graph data is completed.");
@@ -96,7 +98,7 @@ namespace GDO.Apps.SigmaGraph
             }
         }
 
-        public void DoneRendering(int instanceId, int clientId)
+        public void DoneRendering(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])
             {

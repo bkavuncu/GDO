@@ -34,7 +34,7 @@ gdo.net.app["SigmaGraph"].renderGraph = async function () {//todo note this is a
     gdo.stopWatch = window.performance.now();
     gdo.sigmaInstance.refresh({ skipIndexation: true });
 
-    gdo.net.app["SigmaGraph"].server.doneRendering(gdo.controlId, gdo.clientId);
+    gdo.net.app["SigmaGraph"].server.doneRendering(gdo.controlId);
 }
 
 /**
