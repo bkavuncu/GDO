@@ -404,10 +404,10 @@ PeerNet.prototype.onClientCallbackFunc = function () {
                             console.log("@PN 1 Master list after", newList);
 
                             if (newList.length == numClients) {
-                                // console.log("@PN 1", list.length, numClients);
+                                console.log("@PN 1 callback", newList.length, numClients);
                                 getList_callback(p, newList);   // TODO ? is callback necessary
                             } else {
-
+                                console.log("@PN 1 pooling", newList.length, numClients);
                                 setTimeout(function(){ getList(updateInfo) }, 1000);
                             }
                             
@@ -477,6 +477,21 @@ PeerNet.prototype.onClientCallbackFunc = function () {
                                     // search the non-master node id, re-connect
 
                                 });
+
+                            } else if (numClients == 1) {  // only one node
+
+                                var infosAry = $.map(infos, function(value, index) { return [value]; });
+                                infosAry = [JSON.stringify(infosAry)];
+                                console.log("@PN 1 convert array", infosAry); 
+
+                                // for master node
+
+                                dd3Net.net.test.dd3Receive({ functionName: 'receiveConfiguration', data: infosAry }); 
+
+                                dd3Net.net.test.receiveGDOConfiguration({ id: gdo_appInstanceId.applicationId });
+
+                                dd3Net.net.test.updateController({ show: true });
+
                             }
                         });
                     }
@@ -498,6 +513,10 @@ PeerNet.prototype.onClientCallbackFunc = function () {
 
                     _self.net.test.receiveControllerOrder(order);
 
+                }else if(numClients == 1){
+
+                    _self.net.test.receiveControllerOrder(order);
+                    
                 }else{
                     console.log("### PN 1 peer net DONT exist");
                 }
