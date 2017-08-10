@@ -37,6 +37,26 @@ table.table_control {
     /*border-collapse:collapse;*/
 }
 
+.orange {
+    background-color: #CE8500;
+}
+
+.orange:active {
+    background-color: #B97700;
+}
+
+.center {
+    text-align: center;
+}
+
+.disabled {
+    background-color:#B97700;
+}
+
+.green1 {
+    background-color:#006400;
+}
+
 .green {
     background-color:#006400;
 }

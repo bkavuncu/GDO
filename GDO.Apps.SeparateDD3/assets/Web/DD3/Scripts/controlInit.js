@@ -16,7 +16,7 @@ d3.selection.prototype.moveToBack = function () {
     });
 };
 
-
+// var autoRun = false;
 var ctrlConn = null;
 
 var control = {
@@ -217,6 +217,11 @@ var peer = {
                 controlTestBench.dataset.push([row, col, nbr, nbc, nbdc, ts, fps, std]);
                 //gdo.consoleOut(".DD3", 4, dataset);
                 //updateFPSChart();
+
+                // if (autoRun){
+                //     console.log("auto run detected");
+                // }
+
             });  
         });
     }

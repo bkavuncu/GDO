@@ -216,6 +216,64 @@
                 link.setAttribute("download", "event_data.csv");
                 link.click();
             });
+
+            var autoRun = false;
+            var autoRunDone = false;
+            $("#auto_play_btn").click(function(){
+
+                if (!autoRun) {
+
+                    autoRun = true;
+
+                    var num = +$("#auto_num_txt").val();
+                    var max = +$("#auto_max_txt").val();
+
+                    $("#auto_num_dis").text("Step : " + num + " * " + controlTestBench.numClients);
+                    $("#auto_max_dis").text("Max : " + max + " * " + controlTestBench.numClients);
+                    $("#auto_play_btn").text("Enjoy").toggleClass("orange disabled");
+
+                    var j = 1;
+                    for (var i = num; i <= max; i += num) {
+
+                        (function(ii){
+                            setTimeout(function(){
+                                controlTestBench.server.sendOrder(instanceId, controlTestBench.order("createDistributedCircles", [num, 0.9]), true);
+                                controlTestBench.eventLog.push([new Date().getTime(), "Creating Distributed Circles"]);
+                                $("#auto_play_btn").text(ii * controlTestBench.numClients + " / " + max * controlTestBench.numClients);
+                                
+                                setTimeout(function(){
+                                    controlTestBench.server.sendOrder(instanceId, controlTestBench.order("startMoveDistributedCircles", []), true);
+                                    controlTestBench.eventLog.push([new Date().getTime(), "Moving Distributed Circles"]);
+                                    
+                                    setTimeout(function(){
+                                        if(ii >= max) {
+                                            $("#auto_play_btn").text("Save FPS").toggleClass("disabled orange");
+                                            autoRunDone = true;
+                                        }
+                                    }, 5000);
+                                    
+                                }, 3000);
+                            }, j * 13000);
+                        })(i);
+                        j++;
+                    }
+
+                } else if (autoRunDone) {
+
+                    var csvContent = "data:text/csv;charset=utf-8,";
+                    csvContent += "Row; Column; Rectangles; Circles; Distributed Circles; Timestamp; Average FPS; Standard Deviation FPS \n";
+                    controlTestBench.dataset.forEach(function (infoArray, index) {
+                        dataString = infoArray.join(";");
+                        csvContent += index < controlTestBench.dataset.length ? dataString + "\n" : dataString;
+                    });
+                    var encodedUri = encodeURI(csvContent);
+                    var link = document.createElement("a");
+                    link.setAttribute("href", encodedUri);
+                    link.setAttribute("download", "fps_for_" + controlTestBench.numClients + ".csv");
+                    link.click();
+                    
+                }
+            });
         },
         //BAI: "server" variable is needed in this test_bench
         '1': function () {
