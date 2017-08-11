@@ -1338,7 +1338,8 @@
                 .text([r, c])
                 .attr("font-size", 24)
                 .attr("dominant-baseline", "text-before-edge")
-                .attr("transform", 'translate(' + [p.left(0) + 10, p.top(0) + 10] + ')');
+                .attr("transform", 'translate(' + [p.left(0) + 10, p.top(0) + 10] + ')')
+                .attr("font-family", "monospace");
 
             // set up projection and path generator
             var projection = d3.geoEquirectangular()
@@ -1367,6 +1368,8 @@
 
             var mapDistributed = svg.append("g").attr("id", "dd3_map");
             var earthquakesDistributed = svg.append("g").attr("id", "dd3_earthquakes");
+
+            var dateObj = new Date();
 
             function drawMap(mapData) {
                 d3.json(mapData, function(error, world) {
@@ -1403,7 +1406,10 @@
                 });
             }
 
-            function addEarthquakes(earthquakeData, days) {
+            function addEarthquakes(earthquakeData, days, time) {
+
+                dateObj.setDate(dateObj.getDate() - days);
+
                 d3.json(earthquakeData, function(error, earthquakes) {
                     if (error) throw error;
 
@@ -1422,6 +1428,17 @@
                                 (projC[1] < p.left(bheight));
                     });
 
+                    var setQuakeDelay = function(quakes) {
+                        for(var i = 0, max = quakes.length; i < max; i++){
+                            var timeDiff = quakes[i].properties.time - dateObj;
+                            var timeDiffObj = new Date(timeDiff);
+                            // shorten delay
+                            quakes[i].delay = Date.parse(timeDiffObj) / 35000;
+                        }
+                    }
+
+                    setQuakeDelay(filteredEarthquakes);
+
                     var earthquakeCircles = earthquakesDistributed.selectAll("g")
                         .data(filteredEarthquakes)
                     .enter().append("g");
@@ -1434,16 +1451,53 @@
                         .attr("cy", function(d) {
                             return projectCoordinate(d, 1);
                         })
+                        .attr("r", 0)
+                        .style("fill", function(d) {
+                            return colour(d.properties.mag);
+                        });
+
+                    earthquakeCircles.append("circle")
+                        .attr("class", "pulse")
+                        .attr("cx", function(d) {
+                            return projectCoordinate(d, 0);
+                        })
+                        .attr("cy", function(d) {
+                            return projectCoordinate(d, 1);
+                        })
+                        .attr("r", 0)
+                        .style("fill", function(d) {
+                            return colour(d.properties.mag);
+                        });
+
+                    earthquakeCircles.selectAll(".earthquake")
+                        .transition()
+                        .delay(function(d) {
+                            return d.delay;
+                        })
+                        .duration(1000)
                         .attr("r", function(d) {
                             if(d.properties.mag < 0) {
                                 return 0.1;
                             } else {
                                 return radius(d.properties.mag);
                             }
+                        });
+
+                    earthquakeCircles.selectAll(".pulse")
+                        .transition()
+                        .delay(function(d) {
+                            return d.delay;
                         })
-                        .style("fill", function(d) {
-                            return colour(d.properties.mag);
+                        .duration(2000)
+                        .attr("r", function(d) {
+                            if(d.properties.mag < 0) {
+                                return 0.1 * cfg.pulseSize;
+                            } else {
+                                return radius(d.properties.mag) * cfg.pulseSize;
+                            }
                         })
+                        .style('opacity', 0)
+                        .remove();
 
                 });
             }
