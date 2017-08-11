@@ -1336,9 +1336,19 @@
             svg.append("text")
                 .unwatch()
                 .text([r, c])
-                .attr("font-size", 24)
+                .attr("font-size", 20)
                 .attr("dominant-baseline", "text-before-edge")
                 .attr("transform", 'translate(' + [p.left(0) + 10, p.top(0) + 10] + ')')
+                .attr("font-family", "monospace");
+
+            var eqCounter = 0;
+
+            var localEarthquakeCounter = svg.append("text")
+                .unwatch()
+                .text("EQ:" + 0)
+                .attr("font-size", 20)
+                .attr("dominant-baseline", "text-before-edge")
+                .attr("transform", 'translate(' + [p.left(0) + 10, p.top(0) + 40] + ')')
                 .attr("font-family", "monospace");
 
             // set up projection and path generator
@@ -1481,7 +1491,11 @@
                             } else {
                                 return radius(d.properties.mag);
                             }
-                        });
+                        })
+                        .on("end", function() {
+                            eqCounter++;
+                            localEarthquakeCounter.text("EQ:" + eqCounter);
+                        })
 
                     earthquakeCircles.selectAll(".pulse")
                         .transition()
