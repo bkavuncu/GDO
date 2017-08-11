@@ -1340,6 +1340,7 @@
                 .attr("dominant-baseline", "text-before-edge")
                 .attr("transform", 'translate(' + [p.left(0) + 10, p.top(0) + 10] + ')');
 
+            // set up projection and path generator
             var projection = d3.geoEquirectangular()
                 .scale(1)
                 .translate([0, 0]);
@@ -1347,7 +1348,25 @@
             var path = d3.geoPath()
                 .projection(projection);
 
+            // function to get the X or Y of a projected coordinate
+            function projectCoordinate(d, index) {
+                return projection([d.geometry.coordinates[0], d.geometry.coordinates[1]])[index];
+            }
+
+            // some config for the visualisation
+            var cfg = {
+                pulseSize: 4
+            };
+
+            // set up some scales for the earthquake circles
+            var colour = d3.scaleLinear()
+                .range(["yellow", "red"]);
+
+            var radius = d3.scaleSqrt()
+                .range([0, 7]);
+
             var mapDistributed = svg.append("g").attr("id", "dd3_map");
+            var earthquakesDistributed = svg.append("g").attr("id", "dd3_earthquakes");
 
             function drawMap(mapData) {
                 d3.json(mapData, function(error, world) {
@@ -1384,8 +1403,57 @@
                 });
             }
 
+            function addEarthquakes(earthquakeData, days) {
+                d3.json(earthquakeData, function(error, earthquakes) {
+                    if (error) throw error;
+
+                    radius.domain([0, d3.max(earthquakes.features, function(d) {
+                        return d.properties.mag;
+                    })]);
+
+                    colour.domain(radius.domain());
+
+                    var filteredEarthquakes = earthquakes.features.filter(function(a) {
+                        // project coordinates and filter
+                        var projC = projection(a.geometry.coordinates);
+                        return (projC[0] >= p.left(0)) &&
+                                (projC[0] < p.left(bwidth)) &&
+                                (projC[1] >= p.top(0)) &&
+                                (projC[1] < p.left(bheight));
+                    });
+
+                    var earthquakeCircles = earthquakesDistributed.selectAll("g")
+                        .data(filteredEarthquakes)
+                    .enter().append("g");
+
+                    earthquakeCircles.append("circle")
+                        .attr("class", "earthquake")
+                        .attr("cx", function(d) {
+                            return projectCoordinate(d, 0);
+                        })
+                        .attr("cy", function(d) {
+                            return projectCoordinate(d, 1);
+                        })
+                        .attr("r", function(d) {
+                            if(d.properties.mag < 0) {
+                                return 0.1;
+                            } else {
+                                return radius(d.properties.mag);
+                            }
+                        })
+                        .style("fill", function(d) {
+                            return colour(d.properties.mag);
+                        })
+
+                });
+            }
+
             appTestBench.orderController.orders['loadMap'] = function () {
                 drawMap("https://d3js.org/world-50m.v1.json");
+            };
+
+            appTestBench.orderController.orders['showEarthquakes'] = function () {
+                addEarthquakes("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson", 7)
             };
         }
 

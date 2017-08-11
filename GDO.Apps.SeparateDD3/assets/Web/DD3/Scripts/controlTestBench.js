@@ -581,8 +581,12 @@
         },
 
         '99': function () {
-            $("#start-anim").click(function () {
+            $("#load-map").click(function () {
                 controlTestBench.server.sendOrder(instanceId, controlTestBench.order("loadMap", []), true);
+            });
+
+            $("#show-earthquakes").click(function () {
+                controlTestBench.server.sendOrder(instanceId, controlTestBench.order("showEarthquakes", []), true);
             });
         }
 
