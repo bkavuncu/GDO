@@ -557,10 +557,10 @@
 
         },
 
-        // Shor. simple pie chart 
+        // Shor. simple pie chart
         '12': function () {
 
-            // Shor. CONTROL TEMPLATE 
+            // Shor. CONTROL TEMPLATE
 
             //$("#dd3-start").click(function () {
 
@@ -579,6 +579,10 @@
             //});
 
         },
+
+        '99': function () {
+
+        }
 
     },
     order: function (name, args) {

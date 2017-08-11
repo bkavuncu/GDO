@@ -15,7 +15,7 @@
     //BAI: "d3" variable is needed in this test_bench.
     test_bench: {
 
-      
+
 
         //transitions
         '0': function () {
@@ -1243,14 +1243,14 @@
 
         },
 
-        // Shor. simple pie chart 
+        // Shor. simple pie chart
         '12': function () {
 
             var svg = dd3.svgCanvas;
             var width = dd3.cave.svgWidth,
                 height = dd3.cave.svgHeight,
                 radius = Math.min(width, height) / 2;
-            
+
             var draw = function (pieData) {
                 var color = d3.scaleOrdinal(d3.schemeCategory20c);
                 var arc = d3.arc()
@@ -1285,12 +1285,12 @@
                     .style("text-anchor", "middle")
                     .text(function (d) { return d.country; })
                     .send();
-            }; 
+            };
 
             dd3.getPieData('pie', 'pieData', draw , width / 2, height / 2);
 
 
-            // Shor. CONTROL TEMPLATE 
+            // Shor. CONTROL TEMPLATE
 
             //appTestBench.orderController.orders['initWorldConfig'] = function (data) {
 
@@ -1315,6 +1315,36 @@
             //};
 
         },
+
+        '99': function () {
+            var svg = dd3.svgCanvas,
+                width = dd3.cave.svgWidth,
+                height = dd3.cave.svgHeight,
+                bwidth = dd3.browser.svgWidth,
+                bheight = dd3.browser.svgHeight,
+                p = dd3.position("svg", "local", "svg", "global"),
+                c = dd3.browser.column,
+                r = dd3.browser.row;
+
+            svg.append('rect')
+                .attr("x", p.left(0))
+                .attr("y", p.top(0))
+                .attr("width", bwidth)
+                .attr("height", bheight)
+                .attr("stroke", "brown")
+                .attr("fill", "#BBB");
+
+            svg.append("text")
+                .unwatch()
+                .text([r, c])
+                .attr("font-size", 24)
+                .attr("dominant-baseline", "text-before-edge")
+                .attr("transform", 'translate(' + [p.left(0) + 10, p.top(0) + 10] + ')');
+
+            appTestBench.orderController.orders['startAnimation'] = function () {
+                console.log("start animation");
+            };
+        }
 
     },
 
