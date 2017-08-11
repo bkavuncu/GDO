@@ -1331,8 +1331,7 @@
                 .attr("y", p.top(0))
                 .attr("width", bwidth)
                 .attr("height", bheight)
-                .attr("stroke", "brown")
-                .attr("fill", "#BBB");
+                .attr("fill", "#009fe1");
 
             svg.append("text")
                 .unwatch()
@@ -1341,8 +1340,52 @@
                 .attr("dominant-baseline", "text-before-edge")
                 .attr("transform", 'translate(' + [p.left(0) + 10, p.top(0) + 10] + ')');
 
-            appTestBench.orderController.orders['startAnimation'] = function () {
-                console.log("start animation");
+            var projection = d3.geoEquirectangular()
+                .scale(1)
+                .translate([0, 0]);
+
+            var path = d3.geoPath()
+                .projection(projection);
+
+            var mapDistributed = svg.append("g").attr("id", "dd3_map");
+
+            function drawMap(mapData) {
+                d3.json(mapData, function(error, world) {
+                    if (error) throw error;
+                    console.log(topojson.feature(world, world.objects.countries));
+
+                    var land = topojson.feature(world, world.objects.land);
+
+                    // calculate scale and translation to fit map to height/width
+                    var b = path.bounds(land),
+                        s = .95 / Math.max((b[1][0] - b[0][0]) / width, (b[1][1] - b[0][1]) / height),
+                        t = [(width - s * (b[1][0] + b[0][0])) / 2, (height - s * (b[1][1] + b[0][1])) / 2];
+
+                    projection
+                        .scale(s)
+                        .translate(t);
+
+                    var countries = topojson.feature(world, world.objects.countries).features;
+
+                    mapDistributed.selectAll(".boundary")
+                        .data(countries.filter(function(a) {
+                            var bounds = path.bounds(a);
+                            return (bounds[0][0] >= p.left(0)) &&
+                                (bounds[0][0] < p.left(bwidth)) &&
+                                (bounds[0][1] >= p.top(0)) &&
+                                (bounds[0][1] < p.left(bheight));
+                        }))
+                    .enter().append("path")
+                        .attr("class", "boundary")
+                        .attr("d", path)
+                        .style("fill", "white")
+                        .style("stroke-width", 0.5)
+                        .style("stroke", "black")
+                });
+            }
+
+            appTestBench.orderController.orders['loadMap'] = function () {
+                drawMap("https://d3js.org/world-50m.v1.json");
             };
         }
 

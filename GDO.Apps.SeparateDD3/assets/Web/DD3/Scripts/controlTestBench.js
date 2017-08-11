@@ -581,7 +581,9 @@
         },
 
         '99': function () {
-
+            $("#start-anim").click(function () {
+                controlTestBench.server.sendOrder(instanceId, controlTestBench.order("loadMap", []), true);
+            });
         }
 
     },
