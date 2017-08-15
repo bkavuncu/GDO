@@ -58,7 +58,7 @@ namespace GDO.Apps.SigmaGraph.Domain
                 float DEFAULT_NODESIZE = 1;
                 float DEFAULT_LINKWIDTH = 1;
                 var DEFAULT_NODE_COLOR = new { r=0, g=0, b=0};
-                var DEFAULT_EDGE_COLOR = new { r=184, g=184, b=184 };
+                var DEFAULT_EDGE_COLOR = new { r=0, g=0, b=0 };
 
                 #region fill Nodes data structure
 
@@ -118,13 +118,35 @@ namespace GDO.Apps.SigmaGraph.Domain
                     Height = maxY - minY
                 };
 
-                var xscale = 1/ graphinfo.RectDim.Width;
-                var yscale = 1/ graphinfo.RectDim.Height;
+                // Min-Max normalize X and Y; do not preserve aspect ratio
+                //var xscale = 1/ graphinfo.RectDim.Width;
+                //var yscale = 1/ graphinfo.RectDim.Height;
+
+                //foreach (var node in graphinfo.Nodes)
+                //{
+                //    node.Pos.X = (node.Pos.X - minX)*xscale;
+                //    node.Pos.Y = (node.Pos.Y - minY)*yscale;
+                //}
+                
+                // Scale X and Y differently; preserve aspect ratio
+                float xScale;
+                float yScale;
+                var xToYRatio = graphinfo.RectDim.Width / graphinfo.RectDim.Height;
+                if (xToYRatio <= 1)
+                {
+                    xScale = xToYRatio * (1 / graphinfo.RectDim.Width);
+                    yScale = 1 / graphinfo.RectDim.Height;
+                }
+                else {
+                    xScale = 1 / graphinfo.RectDim.Width;
+                    yScale = (1 / xToYRatio) * (1 / graphinfo.RectDim.Height);
+                }
 
                 foreach (var node in graphinfo.Nodes)
                 {
-                    node.Pos.X = (node.Pos.X - minX)*xscale;
-                    node.Pos.Y = (node.Pos.Y - minY)*yscale;
+                    node.Pos.X = (node.Pos.X - minX) * xScale + (1 - xScale * graphinfo.RectDim.Width) / 2;
+                    // Assuming exported from gephi with increasing Y being up
+                    node.Pos.Y = 1 - ((node.Pos.Y - minY) * yScale + (1 - yScale * graphinfo.RectDim.Height) / 2);
                 }
 
                 graphinfo.RectDim = new RectDimension()

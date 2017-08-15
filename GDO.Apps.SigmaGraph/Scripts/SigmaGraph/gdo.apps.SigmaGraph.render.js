@@ -29,7 +29,7 @@ gdo.net.app["SigmaGraph"].renderGraph = async function () {//todo note this is a
     gdo.sigmaInstance.graph.nodes().forEach(convertServerCoordsToSigmaCoords);
     console.log("Time to add objects: " + (window.performance.now() - gdo.stopWatch));
 
-    addDebugGrid();
+    // addDebugGrid();
     // Render the new graph
     gdo.stopWatch = window.performance.now();
     gdo.sigmaInstance.refresh({ skipIndexation: true });
@@ -159,15 +159,16 @@ function handleFileGraphObjects(fileGraphObjects) {
     fileGraphObjects.nodes.forEach(node => {
         node.x = node.pos.x;
         node.y = node.pos.y;
-        if (node.r) {
-            node.color = "#" +
-                toPaddedHexString(node.r, 2) +
-                toPaddedHexString(node.g, 2) +
-                toPaddedHexString(node.b, 2);
-        } else {
-            node.color = "#89f";
-        }
-        node.size = Math.min(12, node.size) || 3;
+        //if (node.r) {
+        //    node.color = "#" +
+        //        toPaddedHexString(node.r, 2) +
+        //        toPaddedHexString(node.g, 2) +
+        //        toPaddedHexString(node.b, 2);
+        //} else {
+            node.color = "#fff"; //"#89f";
+        //}
+        // What should the max be? 5? 12?
+        node.size = Math.min(5, node.size) || 3;
         try {
             gdo.sigmaInstance.graph.addNode(node);
         } catch (err) {
@@ -176,14 +177,14 @@ function handleFileGraphObjects(fileGraphObjects) {
 
     fileGraphObjects.edges.forEach(edge => {
         edge.id = edge.source + " to " + edge.target;
-        if (edge.r) {
-            edge.color = "#" +
-                toPaddedHexString(edge.r, 2) +
-                toPaddedHexString(edge.g, 2) +
-                toPaddedHexString(edge.b, 2);
-        } else {
-            edge.color = "#339";
-        }
+        //if (edge.r) {
+        //    edge.color = "#" +
+        //        toPaddedHexString(edge.r, 2) +
+        //        toPaddedHexString(edge.g, 2) +
+        //        toPaddedHexString(edge.b, 2);
+        //} else {
+            edge.color = "#fff"; // "#339";
+        //}
         try {
             gdo.sigmaInstance.graph.addEdge(edge);
         } catch (err) {
