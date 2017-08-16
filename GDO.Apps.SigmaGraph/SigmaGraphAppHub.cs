@@ -105,7 +105,7 @@ namespace GDO.Apps.SigmaGraph
                 try
                 {
                     Clients.Caller.hideSpinner();
-                    Clients.Caller.savePartialGraphImageToServer();
+                    //Clients.Caller.savePartialGraphImageToServer();
                 }
                 catch (Exception e)
                 {

@@ -159,14 +159,14 @@ function handleFileGraphObjects(fileGraphObjects) {
     fileGraphObjects.nodes.forEach(node => {
         node.x = node.pos.x;
         node.y = node.pos.y;
-        //if (node.r) {
-        //    node.color = "#" +
-        //        toPaddedHexString(node.r, 2) +
-        //        toPaddedHexString(node.g, 2) +
-        //        toPaddedHexString(node.b, 2);
-        //} else {
-            node.color = "#fff"; //"#89f";
-        //}
+        if (node.r || node.g || node.b) {
+            node.color = "#" +
+                toPaddedHexString(node.r, 2) +
+                toPaddedHexString(node.g, 2) +
+                toPaddedHexString(node.b, 2);
+        } else {
+            node.color = "#fff";//"rgba(255,255,255,0)"; //"#89f";
+        }
         // What should the max be? 5? 12?
         node.size = Math.min(5, node.size) || 3;
         try {
@@ -177,14 +177,14 @@ function handleFileGraphObjects(fileGraphObjects) {
 
     fileGraphObjects.edges.forEach(edge => {
         edge.id = edge.source + " to " + edge.target;
-        //if (edge.r) {
-        //    edge.color = "#" +
-        //        toPaddedHexString(edge.r, 2) +
-        //        toPaddedHexString(edge.g, 2) +
-        //        toPaddedHexString(edge.b, 2);
-        //} else {
-            edge.color = "#fff"; // "#339";
-        //}
+        if (edge.r || edge.g || edge.b) {
+            edge.color = "#" +
+                toPaddedHexString(edge.r, 2) +
+                toPaddedHexString(edge.g, 2) +
+                toPaddedHexString(edge.b, 2);
+        } else {
+            edge.color = "rgba("+Math.round(edge.attrs["weight2"] * 255/7)+",0,0,0.1)"; // "#339";
+        }
         try {
             gdo.sigmaInstance.graph.addEdge(edge);
         } catch (err) {
