@@ -1431,8 +1431,27 @@
 
             function moveRect(corners) {
                 var projectedCorners = [projection(corners[0]), projection(corners[1])];
-                console.log(projectedCorners);
                 rectangle.attr("transform", "translate(" + projectedCorners[0] + ")")
+
+                svg.selectAll(".earthquake")
+                    .attr("r", function(d) {
+                        var cx = d3.select(this).attr("cx");
+                        var cy = d3.select(this).attr("cy");
+
+                        if (cx > projectedCorners[0][0] &&
+                            cx < projectedCorners[1][0] &&
+                            cy > projectedCorners[0][1] &&
+                            cy < projectedCorners[1][1])
+                        {
+                            if(d.properties.mag < 0) {
+                                return 0.1;
+                            } else {
+                                return radius(d.properties.mag);
+                            }
+                        } else {
+                            return 0;
+                        }
+                    })
             }
 
             function addEarthquakes(earthquakeData, days, time) {
@@ -1481,56 +1500,63 @@
                             return projectCoordinate(d, 1);
                         })
                         .attr("r", 0)
+                        // .attr("r", function(d) {
+                        //     if(d.properties.mag < 0) {
+                        //         return 0.1;
+                        //     } else {
+                        //         return radius(d.properties.mag);
+                        //     }
+                        // })
                         .style("fill", function(d) {
                             return colour(d.properties.mag);
                         });
 
-                    earthquakeCircles.append("circle")
-                        .attr("class", "pulse")
-                        .attr("cx", function(d) {
-                            return projectCoordinate(d, 0);
-                        })
-                        .attr("cy", function(d) {
-                            return projectCoordinate(d, 1);
-                        })
-                        .attr("r", 0)
-                        .style("fill", function(d) {
-                            return colour(d.properties.mag);
-                        });
+                    // earthquakeCircles.append("circle")
+                    //     .attr("class", "pulse")
+                    //     .attr("cx", function(d) {
+                    //         return projectCoordinate(d, 0);
+                    //     })
+                    //     .attr("cy", function(d) {
+                    //         return projectCoordinate(d, 1);
+                    //     })
+                    //     .attr("r", 0)
+                    //     .style("fill", function(d) {
+                    //         return colour(d.properties.mag);
+                    //     });
 
-                    earthquakeCircles.selectAll(".earthquake")
-                        .transition()
-                        .delay(function(d) {
-                            return d.delay;
-                        })
-                        .duration(1000)
-                        .attr("r", function(d) {
-                            if(d.properties.mag < 0) {
-                                return 0.1;
-                            } else {
-                                return radius(d.properties.mag);
-                            }
-                        })
-                        .on("end", function() {
-                            eqCounter++;
-                            localEarthquakeCounter.text("EQ:" + eqCounter);
-                        })
+                    // earthquakeCircles.selectAll(".earthquake")
+                    //     .transition()
+                    //     .delay(function(d) {
+                    //         return d.delay;
+                    //     })
+                    //     .duration(1000)
+                    //     .attr("r", function(d) {
+                    //         if(d.properties.mag < 0) {
+                    //             return 0.1;
+                    //         } else {
+                    //             return radius(d.properties.mag);
+                    //         }
+                    //     })
+                    //     .on("end", function() {
+                    //         eqCounter++;
+                    //         localEarthquakeCounter.text("EQ:" + eqCounter);
+                    //     })
 
-                    earthquakeCircles.selectAll(".pulse")
-                        .transition()
-                        .delay(function(d) {
-                            return d.delay;
-                        })
-                        .duration(2000)
-                        .attr("r", function(d) {
-                            if(d.properties.mag < 0) {
-                                return 0.1 * cfg.pulseSize;
-                            } else {
-                                return radius(d.properties.mag) * cfg.pulseSize;
-                            }
-                        })
-                        .style('opacity', 0)
-                        .remove();
+                    // earthquakeCircles.selectAll(".pulse")
+                    //     .transition()
+                    //     .delay(function(d) {
+                    //         return d.delay;
+                    //     })
+                    //     .duration(2000)
+                    //     .attr("r", function(d) {
+                    //         if(d.properties.mag < 0) {
+                    //             return 0.1 * cfg.pulseSize;
+                    //         } else {
+                    //             return radius(d.properties.mag) * cfg.pulseSize;
+                    //         }
+                    //     })
+                    //     .style('opacity', 0)
+                    //     .remove();
 
                 });
             }
@@ -1545,6 +1571,7 @@
 
             appTestBench.orderController.orders['loadMap'] = function (bounds) {
                 drawMap("https://d3js.org/world-50m.v1.json", bounds);
+                addEarthquakes("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson", 7);
             };
 
             appTestBench.orderController.orders['showEarthquakes'] = function () {

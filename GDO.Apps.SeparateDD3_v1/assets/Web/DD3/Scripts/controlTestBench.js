@@ -612,7 +612,7 @@
             var brush = d3.brush()
                 .extent([[0, 0], [width, height]])
                 .on("start", brushedStart)
-                .on("brush", brushedMove);
+                .on("end", brushedMove);
 
             d3.queue()
                 .defer(d3.json, mapUrl)
