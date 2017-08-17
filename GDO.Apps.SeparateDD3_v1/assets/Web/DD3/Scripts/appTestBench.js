@@ -1381,7 +1381,7 @@
 
             var dateObj = new Date();
 
-            function drawMap(mapData) {
+            function drawMap(mapData, corners) {
                 d3.json(mapData, function(error, world) {
                     if (error) throw error;
 
@@ -1398,7 +1398,8 @@
 
                     var countries = topojson.feature(world, world.objects.countries).features;
 
-                    mapDistributed.selectAll(".boundary")
+                    mapDistributed.append("g")
+                        .selectAll(".boundary")
                         .data(countries.filter(function(a) {
                             var bounds = path.bounds(a);
                             return (bounds[0][0] >= p.left(0)) &&
@@ -1406,13 +1407,32 @@
                                 (bounds[0][1] >= p.top(0)) &&
                                 (bounds[0][1] < p.left(bheight));
                         }))
-                    .enter().append("path")
-                        .attr("class", "boundary")
-                        .attr("d", path)
-                        .style("fill", "white")
-                        .style("stroke-width", 0.5)
-                        .style("stroke", "black")
+                        .enter().append("path")
+                            .attr("class", "boundary")
+                            .attr("d", path)
+                            .style("fill", "white")
+                            .style("stroke-width", 0.5)
+                            .style("stroke", "black");
+
                 });
+            }
+
+            var rectangle;
+
+            mapDistributed.append("rect");
+
+            function createRect(corners) {
+                rectangle = mapDistributed.select("rect")
+                    .attr("width", width / 4)
+                    .attr("height", height / 4)
+                    .style("fill-opacity", 0.1)
+                    .style("stroke", "white")
+            }
+
+            function moveRect(corners) {
+                var projectedCorners = [projection(corners[0]), projection(corners[1])];
+                console.log(projectedCorners);
+                rectangle.attr("transform", "translate(" + projectedCorners[0] + ")")
             }
 
             function addEarthquakes(earthquakeData, days, time) {
@@ -1515,8 +1535,16 @@
                 });
             }
 
-            appTestBench.orderController.orders['loadMap'] = function () {
-                drawMap("https://d3js.org/world-50m.v1.json");
+            appTestBench.orderController.orders['createRect'] = function (bounds) {
+                createRect(bounds);
+            };
+
+            appTestBench.orderController.orders['moveRect'] = function (bounds) {
+                moveRect(bounds);
+            };
+
+            appTestBench.orderController.orders['loadMap'] = function (bounds) {
+                drawMap("https://d3js.org/world-50m.v1.json", bounds);
             };
 
             appTestBench.orderController.orders['showEarthquakes'] = function () {

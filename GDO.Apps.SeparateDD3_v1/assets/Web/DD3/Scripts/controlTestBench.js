@@ -611,7 +611,8 @@
 
             var brush = d3.brush()
                 .extent([[0, 0], [width, height]])
-                .on("start brush", brushed);
+                .on("start", brushedStart)
+                .on("brush", brushedMove);
 
             d3.queue()
                 .defer(d3.json, mapUrl)
@@ -655,10 +656,12 @@
                 svg.append("g")
                     .attr("class", "brush")
                     .call(brush)
-                    .call(brush.move, [[0, 0], [width / 2, height / 2]])
+                    .call(brush.move, [[0, 0], [width / 4, height / 4]]);
+
+                controlTestBench.server.sendOrder(instanceId, controlTestBench.order("loadMap", [corners]), true);
             }
 
-            function brushed() {
+            function brushedStart() {
                 var s = d3.event.selection,
                     c0 = s[0],
                     c1 = s[1];
@@ -670,10 +673,27 @@
                 corners = [lc0, lc1];
                 cornersCounter.text("Selection: " + [corners[0]] + " " + [corners[1]]);
 
+                controlTestBench.server.sendOrder(instanceId, controlTestBench.order("createRect", [corners]), true);
+            }
+
+            // Refactor duplication
+            function brushedMove() {
+                var s = d3.event.selection,
+                    c0 = s[0],
+                    c1 = s[1];
+
+                // convert to lat long
+                var lc0 = projection.invert(c0);
+                var lc1 = projection.invert(c1);
+
+                corners = [lc0, lc1];
+                cornersCounter.text("Selection: " + [corners[0]] + " " + [corners[1]]);
+
+                controlTestBench.server.sendOrder(instanceId, controlTestBench.order("moveRect", [corners]), true);
             }
 
             $("#load-map").click(function () {
-                controlTestBench.server.sendOrder(instanceId, controlTestBench.order("loadMap", []), true);
+                // controlTestBench.server.sendOrder(instanceId, controlTestBench.order("loadMap", [corners]), true);
             });
 
             $("#show-earthquakes").click(function () {
