@@ -581,6 +581,11 @@
         },
 
         '99': function () {
+            d3.select("#svg-container")
+                .append("svg")
+                .attr("width", 500)
+                .attr("height", 500);
+
             $("#load-map").click(function () {
                 controlTestBench.server.sendOrder(instanceId, controlTestBench.order("loadMap", []), true);
             });
