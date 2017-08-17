@@ -1417,9 +1417,12 @@
                 });
             }
 
-            var rectangle;
+            var rectangle = mapDistributed.append("rect");
 
-            mapDistributed.append("rect");
+            var rectText = mapDistributed.append("text")
+                .attr("y", 15)
+                .attr("font-size", 14)
+                .text("Earthquakes");
 
             function createRect(corners) {
                 rectangle = mapDistributed.select("rect")
@@ -1427,11 +1430,16 @@
                     .attr("height", height / 4)
                     .style("fill-opacity", 0.1)
                     .style("stroke", "white")
+
+                rectText.attr("transform", "translate(" + [0, height / 4] + ")")
             }
 
             function moveRect(corners) {
                 var projectedCorners = [projection(corners[0]), projection(corners[1])];
                 rectangle.attr("transform", "translate(" + projectedCorners[0] + ")")
+                rectText.attr("transform", "translate(" + [projectedCorners[0][0], projectedCorners[1][1]] + ")");
+
+                var count = 0;
 
                 svg.selectAll(".earthquake")
                     .attr("r", function(d) {
@@ -1443,6 +1451,8 @@
                             cy > projectedCorners[0][1] &&
                             cy < projectedCorners[1][1])
                         {
+                            count++;
+
                             if(d.properties.mag < 0) {
                                 return 0.1;
                             } else {
@@ -1452,6 +1462,8 @@
                             return 0;
                         }
                     })
+
+                rectText.text("Earthquakes selected: " + count);
             }
 
             function addEarthquakes(earthquakeData, days, time) {
