@@ -557,10 +557,10 @@
 
         },
 
-        // Shor. simple pie chart 
+        // Shor. simple pie chart
         '12': function () {
 
-            // Shor. CONTROL TEMPLATE 
+            // Shor. CONTROL TEMPLATE
 
             //$("#dd3-start").click(function () {
 
@@ -579,6 +579,74 @@
             //});
 
         },
+
+        '99': function () {
+            var width = 960,
+                height = 500;
+
+            var svg = d3.select("#svg-container")
+                .append("svg")
+                .attr("width", width)
+                .attr("height", height)
+
+            var bg = svg.append("rect")
+                .attr("width", width)
+                .attr("height", height)
+                .style("fill", "#009fe1")
+                .style("stroke", "white");
+
+            var projection = d3.geoEquirectangular()
+                .scale(1)
+                .translate([0, 0]);
+
+            var path = d3.geoPath()
+                .projection(projection);
+
+            var mapUrl = "https://d3js.org/world-50m.v1.json";
+
+            d3.queue()
+                .defer(d3.json, mapUrl)
+                .await(load);
+
+            var map;
+
+            function load(error, m) {
+                if (error) throw error;
+
+                map = m;
+
+                var land = topojson.feature(map, map.objects.land);
+
+                // calculate scale and translation to fit map to height/width
+                var b = path.bounds(land),
+                    s = .95 / Math.max((b[1][0] - b[0][0]) / width, (b[1][1] - b[0][1]) / height),
+                    t = [(width - s * (b[1][0] + b[0][0])) / 2, (height - s * (b[1][1] + b[0][1])) / 2];
+
+                projection
+                    .scale(s)
+                    .translate(t);
+
+                var countries = topojson.feature(map, map.objects.countries).features;
+
+                var world = svg.append("g")
+                    .selectAll(".boundary")
+                    .data(countries)
+                    .enter().append("path")
+                        .attr("class", "boundary")
+                        .attr("d", path)
+                        .style("fill", "white")
+                        .style("stroke-width", 0.5)
+                        .style("stroke", "black");
+            }
+
+            $("#load-map").click(function () {
+                controlTestBench.server.sendOrder(instanceId, controlTestBench.order("loadMap", []), true);
+            });
+
+            $("#show-earthquakes").click(function () {
+                controlTestBench.server.sendOrder(instanceId, controlTestBench.order("showEarthquakes", []), true);
+            });
+        }
 
     },
     order: function (name, args) {

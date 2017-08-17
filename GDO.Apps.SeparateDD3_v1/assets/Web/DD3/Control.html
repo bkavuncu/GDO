@@ -23,14 +23,17 @@
     <script src="../../Web/DD3/Scripts/d3.v4.js"></script>
     <script src="../../Scripts/peer.js"></script>
     <script src="../../Scripts/socket.io.min.js"></script>
-    
+
 
 
     <!-- Shor. load dd3 modules -->
     <script src="../../Scripts/DD3/gdo.apps.dd3.world.js"></script>
     <!--<script src="../../Scripts/DD3/gdo.apps.dd3.js"></script>-->
     <script src="../../Web/DD3/Scripts/controlTestBench.js"></script>
-    <script src="../../Web/DD3/Scripts/controlInit.js"></script> 
+    <script src="../../Web/DD3/Scripts/controlInit.js"></script>
+
+    <!-- extra libraries for example -->
+    <script src="https://d3js.org/topojson.v2.min.js"></script>
 
     <div id="wait" style="">
         Please wait while app is initializing...
@@ -63,7 +66,7 @@
                 <td class="red" id="rotation">Rotation</td>
             </tr>
             <tr class="basic_moves">
-                <td class="red" id="allMoves">All</td>  
+                <td class="red" id="allMoves">All</td>
             </tr>
             <tr class="superposition">
                 <td colspan="3">Superposition</td>
@@ -123,7 +126,7 @@
             </tr>
         </table>
     </div>
-    
+
     <div id="control_3" style="display: none">
 
         <form id="submit_file_form" action="" method="post" enctype="multipart/form-data">
@@ -201,7 +204,7 @@
             <!---->
         </table>
     </div>
-    
+
     <div id="control_6" style="display:none">
         <table class="table_control">
             <tr>
@@ -233,7 +236,7 @@
             <tr>
                 <td class="green" id="upfilter">Update Filter: <input id="attr" type="string" value="Id" style="width:100px"/> Min: <input id="min" type="number" value="0" style="width:50px"/> Max: <input id="max" type="number" value="10" style="width:50px"/></td>
             </tr>
-            
+
         </table>
     </div>
 
@@ -244,6 +247,20 @@
             </tr>
             <tr>
                 <td class="green" id="dd3-refresh">Refresh DD3</td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="control_99" style="display:none">
+        <div id="svg-container">
+        </div>
+
+        <table class="table_control">
+            <tr>
+                <td class="green" id="load-map">Load Map</td>
+            </tr>
+            <tr>
+                <td class="green" id="show-earthquakes">Show Earthquakes</td>
             </tr>
         </table>
     </div>

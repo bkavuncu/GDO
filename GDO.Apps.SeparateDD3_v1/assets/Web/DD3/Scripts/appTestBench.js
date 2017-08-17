@@ -15,7 +15,7 @@
     //BAI: "d3" variable is needed in this test_bench.
     test_bench: {
 
-      
+
 
         //transitions
         '0': function () {
@@ -58,14 +58,13 @@
             }
             //BAI: DD3Q: This function will running all the time once it is called by "loop()" below. Maybe it cause the worse browser performace.
             function loop() {
-                var now =  Date.now();
                 if (!lastRun) {
-                    lastRun = now;
+                    lastRun = window.performance.now();
                     requestAnimFrame(loop);
                     return;
                 }
-                var delta = (now - lastRun) / 1000;
-                lastRun = now;
+                var delta = (new Date().getTime() - lastRun) / 1000;
+                lastRun = new Date().getTime();
                 fps = 1 / delta;
                 //fpss.push(lastRun);
                 fpss.push(Math.round(fps));
@@ -1244,14 +1243,14 @@
 
         },
 
-        // Shor. simple pie chart 
+        // Shor. simple pie chart
         '12': function () {
 
             var svg = dd3.svgCanvas;
             var width = dd3.cave.svgWidth,
                 height = dd3.cave.svgHeight,
                 radius = Math.min(width, height) / 2;
-            
+
             var draw = function (pieData) {
                 var color = d3.scaleOrdinal(d3.schemeCategory20c);
                 var arc = d3.arc()
@@ -1286,12 +1285,12 @@
                     .style("text-anchor", "middle")
                     .text(function (d) { return d.country; })
                     .send();
-            }; 
+            };
 
             dd3.getPieData('pie', 'pieData', draw , width / 2, height / 2);
 
 
-            // Shor. CONTROL TEMPLATE 
+            // Shor. CONTROL TEMPLATE
 
             //appTestBench.orderController.orders['initWorldConfig'] = function (data) {
 
@@ -1316,6 +1315,214 @@
             //};
 
         },
+
+        '99': function () {
+            var svg = dd3.svgCanvas,
+                width = dd3.cave.svgWidth,
+                height = dd3.cave.svgHeight,
+                bwidth = dd3.browser.svgWidth,
+                bheight = dd3.browser.svgHeight,
+                p = dd3.position("svg", "local", "svg", "global"),
+                c = dd3.browser.column,
+                r = dd3.browser.row;
+
+            svg.append('rect')
+                .attr("x", p.left(0))
+                .attr("y", p.top(0))
+                .attr("width", bwidth)
+                .attr("height", bheight)
+                .attr("fill", "#009fe1");
+
+            svg.append("text")
+                .unwatch()
+                .text([r, c])
+                .attr("font-size", 20)
+                .attr("dominant-baseline", "text-before-edge")
+                .attr("transform", 'translate(' + [p.left(0) + 10, p.top(0) + 10] + ')')
+                .attr("font-family", "monospace");
+
+            var eqCounter = 0;
+
+            var localEarthquakeCounter = svg.append("text")
+                .unwatch()
+                .text("EQ:" + 0)
+                .attr("font-size", 20)
+                .attr("dominant-baseline", "text-before-edge")
+                .attr("transform", 'translate(' + [p.left(0) + 10, p.top(0) + 40] + ')')
+                .attr("font-family", "monospace");
+
+            // set up projection and path generator
+            var projection = d3.geoEquirectangular()
+                .scale(1)
+                .translate([0, 0]);
+
+            var path = d3.geoPath()
+                .projection(projection);
+
+            // function to get the X or Y of a projected coordinate
+            function projectCoordinate(d, index) {
+                return projection([d.geometry.coordinates[0], d.geometry.coordinates[1]])[index];
+            }
+
+            // some config for the visualisation
+            var cfg = {
+                pulseSize: 4
+            };
+
+            // set up some scales for the earthquake circles
+            var colour = d3.scaleLinear()
+                .range(["yellow", "red"]);
+
+            var radius = d3.scaleSqrt()
+                .range([0, 7]);
+
+            var mapDistributed = svg.append("g").attr("id", "dd3_map");
+            var earthquakesDistributed = svg.append("g").attr("id", "dd3_earthquakes");
+
+            var dateObj = new Date();
+
+            function drawMap(mapData) {
+                d3.json(mapData, function(error, world) {
+                    if (error) throw error;
+
+                    var land = topojson.feature(world, world.objects.land);
+
+                    // calculate scale and translation to fit map to height/width
+                    var b = path.bounds(land),
+                        s = .95 / Math.max((b[1][0] - b[0][0]) / width, (b[1][1] - b[0][1]) / height),
+                        t = [(width - s * (b[1][0] + b[0][0])) / 2, (height - s * (b[1][1] + b[0][1])) / 2];
+
+                    projection
+                        .scale(s)
+                        .translate(t);
+
+                    var countries = topojson.feature(world, world.objects.countries).features;
+
+                    mapDistributed.selectAll(".boundary")
+                        .data(countries.filter(function(a) {
+                            var bounds = path.bounds(a);
+                            return (bounds[0][0] >= p.left(0)) &&
+                                (bounds[0][0] < p.left(bwidth)) &&
+                                (bounds[0][1] >= p.top(0)) &&
+                                (bounds[0][1] < p.left(bheight));
+                        }))
+                    .enter().append("path")
+                        .attr("class", "boundary")
+                        .attr("d", path)
+                        .style("fill", "white")
+                        .style("stroke-width", 0.5)
+                        .style("stroke", "black")
+                });
+            }
+
+            function addEarthquakes(earthquakeData, days, time) {
+
+                dateObj.setDate(dateObj.getDate() - days);
+
+                d3.json(earthquakeData, function(error, earthquakes) {
+                    if (error) throw error;
+
+                    radius.domain([0, d3.max(earthquakes.features, function(d) {
+                        return d.properties.mag;
+                    })]);
+
+                    colour.domain(radius.domain());
+
+                    var filteredEarthquakes = earthquakes.features.filter(function(a) {
+                        // project coordinates and filter
+                        var projC = projection(a.geometry.coordinates);
+                        return (projC[0] >= p.left(0)) &&
+                                (projC[0] < p.left(bwidth)) &&
+                                (projC[1] >= p.top(0)) &&
+                                (projC[1] < p.left(bheight));
+                    });
+
+                    var setQuakeDelay = function(quakes) {
+                        for(var i = 0, max = quakes.length; i < max; i++){
+                            var timeDiff = quakes[i].properties.time - dateObj;
+                            var timeDiffObj = new Date(timeDiff);
+                            // shorten delay
+                            quakes[i].delay = Date.parse(timeDiffObj) / 35000;
+                        }
+                    }
+
+                    setQuakeDelay(filteredEarthquakes);
+
+                    var earthquakeCircles = earthquakesDistributed.selectAll("g")
+                        .data(filteredEarthquakes)
+                    .enter().append("g");
+
+                    earthquakeCircles.append("circle")
+                        .attr("class", "earthquake")
+                        .attr("cx", function(d) {
+                            return projectCoordinate(d, 0);
+                        })
+                        .attr("cy", function(d) {
+                            return projectCoordinate(d, 1);
+                        })
+                        .attr("r", 0)
+                        .style("fill", function(d) {
+                            return colour(d.properties.mag);
+                        });
+
+                    earthquakeCircles.append("circle")
+                        .attr("class", "pulse")
+                        .attr("cx", function(d) {
+                            return projectCoordinate(d, 0);
+                        })
+                        .attr("cy", function(d) {
+                            return projectCoordinate(d, 1);
+                        })
+                        .attr("r", 0)
+                        .style("fill", function(d) {
+                            return colour(d.properties.mag);
+                        });
+
+                    earthquakeCircles.selectAll(".earthquake")
+                        .transition()
+                        .delay(function(d) {
+                            return d.delay;
+                        })
+                        .duration(1000)
+                        .attr("r", function(d) {
+                            if(d.properties.mag < 0) {
+                                return 0.1;
+                            } else {
+                                return radius(d.properties.mag);
+                            }
+                        })
+                        .on("end", function() {
+                            eqCounter++;
+                            localEarthquakeCounter.text("EQ:" + eqCounter);
+                        })
+
+                    earthquakeCircles.selectAll(".pulse")
+                        .transition()
+                        .delay(function(d) {
+                            return d.delay;
+                        })
+                        .duration(2000)
+                        .attr("r", function(d) {
+                            if(d.properties.mag < 0) {
+                                return 0.1 * cfg.pulseSize;
+                            } else {
+                                return radius(d.properties.mag) * cfg.pulseSize;
+                            }
+                        })
+                        .style('opacity', 0)
+                        .remove();
+
+                });
+            }
+
+            appTestBench.orderController.orders['loadMap'] = function () {
+                drawMap("https://d3js.org/world-50m.v1.json");
+            };
+
+            appTestBench.orderController.orders['showEarthquakes'] = function () {
+                addEarthquakes("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson", 7)
+            };
+        }
 
     },
 
