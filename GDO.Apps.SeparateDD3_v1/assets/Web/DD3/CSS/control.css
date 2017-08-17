@@ -44,7 +44,7 @@ table.table_control {
 .green:active {
     background-color:#005400;
 }
-        
+
 .red {
     background-color:#8B0000;
 }
@@ -64,4 +64,9 @@ table.table_control {
     fill: none;
     stroke: steelblue;
     stroke-width: 1.5px;
+}
+
+/* Hide resize handles */
+g.brush > .handle {
+    display: none;
 }

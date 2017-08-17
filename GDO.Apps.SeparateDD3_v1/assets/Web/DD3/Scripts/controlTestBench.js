@@ -595,6 +595,11 @@
                 .style("fill", "#009fe1")
                 .style("stroke", "white");
 
+            var cornersCounter = svg.append("text")
+                .attr("x", 10)
+                .attr("y", 20)
+                .text("Selection: []");
+
             var projection = d3.geoEquirectangular()
                 .scale(1)
                 .translate([0, 0]);
@@ -604,14 +609,23 @@
 
             var mapUrl = "https://d3js.org/world-50m.v1.json";
 
+            var brush = d3.brush()
+                .extent([[0, 0], [width, height]])
+                .on("start brush", brushed);
+
             d3.queue()
                 .defer(d3.json, mapUrl)
                 .await(load);
 
             var map;
 
+            var corners;
+
             function load(error, m) {
                 if (error) throw error;
+
+                corners = [[m.bbox[0], m.bbox[1]], [m.bbox[2], m.bbox[3]]];
+                cornersCounter.text("Selection: " + [corners[0]] + " " + [corners[1]]);
 
                 map = m;
 
@@ -637,6 +651,25 @@
                         .style("fill", "white")
                         .style("stroke-width", 0.5)
                         .style("stroke", "black");
+
+                svg.append("g")
+                    .attr("class", "brush")
+                    .call(brush)
+                    .call(brush.move, [[0, 0], [width / 2, height / 2]])
+            }
+
+            function brushed() {
+                var s = d3.event.selection,
+                    c0 = s[0],
+                    c1 = s[1];
+
+                // convert to lat long
+                var lc0 = projection.invert(c0);
+                var lc1 = projection.invert(c1);
+
+                corners = [lc0, lc1];
+                cornersCounter.text("Selection: " + [corners[0]] + " " + [corners[1]]);
+
             }
 
             $("#load-map").click(function () {
