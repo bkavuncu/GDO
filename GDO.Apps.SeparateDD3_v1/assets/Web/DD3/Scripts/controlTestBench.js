@@ -699,6 +699,10 @@
             $("#show-earthquakes").click(function () {
                 controlTestBench.server.sendOrder(instanceId, controlTestBench.order("showEarthquakes", []), true);
             });
+        },
+
+        '100': function () {
+
         }
 
     },

@@ -1589,6 +1589,10 @@
             appTestBench.orderController.orders['showEarthquakes'] = function () {
                 addEarthquakes("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson", 7)
             };
+        },
+
+        '100': function () {
+
         }
 
     },
