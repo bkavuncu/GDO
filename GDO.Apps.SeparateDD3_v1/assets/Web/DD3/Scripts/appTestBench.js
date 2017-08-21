@@ -1592,7 +1592,62 @@
         },
 
         '100': function () {
+            var svg = dd3.svgCanvas,
+                width = dd3.cave.svgWidth,
+                height = dd3.cave.svgHeight,
+                bwidth = dd3.browser.svgWidth,
+                bheight = dd3.browser.svgHeight,
+                p = dd3.position("svg", "local", "svg", "global"),
+                c = dd3.browser.column,
+                r = dd3.browser.row;
 
+            svg.append('rect')
+                .attr("x", p.left(0))
+                .attr("y", p.top(0))
+                .attr("width", bwidth)
+                .attr("height", bheight)
+                .attr("fill", "#bbb");
+
+            var globes = svg.append("g")
+                .attr("id", "dd3_globes");
+
+            function initGlobe() {
+
+                var radius = 100;
+
+                var projection = d3.geoOrthographic()
+                    .scale(radius)
+                    .translate([0, 0])
+                    .clipAngle(90)
+                    .precision(0);
+
+                var path = d3.geoPath()
+                    .projection(projection);
+
+                var globe = globes.append("g")
+                    .attr("id", "dd3_globe" + c)
+                    .attr("class", "globe")
+                    .attr("transform", "translate(" + [p.left(0) + bwidth / 2, p.top(0) + bheight / 2] + ")");
+
+                var circle = globe.append("circle")
+                    .attr("class", "outline")
+                    .attr("r", radius);
+
+                d3.json("https://unpkg.com/world-atlas@1.1.4/world/110m.json", function(error, world) {
+                    if (error) throw error;
+
+                    var land = topojson.feature(world, world.objects.land);
+
+                    globe.append("path")
+                        .datum(land)
+                        .attr("d", path);
+                })
+
+            }
+
+            appTestBench.orderController.orders['addGlobe'] = function () {
+                initGlobe();
+            };
         }
 
     },

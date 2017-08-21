@@ -702,7 +702,7 @@
         },
 
         '100': function () {
-
+            controlTestBench.server.sendOrder(instanceId, controlTestBench.order("addGlobe", []), true);
         }
 
     },
