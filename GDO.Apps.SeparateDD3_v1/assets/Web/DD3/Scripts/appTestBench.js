@@ -1601,6 +1601,12 @@
                 c = dd3.browser.column,
                 r = dd3.browser.row;
 
+            var rotate = [0, 0, 0],
+                velocity = [0.05, 0, 0],
+                time = Date.now();
+
+            var radius;
+
             svg.append('rect')
                 .attr("x", p.left(0))
                 .attr("y", p.top(0))
@@ -1611,9 +1617,13 @@
             var globes = svg.append("g")
                 .attr("id", "dd3_globes");
 
+            function calculateRandom(limit, radius) {
+                return (radius) + Math.random() * (limit - (radius * 2));
+            }
+
             function initGlobe() {
 
-                var radius = 100;
+                radius = 100;
 
                 var projection = d3.geoOrthographic()
                     .scale(radius)
@@ -1625,9 +1635,10 @@
                     .projection(projection);
 
                 var globe = globes.append("g")
-                    .attr("id", "dd3_globe" + c)
-                    .attr("class", "globe")
-                    .attr("transform", "translate(" + [p.left(0) + bwidth / 2, p.top(0) + bheight / 2] + ")");
+                    .attr("id", "dd3_globe" + c);
+
+                globe.attr("class", "globe")
+                    .attr("transform", "translate(" + [p.left(0) + calculateRandom(bwidth, radius), p.top(0) + calculateRandom(bheight, radius)] + ")");
 
                 var circle = globe.append("circle")
                     .attr("class", "outline")
@@ -1641,12 +1652,24 @@
                     globe.append("path")
                         .datum(land)
                         .attr("d", path);
-                })
+                });
+
+                d3.timer(function() {
+                    var dt = Date.now() - time;
+                    projection.rotate([rotate[0] + velocity[0] * dt, rotate[1] + velocity[1] * dt, rotate[2] + velocity[2] * dt]);
+                    globe.selectAll("path").attr("d", path);
+                });
 
             }
 
             appTestBench.orderController.orders['addGlobe'] = function () {
                 initGlobe();
+            };
+
+            appTestBench.orderController.orders['moveGlobes'] = function() {
+                globes.selectAll("g")
+                    .transition()
+                    .attr("transform", "translate(" + [calculateRandom(width, radius), calculateRandom(height, radius)] + ")");
             };
         }
 

@@ -703,6 +703,10 @@
 
         '100': function () {
             controlTestBench.server.sendOrder(instanceId, controlTestBench.order("addGlobe", []), true);
+
+            $("#move-globes").click(function () {
+                controlTestBench.server.sendOrder(instanceId, controlTestBench.order("moveGlobes", []), true);
+            });
         }
 
     },
