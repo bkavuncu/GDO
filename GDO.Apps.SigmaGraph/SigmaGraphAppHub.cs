@@ -4,7 +4,6 @@ using System.Net;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 using Microsoft.AspNet.SignalR;
 using GDO.Core;
 using GDO.Core.Apps;
@@ -59,9 +58,6 @@ namespace GDO.Apps.SigmaGraph
                     // Clients.Group to broadcast and get all clients to update graph
                     Clients.Group("" + instanceId).renderGraph();
                     Clients.Caller.setMessage("SigmaGraph is now being rendered.");
-
-                    Clients.Caller.setMessage("Requesting fields...");
-                    Clients.Caller.setMessage("Graph fields requested and sent successfully!");
                 }
                 catch (WebException e)
                 {
@@ -105,7 +101,6 @@ namespace GDO.Apps.SigmaGraph
                 try
                 {
                     Clients.Caller.hideSpinner();
-                    //Clients.Caller.savePartialGraphImageToServer();
                 }
                 catch (Exception e)
                 {
@@ -209,6 +204,23 @@ namespace GDO.Apps.SigmaGraph
                 catch (Exception e)
                 {
                     Clients.Caller.setMessage("Error: Failed to render zoomed-out graph.");
+                    Clients.Caller.setMessage(e.ToString());
+                    Debug.WriteLine(e);
+                }
+            }
+        }
+
+        public void ShowGraphInControlUI(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Group("" + instanceId).savePartialGraphImageToServer();
+                }
+                catch (Exception e)
+                {
+                    Clients.Caller.setMessage("Error: Failed finish rendering.");
                     Clients.Caller.setMessage(e.ToString());
                     Debug.WriteLine(e);
                 }

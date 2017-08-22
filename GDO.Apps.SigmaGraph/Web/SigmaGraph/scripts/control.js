@@ -114,11 +114,11 @@ $(window).ready(function () {
                 let currentXLowerRight = image.currentX + image.currentWidth;
                 let currentYLowerRight = image.currentY + image.currentHeight;
                 image.currentX = image.currentX * ratio + originalZoomCenter.x * (1 - ratio);
-                //image.currentY = image.currentY * ratio + originalZoomCenter.y * (1 - ratio);
+                image.currentY = image.currentY * ratio + originalZoomCenter.y * (1 - ratio);
                 currentXLowerRight = currentXLowerRight * ratio + originalZoomCenter.x * (1 - ratio);
-                //currentYLowerRight = currentYLowerRight * ratio + originalZoomCenter.y * (1 - ratio);
+                currentYLowerRight = currentYLowerRight * ratio + originalZoomCenter.y * (1 - ratio);
                 image.currentWidth = currentXLowerRight - image.currentX;
-                //image.currentHeight = currentYLowerRight - image.currentY;
+                image.currentHeight = currentYLowerRight - image.currentY;
             });
 
             // Update state
@@ -172,8 +172,10 @@ $(window).ready(function () {
 });
 
 $(function () {
-
     var gdo = parent.gdo;
+    document.getElementById("showGraph").onclick = function () {
+        gdo.net.app["SigmaGraph"].server.showGraphInControlUI(gdo.controlId);
+    }
 
     $("#image_digit_button").click(function () {
         var gdo = parent.gdo;
