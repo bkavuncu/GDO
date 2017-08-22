@@ -30,6 +30,13 @@ $(function () {
         }
     }
 
+    // When div content exceeds div height, call this function 
+    // to align bottom of content with bottom of div
+    scroll_bottom = function (div) {
+        if (div.scrollHeight > div.clientHeight)
+            div.scrollTop = div.scrollHeight - div.clientHeight;
+    }
+
     $.connection.sigmaGraphAppHub.client.setMessage = function (message) {
         gdo.consoleOut('.SIGMAGRAPHRENDERER', 1, 'Message from server: ' + message);
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
