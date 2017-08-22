@@ -17,6 +17,7 @@ namespace GDO.Apps.SigmaGraph.Domain
         public static GraphInfo ReadGraphMLData(string graphmlfile) {
             GraphInfo graphinfo;
             Stopwatch sw = new Stopwatch();
+            sw.Start();
             using (var xreader = XmlReader.Create(graphmlfile))
             {
                 XDocument doc = XDocument.Load(xreader);
@@ -42,7 +43,6 @@ namespace GDO.Apps.SigmaGraph.Domain
 
                 bool nodeHascolour = nodeHasR && nodeHasG && nodeHasB;
                 bool nodehasposition = hasX && hasY;    //TODO throw exception / log
-
 
                 var edgekeys = keys.Where(k => k.appliesTo == "edge").ToList();
                 bool edgeHasWeight = edgekeys.Any(k => k.name == "weight");
