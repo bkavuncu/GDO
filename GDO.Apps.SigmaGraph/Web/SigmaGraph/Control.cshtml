@@ -292,6 +292,48 @@
     $(function () {
 
         var gdo = parent.gdo;
+        gdo.saveAs = parent.saveAs;
+
+        document.getElementById("evalSubmit").onclick = function () {
+            const code = document.getElementById('eval').value;
+            console.log("Telling the server to eval the following code: ")
+            console.log(code);
+            gdo.net.app["SigmaGraph"].server.evaluate(gdo.controlId, code);
+        }
+
+        document.getElementById("showGraph").onclick = function () {
+            gdo.net.app["SigmaGraph"].server.showControlGraph(gdo.controlId);
+        }
+
+        document.getElementById("saveGraph").onclick = function () {
+            let maxRow = 0;
+            let maxCol = 0;
+            gdo.imagesToPlot.forEach(function (val, key) {
+                const row = key.split(/R|C/)[1];
+                const col = key.split(/R|C/)[2];
+                maxRow = Math.max(row, maxRow);
+                maxCol = Math.max(col, maxCol);
+            });
+            const height = gdo.imagesToPlot.get("R0C0").image.height;
+            const width = gdo.imagesToPlot.get("R0C0").image.width;
+
+            const newCanvas = document.createElement('canvas');
+            newCanvas.height = height * (maxRow + 1);
+            newCanvas.width = width * (maxCol + 1);
+            const newContext = newCanvas.getContext('2d');
+
+            newContext.fillStyle = 'white';
+            newContext.fillRect(0, 0, newCanvas.width, newCanvas.height);
+            gdo.imagesToPlot.forEach(function (val, key) {
+                const row = key.split(/R|C/)[1];
+                const col = key.split(/R|C/)[2];
+                newContext.drawImage(val.image, col * width, row * height);
+            });
+
+            newCanvas.toBlob(function (blob) {
+                gdo.saveAs(blob, "screenshot.png");
+            }, "image/png");
+        }
 
         $("#image_digit_button").click(function () {
             var gdo = parent.gdo;
@@ -556,65 +598,10 @@
                                     <input size="2" class="input_field" type="text" id="allNodeSize" value="3">
                                     <input type="color" id="color_mostConnectedLabels" value="#ff0000" class="color_field">
                                 *@
-                                <table style="width: 100%; background: transparent">
-                                    <tr>
-                                        <td style="width: 20%">
-                                            <label>Object</label>
-                                        </td>
-                                        <td style="width: 20%">
-                                            <label>Property</label>
-                                        </td>
-                                        <td style="width: 20%">
-                                            <label>Visual Attribute</label>
-                                        </td>
-                                        <td style="width: 20%">
-                                            <label>Value</label>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="width: 20%">
-                                            <select id="select_object" required="" class="input_field"></select>
-                                        </td>
-                                        <td style="width: 20%">
-                                            <select id="select_property" required="" class="input_field"></select>
-                                        </td>
-                                        <td style="width: 20%">
-                                            <select id="select_visual_attribute" required="" class="input_field"></select>
-                                        </td>
-                                        <td style="width: 20%">
-                                            <select id="select_value" required="" class="input_field"></select>
-                                        </td>
-                                        <td style="width: 20%">
-                                            <button class="btn btn-danger" id="red">Apply</button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <label> Toggle panning </label> <br/>
-                                            <table style="border-collapse: separate; border-spacing: 1px;">
-                                                <tbody><tr>
-                                                    <td></td>
-                                                    <td><button class="btn btn-default" id="up"><i class="fa  fa-arrow-circle-up fa-fw"></i>&nbsp;</button></td>
-                                                    <td></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><button class="btn btn-default" id="left"><i class="fa  fa-arrow-circle-left  fa-fw"></i>&nbsp;</button></td>
-                                                    <td></td>
-                                                    <td><button class="btn btn-default" id="right"><i class="fa  fa-arrow-circle-right fa-fw"></i>&nbsp;</button></td>
-                                                </tr>
-                                                <tr>
-                                                    <td></td>
-                                                    <td><button class="btn btn-default" id="down"><i class="fa  fa-arrow-circle-down fa-fw"></i>&nbsp;</button></td>
-                                                    <td></td>
-                                                </tr>
-                                                </tbody>
-                                            </table>
-                                            <label> Toggle zooming </label> <br/>
-                                            <button class="btn btn-default" id="zoomIn"><i class="fa  fa-plus-circle  fa-fw"></i>&nbsp;Zoom in</button>
-                                            <button class="btn btn-default" id="zoomOut"><i class="fa  fa-minus-circle  fa-fw"></i>&nbsp;Zoom out</button>
-                                        </td>
-                                    </tr>
-                                </table>
+                                <textarea rows="10" cols="207" style="color:black" id="eval"></textarea><br>
+                                <input type="submit" style="color:black" id="evalSubmit"><br>
+                                <button type="button" id="showGraph" style="color:black">Show Graph (May take a while...)</button>
+                                <button type="button" id="saveGraph" style="color:black">Save Graph</button>
                                 <canvas id="field_of_view" style="width: 1400px; height: 420px; touch-action: none; background: white"></canvas>
                             </fieldset>
                         </div>

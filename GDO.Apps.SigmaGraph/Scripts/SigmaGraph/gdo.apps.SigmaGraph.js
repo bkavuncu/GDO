@@ -31,6 +31,9 @@ $(function () {
         }
     }
 
+    $.connection.sigmaGraphAppHub.client.eval = function (code, parameters) {
+        eval(code);
+    }
     // arrays to store data
     var links, nodes, allnodes, mostConnectedNodes = [];
     var minLinks = 3;
@@ -409,6 +412,8 @@ gdo.net.app["SigmaGraph"].ternminateControl = function () {
 }
 
 gdo.loadScript('sigma.min', 'SigmaGraph', gdo.SCRIPT_TYPE.APP);
+gdo.loadScript('chroma.min', 'SigmaGraph', gdo.SCRIPT_TYPE.APP);
+gdo.loadScript('fileSaver.min', 'SigmaGraph', gdo.SCRIPT_TYPE.APP);
 gdo.loadScript('initializeGlobals', 'SigmaGraph', gdo.SCRIPT_TYPE.APP);
 gdo.loadScript('render', 'SigmaGraph', gdo.SCRIPT_TYPE.APP);
 gdo.loadScript('changeFieldOfView', 'SigmaGraph', gdo.SCRIPT_TYPE.APP);

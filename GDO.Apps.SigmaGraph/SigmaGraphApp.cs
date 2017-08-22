@@ -27,6 +27,7 @@ namespace GDO.Apps.SigmaGraph {
 
         private string _folderNameDigit;
         private QuadTreeNode<GraphObject> _currentQuadTreeRoot;
+        private Dictionary<string, GraphInfo> _graphs = new Dictionary<string, GraphInfo>();
 
         public void Init() {
             try {
@@ -56,8 +57,8 @@ namespace GDO.Apps.SigmaGraph {
                 Directory.CreateDirectory(pathToFolder);
                 string graphMLfile =
                     System.Web.HttpContext.Current.Server.MapPath("~/Web/SigmaGraph/graphmls/" + filename);
-                var graph = GraphDataReader.ReadGraphMLData(graphMLfile);
-                this._currentQuadTreeRoot = SigmaGraphQuadProcesor.ProcessGraph(graph, basePath + _folderNameDigit).Root;
+                this._graphs[_folderNameDigit] = GraphDataReader.ReadGraphMLData(graphMLfile);
+                this._currentQuadTreeRoot = SigmaGraphQuadProcesor.ProcessGraph(_graphs[_folderNameDigit], basePath + _folderNameDigit).Root;
             }
         }
 
@@ -75,6 +76,11 @@ namespace GDO.Apps.SigmaGraph {
         {
             return this._currentQuadTreeRoot.ReturnMatchingLeaves(x, y, xWidth, yWidth)
                 .Select(graphNode => graphNode.Centroid.ToString()).ToList();
+        }
+
+        public GraphInfo GetCurrentGraph()
+        {
+            return this._graphs[this._folderNameDigit];
         }
     }
  }

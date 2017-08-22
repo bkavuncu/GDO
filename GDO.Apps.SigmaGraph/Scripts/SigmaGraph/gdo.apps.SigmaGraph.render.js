@@ -165,10 +165,10 @@ function handleFileGraphObjects(fileGraphObjects) {
                 toPaddedHexString(node.g, 2) +
                 toPaddedHexString(node.b, 2);
         } else {
-            node.color = "#fff";//"rgba(255,255,255,0)"; //"#89f";
+            node.color = "rgba(0,0,0,1)"; //"#89f";
         }
         // What should the max be? 5? 12?
-        node.size = Math.min(5, node.size) || 3;
+        node.size = Math.min(1, node.size) || 3;
         try {
             gdo.sigmaInstance.graph.addNode(node);
         } catch (err) {
@@ -183,7 +183,7 @@ function handleFileGraphObjects(fileGraphObjects) {
                 toPaddedHexString(edge.g, 2) +
                 toPaddedHexString(edge.b, 2);
         } else {
-            edge.color = "rgba("+Math.round(edge.attrs["weight2"] * 255/7)+",0,0,0.1)"; // "#339";
+            edge.color = "rgba("+Math.round(edge.attrs["weight2"] * 255/7)+",255,255,0.1)"; // "#339";
         }
         try {
             gdo.sigmaInstance.graph.addEdge(edge);

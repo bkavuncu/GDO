@@ -8,6 +8,10 @@ using System.Threading;
 using Microsoft.AspNet.SignalR;
 using GDO.Core;
 using GDO.Core.Apps;
+using Z.Expressions;
+using GDO.Apps.SigmaGraph.Domain;
+using MathNet.Numerics.Statistics;
+using MathNet.Numerics;
 
 // TODO specs for all method
 namespace GDO.Apps.SigmaGraph
@@ -105,7 +109,6 @@ namespace GDO.Apps.SigmaGraph
                 try
                 {
                     Clients.Caller.hideSpinner();
-                    //Clients.Caller.savePartialGraphImageToServer();
                 }
                 catch (Exception e)
                 {
@@ -213,6 +216,105 @@ namespace GDO.Apps.SigmaGraph
                     Debug.WriteLine(e);
                 }
             }
+        }
+
+        public void ShowControlGraph(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Group("" + instanceId).savePartialGraphImageToServer();
+                }
+                catch (Exception e)
+                {
+                    Clients.Caller.setMessage("Error: Failed finish rendering.");
+                    Clients.Caller.setMessage(e.ToString());
+                    Debug.WriteLine(e);
+                }
+            }
+        }
+
+        public void Evaluate(int instanceId, string code)
+        {
+            Clients.Caller.logTime("Beginning to eval code...");
+            ga = (SigmaGraphApp)Cave.Apps["SigmaGraph"].Instances[instanceId];
+            // Test code
+            // First Attempt: Get mean and stdev of all edges of the same arr to arr
+            Clients.Caller.logTime("Getting links...");
+            GraphInfo graph;
+            List<GraphLink> edges;
+            try
+            {
+                graph = ga.GetCurrentGraph();
+                edges = graph.Links;
+            } catch (Exception e)
+            {
+                Clients.Caller.setMessage(e.ToString());
+                Debug.WriteLine(e);
+                return;
+            }
+            
+            Clients.Caller.logTime("Getting weights...");
+            char[] delims = { 'N', ' ', ',' };
+            Dictionary<string, List<double>> weightsAcrossTime = new Dictionary<string, List<double>>();
+            foreach (GraphLink edge in edges)
+            {
+                string sourceArr = edge.Source.Split(delims)[1];
+                string targetArr = edge.Target.Split(delims)[1];
+                string edgeId = "S" + sourceArr + "T" + targetArr;
+                //var x = edge.Source.Split(delims);
+                //DateTime date = DateTime.Parse(edge.Source.Split(delims)[2]);
+                //if (date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday)
+                //{
+                //    continue;
+                //}
+
+                if (!weightsAcrossTime.ContainsKey(edgeId))
+                {
+                    weightsAcrossTime.Add(edgeId, new List<double>());
+                }
+
+                weightsAcrossTime[edgeId].Add(Double.Parse(edge.Attrs["weight2"]));
+            }
+
+            Clients.Caller.logTime("Calculating per edge stats...");
+            Dictionary<string, DescriptiveStatistics> stats = weightsAcrossTime
+                .ToDictionary(elt => elt.Key, elt => new DescriptiveStatistics(elt.Value));
+
+            Clients.Caller.logTime("Calculating per edge zscores...");
+            Dictionary<string, List<double>> zscores = weightsAcrossTime
+                .ToDictionary(elt => elt.Key, elt =>
+                {
+                    var mean = elt.Value.Mean();
+                    var stdev = elt.Value.StandardDeviation();
+                    return elt.Value.Select(w=> (w - mean) / stdev).ToList();
+                });
+
+            Clients.Caller.logTime("Calculating per edge eicdfs...");
+            Dictionary<string, double[]> eicdfs = weightsAcrossTime
+                .ToDictionary(elt => elt.Key, elt =>
+                {
+                    Func<double,double> eicdf = Statistics.EmpiricalInvCDFFunc(elt.Value);
+                    return Generate.LinearSpacedMap(101, start: 0.0, stop: 1.0, map: eicdf);
+                });
+
+            Clients.Caller.logTime("Calculating global stats...");
+            IEnumerable<double> weights = edges.Select(e => Double.Parse(e.Attrs["weight2"]));
+            DescriptiveStatistics globalStats = new DescriptiveStatistics(weights);
+            double[] globalEicdf = Generate.LinearSpacedMap(101, 
+                start: 0.0, stop: 1.0, map: Statistics.EmpiricalInvCDFFunc(weights));
+
+            Dictionary<string, object> parameters = new Dictionary<string, object>
+            {
+                { "stats", stats },
+                { "zscores", zscores },
+                { "eicdfs", eicdfs },
+                { "globalStats", globalStats},
+                { "globalEicdf", globalEicdf}
+            };
+            Clients.Caller.logTime("Sending code to clients...");
+            Clients.Group("" + instanceId).eval(code, parameters);
         }
 
         public void LogTime(string message)
