@@ -1,8 +1,8 @@
-#Distributed Graph Renderer
+# Distributed Graph Renderer
 
 This distributed graph visualisation app is integrated with Gephi and supports visualisation of any graph built using Gephi. It automatically transforms graph based on GDO configuration, and it supports various interactive features such as panning, zooming and searching. Before we visualise it, we need to export the graph from Gephi as graphml.
 
-##Instructions for rendering a graph
+## Instructions for rendering a graph
 1. Switch maintenance mode off.
 2. Create a new section.
 3. In that section, start up a new instance of the SigmaGraph app.
