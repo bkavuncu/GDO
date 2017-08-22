@@ -4,16 +4,21 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Threading;
 using System.Web.Http;
 using GDO.Core;
-using Microsoft.AspNet.SignalR;
 
 namespace GDO.Apps.SigmaGraph.HTTPServer
 {
     public class PartialGraphImagesController : ApiController
     {
+        /// <summary>
+        /// Saves the image represented by model to disk and updates the control
+        /// UI to show the image. If writing to disk fails, this method will
+        /// wait 100ms and try to write to disk again. There is no limit to the
+        /// number of attempts.
+        /// </summary>
+        /// <param name="model">the model containing the image details</param>
         [Route("Web/SigmaGraph/images")]
         public void Post([FromBody]ImageModel model)
         {
