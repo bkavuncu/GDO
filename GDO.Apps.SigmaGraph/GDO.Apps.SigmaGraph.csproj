@@ -25,6 +25,7 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -145,7 +146,6 @@
     <Compile Include="Domain\Domain.cs" />
     <Compile Include="Domain\JSONUtilities.cs" />
     <Compile Include="Domain\QuadTreeNodeConverter.cs" />
-    <Compile Include="Domain\SigmaGraphProcessor.cs" />
     <Compile Include="Domain\SigmaGraphQuadProcesor.cs" />
     <Compile Include="HTTPServer\ImageModel.cs" />
     <Compile Include="HTTPServer\PartialGraphImagesController.cs" />
@@ -160,7 +160,6 @@
     <Compile Include="SigmaGraphApp.cs" />
     <Compile Include="SigmaGraphAppHub.cs" />
     <Compile Include="Domain\SigmaGraphDataReader.cs" />
-    <Compile Include="Domain\SigmaGraphPartitioning.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />

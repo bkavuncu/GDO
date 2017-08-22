@@ -1,8 +1,6 @@
 ﻿using System;
 using GDO.Apps.SigmaGraph.QuadTree;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using Newtonsoft.Json.Linq;
 
 namespace GDO.Apps.SigmaGraph.Domain
 {
@@ -14,8 +12,8 @@ namespace GDO.Apps.SigmaGraph.Domain
         public List<GraphNode> Nodes = new List<GraphNode>();
         public List<GraphLink> Links = new List<GraphLink>();
         public RectDimension RectDim;
-
     }
+
     public class Position
     {
         public float X { get; set; }
@@ -26,22 +24,10 @@ namespace GDO.Apps.SigmaGraph.Domain
         }
     }
 
-    public class PartitionPos
-    {
-        public int Row { get; set; }
-        public int Col { get; set; }
-    }
-
     public class RectDimension
     {
         public float Width { get; set; }
         public float Height { get; set; }
-    }
-
-    public class Scales
-    {
-        public float X { get; set; }
-        public float Y { get; set; }
     }
 
     public abstract class GraphObject : IQuadable<double> {
@@ -56,7 +42,6 @@ namespace GDO.Apps.SigmaGraph.Domain
     }
 
     public class GraphNode : GraphObject, IEquatable<GraphNode> {
-
         #region equality
         public bool Equals(GraphNode other) {
             if (ReferenceEquals(null, other)) return false;
@@ -94,13 +79,12 @@ namespace GDO.Apps.SigmaGraph.Domain
         public int B { get; set; }
         public Dictionary<string, string> Attrs { get; set; }
         public int NumLinks { get; set; }
-        public List<string> Adj { get; set; }  // adj = list of connectedNodes
+        public List<string> Adj { get; set; }
 
         public override bool IsWithin<T>(QuadTreeNode<T> quadTreeNode)
         {
             double xCentroid = quadTreeNode.Centroid.xCentroid;
             double yCentroid = quadTreeNode.Centroid.yCentroid;
-            //todo do you think it would be better to move these flops to be computed once within the centroid class - it costs memory but will be faster! 
             double xWidth = quadTreeNode.Centroid.xWidth/2.0;
             double yWidth = quadTreeNode.Centroid.yWidth/2.0;
 
@@ -114,7 +98,6 @@ namespace GDO.Apps.SigmaGraph.Domain
     }
 
     public class GraphLink : GraphObject, IEquatable<GraphLink> {
-
         #region equality
 
         public bool Equals(GraphLink other) {
@@ -161,7 +144,6 @@ namespace GDO.Apps.SigmaGraph.Domain
         {
             double xCentroid = quadTreeNode.Centroid.xCentroid;
             double yCentroid = quadTreeNode.Centroid.yCentroid;
-            //todo do you think it would be better to move these flops to be computed once within the centroid class - it costs memory but will be faster! 
             double xWidth = quadTreeNode.Centroid.xWidth/2.0;
             double yWidth = quadTreeNode.Centroid.yWidth/2.0;
 
@@ -230,12 +212,4 @@ namespace GDO.Apps.SigmaGraph.Domain
             return "Link = S:"+Source+" T:"+Target+ " | "+ StartPos+" to "+EndPos;
         }
     }
-
-    public class Partition
-    {// TODO there is a good argument that the parallel bersions of the lists should be used
-        public PartitionPos partitionPos { get; set; }
-        public ConcurrentBag<GraphNode> Nodes { get; set; }
-        public ConcurrentBag<GraphLink> Links { get; set; }
-    }
-
 }

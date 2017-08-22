@@ -6,6 +6,10 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace GDO.Apps.SigmaGraph.Domain {
+    /// <summary>
+    /// Custom deserializer for converting a JSON representation of a quadtree node into
+    /// a QuadTreeNode object.
+    /// </summary>
     class QuadTreeNodeConverter : JsonConverter {
         public override bool CanConvert(Type objectType) {
             return (objectType == typeof(QuadTreeNode<GraphObject>));
