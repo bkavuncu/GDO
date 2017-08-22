@@ -17,13 +17,13 @@ gdo.net.app["SigmaGraph"].zoom = function (zoomXCenter, zoomYCenter, ratio) {
     zoomYCenter = zoomYCenter / gdo.totalRatio + gdo.yTotalShift;
 
     gdo.xCentroid = zoomXCenter + (gdo.xCentroid - zoomXCenter) / ratio;
-    //gdo.yCentroid = zoomYCenter + (gdo.yCentroid - zoomYCenter) / ratio;
+    gdo.yCentroid = zoomYCenter + (gdo.yCentroid - zoomYCenter) / ratio;
     gdo.xWidth /= ratio;
-    //gdo.yWidth /= ratio;
+    gdo.yWidth /= ratio;
 
     gdo.totalRatio *= ratio;
     gdo.xTotalShift = gdo.xTotalShift/ratio + zoomXCenter * (ratio - 1) / ratio;
-    //gdo.yTotalShift = gdo.yTotalShift/ratio + zoomYCenter * (ratio - 1) / ratio;
+    gdo.yTotalShift = gdo.yTotalShift/ratio + zoomYCenter * (ratio - 1) / ratio;
     gdo.net.app["SigmaGraph"].renderGraph();
 }
 
