@@ -119,28 +119,32 @@ namespace GDO.Apps.SigmaGraph.Domain
                 };
 
                 // Min-Max normalize X and Y; do not preserve aspect ratio
-                //var xscale = 1/ graphinfo.RectDim.Width;
-                //var yscale = 1/ graphinfo.RectDim.Height;
+                //var xscale = 1 / graphinfo.RectDim.Width;
+                //var yscale = 1 / graphinfo.RectDim.Height;
 
                 //foreach (var node in graphinfo.Nodes)
                 //{
-                //    node.Pos.X = (node.Pos.X - minX)*xscale;
-                //    node.Pos.Y = (node.Pos.Y - minY)*yscale;
+                //    node.Pos.X = (node.Pos.X - minX) * xscale;
+                //    node.Pos.Y = (node.Pos.Y - minY) * yscale;
                 //}
-                
+
                 // Scale X and Y differently; preserve aspect ratio
-                float xScale;
-                float yScale;
-                var xToYRatio = graphinfo.RectDim.Width / graphinfo.RectDim.Height;
-                if (xToYRatio <= 1)
-                {
-                    xScale = xToYRatio * (1 / graphinfo.RectDim.Width);
-                    yScale = 1 / graphinfo.RectDim.Height;
-                }
-                else {
-                    xScale = 1 / graphinfo.RectDim.Width;
-                    yScale = (1 / xToYRatio) * (1 / graphinfo.RectDim.Height);
-                }
+                //float xScale;
+                //float yScale;
+                //var xToYRatio = graphinfo.RectDim.Width / graphinfo.RectDim.Height;
+                //if (xToYRatio <= 1)
+                //{
+                //    xScale = xToYRatio * (1 / graphinfo.RectDim.Width);
+                //    yScale = 1 / graphinfo.RectDim.Height;
+                //}
+                //else
+                //{
+                //    xScale = 1 / graphinfo.RectDim.Width;
+                //    yScale = (1 / xToYRatio) * (1 / graphinfo.RectDim.Height);
+                //}
+
+                float xScale = 1 / graphinfo.RectDim.Width;
+                float yScale = 1 / graphinfo.RectDim.Height;
 
                 foreach (var node in graphinfo.Nodes)
                 {
