@@ -1,11 +1,12 @@
 ﻿/**
 * Functions for rendering the graph with sigma.js
+* TODO extract some helper functions into a seperate file
 */
 
 /**
  * Renders the graph.
  */
-gdo.net.app["SigmaGraph"].renderGraph = async function () {//todo note this is an experimental feature
+gdo.net.app["SigmaGraph"].renderGraph = async function () {
     console.log('Rendering graph...');
     // Get location of files containing objects to render.
     gdo.stopWatch = window.performance.now();
@@ -29,7 +30,6 @@ gdo.net.app["SigmaGraph"].renderGraph = async function () {//todo note this is a
     gdo.sigmaInstance.graph.nodes().forEach(convertServerCoordsToSigmaCoords);
     console.log("Time to add objects: " + (window.performance.now() - gdo.stopWatch));
 
-    // addDebugGrid();
     // Render the new graph
     gdo.stopWatch = window.performance.now();
     gdo.sigmaInstance.refresh({ skipIndexation: true });
@@ -165,7 +165,7 @@ function handleFileGraphObjects(fileGraphObjects) {
                 toPaddedHexString(node.g, 2) +
                 toPaddedHexString(node.b, 2);
         } else {
-            node.color = "#fff";//"rgba(255,255,255,0)"; //"#89f";
+            node.color = "#89f";
         }
         // What should the max be? 5? 12?
         node.size = Math.min(5, node.size) || 3;
@@ -183,7 +183,7 @@ function handleFileGraphObjects(fileGraphObjects) {
                 toPaddedHexString(edge.g, 2) +
                 toPaddedHexString(edge.b, 2);
         } else {
-            edge.color = "rgba("+Math.round(edge.attrs["weight2"] * 255/7)+",0,0,0.1)"; // "#339";
+            edge.color = "#339";
         }
         try {
             gdo.sigmaInstance.graph.addEdge(edge);

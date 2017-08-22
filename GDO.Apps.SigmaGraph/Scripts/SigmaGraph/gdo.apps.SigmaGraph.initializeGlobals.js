@@ -5,7 +5,7 @@
 
 // Initialize global static constants.
 gdo.epsilon = 1E-6;
-gdo.basePath = "\\Web\\SigmaGraph\\graphmls\\";// todo note that you will NOT be able to reply upon this. 
+gdo.basePath = "\\Web\\SigmaGraph\\graphmls\\"; 
 
 /**
  * Initialize global constants of this rendering instance.
@@ -33,7 +33,6 @@ gdo.net.app["SigmaGraph"].initInstanceGlobalConstants = function () {
         ],
         settings: {
             autoRescale: false,
-            // TODO If clone is false, when is garbage collected?
             clone: false
         }
     });

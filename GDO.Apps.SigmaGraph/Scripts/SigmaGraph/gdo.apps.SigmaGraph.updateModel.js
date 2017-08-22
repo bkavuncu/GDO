@@ -1,5 +1,6 @@
 ﻿/**
 * Includes functions that update the model (data).
+* TODO split this file into files containing functions to update the model on the server side, app side, and control side
 */
 
 /**
