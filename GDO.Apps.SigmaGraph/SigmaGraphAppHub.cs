@@ -34,7 +34,7 @@ namespace GDO.Apps.SigmaGraph
         public void InitiateProcessing(int instanceId, string filename)
         {
             Debug.WriteLine("Debug: Server side InitiateProcessing is called.");
-            lock (Cave.AppLocks[instanceId])// todo holding this lock for so long is causing problems for Chris' twitter app - we can look at locking earlier - need to identify who else is trying to obtain the lock
+            lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
