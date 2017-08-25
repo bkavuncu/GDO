@@ -27,7 +27,7 @@ namespace GDO.Apps.SigmaGraph {
 
         private string _folderNameDigit;
         private QuadTreeNode<GraphObject> _currentQuadTreeRoot;
-        private Dictionary<string, GraphInfo> _graphs = new Dictionary<string, GraphInfo>();
+        private readonly Dictionary<string, GraphInfo> _graphs = new Dictionary<string, GraphInfo>();
 
         public void Init() {
             try {

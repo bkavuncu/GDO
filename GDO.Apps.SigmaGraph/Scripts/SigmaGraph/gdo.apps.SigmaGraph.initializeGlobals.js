@@ -34,7 +34,9 @@ gdo.net.app["SigmaGraph"].initInstanceGlobalConstants = function () {
         settings: {
             autoRescale: false,
             // TODO If clone is false, when is garbage collected?
-            clone: false
+            clone: false,
+            defaultLabelSize: 35,
+            defaultLabelColor: "#FFF"
         }
     });
     gdo.sigmaInstance.renderers[0].bind('render',

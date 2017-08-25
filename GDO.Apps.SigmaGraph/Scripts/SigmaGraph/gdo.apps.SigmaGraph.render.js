@@ -2,6 +2,8 @@
 * Functions for rendering the graph with sigma.js
 */
 
+type = 'matrix';
+x_freq = 'w';
 /**
  * Renders the graph.
  */
@@ -32,7 +34,7 @@ gdo.net.app["SigmaGraph"].renderGraph = async function () {//todo note this is a
     // addDebugGrid();
     // Render the new graph
     gdo.stopWatch = window.performance.now();
-    gdo.sigmaInstance.refresh({ skipIndexation: true });
+    gdo.sigmaInstance.refresh({ skipIndexation: false });
 
     gdo.net.app["SigmaGraph"].server.doneRendering(gdo.controlId);
 }
@@ -141,7 +143,8 @@ function httpGet(filePath) {
 
 /**
  * Converts the node in the server coordinate system to the same
- * node in the sigma coordinate system. Mutates the given node.
+ * node in the sigma coordinate system. Mutates the given nosplit
+ * de.
  * @param {any} node the node in the server coordinate system
  * @return the node in the sigma coordinate system
  */
@@ -165,10 +168,39 @@ function handleFileGraphObjects(fileGraphObjects) {
                 toPaddedHexString(node.g, 2) +
                 toPaddedHexString(node.b, 2);
         } else {
-            node.color = "rgba(0,0,0,1)"; //"#89f";
+            node.color = "#FCC";//"#89f";
         }
         // What should the max be? 5? 12?
-        node.size = Math.min(1, node.size) || 3;
+        if (node.id.includes("Date:")) {
+            if (type === 'matrix') {
+                switch (x_freq) {
+                case 'd':
+                    node.x -= 1 / 365 / 2.5;
+                    break;
+                case 'w':
+                    node.x -= 1 / 52 / 2.5;
+                    break;
+                case 'm':
+                    node.x -= 1 / 12 / 2.5;
+                    break;
+                case 'janOnly':
+                    node.x -= 1 / 5 / 2.5;
+                    break;
+                default:
+                    console.log('Error: This frequency is not supported.')
+                }
+                node.y += .01;
+                node.label = node.id.split("NDate: ")[1];
+            } else if (type === 'timeCopy') {
+                node.y += .09;
+                node.label = "Week of " + node.id.split("NDate: ")[1];
+                console.log(node.label, node.x, node.y);
+            }
+            node.size = 10;
+            node.color = "#000";
+        } else {
+            node.size = Math.min(1, node.size) || 3;
+        }
         try {
             gdo.sigmaInstance.graph.addNode(node);
         } catch (err) {
@@ -183,7 +215,7 @@ function handleFileGraphObjects(fileGraphObjects) {
                 toPaddedHexString(edge.g, 2) +
                 toPaddedHexString(edge.b, 2);
         } else {
-            edge.color = "rgba("+Math.round(edge.attrs["weight2"] * 255/7)+",255,255,0.1)"; // "#339";
+            edge.color = "#F00";//"#339";
         }
         try {
             gdo.sigmaInstance.graph.addEdge(edge);

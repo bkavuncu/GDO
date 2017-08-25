@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using Microsoft.AspNet.SignalR;
@@ -264,8 +265,9 @@ namespace GDO.Apps.SigmaGraph
                 string targetArr = edge.Target.Split(delims)[1];
                 string edgeId = "S" + sourceArr + "T" + targetArr;
                 //var x = edge.Source.Split(delims);
-                //DateTime date = DateTime.Parse(edge.Source.Split(delims)[2]);
-                //if (date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday)
+                //matrix is 7, timecopy is 2
+                //DateTime date = DateTime.Parse(x[7]).AddDays(Double.Parse(x[5]));
+                //if (date.DayOfWeek != DayOfWeek.Tuesday)
                 //{
                 //    continue;
                 //}
@@ -305,16 +307,63 @@ namespace GDO.Apps.SigmaGraph
             double[] globalEicdf = Generate.LinearSpacedMap(101, 
                 start: 0.0, stop: 1.0, map: Statistics.EmpiricalInvCDFFunc(weights));
 
+            // okay, now we need to read some csvs as well
+            var distances = File.ReadLines("./Web/SigmaGraph/data/distances.csv")
+                .Select(line => line.Split(',').Select(x=>Double.Parse(x)).ToArray()).ToArray();
+            var populations = File.ReadLines("./Web/SigmaGraph/data/populations.csv")
+                .Select(line => line.Split(',').Select(x => Double.Parse(x))).Select(x=>x.ToList().First()).ToArray();
+            var meansMatrix = File.ReadLines("./Web/SigmaGraph/data/meansMatrix.csv")
+                .Select(line => line.Split(',').Select(x => Double.Parse(x)).ToArray()).ToArray();
+
             Dictionary<string, object> parameters = new Dictionary<string, object>
             {
                 { "stats", stats },
                 { "zscores", zscores },
                 { "eicdfs", eicdfs },
-                { "globalStats", globalStats},
-                { "globalEicdf", globalEicdf}
+                { "globalStats", globalStats },
+                { "globalEicdf", globalEicdf },
+                { "distances", distances },
+                { "populations", populations },
+                { "meansMatrix", meansMatrix }
             };
             Clients.Caller.logTime("Sending code to clients...");
             Clients.Group("" + instanceId).eval(code, parameters);
+
+            // Okay, now we want to get a matrix out of stats...
+            // Lets find out the smallest and largest arrondissement ids first, to check ourselves
+            char[] edgeDelims = { 'S', 'T' };
+            var minSourceArr = stats.Keys.Select(e => int.Parse(e.Split(edgeDelims)[1])).Min();
+            var maxSourceArr = stats.Keys.Select(e => int.Parse(e.Split(edgeDelims)[1])).Max();
+            var minTargetArr = stats.Keys.Select(e => int.Parse(e.Split(edgeDelims)[2])).Min();
+            var maxTargetArr = stats.Keys.Select(e => int.Parse(e.Split(edgeDelims)[2])).Max();
+
+            double[,] stdevMatrix = new double[maxSourceArr, maxTargetArr];
+            foreach (var stat in stats)
+            {
+                var sourceArr = int.Parse(stat.Key.Split(edgeDelims)[1]) - 1;
+                var targetArr = int.Parse(stat.Key.Split(edgeDelims)[2]) - 1;
+                stdevMatrix[sourceArr, targetArr] = stat.Value.StandardDeviation;
+            }
+
+            var csv = "";
+            for (int s = 0; s < maxSourceArr; s++)
+            {
+                var row = "";
+                for (int t = 0; t < maxTargetArr; t++)
+                {
+                    row += Math.Pow(10, stdevMatrix[s, t]);
+                    if (t != maxTargetArr - 1)
+                    {
+                        row += ',';
+                    }
+                }
+                csv += row + "\n";
+            }
+
+            //Console.WriteLine(meansMatrix);
+            //Console.WriteLine(stdevMatrix);
+            //Console.WriteLine("debug");
+            System.IO.File.WriteAllText(@"C:\Users\TimT5\Desktop\stdevMatrix.csv", csv);
         }
 
         public void LogTime(string message)

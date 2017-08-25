@@ -279,7 +279,7 @@
         function plotImages() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             gdo.imagesToPlot.forEach(function (canvasImage) {
-                ctx.drawImage(canvasImage.image, canvasImage.currentX, canvasImage.currentY, canvasImage.currentWidth, canvasImage.currentHeight);
+                //ctx.drawImage(canvasImage.image, canvasImage.currentX, canvasImage.currentY, canvasImage.currentWidth, canvasImage.currentHeight);
             });
         }
 
@@ -322,7 +322,7 @@
             newCanvas.width = width * (maxCol + 1);
             const newContext = newCanvas.getContext('2d');
 
-            newContext.fillStyle = 'white';
+            newContext.fillStyle = 'black';
             newContext.fillRect(0, 0, newCanvas.width, newCanvas.height);
             gdo.imagesToPlot.forEach(function (val, key) {
                 const row = key.split(/R|C/)[1];

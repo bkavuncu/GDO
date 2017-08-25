@@ -48,6 +48,7 @@ gdo.net.app["SigmaGraph"].updateImagesToPlot = async function (imagePath) {
         return new CanvasImage(initialX, initialY, initialWidth, initialHeight, image);
     });
     gdo.imagesToPlot.set(name, canvasImage);
+    console.log('number of images: ', gdo.imagesToPlot.length);
 }
 
 /**
