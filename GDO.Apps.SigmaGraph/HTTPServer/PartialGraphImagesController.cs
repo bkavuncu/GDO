@@ -19,7 +19,7 @@ namespace GDO.Apps.SigmaGraph.HTTPServer
         {
             string imagePathForServer = "Web/SigmaGraph/images/" + model.Name;
             string imagePathForClient = "SigmaGraph/images/" + model.Name;
-            var clients = Cave.Apps["SigmaGraph"].Hub.Clients;
+            var clients = Cave.Deployment.Apps["SigmaGraph"].Hub.Clients;
             while (true)
             {
                 try

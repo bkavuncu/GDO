@@ -23,7 +23,7 @@ namespace GDO.Apps.SigmaGraph
         public Type InstanceType { get; set; } = new SigmaGraphApp().GetType();
         public void JoinGroup(string groupId)
         {
-            Cave.Apps[Name].Hub.Clients = Clients;
+            Cave.Deployment.Apps[Name].Hub.Clients = Clients;
             Groups.Add(Context.ConnectionId, "" + groupId);
         }
         public void ExitGroup(string groupId)
@@ -48,7 +48,7 @@ namespace GDO.Apps.SigmaGraph
                     Clients.Group("" + instanceId).initInstanceGlobalVariables();
 
                     // Create SigmaGraphApp project and call its function to process graph
-                    ga = (SigmaGraphApp) Cave.Apps["SigmaGraph"].Instances[instanceId];
+                    ga = (SigmaGraphApp) Cave.Deployment.Apps["SigmaGraph"].Instances[instanceId];
                     ga.ControllerId = Context.ConnectionId;
 
                     Clients.Caller.setMessage("Initiating processing of graph data in file: " + filename);
@@ -77,7 +77,7 @@ namespace GDO.Apps.SigmaGraph
         {
             lock (Cave.AppLocks[instanceId])
             {
-                ga = (SigmaGraphApp)Cave.Apps["SigmaGraph"].Instances[instanceId];
+                ga = (SigmaGraphApp)Cave.Deployment.Apps["SigmaGraph"].Instances[instanceId];
                 IEnumerable<string> filePaths = ga.GetFilesWithin(x, y, xWidth, yWidth)
                     .Select(filePath => "Web/SigmaGraph/QuadTrees/" + filePath);
                 return filePaths.ToList();
@@ -88,7 +88,7 @@ namespace GDO.Apps.SigmaGraph
         {
             lock (Cave.AppLocks[instanceId])
             {
-                ga = (SigmaGraphApp)Cave.Apps["SigmaGraph"].Instances[instanceId];
+                ga = (SigmaGraphApp)Cave.Deployment.Apps["SigmaGraph"].Instances[instanceId];
                 IEnumerable<string> boxes = ga.GetLeafBoxes(x, y, xWidth, yWidth);
                 return boxes.ToList();
             }
