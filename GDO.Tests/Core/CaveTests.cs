@@ -19,13 +19,13 @@ namespace GDO.Tests.Core
             {
                 Assert.Fail();
             }
-            Assert.AreNotEqual(true, Cave.Nodes.IsEmpty);
-            if (Cave.Nodes.Count < Cave.Cols*Cave.Rows)
+            Assert.AreNotEqual(true, Cave.Layout.Nodes.IsEmpty);
+            if (Cave.Layout.Nodes.Count < Cave.Cols*Cave.Rows)
             {
                 Assert.Fail();
             }
             Node node;
-            Cave.Nodes.TryGetValue(Cave.Cols*Cave.Rows, out node);
+            Cave.Layout.Nodes.TryGetValue(Cave.Cols*Cave.Rows, out node);
             Assert.AreNotEqual(null, node);
             Assert.AreEqual(16, node.Id);
             Assert.AreEqual(3, node.Col);
@@ -37,11 +37,11 @@ namespace GDO.Tests.Core
         {
             Cave.Init();
             Section section;
-            if (Cave.Nodes.Count <= 0)
+            if (Cave.Layout.Nodes.Count <= 0)
             {
-                Assert.Fail("Cave.nodes.Count:" + Cave.Nodes.Count);
+                Assert.Fail("Cave.Layout.Nodes.Count:" + Cave.Layout.Nodes.Count);
             }
-            List<Node> deployedNodes = Cave.CreateSection(2, 2, 3, 3);
+            List<Node> deployedNodes = Cave.Deployment.CreateSection(2, 2, 3, 3);
             if (deployedNodes.Count < 4)
             {
                 Assert.Fail("deployedNodes.Count:" + deployedNodes.Count);
@@ -57,8 +57,8 @@ namespace GDO.Tests.Core
                 {
                     Assert.Fail("node.row:" + node.Row);
                 }
-                Cave.Sections.TryGetValue(node.SectionId, out section);
-                if (!Cave.Sections.ContainsKey(node.SectionId))
+                Cave.Deployment.Sections.TryGetValue(node.SectionId, out section);
+                if (!Cave.Deployment.Sections.ContainsKey(node.SectionId))
                 {
                     Assert.Fail("node.sectionID:" + node.SectionId);
                 }
@@ -67,13 +67,13 @@ namespace GDO.Tests.Core
                     Assert.Fail();
                 }
             }
-            Cave.Sections.TryGetValue(1, out section);
-            Cave.CloseSection(1);
-            if (Cave.Sections.ContainsKey(1))
+            Cave.Deployment.Sections.TryGetValue(1, out section);
+            Cave.Deployment.CloseSection(1);
+            if (Cave.Deployment.Sections.ContainsKey(1))
             {
                 Assert.Fail();
             }
-            foreach (KeyValuePair<int, Node> nodeEntry in Cave.Nodes)
+            foreach (KeyValuePair<int, Node> nodeEntry in Cave.Layout.Nodes)
             {
                 if (nodeEntry.Value.SectionId > 0)
                 {
@@ -84,8 +84,8 @@ namespace GDO.Tests.Core
                     Assert.Fail();
                 }
             }
-            Cave.CreateSection(1, 2, 3, 3);
-            Cave.Sections.TryGetValue(1, out section);
+            Cave.Deployment.CreateSection(1, 2, 3, 3);
+            Cave.Deployment.Sections.TryGetValue(1, out section);
             Assert.AreEqual(1920 + 1920 + 1920, section.Width);
             Assert.AreEqual(1080 + 1080, section.Height);
         }
@@ -94,7 +94,7 @@ namespace GDO.Tests.Core
         public void GetMapTests()
         {
             Cave.Init();
-            List<Node> deployedNodes = Cave.CreateSection(2, 2, 3, 3);
+            List<Node> deployedNodes = Cave.Deployment.CreateSection(2, 2, 3, 3);
 
             _nodeMap = Cave.GetNodeMap();
             _sectionMap = Cave.GetSectionMap(1);

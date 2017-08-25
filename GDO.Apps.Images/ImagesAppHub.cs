@@ -13,7 +13,7 @@ using log4net;
 namespace GDO.Apps.Images
 {
     [Export(typeof(IAppHub))]
-    public class ImagesAppHub : Hub, IBaseAppHub, IHubLog
+    public class ImagesAppHub : GDOHub, IBaseAppHub, IHubLog
     {
 
         public ILog Log { get; set; } = LogManager.GetLogger(typeof(ImagesAppHub));
@@ -23,7 +23,7 @@ namespace GDO.Apps.Images
 
         public void JoinGroup(string groupId)
         {
-            Cave.Apps[Name].Hub.Clients = Clients;
+            Cave.Deployment.Apps[Name].Hub.Clients = Clients;
             Groups.Add(Context.ConnectionId, "" + groupId);
         }
 
@@ -38,7 +38,7 @@ namespace GDO.Apps.Images
             {
                 try
                 {
-                    ImagesApp ia = (ImagesApp) Cave.Apps["Images"].Instances[instanceId];
+                    ImagesApp ia = (ImagesApp) Cave.Deployment.Apps["Images"].Instances[instanceId];
 
                     ia.ImageName = imageName;
 
@@ -263,7 +263,7 @@ namespace GDO.Apps.Images
                         Log.Error("Digits not found! Please upload a new image!");
                         return;
                     }
-                    ImagesApp ia = (ImagesApp) Cave.Apps["Images"].Instances[instanceId];
+                    ImagesApp ia = (ImagesApp) Cave.Deployment.Apps["Images"].Instances[instanceId];
                     ia.ImageNameDigit = digits;
                     Clients.Caller.setMessage("Digits found! Initializing image configuration...");
                     string[] lines = File.ReadAllLines(basePath + ia.ImageNameDigit + "\\config.txt");
@@ -316,13 +316,13 @@ namespace GDO.Apps.Images
                 try
                 {
                     Clients.Caller.setMessage("Requesting image name...");
-                    if (((ImagesApp) Cave.Apps["Images"].Instances[instanceId]).ImageName != null)
+                    if (((ImagesApp) Cave.Deployment.Apps["Images"].Instances[instanceId]).ImageName != null)
                     {
                         Clients.Caller.receiveImageName(instanceId,
-                            ((ImagesApp) Cave.Apps["Images"].Instances[instanceId]).ImageName,
-                            ((ImagesApp) Cave.Apps["Images"].Instances[instanceId]).ImageNameDigit);
+                            ((ImagesApp) Cave.Deployment.Apps["Images"].Instances[instanceId]).ImageName,
+                            ((ImagesApp) Cave.Deployment.Apps["Images"].Instances[instanceId]).ImageNameDigit);
                         Clients.Caller.setDigitText(instanceId,
-                            ((ImagesApp) Cave.Apps["Images"].Instances[instanceId]).ImageNameDigit);
+                            ((ImagesApp) Cave.Deployment.Apps["Images"].Instances[instanceId]).ImageNameDigit);
                         Clients.Caller.setMessage("Request image name Successfully!");
                     }
                     else
@@ -346,7 +346,7 @@ namespace GDO.Apps.Images
                 try
                 {
                     Clients.Caller.setMessage("Updating display mode...");
-                    ImagesApp ia = (ImagesApp) Cave.Apps["Images"].Instances[instanceId];
+                    ImagesApp ia = (ImagesApp) Cave.Deployment.Apps["Images"].Instances[instanceId];
                     ia.DisplayMode = displaymode;
                     Clients.Caller.setMessage("Update display mode Successfully!");
                 }
@@ -365,7 +365,7 @@ namespace GDO.Apps.Images
                 try
                 {
                     Clients.Caller.setMessage("Requesting display mode...");
-                    ImagesApp ia = (ImagesApp) Cave.Apps["Images"].Instances[instanceId];
+                    ImagesApp ia = (ImagesApp) Cave.Deployment.Apps["Images"].Instances[instanceId];
                     Clients.Caller.receiveDisplayMode(ia.DisplayMode);
                     Clients.Caller.setMessage("Request display mode Successfully!");
                 }
@@ -385,7 +385,7 @@ namespace GDO.Apps.Images
                 try
                 {
                     Clients.Caller.setMessage("Updating thumbnail image information...");
-                    ImagesApp ia = (ImagesApp) Cave.Apps["Images"].Instances[instanceId];
+                    ImagesApp ia = (ImagesApp) Cave.Deployment.Apps["Images"].Instances[instanceId];
                     ia.ThumbNailImage = JsonConvert.DeserializeObject<ThumbNailImageInfo>(imageInfo);
                     ia.Rotate = Convert.ToInt32(ia.ThumbNailImage.imageData.rotate);
                     double ratio = ia.ImageNaturalWidth/(ia.ThumbNailImage.imageData.width + 0.0);
@@ -555,7 +555,7 @@ namespace GDO.Apps.Images
                 try
                 {
                     Clients.Caller.setMessage("Requesting tiles information...");
-                    ImagesApp ia = (ImagesApp) Cave.Apps["Images"].Instances[instanceId];
+                    ImagesApp ia = (ImagesApp) Cave.Deployment.Apps["Images"].Instances[instanceId];
                     Clients.Caller.setTiles(instanceId, ia.ImageNameDigit, ia.Rotate, ia.Section.Width/ia.Section.Cols,
                         ia.Section.Height/ia.Section.Rows,
                         ia.BlockRegion[col, row].tiles != null
@@ -578,7 +578,7 @@ namespace GDO.Apps.Images
                 try
                 {
                     Clients.Caller.setMessage("Requesting thumbnail image information...");
-                    ImagesApp ia = (ImagesApp) Cave.Apps["Images"].Instances[instanceId];
+                    ImagesApp ia = (ImagesApp) Cave.Deployment.Apps["Images"].Instances[instanceId];
                     Clients.Caller.setThumbNailImageInfo(instanceId, ia.ThumbNailImage != null
                         ? JsonConvert.SerializeObject(ia.ThumbNailImage)
                         : null);
@@ -600,7 +600,7 @@ namespace GDO.Apps.Images
                 try
                 {
                     Clients.Caller.setMessage("Requesting section information...");
-                    ImagesApp ia = (ImagesApp) Cave.Apps["Images"].Instances[instanceId];
+                    ImagesApp ia = (ImagesApp) Cave.Deployment.Apps["Images"].Instances[instanceId];
                     Clients.Caller.getSectionSize(instanceId, ia.Section.Width, ia.Section.Height);
                     Clients.Caller.setMessage("Requested section information Success!");
                 }
@@ -620,7 +620,7 @@ namespace GDO.Apps.Images
 
                 try
                 {
-                    ImagesApp ia = (ImagesApp)Cave.Apps["Images"].Instances[instanceId];
+                    ImagesApp ia = (ImagesApp)Cave.Deployment.Apps["Images"].Instances[instanceId];
                     if (ia.ThumbNailImage != null)
                     {
                         ratio = (ratio < 0) ? ratio = 1 / (1 - ratio) : 1 + ratio;
@@ -649,7 +649,7 @@ namespace GDO.Apps.Images
             {
                 try
                 {
-                    ImagesApp ia = (ImagesApp)Cave.Apps["Images"].Instances[instanceId];
+                    ImagesApp ia = (ImagesApp)Cave.Deployment.Apps["Images"].Instances[instanceId];
                     if (ia.ThumbNailImage != null)
                     {
                         ia.ThumbNailImage.canvasData.left += x;
@@ -674,7 +674,7 @@ namespace GDO.Apps.Images
             {
                 try
                 {
-                    ImagesApp ia = (ImagesApp)Cave.Apps["Images"].Instances[instanceId];
+                    ImagesApp ia = (ImagesApp)Cave.Deployment.Apps["Images"].Instances[instanceId];
                     FindDigits(instanceId, digits);
                     SetMode(instanceId, displayMode);
                 }
@@ -693,7 +693,7 @@ namespace GDO.Apps.Images
             {
                 try
                 {
-                    ImagesApp ia = (ImagesApp)Cave.Apps["Images"].Instances[instanceId];
+                    ImagesApp ia = (ImagesApp)Cave.Deployment.Apps["Images"].Instances[instanceId];
                     string database_path = HttpContext.Current.Server.MapPath("~/Web/Images/images/Database.txt");
                     string[] database = { };
                     // if file is processed
@@ -729,7 +729,7 @@ namespace GDO.Apps.Images
                 try
                 {
                     Clients.Caller.setMessage("Setting display mode " + displayMode);
-                    ImagesApp ia = (ImagesApp)Cave.Apps["Images"].Instances[instanceId];
+                    ImagesApp ia = (ImagesApp)Cave.Deployment.Apps["Images"].Instances[instanceId];
 
                     double autoCropArea = 0.65;
                     double aspectRatio = ia.Section.Width / (0.0 + ia.Section.Height);

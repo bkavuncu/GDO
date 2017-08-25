@@ -74,7 +74,6 @@ gdo.net.app["Twitter"].drawSectionTable = function (instanceId) {
                 .css('padding', 0);
             continue;
         }
-
         var sectionId = node.sectionId;
         $("iframe").contents().find("#section_table_row_" + gdo.net.rows)
             .css("height", 0);
@@ -132,20 +131,20 @@ gdo.net.app["Twitter"].drawSectionTable = function (instanceId) {
                     "</b></font></div>")
                 .append("<div style='height:5px'></div>");
             //Prepared
-            if (gdo.net.instance[instanceId].caveStatus.sections[sectionId].twitterVis.id != null) {
+            if (gdo.net.instance[instanceId].caveStatus.sections[sectionId].appInfo.id != null) {
                 $("iframe").contents().find("#section_table_row_" + node.row + "_col_" + node.col)
                     .css('overflow', 'hidden')
                     .append("<div id='section_table_section_" +
                         sectionId +
                         "_c'> <b>&nbsp;Vis Type:</b> " +
-                        gdo.net.instance[instanceId].caveStatus.sections[sectionId].twitterVis.twitterVisSubType +
+                        gdo.net.instance[instanceId].caveStatus.sections[sectionId].appInfo.appSubType +
                         "</div>")
                     .css('overflow', 'hidden')
                     .css("background", "#a7a100")
                     .append("<div id='section_table_section_" +
                         sectionId +
                         "_c'> <b>&nbsp;File Path:</b> " +
-                        gdo.net.instance[instanceId].caveStatus.sections[sectionId].twitterVis.filePath +
+                        gdo.net.instance[instanceId].caveStatus.sections[sectionId].appInfo.filePath +
                         "</div>")
                     .css('overflow', 'hidden')
                     .css("background", "#a7a100");
@@ -193,7 +192,6 @@ gdo.net.app["Twitter"].drawSectionTable = function (instanceId) {
                     }
                     gdo.net.app["Twitter"].updateDisplayCanvas(instanceId);
                 });
-
             if (gdo.net.instance[instanceId].control.selectedSection === sectionId) {
                 if (gdo.net.instance[instanceId].caveStatus.sections[sectionId].appInstanceId >= 0) {
                     $("iframe").contents().find("#section_table_row_" + node.row + "_col_" + node.col)
@@ -201,7 +199,7 @@ gdo.net.app["Twitter"].drawSectionTable = function (instanceId) {
                         .css("border", "1px solid #99D522");
                     $("iframe").contents().find("#section_table_section_" + sectionId + "_i").css("background", "#99D522");
                 } else if (gdo.net.instance[instanceId].caveStatus.sections[sectionId].appInstanceId < 0 &&
-                    gdo.net.instance[instanceId].caveStatus.sections[sectionId].twitterVis.id != null) {
+                    gdo.net.instance[instanceId].caveStatus.sections[sectionId].appInfo.id != null) {
                     $("iframe").contents().find("#section_table_row_" + node.row + "_col_" + node.col)
                         .css("background-color", "#b8b100")
                         .css("border", "1px solid #d2ca02");
@@ -305,7 +303,7 @@ gdo.net.app["Twitter"].drawSectionControlTable = function (instanceId) {
                     .append("<font size='4px'><b> I" +
                         gdo.net.instance[instanceId].caveStatus.sections[sectionId].appInstanceId +
                         "</b></font>");
-                if (gdo.net.instance[instanceId].caveStatus.sections[sectionId].twitterVis.appType === "Graph") {
+                if (gdo.net.instance[instanceId].caveStatus.sections[sectionId].appInfo.appType === "Graph") {
                     $("iframe").contents().find("#section_control_table_row_" + node.row + "_col_" + node.col)
                         .css('overflow', 'hidden')
                         .append("<div id='section_control_table_section_" +
@@ -340,7 +338,7 @@ gdo.net.app["Twitter"].drawSectionControlTable = function (instanceId) {
                 }
 
             }
-            if (gdo.net.instance[instanceId].caveStatus.sections[sectionId].twitterVis.appType === "Graph") {
+            if (gdo.net.instance[instanceId].caveStatus.sections[sectionId].appInfo.appType === "Graph") {
                 $("iframe").contents().find("#section_control_table_row_" + node.row + "_col_" + node.col)
                     .click(function () {
                         var appInstanceId = gdo.net.instance[instanceId].caveStatus.nodes[gdo.net

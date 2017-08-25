@@ -10,14 +10,14 @@ using Newtonsoft.Json.Linq;
 namespace GDO.Apps.FusionChart
 {
     [Export(typeof(IAppHub))]
-    public class FusionChartAppHub : Hub, IBaseAppHub
+    public class FusionChartAppHub : GDOHub, IBaseAppHub
     {
         public string Name { get; set; } = "FusionChart";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.None;
         public Type InstanceType { get; set; } = new FusionChartApp().GetType();
         public void JoinGroup(string groupId)
         {
-            Cave.Apps[Name].Hub.Clients = Clients;
+            Cave.Deployment.Apps[Name].Hub.Clients = Clients;
             Groups.Add(Context.ConnectionId, "" + groupId);
         }
         public void ExitGroup(string groupId)
@@ -61,7 +61,7 @@ namespace GDO.Apps.FusionChart
             {
                 try
                 {
-                    string path = ((FusionChartApp)Cave.Apps["FusionChart"].Instances[instanceId]).ProcessSaveConfig(config);
+                    string path = ((FusionChartApp)Cave.Deployment.Apps["FusionChart"].Instances[instanceId]).ProcessSaveConfig(config);
                     if (path.Equals(""))
                     {
                         // failed
@@ -134,7 +134,7 @@ namespace GDO.Apps.FusionChart
                 {
                     Debug.WriteLine("Broadcasting mouse event: " + serialisedMouseEvent);
                     string me =
-                        ((FusionChartApp) Cave.Apps["FusionChart"].Instances[instanceId]).ProcessMouseEvent(
+                        ((FusionChartApp) Cave.Deployment.Apps["FusionChart"].Instances[instanceId]).ProcessMouseEvent(
                             serialisedMouseEvent);
                     Clients.Group("" + instanceId).receiveMouseEvent(instanceId, me);
                 }
@@ -152,7 +152,7 @@ namespace GDO.Apps.FusionChart
                 try
                 {
                     Debug.WriteLine("Process file: " + fileName);
-                    if(((FusionChartApp)Cave.Apps["FusionChart"].Instances[instanceId]).ProcessFile(fileName))
+                    if(((FusionChartApp)Cave.Deployment.Apps["FusionChart"].Instances[instanceId]).ProcessFile(fileName))
                     {
                         BroadcastChartData(instanceId, true);
                     }      
@@ -171,7 +171,7 @@ namespace GDO.Apps.FusionChart
                 try
                 {
                     Debug.WriteLine("Delete file: " + fileName);
-                    if (((FusionChartApp)Cave.Apps["FusionChart"].Instances[instanceId]).DeleteFile(fileName))
+                    if (((FusionChartApp)Cave.Deployment.Apps["FusionChart"].Instances[instanceId]).DeleteFile(fileName))
                     {
                         Clients.Caller.deleteFileFinished(instanceId, fileName);
                     }
@@ -201,7 +201,7 @@ namespace GDO.Apps.FusionChart
         public void BroadcastChartData(int instanceId, bool toAll)
         {
             string serialisedChartData =
-                ((FusionChartApp) Cave.Apps["FusionChart"].Instances[instanceId]).GetChartData();
+                ((FusionChartApp) Cave.Deployment.Apps["FusionChart"].Instances[instanceId]).GetChartData();
             Clients.Caller.receiveChartData(instanceId, serialisedChartData);
             if (toAll)
             {

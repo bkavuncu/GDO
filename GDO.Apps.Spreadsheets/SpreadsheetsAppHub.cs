@@ -7,7 +7,7 @@ using Microsoft.AspNet.SignalR;
 namespace GDO.Apps.Spreadsheets
 {
     [Export(typeof(IAppHub))]
-    public class SpreadsheetsAppHub : Hub, IBaseAppHub
+    public class SpreadsheetsAppHub : GDOHub, IBaseAppHub
     {
         public string Name { get; set; } = "Spreadsheets";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.None;
@@ -15,7 +15,7 @@ namespace GDO.Apps.Spreadsheets
 
         public void JoinGroup(string groupId)
         {
-            Cave.Apps[Name].Hub.Clients = Clients;
+            Cave.Deployment.Apps[Name].Hub.Clients = Clients;
             Groups.Add(Context.ConnectionId, "" + groupId);
         }
         public void ExitGroup(string groupId)
@@ -36,7 +36,7 @@ namespace GDO.Apps.Spreadsheets
             {
                 try
                 {
-                    ((SpreadsheetsApp)Cave.Apps["HelloWorld"].Instances[instanceId]).SetName(name);
+                    ((SpreadsheetsApp)Cave.Deployment.Apps["HelloWorld"].Instances[instanceId]).SetName(name);
                     Clients.Group("" + instanceId).receiveName(instanceId, name);
                 }
                 catch (Exception e)
@@ -58,7 +58,7 @@ namespace GDO.Apps.Spreadsheets
             {
                 try
                 {
-                    Clients.Caller.receiveName(instanceId, ((SpreadsheetsApp)Cave.Apps["HelloWorld"].Instances[instanceId]).GetName());
+                    Clients.Caller.receiveName(instanceId, ((SpreadsheetsApp)Cave.Deployment.Apps["HelloWorld"].Instances[instanceId]).GetName());
                 }
                 catch (Exception e)
                 {
