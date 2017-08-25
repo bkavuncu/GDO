@@ -9,7 +9,7 @@ using GDO.Core.Apps;
 namespace GDO.Apps.Cortical
 {
     [Export(typeof(IAppHub))]
-    public class CorticalAppHub : Hub, IBaseAppHub
+    public class CorticalAppHub : GDOHub, IBaseAppHub
     {
         public string ControllerId { get; set; }
         public static CorticalAppHub self;
@@ -20,7 +20,7 @@ namespace GDO.Apps.Cortical
         public Type InstanceType { get; set; } = new CorticalApp().GetType();
         public void JoinGroup(string groupId)
         {
-            Cave.Apps[Name].Hub.Clients = Clients;
+            Cave.Deployment.Apps[Name].Hub.Clients = Clients;
             Groups.Add(Context.ConnectionId, "" + groupId);
         }
         public void ExitGroup(string groupId)
@@ -43,7 +43,7 @@ namespace GDO.Apps.Cortical
                     this.ControllerId = Context.ConnectionId;
 
                     // create CorticalApp project
-                    ga = (CorticalApp) Cave.Apps["Cortical"].Instances[instanceId];
+                    ga = (CorticalApp) Cave.Deployment.Apps["Cortical"].Instances[instanceId];
                     Clients.Group("" + instanceId).initWordConf_layout();
                     Clients.Caller.setMessage("Cortical app initialised.");
                 }
@@ -67,7 +67,7 @@ namespace GDO.Apps.Cortical
                     this.ControllerId = Context.ConnectionId;
 
                     // create CorticalApp project
-                    ga = (CorticalApp)Cave.Apps["Cortical"].Instances[instanceId];
+                    ga = (CorticalApp)Cave.Deployment.Apps["Cortical"].Instances[instanceId];
                     Clients.Group("" + instanceId).initTextConf_layout();
                     Clients.Caller.setMessage("Cortical app initialised.");
                 }
@@ -91,7 +91,7 @@ namespace GDO.Apps.Cortical
                     this.ControllerId = Context.ConnectionId;
 
                     // create CorticalApp project
-                    ga = (CorticalApp)Cave.Apps["Cortical"].Instances[instanceId];
+                    ga = (CorticalApp)Cave.Deployment.Apps["Cortical"].Instances[instanceId];
                     Clients.Group("" + instanceId).initCompareConf_layout();
                     Clients.Caller.setMessage("Cortical app initialised.");
                 }

@@ -10,8 +10,8 @@ namespace GDO.Utility
 
         public void Init(int instanceId)
         {
-            SectionWidth = ((IBaseAppInstance)Cave.Instances[instanceId]).Section.Width;
-            SectionHeight = ((IBaseAppInstance)Cave.Instances[instanceId]).Section.Height;
+            SectionWidth = ((IBaseAppInstance)Cave.Deployment.Instances[instanceId]).Section.Width;
+            SectionHeight = ((IBaseAppInstance)Cave.Deployment.Instances[instanceId]).Section.Height;
         }
 
         public Boundary CalculateBoundary(double centerX, double centerY, double pixelToUnitRatio)

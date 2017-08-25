@@ -11,7 +11,7 @@ using Newtonsoft.Json.Linq;
 namespace GDO.Apps.StaticHTML
 {
     [Export(typeof(IAppHub))]
-    public class StaticHTMLAppHub : Hub, IBaseAppHub
+    public class StaticHTMLAppHub : GDOHub, IBaseAppHub
     {
         public string Name { get; set; } = "StaticHTML";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.None;
@@ -19,7 +19,7 @@ namespace GDO.Apps.StaticHTML
 
         public void JoinGroup(string groupId)
         {
-            Cave.Apps[Name].Hub.Clients = Clients;
+            Cave.Deployment.Apps[Name].Hub.Clients = Clients;
             Groups.Add(Context.ConnectionId, "" + groupId);
         }
         public void ExitGroup(string groupId)
@@ -33,7 +33,7 @@ namespace GDO.Apps.StaticHTML
             {
                 try
                 {
-                    StaticHTMLApp app = ((StaticHTMLApp) Cave.Apps["StaticHTML"].Instances[instanceId]);
+                    StaticHTMLApp app = ((StaticHTMLApp) Cave.Deployment.Apps["StaticHTML"].Instances[instanceId]);
                     app.SetURL(url);
                     Debug.WriteLine("Using responsive mode: " + app.IsResponsiveMode);
                     Clients.Group("" + instanceId).receiveURL(instanceId, url, app.IsResponsiveMode);
@@ -52,7 +52,7 @@ namespace GDO.Apps.StaticHTML
             {
                 try
                 {
-                    StaticHTMLApp app = ((StaticHTMLApp) Cave.Apps["StaticHTML"].Instances[instanceId]);
+                    StaticHTMLApp app = ((StaticHTMLApp) Cave.Deployment.Apps["StaticHTML"].Instances[instanceId]);
                     Debug.WriteLine("Using responsive mode: " + app.IsResponsiveMode);
                     Clients.Caller.receiveURL(instanceId, app.GetURL(), app.IsResponsiveMode);
                 }

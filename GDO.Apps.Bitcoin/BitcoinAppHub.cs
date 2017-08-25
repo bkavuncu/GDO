@@ -13,14 +13,14 @@ namespace GDO.Apps.Bitcoin
 {
 
     [Export(typeof(IAppHub))]
-    public class BitcoinAppHub : Hub, IBaseAppHub
+    public class BitcoinAppHub : GDOHub, IBaseAppHub
     {
         public string Name { get; set; } = "Bitcoin";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.Neighbours;
         public Type InstanceType { get; set; } = new BitcoinApp().GetType();
         public void JoinGroup(string groupId)
         {
-            Cave.Apps[Name].Hub.Clients = Clients;
+            Cave.Deployment.Apps[Name].Hub.Clients = Clients;
             Groups.Add(Context.ConnectionId, "" + groupId);
         }
         public void ExitGroup(string groupId)

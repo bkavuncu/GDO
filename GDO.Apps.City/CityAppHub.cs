@@ -15,7 +15,7 @@ using Microsoft.SqlServer.Server;
 namespace GDO.Apps.City
 {
     [Export(typeof (IAppHub))]
-    public class CityAppHub : Hub, ICompositeAppHub
+    public class CityAppHub : GDOHub, ICompositeAppHub
     {
         public string Name { get; set; } = "City";
         public int P2PMode { get; set; } = (int) Cave.P2PModes.None;
@@ -24,7 +24,7 @@ namespace GDO.Apps.City
 
         public void JoinGroup(string groupId)
         {
-            Cave.Apps[Name].Hub.Clients = Clients;
+            Cave.Deployment.Apps[Name].Hub.Clients = Clients;
             Groups.Add(Context.ConnectionId, "" + groupId);
         }
         public void ExitGroup(string groupId)

@@ -45,10 +45,10 @@ namespace GDO.Core.Apps
                 return -1;
             }
 
-            int instanceId = Utilities.GetAvailableSlot(Cave.Instances);
+            int instanceId = Utilities.GetAvailableSlot(Cave.Deployment.Instances);
             IBaseAppInstance instance = (IBaseAppInstance) Activator.CreateInstance(AppClassType, new object[0]);
             AppConfiguration conf;
-            Cave.Sections[sectionId].CalculateDimensions();
+            Cave.Deployment.Sections[sectionId].CalculateDimensions();
             Configurations.TryGetValue(configName, out conf);
             if (conf==null) {
                 Log.Error("Failed to find config name "+configName);
@@ -59,16 +59,16 @@ namespace GDO.Core.Apps
             instance.AppName = Name;
             //instance.HubContext = GlobalHost.ConnectionManager.GetHubContext(Name + "Hub");
             //instance.HubContext = (IHubContext) typeof (IConnectionManager).GetMethod("GetHubContext").GetGenericMethodDefinition().MakeGenericMethod(AppHubType).Invoke(GlobalHost.ConnectionManager, null);
-            instance.Section = Cave.Sections[sectionId];
+            instance.Section = Cave.Deployment.Sections[sectionId];
             instance.Configuration = conf;
             instance.IntegrationMode = integrationMode;
             if (integrationMode)
             {
-                instance.ParentApp = (ICompositeAppInstance) Cave.Instances[parentId];
+                instance.ParentApp = (ICompositeAppInstance) Cave.Deployment.Instances[parentId];
             }
             instance.Init();
             Instances.TryAdd(instanceId,instance);
-            Cave.Instances.TryAdd(instanceId,instance);
+            Cave.Deployment.Instances.TryAdd(instanceId,instance);
             Log.Info("created app "+Name+ " instance "+configName);
             return instanceId;
         }
@@ -80,7 +80,7 @@ namespace GDO.Core.Apps
 
             IAppInstance instance;
             Instances.TryRemove(instanceId, out instance);
-            Cave.Instances.TryRemove(instanceId,out instance);
+            Cave.Deployment.Instances.TryRemove(instanceId,out instance);
             return true;
         }
 

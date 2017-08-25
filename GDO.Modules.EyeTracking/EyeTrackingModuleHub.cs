@@ -29,7 +29,7 @@ namespace GDO.Modules.EyeTracking
 
         public void LinkCallbackFunction()
         {
-            ((EyeTrackingModule)Cave.Modules["EyeTracking"]).LinkCallbackFunction(BroadcastData);
+            ((EyeTrackingModule)Cave.Layout.Modules["EyeTracking"]).LinkCallbackFunction(BroadcastData);
         }
         public void RequestMarkerMode()
         {
@@ -37,7 +37,7 @@ namespace GDO.Modules.EyeTracking
             {
                 try
                 {
-                    Clients.Caller.updateMarkerMode(((EyeTrackingModule)Cave.Modules["EyeTracking"]).MarkerMode);
+                    Clients.Caller.updateMarkerMode(((EyeTrackingModule)Cave.Layout.Modules["EyeTracking"]).MarkerMode);
 
                 }
                 catch (Exception e)
@@ -53,7 +53,7 @@ namespace GDO.Modules.EyeTracking
             {
                 try
                 {
-                    ((EyeTrackingModule) Cave.Modules["EyeTracking"]).MarkerMode = mode;
+                    ((EyeTrackingModule) Cave.Layout.Modules["EyeTracking"]).MarkerMode = mode;
                     Clients.Group("EyeTracking").updateMarkerMode(mode);
                 }
                 catch (Exception e)
@@ -69,7 +69,7 @@ namespace GDO.Modules.EyeTracking
             {
                 try
                 {
-                    Clients.Caller.receiveMarkers(((EyeTrackingModule)Cave.Modules["EyeTracking"]).SerializeMarkers());
+                    Clients.Caller.receiveMarkers(((EyeTrackingModule)Cave.Layout.Modules["EyeTracking"]).SerializeMarkers());
 
                 }
                 catch (Exception e)
@@ -85,7 +85,7 @@ namespace GDO.Modules.EyeTracking
             {
                 try
                 {
-                    Clients.Caller.updateCursorMode(((EyeTrackingModule)Cave.Modules["EyeTracking"]).CursorMode);
+                    Clients.Caller.updateCursorMode(((EyeTrackingModule)Cave.Layout.Modules["EyeTracking"]).CursorMode);
 
                 }
                 catch (Exception e)
@@ -104,11 +104,11 @@ namespace GDO.Modules.EyeTracking
                     
                     if (userId > 0)
                     {
-                        Clients.Caller.updateHeatmapVisible(userId,((EyeTrackingModule)Cave.Modules["EyeTracking"]).Users[userId].IsHeatmapVisible);
+                        Clients.Caller.updateHeatmapVisible(userId,((EyeTrackingModule)Cave.Layout.Modules["EyeTracking"]).Users[userId].IsHeatmapVisible);
                     }
                     else
                     {
-                        Clients.Caller.updateHeatmapVisible(userId,((EyeTrackingModule)Cave.Modules["EyeTracking"]).IsHeatmapVisible);
+                        Clients.Caller.updateHeatmapVisible(userId,((EyeTrackingModule)Cave.Layout.Modules["EyeTracking"]).IsHeatmapVisible);
                     }
                 }
                 catch (Exception e)
@@ -124,7 +124,7 @@ namespace GDO.Modules.EyeTracking
             {
                 try
                 {
-                    ((EyeTrackingModule)Cave.Modules["EyeTracking"]).CursorMode = mode;
+                    ((EyeTrackingModule)Cave.Layout.Modules["EyeTracking"]).CursorMode = mode;
                     Clients.Group("EyeTracking").updateCursorMode(mode);
                 }
                 catch (Exception e)
@@ -141,18 +141,18 @@ namespace GDO.Modules.EyeTracking
             {
                 try
                 {
-                    for (int i = 1; i < ((EyeTrackingModule)Cave.Modules["EyeTracking"]).NumUsers+1; i++)
+                    for (int i = 1; i < ((EyeTrackingModule)Cave.Layout.Modules["EyeTracking"]).NumUsers+1; i++)
                     {
-                        ((EyeTrackingModule) Cave.Modules["EyeTracking"]).Users[i].IsHeatmapVisible = false;
+                        ((EyeTrackingModule) Cave.Layout.Modules["EyeTracking"]).Users[i].IsHeatmapVisible = false;
                     }
-                    ((EyeTrackingModule) Cave.Modules["EyeTracking"]).IsHeatmapVisible = false;
+                    ((EyeTrackingModule) Cave.Layout.Modules["EyeTracking"]).IsHeatmapVisible = false;
                     if (userId > 0)
                     {
-                        ((EyeTrackingModule) Cave.Modules["EyeTracking"]).Users[userId].IsHeatmapVisible = visible;
+                        ((EyeTrackingModule) Cave.Layout.Modules["EyeTracking"]).Users[userId].IsHeatmapVisible = visible;
                     }
                     else
                     {
-                        ((EyeTrackingModule) Cave.Modules["EyeTracking"]).IsHeatmapVisible = visible;
+                        ((EyeTrackingModule) Cave.Layout.Modules["EyeTracking"]).IsHeatmapVisible = visible;
                     }
                     Clients.Group("EyeTracking").updateHeatmapVisible(userId, visible);
                 }
@@ -169,7 +169,7 @@ namespace GDO.Modules.EyeTracking
             {
                 try
                 {
-                    Clients.Caller.updateMarkerSize(((EyeTrackingModule)Cave.Modules["EyeTracking"]).MarkerSize);
+                    Clients.Caller.updateMarkerSize(((EyeTrackingModule)Cave.Layout.Modules["EyeTracking"]).MarkerSize);
 
                 }
                 catch (Exception e)
@@ -185,7 +185,7 @@ namespace GDO.Modules.EyeTracking
             {
                 try
                 {
-                    ((EyeTrackingModule)Cave.Modules["EyeTracking"]).MarkerSize = size;
+                    ((EyeTrackingModule)Cave.Layout.Modules["EyeTracking"]).MarkerSize = size;
                     Clients.Group("EyeTracking").updateMarkerSize(size);
                 }
                 catch (Exception e)
@@ -205,12 +205,12 @@ namespace GDO.Modules.EyeTracking
                     if (index == 0)
                     {
                         Clients.Caller.updateHeatmapMax(index,
-                            ((EyeTrackingModule) Cave.Modules["EyeTracking"]).HeatmapMax);
+                            ((EyeTrackingModule) Cave.Layout.Modules["EyeTracking"]).HeatmapMax);
                     }
                     else
                     {
                         Clients.Caller.updateHeatmapMax(index,
-                            ((EyeTrackingModule) Cave.Modules["EyeTracking"]).Users[index].HeatmapMax);
+                            ((EyeTrackingModule) Cave.Layout.Modules["EyeTracking"]).Users[index].HeatmapMax);
                     }
                 }
                 catch (Exception e)
@@ -228,11 +228,11 @@ namespace GDO.Modules.EyeTracking
                 {
                     if (index == 0)
                     {
-                        ((EyeTrackingModule)Cave.Modules["EyeTracking"]).HeatmapMax = max;
+                        ((EyeTrackingModule)Cave.Layout.Modules["EyeTracking"]).HeatmapMax = max;
                     }
                     else
                     {
-                        ((EyeTrackingModule)Cave.Modules["EyeTracking"]).Users[index].HeatmapMax = max;
+                        ((EyeTrackingModule)Cave.Layout.Modules["EyeTracking"]).Users[index].HeatmapMax = max;
                     }
                     Clients.Group("EyeTracking").updateHeatmapMax(index, max);
                 }
@@ -250,7 +250,7 @@ namespace GDO.Modules.EyeTracking
             {
                 try
                 {
-                    Clients.Caller.updateMarkerColor(((EyeTrackingModule)Cave.Modules["EyeTracking"]).MarkerColor);
+                    Clients.Caller.updateMarkerColor(((EyeTrackingModule)Cave.Layout.Modules["EyeTracking"]).MarkerColor);
 
                 }
                 catch (Exception e)
@@ -266,7 +266,7 @@ namespace GDO.Modules.EyeTracking
             {
                 try
                 {
-                    ((EyeTrackingModule)Cave.Modules["EyeTracking"]).MarkerColor = color;
+                    ((EyeTrackingModule)Cave.Layout.Modules["EyeTracking"]).MarkerColor = color;
                     Clients.Group("EyeTracking").updateMarkerColor(color);
                 }
                 catch (Exception e)
@@ -282,7 +282,7 @@ namespace GDO.Modules.EyeTracking
             {
                 try
                 {
-                    Clients.Caller.updateCursorSize(((EyeTrackingModule)Cave.Modules["EyeTracking"]).CursorSize);
+                    Clients.Caller.updateCursorSize(((EyeTrackingModule)Cave.Layout.Modules["EyeTracking"]).CursorSize);
 
                 }
                 catch (Exception e)
@@ -298,7 +298,7 @@ namespace GDO.Modules.EyeTracking
             {
                 try
                 {
-                    ((EyeTrackingModule)Cave.Modules["EyeTracking"]).CursorSize = size;
+                    ((EyeTrackingModule)Cave.Layout.Modules["EyeTracking"]).CursorSize = size;
                     Clients.Group("EyeTracking").updateCursorSize(size);
                 }
                 catch (Exception e)
@@ -314,7 +314,7 @@ namespace GDO.Modules.EyeTracking
             {
                 try
                 {
-                    Clients.Caller.updateCacheSize(((EyeTrackingModule)Cave.Modules["EyeTracking"]).CacheSize);
+                    Clients.Caller.updateCacheSize(((EyeTrackingModule)Cave.Layout.Modules["EyeTracking"]).CacheSize);
 
                 }
                 catch (Exception e)
@@ -330,7 +330,7 @@ namespace GDO.Modules.EyeTracking
             {
                 try
                 {
-                    ((EyeTrackingModule)Cave.Modules["EyeTracking"]).CacheSize = size;
+                    ((EyeTrackingModule)Cave.Layout.Modules["EyeTracking"]).CacheSize = size;
                     Clients.Group("EyeTracking").updateCacheSize(size);
                 }
                 catch (Exception e)
@@ -346,14 +346,14 @@ namespace GDO.Modules.EyeTracking
             {
                 try
                 {
-                    foreach (User user in ((EyeTrackingModule) Cave.Modules["EyeTracking"]).Users)
+                    foreach (User user in ((EyeTrackingModule) Cave.Layout.Modules["EyeTracking"]).Users)
                     {
                         if (user != null)
                         {
-                            user.Clear(user.Id, ((EyeTrackingModule)Cave.Modules["EyeTracking"]).CacheSize);
+                            user.Clear(user.Id, ((EyeTrackingModule)Cave.Layout.Modules["EyeTracking"]).CacheSize);
                         }
                     }
-                    //((EyeTrackingModule) Cave.Modules["EyeTracking"]).HeatmapMax = ((EyeTrackingModule)Cave.Modules["EyeTracking"]).DefaultHeatmapMax;
+                    //((EyeTrackingModule) Cave.Layout.Modules["EyeTracking"]).HeatmapMax = ((EyeTrackingModule)Cave.Layout.Modules["EyeTracking"]).DefaultHeatmapMax;
                     Clients.Group("EyeTracking").clearSession();
                 }
                 catch (Exception e)
@@ -371,13 +371,13 @@ namespace GDO.Modules.EyeTracking
                 try
                 {
                     //EyeTrackingModule.TrackData deserializedData = JsonConvert.DeserializeObject<EyeTrackingModule.TrackData>(serializedData);
-                    //if (((EyeTrackingModule) Cave.Modules["EyeTracking"]).User[deserializedData.UserId].Count >
-                    //    ((EyeTrackingModule) Cave.Modules["EyeTracking"]).CacheSize)
+                    //if (((EyeTrackingModule) Cave.Layout.Modules["EyeTracking"]).User[deserializedData.UserId].Count >
+                    //    ((EyeTrackingModule) Cave.Layout.Modules["EyeTracking"]).CacheSize)
                     //{
                     //    EyeTrackingModule.TrackData remove;
-                    //    ((EyeTrackingModule)Cave.Modules["EyeTracking"]).User[deserializedData.UserId].TryRemove(((EyeTrackingModule)Cave.Modules["EyeTracking"]).User[deserializedData.UserId].Keys.First(),out remove);
+                    //    ((EyeTrackingModule)Cave.Layout.Modules["EyeTracking"]).User[deserializedData.UserId].TryRemove(((EyeTrackingModule)Cave.Layout.Modules["EyeTracking"]).User[deserializedData.UserId].Keys.First(),out remove);
                     //}
-                    //((EyeTrackingModule)Cave.Modules["EyeTracking"]).User[deserializedData.UserId].TryAdd(deserializedData.TimeStamp, deserializedData); ;
+                    //((EyeTrackingModule)Cave.Layout.Modules["EyeTracking"]).User[deserializedData.UserId].TryAdd(deserializedData.TimeStamp, deserializedData); ;
                     BroadcastData(serializedData);
                 }
                 catch (Exception e)
@@ -407,7 +407,7 @@ namespace GDO.Modules.EyeTracking
             {
                 try
                 {
-                    Clients.Caller.receiveConnectionStatus(userId, ((EyeTrackingModule)Cave.Modules["EyeTracking"]).Users[userId].IsConnected, ((EyeTrackingModule)Cave.Modules["EyeTracking"]).Users[userId].IsReceiving);
+                    Clients.Caller.receiveConnectionStatus(userId, ((EyeTrackingModule)Cave.Layout.Modules["EyeTracking"]).Users[userId].IsConnected, ((EyeTrackingModule)Cave.Layout.Modules["EyeTracking"]).Users[userId].IsReceiving);
 
                 }
                 catch (Exception e)
@@ -425,17 +425,17 @@ namespace GDO.Modules.EyeTracking
                 {
                     if (status)
                     {
-                        ((EyeTrackingModule)Cave.Modules["EyeTracking"]).Users[userId].IP = ip;
-                        ((EyeTrackingModule)Cave.Modules["EyeTracking"]).Users[userId].Port = port;
-                        ((EyeTrackingModule) Cave.Modules["EyeTracking"]).Users[userId].Thread = new Thread(((EyeTrackingModule)Cave.Modules["EyeTracking"]).Users[userId].StartTCPClient);
-                        ((EyeTrackingModule)Cave.Modules["EyeTracking"]).Users[userId].Thread.Start();
+                        ((EyeTrackingModule)Cave.Layout.Modules["EyeTracking"]).Users[userId].IP = ip;
+                        ((EyeTrackingModule)Cave.Layout.Modules["EyeTracking"]).Users[userId].Port = port;
+                        ((EyeTrackingModule) Cave.Layout.Modules["EyeTracking"]).Users[userId].Thread = new Thread(((EyeTrackingModule)Cave.Layout.Modules["EyeTracking"]).Users[userId].StartTCPClient);
+                        ((EyeTrackingModule)Cave.Layout.Modules["EyeTracking"]).Users[userId].Thread.Start();
                     }
                     else
                     {
-                        ((EyeTrackingModule)Cave.Modules["EyeTracking"]).Users[userId].StopTCPClient();
+                        ((EyeTrackingModule)Cave.Layout.Modules["EyeTracking"]).Users[userId].StopTCPClient();
                     }
                     System.Threading.Thread.Sleep(700);
-                    BroadcastConnectionStatus(userId, ((EyeTrackingModule)Cave.Modules["EyeTracking"]).Users[userId].IsConnected, ((EyeTrackingModule)Cave.Modules["EyeTracking"]).Users[userId].IsReceiving);
+                    BroadcastConnectionStatus(userId, ((EyeTrackingModule)Cave.Layout.Modules["EyeTracking"]).Users[userId].IsConnected, ((EyeTrackingModule)Cave.Layout.Modules["EyeTracking"]).Users[userId].IsReceiving);
                 }
                 catch (Exception e)
                 {

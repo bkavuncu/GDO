@@ -13,7 +13,7 @@ namespace GDO.Apps.DD3
 {
 
     [Export(typeof(IAppHub))]
-    public class DD3AppHub : Hub, IBaseAppHub
+    public class DD3AppHub : GDOHub, IBaseAppHub
     {
 
         private static ConcurrentDictionary<int, IAppInstance> instances;
@@ -35,7 +35,7 @@ namespace GDO.Apps.DD3
 
         public void JoinGroup(string groupId)
         {
-            Cave.Apps[Name].Hub.Clients = Clients;
+            Cave.Deployment.Apps[Name].Hub.Clients = Clients;
             Groups.Add(Context.ConnectionId, "" + groupId);
         }
         public void ExitGroup(string groupId)
@@ -66,7 +66,7 @@ namespace GDO.Apps.DD3
         public void updateInformation (int instanceId, BrowserInfo b)
         {
             JoinGroup("" + instanceId);
-            instances = Cave.Apps["DD3"].Instances;
+            instances = Cave.Deployment.Apps["DD3"].Instances;
             ((DD3App) instances[instanceId]).newClient(Context.ConnectionId, b);
         }
 
@@ -155,7 +155,7 @@ namespace GDO.Apps.DD3
 
         public void defineController(int instanceId)
         {
-            instances = Cave.Apps["DD3"].Instances;
+            instances = Cave.Deployment.Apps["DD3"].Instances;
             ((DD3App)instances[instanceId]).defineController(Context.ConnectionId);
         }
 
@@ -168,7 +168,7 @@ namespace GDO.Apps.DD3
             else
             {
                 //Maybe should we make more checks to ensure we always send order to the same node...
-                instances = Cave.Apps["DD3"].Instances;
+                instances = Cave.Deployment.Apps["DD3"].Instances;
                 var cid = ((DD3App)instances[instanceId]).getFirstNode();
                 if (cid != null)
                     sendControllerOrder(cid, order);

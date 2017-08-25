@@ -27,15 +27,15 @@ namespace GDO.Modules.EyeTracking.Core
             this.DataMatrix = dataMatrix;
             this.X = new double[4];
             this.Y = new double[4];
-            X[0] = ((Cave.Nodes[nodeId].Col+1)*Cave.Nodes[nodeId].Width) - markerSize;
-            X[1] = ((Cave.Nodes[nodeId].Col+1) * Cave.Nodes[nodeId].Width) - markerSize;
-            X[2] = ((Cave.Nodes[nodeId].Col+1)*Cave.Nodes[nodeId].Width);
-            X[3] = ((Cave.Nodes[nodeId].Col+1)*Cave.Nodes[nodeId].Width);
-            Y[0] = ((Cave.Nodes[nodeId].Row+1) * Cave.Nodes[nodeId].Height);
-            Y[1] = ((Cave.Nodes[nodeId].Row+1) * Cave.Nodes[nodeId].Height) - markerSize;
-            Y[2] = ((Cave.Nodes[nodeId].Row+1) * Cave.Nodes[nodeId].Height) - markerSize;
-            Y[3] = ((Cave.Nodes[nodeId].Row+1) * Cave.Nodes[nodeId].Height);
-            Angle = (Cave.Nodes[nodeId].Col*19.5) + 43;
+            X[0] = ((Cave.Layout.Nodes[nodeId].Col+1)*Cave.Layout.Nodes[nodeId].Width) - markerSize;
+            X[1] = ((Cave.Layout.Nodes[nodeId].Col+1) * Cave.Layout.Nodes[nodeId].Width) - markerSize;
+            X[2] = ((Cave.Layout.Nodes[nodeId].Col+1)*Cave.Layout.Nodes[nodeId].Width);
+            X[3] = ((Cave.Layout.Nodes[nodeId].Col+1)*Cave.Layout.Nodes[nodeId].Width);
+            Y[0] = ((Cave.Layout.Nodes[nodeId].Row+1) * Cave.Layout.Nodes[nodeId].Height);
+            Y[1] = ((Cave.Layout.Nodes[nodeId].Row+1) * Cave.Layout.Nodes[nodeId].Height) - markerSize;
+            Y[2] = ((Cave.Layout.Nodes[nodeId].Row+1) * Cave.Layout.Nodes[nodeId].Height) - markerSize;
+            Y[3] = ((Cave.Layout.Nodes[nodeId].Row+1) * Cave.Layout.Nodes[nodeId].Height);
+            Angle = (Cave.Layout.Nodes[nodeId].Col*19.5) + 43;
         }
     }
 }

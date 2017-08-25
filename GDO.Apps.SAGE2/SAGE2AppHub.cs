@@ -10,7 +10,7 @@ using Newtonsoft.Json.Linq;
 namespace GDO.Apps.SAGE2
 {
     [Export(typeof(IAppHub))]
-    public class SAGE2AppHub : Hub, IBaseAppHub
+    public class SAGE2AppHub : GDOHub, IBaseAppHub
     {
         public string Name { get; set; } = "SAGE2";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.None;
@@ -18,7 +18,7 @@ namespace GDO.Apps.SAGE2
 
         public void JoinGroup(string groupId)
         {
-            Cave.Apps[Name].Hub.Clients = Clients;
+            Cave.Deployment.Apps[Name].Hub.Clients = Clients;
             Groups.Add(Context.ConnectionId, "" + groupId);
         }
         public void ExitGroup(string groupId)
