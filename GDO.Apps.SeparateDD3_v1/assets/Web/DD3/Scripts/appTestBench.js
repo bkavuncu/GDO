@@ -1895,7 +1895,229 @@
             };
         },
 
+        /*
+            In this example, the map of London is NOT distributed. Instead we distribute the stations and routes between them.
+            Each browser has its own counter which shows many of these lines, or routes are contained within its bounds.
+            The hope is that this example will show how lines (using midpoints in this case) can be properly distributed in DD3.
+        */
+
         '23': function () {
+            var svg = dd3.svgCanvas,
+            width = dd3.cave.svgWidth,
+            height = dd3.cave.svgHeight,
+            bwidth = dd3.browser.svgWidth,
+            bheight = dd3.browser.svgHeight,
+            p = dd3.position("svg", "local", "svg", "global"),
+            c = dd3.browser.column,
+            r = dd3.browser.row;
+
+            svg.append("rect")
+                .attr("x", p.left(0))
+                .attr("y", p.top(0))
+                .attr("width", bwidth)
+                .attr("height", bheight)
+                .style("fill", "#bbb");
+
+            var connectionCounter = svg.append("text")
+                .text("Connections: 0")
+                .attr("font-size", 12)
+                .attr("dominant-baseline", "text-before-edge")
+                .attr("transform", 'translate(' + [p.left(0) + 10, p.top(0) + 10] + ')');
+
+            var interchangeCounter = svg.append("text")
+                .text("Interchanges: 0")
+                .attr("font-size", 12)
+                .attr("dominant-baseline", "text-before-edge")
+                .attr("transform", 'translate(' + [p.left(0) + 10, p.top(0) + 30] + ')');
+
+            var stationCounter = svg.append("text")
+                .text("Stations: 0")
+                .attr("font-size", 12)
+                .attr("dominant-baseline", "text-before-edge")
+                .attr("transform", 'translate(' + [p.left(0) + 10, p.top(0) + 50] + ')');
+
+            var projection = d3.geoAlbers()
+                .scale(1)
+                .translate([0, 0])
+                .rotate([0, 0]);
+
+            d3.queue()
+                .defer(d3.json, "Scripts/london_tube/london_topo_wpc.json")
+                .await(ready);
+
+            function ready(error, london) {
+                if (error) throw error;
+
+                var merged = topojson.merge(london, london.objects.wpc.geometries);
+
+                var path = d3.geoPath()
+                    .projection(projection);
+
+                // Calculate bounds of London
+                var b = path.bounds(merged),
+                s = .85 / Math.max((b[1][0] - b[0][0]) / width, (b[1][1] - b[0][1]) / height),
+                t = [(width - s * (b[1][0] + b[0][0])) / 2, (height - s * (b[1][1] + b[0][1])) / 2];
+
+                projection
+                    .scale(s)
+                    .translate(t);
+
+                // Add outline of London
+                var outline = svg.append("g")
+                    .attr("class", "outline-group")
+                    .datum(merged)
+                    .append("path")
+                    .attr("d", path)
+                    .attr("fill", "grey")
+                    .attr("stroke", "#999")
+                    .style("fill-opacity", 0.1);
+
+            }
+
+            // Add a distributed group
+            var tubeMap = svg.append("g")
+                .attr("id", "dd3_map");
+
+            function addStations() {
+
+                var stationsById = {};
+                var routesById = {};
+
+                var stations, connections, routes;
+
+                // Load station, line, and route data
+                d3.queue()
+                    .defer(d3.csv, "Scripts/london_tube/stations.csv")
+                    .defer(d3.csv, "Scripts/london_tube/lines2.csv")
+                    .defer(d3.csv, "Scripts/london_tube/routes.csv")
+                    .await(displayStations);
+
+                function displayStations(error, s, c, r) {
+                    if (error) throw error;
+
+                    stations = s;
+                    connections = c;
+                    routes = r;
+
+                    // create an object index by station id
+                    stations.forEach(function(s) {
+                        stationsById[s.id] = s;
+                        s.conns = [];
+                        s.display_name = (s.display_name == 'NULL') ? null : s.display_name;
+                        s.rail = parseInt(s.rail,10);
+                        s.totalLines = parseInt(s.total_lines, 10);
+                        s.latitude = parseFloat(s.latitude);
+                        s.longitude = parseFloat(s.longitude);
+                    });
+
+                    // link lines
+                    connections.forEach(function(c) {
+                        c.station1 = stationsById[c.station1];
+                        c.station2 = stationsById[c.station2];
+                        c.station1.conns.push(c);
+                            c.station2.conns.push(c);
+                        c.time = parseInt(c.time, 10);
+                    });
+
+                    routes.forEach(function(r) {
+                        routesById[r.line] = r;
+                    });
+
+                    var linePath = d3.geoPath()
+                        .projection(projection);
+
+                    // An interesting observation here - when using SVG lines this does not work
+                    // x2,y2 break when lines are sent to other browsers. The solution is to use a path instead
+                    var routes = tubeMap.append("g")
+                        .attr("class", "routes")
+                    .selectAll("path")
+                        .data(connections.filter(function(a) {
+                            var coord1 = projection([a.station1.longitude, a.station1.latitude]);
+                            var coord2 = projection([a.station2.longitude, a.station2.latitude]);
+
+                            var midpointX = (coord1[0] + coord2[0]) / 2;
+                            var midpointY = (coord1[1] + coord2[1]) / 2;
+
+                            return (midpointX >= p.left(0)) &&
+                                (midpointX < p.left(bwidth)) &&
+                                (midpointY >= p.top(0)) &&
+                                (midpointY < p.top(bheight));
+                        }))
+                        .enter().append("path")
+                            .attr("class", "route")
+                            .attr("stroke", function(d) { return "#" + routesById[d.line].colour; })
+                            .attr("stroke-linecap", 'round')
+                            .attr("d", function(d) {
+                                return linePath({
+                                    type: "LineString", coordinates: [
+                                        [d.station1.longitude, d.station1.latitude],
+                                        [d.station2.longitude, d.station2.latitude]
+                                    ]
+                                });
+                            })
+                            .attr("stroke-width", 2);
+
+                    var tubeStations = tubeMap.append("g")
+                        .attr("class", "stations")
+                        .selectAll("circle")
+                        .data(stations
+                            .filter(function(a) {
+                                var coord = projection([a.longitude, a.latitude]);
+
+                                return (coord[0] >= p.left(0)) &&
+                                    (coord[0] < p.left(bwidth)) &&
+                                    (coord[1] >= p.top(0)) &&
+                                    (coord[1] < p.top(bheight));
+                            })
+                        )
+                        .enter().append("circle")
+                            .attr("class", "station")
+                            .attr("id", function(d) { return 'station'+d.id })
+                            .attr("cx", function(d) {
+                                return projection([d.longitude, d.latitude])[0];
+                            })
+                            .attr("cy", function(d) {
+                                return projection([d.longitude, d.latitude])[1];
+                            })
+                            .attr("r", 3)
+                            .attr("title", function(d) { return d.name });
+
+                    var interchanges = tubeMap.append("g")
+                        .attr("class", "changes")
+                        .selectAll("circle")
+                        .data(stations
+                            .filter(function(d) { return d.totalLines - d.rail > 1; })
+                            .filter(function(a) {
+                                var coord = projection([a.longitude, a.latitude]);
+
+                                return (coord[0] >= p.left(0)) &&
+                                    (coord[0] < p.left(bwidth)) &&
+                                    (coord[1] >= p.top(0)) &&
+                                    (coord[1] < p.top(bheight));
+                            })
+                        )
+                        .enter().append("circle")
+                            .attr("class", "interchange")
+                            .attr("cx", function(d) {
+                                return projection([d.longitude, d.latitude])[0];
+                            })
+                            .attr("cy", function(d) {
+                                return projection([d.longitude, d.latitude])[1];
+                            })
+                            .attr("r", 3);
+
+                    connectionCounter.text("Connections (Total): " + d3.selectAll(".route").size());
+                    interchangeCounter.text("Interchanges (Total): " + d3.selectAll(".interchange").size());
+                    stationCounter.text("Stations (Total): " + d3.selectAll(".station").size());
+                }
+            }
+
+            appTestBench.orderController.orders['addStations'] = function () {
+                addStations();
+            }
+        },
+
+        '24': function () {
             var svg = dd3.svgCanvas,
                 width = dd3.cave.svgWidth,
                 height = dd3.cave.svgHeight,

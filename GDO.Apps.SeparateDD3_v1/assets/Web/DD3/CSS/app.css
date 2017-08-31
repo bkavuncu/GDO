@@ -69,7 +69,19 @@ text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
 cursor: move;
 }
 
-/* globe example */
+/* London Tube Map */
+
+circle.interchange {
+    fill: white;
+    stroke: black;
+}
+
+circle.station {
+    fill: white;
+    stroke: grey;
+}
+
+/* Globe example */
 
 .outline {
     fill: white;

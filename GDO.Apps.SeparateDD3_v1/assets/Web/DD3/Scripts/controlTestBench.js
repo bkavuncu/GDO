@@ -715,6 +715,10 @@
             });
         },
 
+        /*
+            This example has minimal interaction, clicking the button will start the sorting animation.
+        */
+
         '22': function () {
             var sorted = false;
 
@@ -727,7 +731,13 @@
             });
         },
 
-        '23': function () {
+        '23': function() {
+            $('#addStations').click(function () {
+                controlTestBench.server.sendOrder(instanceId, controlTestBench.order("addStations", []), true);
+            });
+        },
+
+        '24': function () {
             controlTestBench.server.sendOrder(instanceId, controlTestBench.order("addGlobe", []), true);
 
             $("#move-globes").click(function () {
