@@ -580,7 +580,17 @@
 
         },
 
-        '99': function () {
+        ////////////////////////////////////////
+        /* The following examples are all new */
+        ////////////////////////////////////////
+
+        /*
+            This example makes use of a "second screen" allowing users
+            to interact with the distributed visualisation using a control panel
+            which itself uses D3.
+        */
+
+        '20': function () {
             var width = 960,
                 height = 500;
 
@@ -676,7 +686,6 @@
                 controlTestBench.server.sendOrder(instanceId, controlTestBench.order("createRect", [corners]), true);
             }
 
-            // Refactor duplication
             function brushedMove() {
                 var s = d3.event.selection,
                     c0 = s[0],
@@ -691,17 +700,9 @@
 
                 controlTestBench.server.sendOrder(instanceId, controlTestBench.order("moveRect", [corners]), true);
             }
-
-            $("#load-map").click(function () {
-                // controlTestBench.server.sendOrder(instanceId, controlTestBench.order("loadMap", [corners]), true);
-            });
-
-            $("#show-earthquakes").click(function () {
-                controlTestBench.server.sendOrder(instanceId, controlTestBench.order("showEarthquakes", []), true);
-            });
         },
 
-        '100': function () {
+        '22': function () {
             controlTestBench.server.sendOrder(instanceId, controlTestBench.order("addGlobe", []), true);
 
             $("#move-globes").click(function () {

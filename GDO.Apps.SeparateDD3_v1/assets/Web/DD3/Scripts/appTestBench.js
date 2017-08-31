@@ -1316,7 +1316,18 @@
 
         },
 
-        '99': function () {
+        ////////////////////////////////////////
+        /* The following examples are all new */
+        ////////////////////////////////////////
+
+        /*
+            This example makes use of a "second screen" allowing users
+            to interact with the distributed visualisation using a control panel
+            which itself uses D3. It is also an example of how maps can be distributed in
+            DD3.
+        */
+
+        '20': function () {
             var svg = dd3.svgCanvas,
                 width = dd3.cave.svgWidth,
                 height = dd3.cave.svgHeight,
@@ -1381,6 +1392,7 @@
 
             var dateObj = new Date();
 
+            // draws the background map
             function drawMap(mapData, corners) {
                 d3.json(mapData, function(error, world) {
                     if (error) throw error;
@@ -1388,6 +1400,7 @@
                     var land = topojson.feature(world, world.objects.land);
 
                     // calculate scale and translation to fit map to height/width
+                    // as fitSize is not implemened in DD3
                     var b = path.bounds(land),
                         s = .95 / Math.max((b[1][0] - b[0][0]) / width, (b[1][1] - b[0][1]) / height),
                         t = [(width - s * (b[1][0] + b[0][0])) / 2, (height - s * (b[1][1] + b[0][1])) / 2];
@@ -1398,6 +1411,7 @@
 
                     var countries = topojson.feature(world, world.objects.countries).features;
 
+                    // each browser only appends countries within its bounds
                     mapDistributed.append("g")
                         .selectAll(".boundary")
                         .data(countries.filter(function(a) {
@@ -1417,29 +1431,20 @@
                 });
             }
 
+            // create the selection rectangle
             var rectangle = mapDistributed.append("rect");
-
-            var rectText = mapDistributed.append("text")
-                .attr("y", 15)
-                .attr("font-size", 14)
-                .text("Earthquakes");
 
             function createRect(corners) {
                 rectangle = mapDistributed.select("rect")
                     .attr("width", width / 4)
                     .attr("height", height / 4)
                     .style("fill-opacity", 0.1)
-                    .style("stroke", "white")
-
-                rectText.attr("transform", "translate(" + [0, height / 4] + ")")
+                    .style("stroke", "white");
             }
 
             function moveRect(corners) {
                 var projectedCorners = [projection(corners[0]), projection(corners[1])];
                 rectangle.attr("transform", "translate(" + projectedCorners[0] + ")")
-                rectText.attr("transform", "translate(" + [projectedCorners[0][0], projectedCorners[1][1]] + ")");
-
-                var count = 0;
 
                 svg.selectAll(".earthquake")
                     .attr("r", function(d) {
@@ -1451,8 +1456,6 @@
                             cy > projectedCorners[0][1] &&
                             cy < projectedCorners[1][1])
                         {
-                            count++;
-
                             if(d.properties.mag < 0) {
                                 return 0.1;
                             } else {
@@ -1462,8 +1465,6 @@
                             return 0;
                         }
                     })
-
-                rectText.text("Earthquakes selected: " + count);
             }
 
             function addEarthquakes(earthquakeData, days, time) {
@@ -1512,63 +1513,9 @@
                             return projectCoordinate(d, 1);
                         })
                         .attr("r", 0)
-                        // .attr("r", function(d) {
-                        //     if(d.properties.mag < 0) {
-                        //         return 0.1;
-                        //     } else {
-                        //         return radius(d.properties.mag);
-                        //     }
-                        // })
                         .style("fill", function(d) {
                             return colour(d.properties.mag);
                         });
-
-                    // earthquakeCircles.append("circle")
-                    //     .attr("class", "pulse")
-                    //     .attr("cx", function(d) {
-                    //         return projectCoordinate(d, 0);
-                    //     })
-                    //     .attr("cy", function(d) {
-                    //         return projectCoordinate(d, 1);
-                    //     })
-                    //     .attr("r", 0)
-                    //     .style("fill", function(d) {
-                    //         return colour(d.properties.mag);
-                    //     });
-
-                    // earthquakeCircles.selectAll(".earthquake")
-                    //     .transition()
-                    //     .delay(function(d) {
-                    //         return d.delay;
-                    //     })
-                    //     .duration(1000)
-                    //     .attr("r", function(d) {
-                    //         if(d.properties.mag < 0) {
-                    //             return 0.1;
-                    //         } else {
-                    //             return radius(d.properties.mag);
-                    //         }
-                    //     })
-                    //     .on("end", function() {
-                    //         eqCounter++;
-                    //         localEarthquakeCounter.text("EQ:" + eqCounter);
-                    //     })
-
-                    // earthquakeCircles.selectAll(".pulse")
-                    //     .transition()
-                    //     .delay(function(d) {
-                    //         return d.delay;
-                    //     })
-                    //     .duration(2000)
-                    //     .attr("r", function(d) {
-                    //         if(d.properties.mag < 0) {
-                    //             return 0.1 * cfg.pulseSize;
-                    //         } else {
-                    //             return radius(d.properties.mag) * cfg.pulseSize;
-                    //         }
-                    //     })
-                    //     .style('opacity', 0)
-                    //     .remove();
 
                 });
             }
