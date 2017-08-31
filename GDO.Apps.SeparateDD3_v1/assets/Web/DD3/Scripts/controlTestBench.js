@@ -587,7 +587,7 @@
         /*
             This example makes use of a "second screen" allowing users
             to interact with the distributed visualisation using a control panel
-            which itself uses D3.
+            which itself uses D3. Move the rectangle to reveal data on the main screen.
         */
 
         '20': function () {
@@ -700,6 +700,19 @@
 
                 controlTestBench.server.sendOrder(instanceId, controlTestBench.order("moveRect", [corners]), true);
             }
+        },
+
+        /*
+            This example has minimal interaction, clicking the button will start the earthquake animations.
+        */
+
+        '21': function () {
+            // Initialise the map
+            controlTestBench.server.sendOrder(instanceId, controlTestBench.order("loadMap", []), true);
+
+            $("#show-earthquakes").click(function () {
+                controlTestBench.server.sendOrder(instanceId, controlTestBench.order("showEarthquakes", []), true);
+            });
         },
 
         '22': function () {
