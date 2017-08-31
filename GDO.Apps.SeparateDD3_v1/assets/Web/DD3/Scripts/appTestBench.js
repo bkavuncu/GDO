@@ -1750,7 +1750,152 @@
             };
         },
 
+        /*
+            This example is an example of a distributed bar chart. It can be sorted using the control panel.
+        */
+
         '22': function () {
+            var svg = dd3.svgCanvas,
+                width = dd3.cave.svgWidth,
+                height = dd3.cave.svgHeight,
+                bwidth = dd3.browser.svgWidth,
+                bheight = dd3.browser.svgHeight,
+                p = dd3.position("svg", "local", "svg", "global"),
+                c = dd3.browser.column,
+                r = dd3.browser.row;
+
+            var margin = {top: 100, right: 100, bottom: 100, left: 100};
+
+            var innerWidth = width - margin.left - margin.right,
+                innerHeight = height - margin.top - margin.bottom;
+
+            svg.append("rect")
+                .attr("x", p.left(0))
+                .attr("y", p.top(0))
+                .attr("width", bwidth)
+                .attr("height", bheight)
+                .style("fill", "#bbb");
+
+            var g = svg.append("g")
+                .attr("transform", "translate(" + [margin.left, margin.top] + ")");
+
+            var barCounter = svg.append("text")
+                .text("Bars: 0")
+                .attr("font-size", 18)
+                .attr("dominant-baseline", "text-before-edge")
+                .attr("transform", 'translate(' + [p.left(0) + 10, p.top(0) + 10] + ')');
+
+            var formatPercent = d3.format(".0%");
+
+            var x = d3.scaleBand()
+                .range([0, innerWidth])
+                .round(0.1)
+                .padding(0.2);
+
+            var y = d3.scaleLinear()
+                .range([innerHeight, 0]);
+
+            var yColour = d3.scaleSequential(d3.interpolateWarm);
+
+            var yAxis = d3.axisLeft()
+                .scale(y)
+                .tickFormat(formatPercent);
+
+            var savedData;
+
+            var barGroupDistributed = g.append("g").attr("id", "dd3_bgd");
+
+            function initBarChart() {
+                d3.tsv("https://gist.githubusercontent.com/mbostock/3885705/raw/d72997db0cde45e4136b95b0ca83483a6c428edf/data.tsv", function(error, data) {
+
+                    data.forEach(function(d) {
+                        d.frequency = +d.frequency;
+                    });
+
+                    savedData = data;
+
+                    x.domain(savedData.map(function(d) { return d.letter; }));
+                    y.domain([0, d3.max(data, function(d) { return d.frequency; })]);
+                    yColour.domain([d3.max(data, function(d) { return d.frequency; }), 0]);
+
+                    // As we are running this as a distributed function, we only want to append it to the first browser
+                    if (c == 0) {
+                        g.append("g")
+                            .attr("class", "y-axis")
+                            .call(yAxis);
+                    }
+
+                    // We distribute the bars across browsers, there is some overlap because we use margins
+                    barGroupDistributed.selectAll(".bar")
+                        .data(savedData.filter(function(a) {
+                            return (x(a.letter) >= p.left(0)) && (x(a.letter) < p.left(bwidth));
+                        }))
+                        .enter().append("rect")
+                        .attr("class", "bar")
+                        .attr("x", function(d) { return x(d.letter); })
+                        .attr("width", x.bandwidth())
+                        .attr("y", function(d) { return y(d.frequency); })
+                        .attr("height", function(d) { return innerHeight - y(d.frequency); })
+                        .style("fill", function(d) { return yColour(d.frequency)});
+
+                    barGroupDistributed.selectAll("text")
+                        .data(savedData.filter(function(a) {
+                            return (x(a.letter) >= p.left(0)) && (x(a.letter) < p.left(bwidth));
+                        }))
+                        .enter().append("text")
+                        .text(function(d) { return d.letter })
+                        .attr("text-anchor", "middle")
+                        .attr("font-size", "16px")
+                        .attr("x", function(d) { return x(d.letter) + x.bandwidth() / 2; })
+                        .attr("y", innerHeight)
+                        .attr("dy", -20);
+
+                    barCounter.text("Bars: " + d3.selectAll(".bar").size());
+                });
+            }
+
+            appTestBench.orderController.orders['startVis'] = function () {
+                initBarChart();
+            };
+
+            appTestBench.orderController.orders['sortBars'] = function (sorted) {
+
+                if (sorted) {
+                    savedData.sort(function(a, b) {
+                        if (a.letter < b.letter) return -1;
+                        if (a.letter > b.letter) return 1;
+                        return 0;
+                    });
+                } else {
+                    savedData.sort(function(a, b) {
+                        if (a.frequency > b.frequency) return -1;
+                        if (a.frequency < b.frequency) return 1;
+                        return 0;
+                    });
+                }
+
+                x.domain(savedData.map(function(d) { return d.letter; }));
+
+                barGroupDistributed.selectAll(".bar")
+                    .transition()
+                    .duration(750)
+                    .delay(function(d, i) { return i * 50; })
+                    .attr("x", function(d) { return x(d.letter); })
+                    .on("end", function() {
+                        barCounter.text("Bars: " + d3.selectAll(".bar").size());
+                    });
+
+                barGroupDistributed.selectAll("text")
+                    .transition()
+                    .duration(750)
+                    .delay(function(d, i) { return i * 50 })
+                    .attr("x", function(d) { return x(d.letter) + x.bandwidth() / 2; });
+
+
+            };
+        },
+
+        '23': function () {
             var svg = dd3.svgCanvas,
                 width = dd3.cave.svgWidth,
                 height = dd3.cave.svgHeight,

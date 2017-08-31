@@ -716,6 +716,18 @@
         },
 
         '22': function () {
+            var sorted = false;
+
+            controlTestBench.server.sendOrder(instanceId, controlTestBench.order("initVis", []), false);
+            controlTestBench.server.sendOrder(instanceId, controlTestBench.order("startVis", []), true);
+
+            $('#startAnim').click(function () {
+                controlTestBench.server.sendOrder(instanceId, controlTestBench.order("sortBars", [sorted]), true);
+                sorted = !sorted;
+            });
+        },
+
+        '23': function () {
             controlTestBench.server.sendOrder(instanceId, controlTestBench.order("addGlobe", []), true);
 
             $("#move-globes").click(function () {
