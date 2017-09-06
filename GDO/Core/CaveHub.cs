@@ -164,22 +164,16 @@ namespace GDO.Core
         /// <param name="p2pmode">The p2pmode.</param>
         public bool SetSectionP2PMode(int sectionId, int p2pmode)
         {
-            lock (Cave.ServerLock)
-            {
+            lock (Cave.ServerLock) {
                 List<Node> affectedNodes = Cave.Deployment.SetSectionP2PMode(sectionId, p2pmode);
-                if (affectedNodes.Capacity > 0)
-                {
-                    BroadcastSectionUpdate(sectionId);
-                    foreach (Node node in affectedNodes)
-                    {
-                        BroadcastNodeUpdate(node.Id);
-                    }
-                    return true;
+                if (!affectedNodes.Any()) return false;
+
+                BroadcastSectionUpdate(sectionId);
+                foreach (Node node in affectedNodes) {
+                    BroadcastNodeUpdate(node.Id);
                 }
-                else
-                {
-                    return false;
-                }
+                return true;
+
             }
         }
         /// <summary>

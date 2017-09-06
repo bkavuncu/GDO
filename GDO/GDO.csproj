@@ -1055,8 +1055,9 @@
     <Compile Include="Core\Cave.cs" />
     <Compile Include="Core\States\AppState.cs" />
     <Compile Include="Core\CaveState\CaveState.cs" />
-    <Compile Include="GDOController.cs" />
+    <Compile Include="Core\GDOController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Core\Scenarios\ScenarioRunner.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Utility\BoundaryCalculation.cs" />
     <Compile Include="Utility\Parameter.cs" />
@@ -1073,6 +1074,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Configurations\" />
+    <Folder Include="Core\Scripting\" />
     <Folder Include="Data\" />
   </ItemGroup>
   <ItemGroup>

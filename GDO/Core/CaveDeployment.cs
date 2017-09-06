@@ -11,6 +11,9 @@ using System.Linq;
 
 namespace GDO.Core
 {
+    /// <summary>
+    /// This class holds the state of the GDO - which sections, apps and instances are deployed.
+    /// </summary>
     public sealed class CaveDeployment
     {
         public enum AppTypes
