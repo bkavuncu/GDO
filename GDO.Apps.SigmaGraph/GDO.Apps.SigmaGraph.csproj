@@ -117,11 +117,63 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Configurations\SigmaGraph\Default.json" />
+    <Content Include="Scripts\Control\fieldOfViewCanvas.js" />
+    <Content Include="Scripts\Control\openseadragon\images\button_grouphover.png" />
+    <Content Include="Scripts\Control\openseadragon\images\button_hover.png" />
+    <Content Include="Scripts\Control\openseadragon\images\button_pressed.png" />
+    <Content Include="Scripts\Control\openseadragon\images\button_rest.png" />
+    <Content Include="Scripts\Control\openseadragon\images\fullpage_grouphover.png" />
+    <Content Include="Scripts\Control\openseadragon\images\fullpage_hover.png" />
+    <Content Include="Scripts\Control\openseadragon\images\fullpage_pressed.png" />
+    <Content Include="Scripts\Control\openseadragon\images\fullpage_rest.png" />
+    <Content Include="Scripts\Control\openseadragon\images\home_grouphover.png" />
+    <Content Include="Scripts\Control\openseadragon\images\home_hover.png" />
+    <Content Include="Scripts\Control\openseadragon\images\home_pressed.png" />
+    <Content Include="Scripts\Control\openseadragon\images\home_rest.png" />
+    <Content Include="Scripts\Control\openseadragon\images\next_grouphover.png" />
+    <Content Include="Scripts\Control\openseadragon\images\next_hover.png" />
+    <Content Include="Scripts\Control\openseadragon\images\next_pressed.png" />
+    <Content Include="Scripts\Control\openseadragon\images\next_rest.png" />
+    <Content Include="Scripts\Control\openseadragon\images\previous_grouphover.png" />
+    <Content Include="Scripts\Control\openseadragon\images\previous_hover.png" />
+    <Content Include="Scripts\Control\openseadragon\images\previous_pressed.png" />
+    <Content Include="Scripts\Control\openseadragon\images\previous_rest.png" />
+    <Content Include="Scripts\Control\openseadragon\images\rotateleft_grouphover.png" />
+    <Content Include="Scripts\Control\openseadragon\images\rotateleft_hover.png" />
+    <Content Include="Scripts\Control\openseadragon\images\rotateleft_pressed.png" />
+    <Content Include="Scripts\Control\openseadragon\images\rotateleft_rest.png" />
+    <Content Include="Scripts\Control\openseadragon\images\rotateright_grouphover.png" />
+    <Content Include="Scripts\Control\openseadragon\images\rotateright_hover.png" />
+    <Content Include="Scripts\Control\openseadragon\images\rotateright_pressed.png" />
+    <Content Include="Scripts\Control\openseadragon\images\rotateright_rest.png" />
+    <Content Include="Scripts\Control\openseadragon\images\zoomin_grouphover.png" />
+    <Content Include="Scripts\Control\openseadragon\images\zoomin_hover.png" />
+    <Content Include="Scripts\Control\openseadragon\images\zoomin_pressed.png" />
+    <Content Include="Scripts\Control\openseadragon\images\zoomin_rest.png" />
+    <Content Include="Scripts\Control\openseadragon\images\zoomout_grouphover.png" />
+    <Content Include="Scripts\Control\openseadragon\images\zoomout_hover.png" />
+    <Content Include="Scripts\Control\openseadragon\images\zoomout_pressed.png" />
+    <Content Include="Scripts\Control\openseadragon\images\zoomout_rest.png" />
+    <Content Include="Scripts\Control\openseadragon\openseadragon.min.js" />
+    <Content Include="Scripts\Control\pinch-zoom-canvas.js" />
+    <Content Include="Scripts\SigmaGraph\gdo.apps.SigmaGraph.hammer.min.js" />
     <Content Include="Scripts\SigmaGraph\gdo.apps.SigmaGraph.initializeGlobals.js" />
     <Content Include="Scripts\SigmaGraph\gdo.apps.SigmaGraph.updateModel.js" />
+    <Content Include="Scripts\SigmaGraph\sigma\LICENSE.txt" />
+    <Content Include="Scripts\SigmaGraph\sigma\plugins\sigma.exporters.svg.min.js" />
+    <Content Include="Scripts\SigmaGraph\sigma\plugins\sigma.layout.forceAtlas2.min.js" />
+    <Content Include="Scripts\SigmaGraph\sigma\plugins\sigma.layout.noverlap.min.js" />
+    <Content Include="Scripts\SigmaGraph\sigma\plugins\sigma.neo4j.cypher.min.js" />
+    <Content Include="Scripts\SigmaGraph\sigma\plugins\sigma.parsers.gexf.min.js" />
+    <Content Include="Scripts\SigmaGraph\sigma\plugins\sigma.parsers.json.min.js" />
+    <Content Include="Scripts\SigmaGraph\sigma\plugins\sigma.pathfinding.astar.min.js" />
+    <Content Include="Scripts\SigmaGraph\sigma\sigma.require.js" />
+    <Content Include="Web\SigmaGraph\images\06c774b45.jpg" />
     <Content Include="Web\SigmaGraph\scripts\control.js" />
     <Content Include="Web\SigmaGraph\styles\appStyle.css" />
     <Content Include="Web\SigmaGraph\styles\controlStyle.css" />
+    <Content Include="README.md" />
+    <Content Include="Scripts\Control\openseadragon\openseadragon.min.js.map" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -132,6 +184,12 @@
     <Content Include="Scripts\SigmaGraph\gdo.apps.SigmaGraph.changeFieldOfView.js" />
     <Content Include="Web\SigmaGraph\graphmls\oneDiagonalEdge.graphml" />
     <Content Include="Web\SigmaGraph\graphmls\fourEdges.graphml" />
+    <Content Include="Web\SigmaGraph\graphmls\euro.graphml" />
+    <Content Include="Web\SigmaGraph\graphmls\facebook_1912.json" />
+    <Content Include="Web\SigmaGraph\graphmls\fiveEdges.graphml" />
+    <Content Include="Web\SigmaGraph\graphmls\marvel_heroes.graphml" />
+    <Content Include="Web\SigmaGraph\graphmls\N22963E48436.graphml" />
+    <Content Include="Web\SigmaGraph\graphmls\sample.graphml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Scripts\SigmaGraph\gdo.apps.SigmaGraph.js" />
@@ -150,6 +208,7 @@
     <Compile Include="Domain\SigmaGraphQuadProcesor.cs" />
     <Compile Include="HTTPServer\ImageModel.cs" />
     <Compile Include="HTTPServer\PartialGraphImagesController.cs" />
+    <Compile Include="PartitionedGraphState.cs" />
     <Compile Include="QuadTree\AConcurrentQuadTreeFactory.cs" />
     <Compile Include="QuadTree\ConcurrentQuadTreeFactory.cs" />
     <Compile Include="QuadTree\IQuadable.cs" />

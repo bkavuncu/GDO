@@ -994,7 +994,9 @@ gdo.net.initModules = function () {
         if (!gdo.net.module.hasOwnProperty((index))) {
             continue;
         }
-        gdo.net.module[index].initModule();
+        if (typeof gdo.net.module[index].initModule === "function") {
+            gdo.net.module[index].initModule();
+        }
     }
 }
 
