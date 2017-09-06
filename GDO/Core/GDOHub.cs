@@ -4,6 +4,7 @@ namespace GDO.Core
 {
     public class GDOHub : Hub {
         /// <summary>
+        /// The root which all Hubs in the GDO framework should inherit from. 
         /// Sets the state from another hub, this is a hack to get around problems with SignalR / AutoFac integration 
         /// </summary>
         /// <param name="other">The other.</param>

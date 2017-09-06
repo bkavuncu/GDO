@@ -11,6 +11,12 @@ using Newtonsoft.Json;
 
 namespace GDO.Core
 {
+    /// <summary>
+    /// The root hub for controlling the GDO - deploying sections, apps ect. 
+    /// communicated with from the .js control panel 
+    /// </summary>
+    /// <seealso cref="Microsoft.AspNet.SignalR.Hub" />
+    /// <seealso cref="GDO.Core.Apps.IHubLog" />
     public class CaveHub : Hub, IHubLog
     {
         public ILog Log { get; set; } = LogManager.GetLogger(typeof(CaveHub));
@@ -103,23 +109,24 @@ namespace GDO.Core
         {
             lock (Cave.ServerLock)
             {
+                // deploy the section
                 List<Node> deployedNodes = Cave.Deployment.CreateSection(colStart, rowStart, colEnd, rowEnd);
-                if (deployedNodes.Capacity > 0)
+
+                if (!deployedNodes.Any()) return false;
+
+                // add the nodes to the signal R connection group for the new section
+                foreach (Node node in deployedNodes)
                 {
-                    foreach (Node node in deployedNodes)
+                    if (node.ConnectionId != null)
                     {
-                        if (node.ConnectionId != null)
-                        {
-                            Groups.Add(node.ConnectionId, node.SectionId.ToString());
-                        }
+                        Groups.Add(node.ConnectionId, node.SectionId.ToString());
                     }
-                    BroadcastSectionUpdate(Cave.GetSectionId(colStart, rowStart));
-                    return true;
                 }
-                else
-                {
-                    return false;
-                }
+
+                // broadcast an update saying that connection is updated. 
+                BroadcastSectionUpdate(Cave.GetSectionId(colStart, rowStart));
+
+                return true;
             }
         }
 
@@ -130,25 +137,23 @@ namespace GDO.Core
         /// <returns></returns>
         public bool CloseSection(int sectionId)
         {
-            lock (Cave.ServerLock)
-            {
+            lock (Cave.ServerLock) {
+                // close the section
                 List<Node> freedNodes = Cave.Deployment.CloseSection(sectionId);
-                if (freedNodes.Capacity > 0)
-                {
-                    foreach (Node node in freedNodes)
-                    {
-                        if (node.ConnectionId != null)
-                        {
-                            Groups.Remove(node.ConnectionId, node.SectionId.ToString());
-                        }
+
+                if (!freedNodes.Any()) return false;
+
+                // remove them from the SignalR group
+                foreach (Node node in freedNodes) {
+                    if (node.ConnectionId != null) {
+                        Groups.Remove(node.ConnectionId, node.SectionId.ToString());
                     }
-                    BroadcastSectionUpdate(sectionId);
-                    return true;
                 }
-                else
-                {
-                    return false;
-                }
+                
+                // send an update...
+                BroadcastSectionUpdate(sectionId);
+                return true;
+
             }
         }
 

@@ -6,7 +6,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using GDO.Core.Apps;
-using GDO.Core.Modules;
 using GDO.Core.Scenarios;
 using GDO.Core.States;
 using GDO.Utility;
@@ -18,7 +17,7 @@ namespace GDO.Core
 {
     // TODO also check how static controls are recycled during the asp.net lifecycle 
     /// <summary>
-    /// Cave Object Class
+    /// Cave Object Class this stores all of the information about the deployment
     /// </summary>
     public sealed class Cave
     {
@@ -58,7 +57,7 @@ namespace GDO.Core
         {
             //CurrentHeartbeat = 0;
             //MaximumHeartbeat = 1000000;
-            MaintenanceMode = true;
+            MaintenanceMode = false;//todo note that you can define default maintainence mode here 
             BlankMode = false;
             
             Layout = new CaveLayout();

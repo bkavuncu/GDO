@@ -6,10 +6,12 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 
 namespace GDO.Core
 {
+    /// <summary>
+    /// Cave Layout class - contains a list of which nodes and modules are deployed
+    /// </summary>
     public sealed class CaveLayout
     {
         public ConcurrentDictionary<string, IModule> Modules { get; set; }
