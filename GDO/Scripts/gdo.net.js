@@ -136,12 +136,9 @@ $(function() {
         gdo.consoleOut('.NET', 1, 'Reload Node IFrame');
         gdo.reloadNodeIFrame();
     }
-    $.connection.caveHub.client.receiveCaveState = function (caveState, id, exists) {
-        if (exists) {
-            gdo.net.processState(JSON.parse(caveState), id, exists);
-        } else {
-            gdo.net.processState("", id, exists);
-        }
+    $.connection.caveHub.client.receiveCaveState = function (stateName, exists) {
+        gdo.net.processState(stateName, exists);
+        
         gdo.updateSelf();
     }
     $.connection.caveHub.client.receiveCaveUpdate = function (cols,rows, maintenanceMode,blankMode,p2pmode,nodeMap,neighbourMap,moduleList,appList,nodes,sections,modules,apps,instances,states,scenarios) {
@@ -189,8 +186,7 @@ $(function() {
         }
         for (var i = 0; i < states.length; i++) {
             if (states[i] != null) {
-                var state = JSON.parse(states[i]);
-                gdo.net.processState(state, i, true);
+                gdo.net.processState(states[i], true);
             }
         }
         for (var i = 0; i < scenarios.length; i++) {
@@ -656,7 +652,7 @@ gdo.net.isNodeInitialized = function () {
 }
 
 gdo.net.initializeArrays = function (num) {
-    gdo.net.state = new Array(num);
+    gdo.net.state = {};
     gdo.net.scenario = new Array(num);
     gdo.net.node = new Array(num);
     for (var i = 0; i < num; i++) {
@@ -956,16 +952,14 @@ gdo.net.processInstance = function (exists, id, instance) {
 
 }
 
-gdo.net.processState = function (state, id, exists) {
-    gdo.consoleOut('.NET', 2, 'Updating state: ' + state.Id);
+//goal here is to keep a simple list of state names ... 
+gdo.net.processState = function (stateName, exists) {
+    gdo.consoleOut('.NET', 2, 'Updating state: ' + stateName+' which exists='+exists);
+
     if (exists) {
-        gdo.consoleOut('.NET', 1, 'Received Cave State ' + id + ' (exists)');
-        gdo.net.state[id] = {}
-        gdo.net.state[id].Id = state.Id;
-        gdo.net.state[id].Name = state.Name;
+        gdo.net.state[stateName] = stateName;
     } else {
-        gdo.consoleOut('.NET', 1, 'Received Cave State ' + id + ' (does not exist)');
-        gdo.net.state[id] = null;
+        delete gdo.net.state[stateName];
     }
 }
 

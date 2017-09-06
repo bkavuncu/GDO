@@ -132,7 +132,9 @@ namespace GDO.Utility
             try
             {
                 string path = Directory.GetCurrentDirectory() + @"\\" + folderName + "\\" + fileName + ".json";
-                File.Delete(path);
+                if (File.Exists(path)) {
+                    File.Delete(path);
+                }
             }
             catch (Exception e)
             {

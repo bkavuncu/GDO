@@ -1077,6 +1077,7 @@
     <Folder Include="Configurations\" />
     <Folder Include="Core\Scripting\" />
     <Folder Include="Data\" />
+    <Folder Include="States\" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

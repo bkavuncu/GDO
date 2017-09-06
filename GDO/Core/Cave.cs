@@ -40,7 +40,7 @@ namespace GDO.Core
         public static bool InitializedSync { get; set; }
         public static CaveLayout Layout { get; set; }
         public static CaveDeployment Deployment { get; set; }
-        public static ConcurrentDictionary<int, State> States { get; set; }
+        public static ConcurrentDictionary<string, State> States { get; set; }
         public static ConcurrentDictionary<string, Scenario> Scenarios { get; set; }
 
         public enum P2PModes
@@ -62,7 +62,7 @@ namespace GDO.Core
             
             Layout = new CaveLayout();
             Deployment = new CaveDeployment();
-            States = new ConcurrentDictionary<int, State>();
+            States = new ConcurrentDictionary<string, State>();
             Scenarios = new ConcurrentDictionary<string, Scenario>();
             Cols = int.Parse(ConfigurationManager.AppSettings["numCols"]);
             Rows = int.Parse(ConfigurationManager.AppSettings["numRows"]);
@@ -93,6 +93,7 @@ namespace GDO.Core
             }
             Deployment.CreateSection(0, 0, Cols - 1, Rows - 1); //Free Nodes Pool , id=0
             LoadScenarios();
+            LoadStates();
             Log.Info("Created new CAVE object");
         }
 
@@ -127,7 +128,7 @@ namespace GDO.Core
             }
         }
 
-        public static bool ContainsState(int stateId)
+        public static bool ContainsState(string stateId)
         {
             return States.ContainsKey(stateId);
         }
@@ -233,6 +234,29 @@ namespace GDO.Core
             return neighbours;
         }
 
+        public static bool LoadStates() {
+            try {
+                Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
+                String path = Directory.GetCurrentDirectory() + @"\States\";  // TODO using server.map path
+                if (Directory.Exists(path)) {
+                    string[] filePaths = Directory.GetFiles(path, "*.json", SearchOption.AllDirectories);
+                    
+                    foreach (string filePath in filePaths) {
+                        State state = Utilities.LoadJsonFile<State>(filePath);
+                        if (state != null) {
+                            Log.Info("Found scenario called " + state.Name + " about to load");
+                            States.TryAdd(state.Name, state);
+                        }
+                    }
+                    return true;
+                }
+                return false;
+            } catch (Exception e) {
+                Log.Debug("failed to load scenarios ", e);
+                return false;
+            }
+        }
+
         public static bool LoadScenarios()
         {
             try
@@ -242,7 +266,7 @@ namespace GDO.Core
                 if (Directory.Exists(path))
                 {
                     string[] filePaths = Directory.GetFiles(path, "*.json", SearchOption.AllDirectories);
-                    //todo comment why the@ is needed
+                    
                     foreach (string filePath in filePaths)
                     {
                         Scenario scenario = Utilities.LoadJsonFile<Scenario>(filePath);
@@ -410,28 +434,51 @@ namespace GDO.Core
             return Deployment.GetAppName(instanceId);
         }
 
-        public static int SaveCaveState(string name)
+        #region CaveState
+
+        public static bool SaveCaveState(string name)
         {
-            Log.Info("Saving CAVE STATE "+name);
-            int slot = Utilities.GetAvailableSlot<State>(States);
-            State caveState = new State(slot, name);
-            States.TryAdd(slot, caveState);
-            //TODO Add support composite app
-            foreach(KeyValuePair<int,IAppInstance> instaKeyValuePair in Deployment.Instances)
-            {
+            Log.Info("Saving CAVE STATE " + name);
+
+            //create the CaveState
+            State caveState = new State(name);
+            foreach (KeyValuePair<int, IAppInstance> instaKeyValuePair in Deployment.Instances) {
                 IBaseAppInstance instance = (IBaseAppInstance)instaKeyValuePair.Value;
                 Section section = instance.Section;
                 AppState appState = new AppState(section.Col, section.Row, section.Cols, section.Rows, instance.App.Name, instance.Configuration.Name);
                 caveState.States.Add(appState);
             }
-            return slot;
+
+            // store it
+            Cave.States[name] = caveState;
+
+            // then save it 
+
+            try {
+                if (ContainsState(name)) {
+                    Utilities.RemoveJsonFile(name, "states");
+                }
+                Utilities.SaveJsonFile<State>(name,"states",caveState);
+                return true;
+
+            } catch (Exception e) {
+                Log.Error("failed to delete scenario ", e);
+                return false; 
+            }
+
         }
 
-        public static void RemoveCaveState(int id)
+        public static bool RemoveCaveState(string name)
         {
             State caveState;
-            States.TryRemove(id, out caveState);
+            if (States.TryRemove(name, out caveState)) {
+                Utilities.RemoveJsonFile(name, "states");
+                return true;
+            }
+            return false;
         }
+
+        #endregion
 
         public static void WaitReady()//TODO delete this???
         {
