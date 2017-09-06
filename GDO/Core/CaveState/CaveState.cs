@@ -6,6 +6,10 @@ using Newtonsoft.Json;
 
 namespace GDO.Core.CaveState
 {
+    /// <summary>
+    /// This is the code from the Twitter App which replicates the state of the observatory and enables it to be loaded... 
+    /// this is done by roundtripping between the .js and the c#hub method. 
+    /// </summary>
     public class CaveState
     {
         [JsonProperty(PropertyName = "nodes")]
