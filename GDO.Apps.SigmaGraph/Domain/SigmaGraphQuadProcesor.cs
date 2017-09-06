@@ -18,18 +18,23 @@ namespace GDO.Apps.SigmaGraph.Domain {
         /// <returns>the quadtree representing the graph</returns>
         public static QuadTree<GraphObject> ProcessGraph(GraphInfo graph, string outputfolder) {
             // Create the quadtree factory
-            // TODO this hard limit is questionable and may cause issues if there exists a node with valency > limit 
-            //      (or nodes very close with total valency > limit) 
+            // TODO this hard limit onmaxobjectPerBag  is questionable and may cause issues if there exists a node with valency > limit 
+            //      (or nodes very close spatially with total valency > limit) 
+            int maxobjsPerBag = graph.Nodes.Count + graph.Links.Count / 64;
+            if (maxobjsPerBag < 10000) {
+                maxobjsPerBag = 10000;
+                
+            }
             var factory =
                 new ConcurrentQuadTreeFactory<GraphObject>(new QuadCentroid(graph.RectDim.Width, graph.RectDim.Height),
-                    maxbags: 1, maxobjectPerBag: 10000);
+                    maxbags: 1, maxobjectPerBag: maxobjsPerBag);
 
             // Add the graph objects to the quadtree factory
             List<IEnumerable<List<GraphObject>>> addData = new List<IEnumerable<List<GraphObject>>>() {
                 graph.Nodes.BatchListCast<GraphNode, GraphObject>(500),
                 graph.Links.BatchListCast<GraphLink, GraphObject>(1000)
             };
-            // TODO not sure if these numbers of threads is optimal
+            // TODO not sure if these numbers of threads is optimal - will depend upon server
             factory.ConcurrentAdd(addData, workthreads: 4, reworkthreads: 4);
             factory.QuadTree.ShedAllObjects();
 

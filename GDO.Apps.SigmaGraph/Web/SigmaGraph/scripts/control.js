@@ -154,8 +154,9 @@ $(window).ready(function () {
     }
 
     function distance(points) {
-        return Math.sqrt((points[0].x - points[1].x) ** 2 +
-            (points[0].y - points[1].y) ** 2);
+        return Math.sqrt(
+            Math.pow((points[0].x - points[1].x), 2) +
+            Math.pow((points[0].y - points[1].y), 2));
     }
 
     function plotImages() {

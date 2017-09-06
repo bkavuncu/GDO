@@ -13,5 +13,8 @@ This distributed graph visualisation app is integrated with Gephi and supports v
 You can interact with the graph through touch by panning (to pan) or pinching (to zoom) in the white canvas shown in the control UI. 
 To show the graph in the white canvas, press the "Show Graph (May take a while...)" button.
 
-*Note that if you use the "Show Graph (May take a while...)" functionality, other simultaneous instances of SigmaGraph may not work properly.
-*Using "Show Graph (May take a while...)" with all $$64$$ GDO nodes will crash the control UI. It has only been tested with $$\leq 4$$ nodes.
+##known issues:
+* supports maximum valency of a node at 10,000 - can be changed see SigmaGraphQuadProcesor.cs
+* Note that if you use the "Show Graph (May take a while...)" functionality, other simultaneous instances of SigmaGraph may not work properly. 
+* Using "Show Graph (May take a while...)" with all $$64$$ GDO nodes will crash the control UI. It has only been tested with $$\leq 4$$ nodes.
+* You may configure the number of threads for quad generation in SigmaGraphQuadProcesor.cs 

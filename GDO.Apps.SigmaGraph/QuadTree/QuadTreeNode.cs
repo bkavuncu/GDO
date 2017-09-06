@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using GDO.Apps.SigmaGraph.Domain;
 
 namespace GDO.Apps.SigmaGraph.QuadTree {
     /// <summary>
@@ -16,7 +14,7 @@ namespace GDO.Apps.SigmaGraph.QuadTree {
         public string CreationTime { get; set; }
         public QuadCentroid Centroid { get; set; }
         public QuadTreeNode<T>[] SubQuads { get; set; }
-        //internal QuadTreeNode<T>[] SubQuads { get; set; }
+        
         [NonSerialized]
         public readonly ConcurrentBag<T> ObjectsInside = new ConcurrentBag<T>();
         [NonSerialized]
@@ -36,18 +34,8 @@ namespace GDO.Apps.SigmaGraph.QuadTree {
             this.TreeId = treeId;
         }
 
-        public List<QuadTreeNode<T>> ReturnMatchingQuadrants(T o) {//todo we need to change IQuadable to have methods to be able to work out which quad its in 
-            //todo  we need to change this method to support returning  multiple quads for the edges which will lie in many quads. 
-
+        public List<QuadTreeNode<T>> ReturnMatchingQuadrants(T o) {
             return this.SubQuads.Where(o.IsWithin).ToList();
-
-         /*   double xCentroid = this.centroid.xCentroid;
-            double yCentroid = this.centroid.yCentroid;
-            bool infMiddleX = x < xCentroid;
-            bool infMiddleY = y < yCentroid;
-            int indexOfPointed;
-            if (infMiddleX) { indexOfPointed = infMiddleY ? 0 : 1; } else { indexOfPointed = infMiddleY ? 2 : 3; }
-            return this.GetSubQuads(indexOfPointed);*/
         }
 
         //TODO  rewriting this co-recursive function 
@@ -57,11 +45,13 @@ namespace GDO.Apps.SigmaGraph.QuadTree {
         }
 
         private static List<double> ComputeCorners(double xCentroid, double ycentroid, double xWidth, double yWidth) {
-            List<double> cornersCamera = new List<double>();
-            cornersCamera.Add(xCentroid - xWidth / 2); // xMin
-            cornersCamera.Add(xCentroid + xWidth / 2); // xMax
-            cornersCamera.Add(ycentroid - yWidth / 2); // yMin
-            cornersCamera.Add(ycentroid + yWidth / 2); // yMax
+            List<double> cornersCamera = new List<double> {
+                xCentroid - xWidth / 2, // xMin
+                xCentroid + xWidth / 2, // xMax
+                ycentroid - yWidth / 2, // yMin
+                ycentroid + yWidth / 2  // yMax
+            };
+            
             return cornersCamera;
         }
 
@@ -169,9 +159,7 @@ namespace GDO.Apps.SigmaGraph.QuadTree {
                 }
             }
         }
-
-
-
+        
         public void ReturnLeafsNames(double raVal, double decVal, double fovValX,double fovValY, ref string listResult)
         {
             if (this.IsLeaf())
@@ -183,7 +171,6 @@ namespace GDO.Apps.SigmaGraph.QuadTree {
             // Else, return the quadrants that match
             else
             {
-                // todo 
                 QuadTreeNode<T>[] subQuads = ReturnMatchingQuadrants(raVal, decVal, fovValX,fovValY);
                 foreach (var subQuad in subQuads)
                 {

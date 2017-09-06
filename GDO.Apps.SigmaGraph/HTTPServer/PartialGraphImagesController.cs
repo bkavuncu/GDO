@@ -20,8 +20,9 @@ namespace GDO.Apps.SigmaGraph.HTTPServer
             string imagePathForServer = "Web/SigmaGraph/images/" + model.Name;
             string imagePathForClient = "SigmaGraph/images/" + model.Name;
             var clients = Cave.Deployment.Apps["SigmaGraph"].Hub.Clients;
-            while (true)
-            {
+            int retries = 0;
+            while (retries<5) {
+                retries++;
                 try
                 {
                     File.WriteAllText(imagePathForServer, model.Image);
@@ -30,7 +31,7 @@ namespace GDO.Apps.SigmaGraph.HTTPServer
                 }
                 catch (IOException)
                 {
-                    Thread.Sleep(100);
+                    Thread.Sleep(100);// back off for file locks 
                 }
             }
         }
