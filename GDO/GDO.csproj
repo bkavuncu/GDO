@@ -1019,6 +1019,7 @@
     <Content Include="Scripts\jquery.signalR-2.2.1.min.js" />
     <Content Include="Scripts\peer.js" />
     <Content Include="Scripts\rangeslider.js" />
+    <None Include="States\Sample.json" />
     <Content Include="Web\Nodes.cshtml" />
     <Content Include="Web\Sections.cshtml" />
     <Content Include="Web\States.cshtml" />
@@ -1077,7 +1078,6 @@
     <Folder Include="Configurations\" />
     <Folder Include="Core\Scripting\" />
     <Folder Include="Data\" />
-    <Folder Include="States\" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
