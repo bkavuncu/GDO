@@ -1,4 +1,6 @@
-﻿namespace GDO.Core.Apps
+﻿using System;
+
+namespace GDO.Core.Apps
 {
     /// <summary>
     ///  App Configuration Class
@@ -15,6 +17,27 @@
             this.Name = name;
             this.Json = json;
             IntegrationMode = this.Name == "Integration Mode";
+        }
+
+        public T GetProperty<T>(string key)
+        {
+            return (T)Convert.ChangeType((object)Json.SelectToken(key) ?? default(T), typeof(T));
+        }
+
+        public void SetProperty<T>(string key, T value)
+        {
+            if (value != null)
+            {
+                if (GetProperty<T>(key) != null)
+                {
+                    Json.Remove(key);
+                }
+                Json.Add(new Newtonsoft.Json.Linq.JProperty(key, value));
+            }
+            else
+            {
+                Json.Remove(key);
+            }
         }
     }
 }
