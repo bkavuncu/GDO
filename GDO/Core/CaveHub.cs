@@ -222,6 +222,28 @@ namespace GDO.Core
             }
         }
 
+        /// <summary>
+        /// Deploys the application.
+        /// </summary>
+        /// <param name="sectionId">The section identifier.</param>
+        /// <param name="appName">Name of the application.</param>
+        /// <param name="config">The configuration.</param>
+        /// <returns></returns>
+        private int DeployBaseApp(int sectionId, string appName, AppConfiguration config)
+        {
+            lock (Cave.ServerLock)
+            {
+                int instanceId = Cave.Deployment.CreateBaseAppInstance(sectionId, appName, config);
+                Cave.Deployment.SetSectionP2PMode(sectionId, Cave.Deployment.Apps[appName].P2PMode);
+                if (instanceId >= 0)
+                {
+                    string serializedInstance = GetInstanceUpdate(instanceId);
+                    BroadcastAppUpdate(true, instanceId, serializedInstance);
+                }
+                return instanceId;
+            }
+        }
+
         public int DeployChildApp(int sectionId, string appName, string configName, int parentId)
         {
             lock (Cave.ServerLock)
@@ -810,7 +832,7 @@ namespace GDO.Core
                     CreateSection(appState.Col, appState.Row, (appState.Col + appState.Cols -1),
                         (appState.Row + appState.Rows -1));
                     Cave.GetSectionId(appState.Col, appState.Row);
-                    DeployBaseApp(Cave.GetSectionId(appState.Col, appState.Row), appState.AppName, appState.ConfigName);
+                    DeployBaseApp(Cave.GetSectionId(appState.Col, appState.Row), appState.AppName, appState.Config);
                 }
             }
 

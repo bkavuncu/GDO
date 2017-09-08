@@ -445,7 +445,7 @@ namespace GDO.Core
             foreach (KeyValuePair<int, IAppInstance> instaKeyValuePair in Deployment.Instances) {
                 IBaseAppInstance instance = (IBaseAppInstance)instaKeyValuePair.Value;
                 Section section = instance.Section;
-                AppState appState = new AppState(section.Col, section.Row, section.Cols, section.Rows, instance.App.Name, instance.Configuration.Name);
+                AppState appState = new AppState(section.Col, section.Row, section.Cols, section.Rows, instance.App.Name, instance.Configuration);
                 caveState.States.Add(appState);
             }
 

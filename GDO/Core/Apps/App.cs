@@ -40,19 +40,26 @@ namespace GDO.Core.Apps
             Instances = new ConcurrentDictionary<int, IAppInstance>();
         }
 
-        public int CreateAppInstance(string configName, int sectionId, bool integrationMode, int parentId) {
-            if (!Configurations.ContainsKey(configName)) {
+        public int CreateAppInstance(dynamic config, int sectionId, bool integrationMode, int parentId) {
+            if (!(config is AppConfiguration) && !Configurations.ContainsKey(config)) {
                 return -1;
             }
 
             int instanceId = Utilities.GetAvailableSlot(Cave.Deployment.Instances);
-            IBaseAppInstance instance = (IBaseAppInstance) Activator.CreateInstance(AppClassType, new object[0]);
+            IBaseAppInstance instance = (IBaseAppInstance)Activator.CreateInstance(AppClassType, new object[0]);
             AppConfiguration conf;
             Cave.Deployment.Sections[sectionId].CalculateDimensions();
-            Configurations.TryGetValue(configName, out conf);
-            if (conf==null) {
-                Log.Error("Failed to find config name "+configName);
-                return -1;
+            if (config is AppConfiguration)
+            {
+                conf = config;
+            }
+            else
+            {
+                Configurations.TryGetValue(config, out conf);
+                if (conf == null) {
+                    Log.Error("Failed to find config name " + config);
+                    return -1;
+                }
             }
             instance.Id = instanceId;
             instance.App = this;
@@ -69,7 +76,7 @@ namespace GDO.Core.Apps
             instance.Init();
             Instances.TryAdd(instanceId,instance);
             Cave.Deployment.Instances.TryAdd(instanceId,instance);
-            Log.Info("created app "+Name+ " instance "+configName);
+            Log.Info("created app "+Name+ " instance "+(config is string ? config : config.Name));
             return instanceId;
         }
 

@@ -204,14 +204,16 @@ namespace GDO.Core
             return appList;
         }
 
-        public int CreateBaseAppInstance(int sectionId, string appName, string configName)
+        public int CreateBaseAppInstance(int sectionId, string appName, dynamic config)
         {
+            string configName = config is string ? config : config.Name;
+
             Log.Info($"Creating App instance {appName} {configName} on section {sectionId}");
             if (!Sections[sectionId].IsDeployed() && Apps.ContainsKey(appName))
             {
-                if (Apps[appName].Configurations.ContainsKey(configName))
+                if (config is AppConfiguration || Apps[appName].Configurations.ContainsKey(configName))
                 {
-                    int instanceId = Apps[appName].CreateAppInstance(configName, sectionId, false, -1);
+                    int instanceId = Apps[appName].CreateAppInstance(config, sectionId, false, -1);
                     if (instanceId >= 0)
                     {
                         ((IBaseAppInstance)Apps[appName].Instances[instanceId]).Section.DeploySection(instanceId);
