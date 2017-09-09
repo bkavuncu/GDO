@@ -24,13 +24,13 @@ namespace GDO.Apps.Images
         public ICompositeAppInstance ParentApp { get; set; }
         public string ImageName
         {
-            get { return Configuration.GetProperty<string>("imageName"); }
-            set { Configuration.SetProperty("imageName", value); }
+            get { return Configuration.State.ImageName; }
+            set { Configuration.State.ImageName = value; }
         }
         public string ImageNameDigit
         {
-            get { return Configuration.GetProperty<string>("imageNameDigit"); }
-            set { Configuration.SetProperty("imageNameDigit", value); }
+            get { return Configuration.State.ImageNameDigit; }
+            set { Configuration.State.ImageNameDigit = value; }
         }
         public int DisplayMode { get; set; }
         
@@ -46,20 +46,25 @@ namespace GDO.Apps.Images
         public int TileCols { get; set; } // cols of tiles including those not displayed
         public int TileRows { get; set; } // rows of tiles including those not displayed
         public int Rotate {
-            get { return Configuration.GetProperty<int>("rotate"); }
-            set { Configuration.SetProperty("rotate", value); }
+            get { return Configuration.State.Rotate; }
+            set { Configuration.State.Rotate = value; }
         }
 
         public DisplayRegionInfo DisplayRegion { get; set; }
         public DisplayBlockInfo DisplayBlock
         {
-            get { return Configuration.GetProperty<DisplayBlockInfo>("displayBlock"); }
-            set { Configuration.SetProperty("displayBlock", value); }
+            get { return Configuration.State.DisplayBlock; }
+            set { Configuration.State.DisplayBlock = value; }
         }
 
         public void Init()
         {
             this.DisplayMode = (int)Mode.FIT;
+
+            if (Configuration.State == null)
+            {
+                this.Configuration.State = new ImageAppStateConfiguration();
+            }
 
             this.ThumbNailImage = null;
             this.TilesNumInEachBlockRow = 3;
@@ -119,6 +124,16 @@ namespace GDO.Apps.Images
                 }
             }
         }
+    }
 
+    public class ImageAppStateConfiguration
+    {
+        public string ImageName { get; set; }
+
+        public string ImageNameDigit { get; set; }
+
+        public int Rotate { get; set; }
+
+        public DisplayBlockInfo DisplayBlock { get; set; }
     }
 }

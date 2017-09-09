@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 
 namespace GDO.Core.Apps
 {
@@ -10,7 +11,46 @@ namespace GDO.Core.Apps
         public string Name { get; set; }
         public bool IntegrationMode { get; set; }
 
-        public Newtonsoft.Json.Linq.JObject Json { get; set; }
+        public Newtonsoft.Json.Linq.JObject Json {
+            get
+            {
+                if (State != null)
+                {
+                    SerializeState();
+                }
+                return _json;
+            }
+            set
+            {
+                _json = value;
+                if (StateType != null)
+                {
+                    // if the state type or state object has been set.
+                    DeserializeState();
+                }
+            }
+        }
+
+        private Newtonsoft.Json.Linq.JObject _json;
+
+        [Newtonsoft.Json.JsonIgnore]
+        public dynamic State { get; set; }
+
+        public string StateType
+        {
+            get { return _stateType ?? this.State?.GetType().AssemblyQualifiedName; }
+            set
+            {
+                _stateType = value;
+                if (_json != null && State == null)
+                {
+                    // if the JSON was set first, but state type was not set as yet.
+                    DeserializeState();
+                }
+            }
+        }
+
+        private string _stateType;
 
         public AppConfiguration(string name, dynamic json)
         {
@@ -19,40 +59,32 @@ namespace GDO.Core.Apps
             IntegrationMode = this.Name == "Integration Mode";
         }
 
-        public T GetProperty<T>(string key)
+        private void DeserializeState()
         {
-            if (typeof(T).IsGenericType)
+            if (_json.SelectToken("stateConfig") != null)
             {
-                return (T)Convert.ChangeType((object)Json.SelectToken(key) ?? default(T), typeof(T));
+                State = typeof(AppConfiguration).GetMethod("DeserializeStateHelper", 
+                    BindingFlags.NonPublic | BindingFlags.Instance).MakeGenericMethod(
+                    Type.GetType(StateType)).Invoke(this, new object[] { });
             }
-            else if (string.IsNullOrEmpty((string)Json.SelectToken(key)))
-            {
-                return default(T);
-            }
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<T>((string)Json.SelectToken(key));
         }
 
-        public void SetProperty<T>(string key, T value)
+        private T DeserializeStateHelper<T>()
         {
-            if (value != null)
+            // There are two methods in JsonConvert that accepts the same arguments.
+            // This is to avoid that.
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(
+                (string)_json.SelectToken("stateConfig"));
+        }
+
+        private void SerializeState()
+        {
+            if (_json.SelectToken("stateConfig") != null)
             {
-                if (GetProperty<T>(key) != null)
-                {
-                    Json.Remove(key);
-                }
-                if (typeof(T).IsGenericType)
-                {
-                    Json.Add(new Newtonsoft.Json.Linq.JProperty(key, value));
-                }
-                else
-                {
-                    Json.Add(new Newtonsoft.Json.Linq.JProperty(key, Newtonsoft.Json.JsonConvert.SerializeObject(value)));
-                }
+                _json.Remove("stateConfig");
             }
-            else
-            {
-                Json.Remove(key);
-            }
+            _json.Add(new Newtonsoft.Json.Linq.JProperty("stateConfig", 
+                Newtonsoft.Json.JsonConvert.SerializeObject(State)));
         }
     }
 }
