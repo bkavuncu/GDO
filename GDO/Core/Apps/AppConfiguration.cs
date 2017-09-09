@@ -11,6 +11,10 @@ namespace GDO.Core.Apps
         public string Name { get; set; }
         public bool IntegrationMode { get; set; }
 
+        /// <summary>
+        /// The raw JSON content that would be serialised into the configuration.
+        /// Some applications may prefer to use this.
+        /// </summary>
         public Newtonsoft.Json.Linq.JObject Json {
             get
             {
@@ -33,9 +37,24 @@ namespace GDO.Core.Apps
 
         private Newtonsoft.Json.Linq.JObject _json;
 
+        // The State property has a dynamic return type such that downstream
+        // classes can easily extend it and use it within their respective
+        // contexts. If you give this a standard return type a lot of unwanted
+        // type casting will have to be done. One way to avoid this would be to
+        // make AppConfiguration a generic class and update the entire codebase.
+        //
+        // The State property is not serialised into JSON, because we want to
+        // treat it separately.
+
+        /// <summary>
+        /// Stores an object to hold state variables.
+        /// </summary>
         [Newtonsoft.Json.JsonIgnore]
         public dynamic State { get; set; }
 
+        /// <summary>
+        /// Provides the type of the state object stored.
+        /// </summary>
         public string StateType
         {
             get { return _stateType ?? this.State?.GetType().AssemblyQualifiedName; }
@@ -59,6 +78,7 @@ namespace GDO.Core.Apps
             IntegrationMode = this.Name == "Integration Mode";
         }
 
+        #region State Serialisation Helper Methods
         private void DeserializeState()
         {
             if (_json.SelectToken("stateConfig") != null)
@@ -86,5 +106,6 @@ namespace GDO.Core.Apps
             _json.Add(new Newtonsoft.Json.Linq.JProperty("stateConfig", 
                 Newtonsoft.Json.JsonConvert.SerializeObject(State)));
         }
+        #endregion
     }
 }
