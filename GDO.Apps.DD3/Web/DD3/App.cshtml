@@ -577,10 +577,15 @@
                     orderController.orders['createRect'] = function (id, image, w_img, h_img) {
                         var rectG = svg.append('g').attr('id', "r" + id);
                         var id_int = parseInt(id.substr(1, id.length));
-                        var col = (id_int - 1) % 5, row = Math.floor((id_int - 1) / 5);
-                        var offx = (((2 * width / 10) * col) % width) + col;
-                        var offy = (((2 * height / 10) * row) % height) + row;
-                        //*
+                        let columns = 32;
+                        var col = (id_int - 1) % columns;
+                        var row = Math.floor((id_int - 1) / columns);
+
+                        var offx = (((width / columns) * col) % width) ;
+                        var offy = (((height / 4) * row) % height);
+
+                        
+                        
                         var inner_rect = rectG.append('rect');
                         var w1 = (2 * width / 10) - 2;
                         var w = w_img < w1 ? w_img : w1;
@@ -593,7 +598,7 @@
                             current_y = max_y; //set the offset to lower Y
                             max_y = 0;
                             last_row = row;
-                            if (row % 5 === 0)
+                            if (row % 4 === 0)
                                 current_y = row;
                         }
 
@@ -602,8 +607,8 @@
                         max_y = max_y > (current_y + h1 + row) ? max_y : (current_y + h1 + row); //Get max from dynamic layout with static image height
                         max_y = max_y > (current_y + h2 + row) ? max_y : (current_y + h2 + row); //Get max from dynamic layout with image full height
 
-                        rectG.attr("transform", "translate(" + [offx, current_y] + ")");
 
+                        rectG.attr("transform", "translate(" + [offx, offy] + ")");
                        
 
                         inner_rect.attr("x", 0)
