@@ -51,7 +51,11 @@ namespace GDO.Apps.Images
         }
 
         public DisplayRegionInfo DisplayRegion { get; set; }
-        public BlockRegionInfo[,] BlockRegion { get; set; }
+        public DisplayBlockInfo DisplayBlock
+        {
+            get { return Configuration.GetProperty<DisplayBlockInfo>("displayBlock"); }
+            set { Configuration.SetProperty("displayBlock", value); }
+        }
 
         public void Init()
         {
@@ -71,12 +75,7 @@ namespace GDO.Apps.Images
             {
                 this.ImageNameDigit = "";
                 this.Rotate = 0;
-            }
-            this.BlockRegion = new BlockRegionInfo[Section.Cols, Section.Rows];
-            for(int i = 0 ; i < Section.Cols ; i++) {
-                for (int j = 0 ; j < Section.Rows ; j++) {
-                    this.BlockRegion[i, j] = new BlockRegionInfo();
-                }
+                this.DisplayBlock = new DisplayBlockInfo(Section.Cols, Section.Rows);
             }
             String basePath = HttpContext.Current.Server.MapPath("~/Web/Images/images/");
             if (!Directory.Exists(basePath))

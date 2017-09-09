@@ -21,7 +21,15 @@ namespace GDO.Core.Apps
 
         public T GetProperty<T>(string key)
         {
-            return (T)Convert.ChangeType((object)Json.SelectToken(key) ?? default(T), typeof(T));
+            if (typeof(T).IsGenericType)
+            {
+                return (T)Convert.ChangeType((object)Json.SelectToken(key) ?? default(T), typeof(T));
+            }
+            else if (string.IsNullOrEmpty((string)Json.SelectToken(key)))
+            {
+                return default(T);
+            }
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<T>((string)Json.SelectToken(key));
         }
 
         public void SetProperty<T>(string key, T value)
@@ -32,7 +40,14 @@ namespace GDO.Core.Apps
                 {
                     Json.Remove(key);
                 }
-                Json.Add(new Newtonsoft.Json.Linq.JProperty(key, value));
+                if (typeof(T).IsGenericType)
+                {
+                    Json.Add(new Newtonsoft.Json.Linq.JProperty(key, value));
+                }
+                else
+                {
+                    Json.Add(new Newtonsoft.Json.Linq.JProperty(key, Newtonsoft.Json.JsonConvert.SerializeObject(value)));
+                }
             }
             else
             {
