@@ -85,7 +85,7 @@ namespace GDO.Apps.Images
             String basePath = HttpContext.Current.Server.MapPath("~/Web/Images/images/");
             if (!Directory.Exists(basePath))
             {
-                Directory.CreateDirectory(HttpContext.Current.Server.MapPath("~/Web/Images/images"));
+                Directory.CreateDirectory(basePath);
             }
         }
 
