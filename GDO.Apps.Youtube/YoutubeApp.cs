@@ -28,6 +28,8 @@ namespace GDO.Apps.Youtube
         {
             VideoReady = false;
             URL = url;
+            Configuration.Json.SelectToken("url").Replace(
+                new Newtonsoft.Json.Linq.JValue(url));
         }
 
         public string GetURL()

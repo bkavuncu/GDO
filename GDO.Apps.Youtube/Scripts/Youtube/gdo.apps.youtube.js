@@ -8,6 +8,11 @@ $(function () {
         $("iframe").contents().find("#youtube_player").hide();
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             gdo.consoleOut('.Youtube', 1, 'Instance - ' + instanceId + ": Received URL : " + url);
+            // This is to let the system load the default URL instead of
+            // replacing it with this blank URL.
+            if (url != 'https://www.youtube.com/watch?v=') {
+                $("iframe").contents().find('#url_input').val(url);
+            }
             $("iframe").contents().find("#control_buttons").hide();
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             gdo.consoleOut('.Youtube', 1, 'Instance - ' + instanceId + ": Received URL : " + url);
