@@ -30,19 +30,45 @@ namespace GDO.Apps.Presentation
         public bool IntegrationMode { get; set; }
         public ICompositeAppInstance ParentApp { get; set; }
         public string BasePath { get; set; }
-        public string FileName { get; set; }
-        public string FileNameDigit { get; set; }
-        public int PageCount { get; set; }
-        public int CurrentPage { get; set; }
+        public string FileName
+        {
+            get { return Configuration.State.FileName; }
+            set { Configuration.State.FileName = value; }
+        }
+        public string FileNameDigit
+        {
+            get { return Configuration.State.FileNameDigit; }
+            set { Configuration.State.FileNameDigit = value; }
+        }
+        public int PageCount
+        {
+            get { return Configuration.State.PageCount; }
+            set { Configuration.State.PageCount = value; }
+        }
+        public int CurrentPage
+        {
+            get { return Configuration.State.CurrentPage; }
+            set { Configuration.State.CurrentPage = value; }
+        }
 
         public void Init()
         {
             this.BasePath = HttpContext.Current.Server.MapPath("~/Web/Presentation/PPTs/");
-            this.FileName = "";
-            this.FileNameDigit = "";
-            this.PageCount = 0;
-            this.CurrentPage = 0;
-            Directory.CreateDirectory(HttpContext.Current.Server.MapPath("~/Web/Presentation/PPTs"));
+            if (Configuration.State == null)
+            {
+                this.Configuration.State = new PresentationAppStateConfiguration();
+            }
+            if (this.FileNameDigit == null)
+            {
+                this.FileName = "";
+                this.FileNameDigit = "";
+                this.PageCount = 0;
+                this.CurrentPage = 0;
+            }
+            if (!Directory.Exists(this.BasePath))
+            {
+                Directory.CreateDirectory(this.BasePath);
+            }
         }
 
         public void ProcessImage(string imagePath, int pageNumber, int mode)
@@ -116,5 +142,13 @@ namespace GDO.Apps.Presentation
             
             return;
         }
+    }
+
+    public class PresentationAppStateConfiguration
+    {
+        public string FileName { get; set; }
+        public string FileNameDigit { get; set; }
+        public int PageCount { get; set; }
+        public int CurrentPage { get; set; }
     }
 }
