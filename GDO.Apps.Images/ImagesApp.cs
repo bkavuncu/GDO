@@ -55,7 +55,9 @@ namespace GDO.Apps.Images
         public bool IntegrationMode { get; set; }
         public ICompositeAppInstance ParentApp { get; set; }
         public int DisplayMode { get; set; }
-        
+
+        public DisplayRegionInfo DisplayRegion { get; set; }
+
         public ThumbNailImageInfo ThumbNailImage { get; set; }
         public int TilesNumInEachBlockRow { get; set; }
         public int TilesNumInEachBlockCol { get; set; }
@@ -94,6 +96,8 @@ namespace GDO.Apps.Images
                 Directory.CreateDirectory(basePath);
             }
         }
+
+        
 
         private void FindImageData(string digits)
         {
