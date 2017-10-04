@@ -28,12 +28,14 @@ namespace GDO.Core
         public ConcurrentDictionary<string, App> Apps { get; set; }
         public ConcurrentDictionary<int, IAppInstance> Instances { get; set; }
         public ConcurrentDictionary<int, Section> Sections { get; set; }
+        public readonly List<Type> ApplicationConfigTypes;
 
         public CaveDeployment()
         {
             Apps = new ConcurrentDictionary<string, App>();
             Instances = new ConcurrentDictionary<int, IAppInstance>();
             Sections = new ConcurrentDictionary<int, Section>();
+            ApplicationConfigTypes = new List<Type>();
         }
 
         /// <summary>
@@ -181,7 +183,8 @@ namespace GDO.Core
                     ? new CompositeApp(name, appClassType, (int)AppTypes.Composite, supportedApps, p2pmode)
                     : new App(name, appClassType, (int)AppTypes.Base, p2pmode);
                 Apps.TryAdd(name, app);
-                List<AppConfiguration> configurations = Cave.LoadAppConfigurations(name);
+                List<IAppConfiguration> configurations = Cave.LoadAllAppConfigurations(name);
+
                 foreach (var configuration in configurations)
                 {
                     Log.Info("registering an app configuration for app " + name + " called " + configuration.Name);
@@ -211,7 +214,7 @@ namespace GDO.Core
             Log.Info($"Creating App instance {appName} {configName} on section {sectionId}");
             if (!Sections[sectionId].IsDeployed() && Apps.ContainsKey(appName))
             {
-                if (config is AppConfiguration || Apps[appName].Configurations.ContainsKey(configName))
+                if (config is AppJsonConfiguration || Apps[appName].Configurations.ContainsKey(configName))
                 {
                     int instanceId = Apps[appName].CreateAppInstance(config, sectionId, false, -1);
                     if (instanceId >= 0)
@@ -310,6 +313,10 @@ namespace GDO.Core
             }
             Log.Error("unable to find app for name " + name);
             return null;
+        }
+
+        public IAppInstance GetInstancebyID(int instanceId) {
+            return Apps[Cave.GetAppName(instanceId)].Instances[instanceId];
         }
     }
 }

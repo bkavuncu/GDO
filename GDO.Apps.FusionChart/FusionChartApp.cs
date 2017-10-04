@@ -19,7 +19,26 @@ namespace GDO.Apps.FusionChart
         public Section Section { get; set; }
         public bool IntegrationMode { get; set; }
         public ICompositeAppInstance ParentApp { get; set; }
-        public AppConfiguration Configuration { get; set; }
+        #region config
+        public AppJsonConfiguration Configuration { get; set; }
+        public IAppConfiguration GetConfiguration() {
+            return this.Configuration;
+        }
+
+        public bool SetConfiguration(IAppConfiguration config) {
+            if (config is AppJsonConfiguration) {
+                this.Configuration = (AppJsonConfiguration)config;
+                // todo signal status change
+                return true;
+            }
+            this.Configuration = (AppJsonConfiguration)GetDefaultConfiguration();
+            return false;
+        }
+
+        public IAppConfiguration GetDefaultConfiguration() {
+            return new AppJsonConfiguration();
+        }
+        #endregion
 
         public string ChartBasePath { get; set; }
         public double ControlChartX { get; set; }

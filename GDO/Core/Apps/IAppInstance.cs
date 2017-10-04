@@ -11,7 +11,11 @@ namespace GDO.Core.Apps
         string AppName { get; set; }
         [JsonIgnore]
         App App { get; set; }
-        AppConfiguration Configuration { get; set; }
+
+        IAppConfiguration GetConfiguration();
+        bool SetConfiguration(IAppConfiguration config);
+        IAppConfiguration GetDefaultConfiguration();
+
         //IHubContext HubContext { get; set; }
         void Init();
     }

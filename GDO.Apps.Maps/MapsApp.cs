@@ -30,7 +30,26 @@ namespace GDO.Apps.Maps
         public Section Section { get; set; }
         public bool IntegrationMode { get; set; }
         public ICompositeAppInstance ParentApp { get; set; }
-        public AppConfiguration Configuration { get; set; }
+        #region config
+        public AppJsonConfiguration Configuration { get; set; }
+        public IAppConfiguration GetConfiguration() {
+            return this.Configuration;
+        }
+
+        public bool SetConfiguration(IAppConfiguration config) {
+            if (config is AppJsonConfiguration) {
+                this.Configuration = (AppJsonConfiguration)config;
+                // todo signal status change
+                return true;
+            }
+            this.Configuration = (AppJsonConfiguration)GetDefaultConfiguration();
+            return false;
+        }
+
+        public IAppConfiguration GetDefaultConfiguration() {
+            return new AppJsonConfiguration();
+        }
+        #endregion
         public string[] MarkerPosition { get; set; }
         public Map Map;
         public string Label { get; set; }
@@ -129,7 +148,7 @@ namespace GDO.Apps.Maps
             Configurations = new GenericDictionary<Configuration>();
             Configurations.Init();
 
-            foreach (AppConfiguration config in Cave.Deployment.Apps["Maps"].Configurations.Values)
+            foreach (AppJsonConfiguration config in Cave.Deployment.Apps["Maps"].Configurations.Values)
             {
                 Core.Configuration configuration = new Core.Configuration();
                 configuration.Name.Value = config.Name;

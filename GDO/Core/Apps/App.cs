@@ -19,7 +19,7 @@ namespace GDO.Core.Apps
         public int AppType { get; set; }
         public int P2PMode { get; set; }
         [JsonIgnore]
-        public ConcurrentDictionary<string,AppConfiguration> Configurations { get; set; }
+        public ConcurrentDictionary<string,IAppConfiguration> Configurations { get; set; }
         public List<string> ConfigurationList { get; set; }
         [JsonIgnore]
         public ConcurrentDictionary<int,IAppInstance> Instances { get; set; }
@@ -36,20 +36,20 @@ namespace GDO.Core.Apps
             AppClassType = appClassType;
             AppType = appType;
             P2PMode = p2pmode;
-            Configurations = new ConcurrentDictionary<string, AppConfiguration>();
+            Configurations = new ConcurrentDictionary<string, IAppConfiguration>();
             Instances = new ConcurrentDictionary<int, IAppInstance>();
         }
 
         public int CreateAppInstance(dynamic config, int sectionId, bool integrationMode, int parentId) {
-            if (!(config is AppConfiguration) && !Configurations.ContainsKey(config)) {
+            if (!(config is AppJsonConfiguration) && !Configurations.ContainsKey(config)) {
                 return -1;
             }
 
             int instanceId = Utilities.GetAvailableSlot(Cave.Deployment.Instances);
             IBaseAppInstance instance = (IBaseAppInstance)Activator.CreateInstance(AppClassType, new object[0]);
-            AppConfiguration conf;
+            IAppConfiguration conf;
             Cave.Deployment.Sections[sectionId].CalculateDimensions();
-            if (config is AppConfiguration)
+            if (config is AppJsonConfiguration)
             {
                 conf = config;
             }
@@ -67,7 +67,7 @@ namespace GDO.Core.Apps
             //instance.HubContext = GlobalHost.ConnectionManager.GetHubContext(Name + "Hub");
             //instance.HubContext = (IHubContext) typeof (IConnectionManager).GetMethod("GetHubContext").GetGenericMethodDefinition().MakeGenericMethod(AppHubType).Invoke(GlobalHost.ConnectionManager, null);
             instance.Section = Cave.Deployment.Sections[sectionId];
-            instance.Configuration = conf;
+            instance.SetConfiguration(conf);
             instance.IntegrationMode = integrationMode;
             if (integrationMode)
             {
@@ -89,11 +89,6 @@ namespace GDO.Core.Apps
             Instances.TryRemove(instanceId, out instance);
             Cave.Deployment.Instances.TryRemove(instanceId,out instance);
             return true;
-        }
-
-        public bool LoadConfigurations()
-        {
-            return false;
         }
 
         public List<string> GetConfigurationList() {

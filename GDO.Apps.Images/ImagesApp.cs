@@ -3,9 +3,16 @@ using System.Web;
 using GDO.Core;
 using GDO.Core.Apps;
 using System;
+using Newtonsoft.Json.Linq;
 
 namespace GDO.Apps.Images
 {
+    public class ImagesAppConfig : AppJsonConfiguration {
+        public string ImageName;
+        public string ImageNameDigit;
+        public int Rotate;
+        public DisplayBlockInfo DisplayBlock;
+    }
     enum Mode
     {
         // ReSharper disable once InconsistentNaming
@@ -18,20 +25,35 @@ namespace GDO.Apps.Images
         public int Id { get; set; }
         public string AppName { get; set; }
         public App App { get; set; }
+
+        #region config
+
+        public ImagesAppConfig Configuration;
+        public IAppConfiguration GetConfiguration() {
+            return Configuration;
+        }
+
+        public bool SetConfiguration(IAppConfiguration config) {
+            if (config is ImagesAppConfig) {
+                Configuration = (ImagesAppConfig) config;
+                // todo signal update of config status
+                return true;
+            }
+
+            Configuration = (ImagesAppConfig) GetDefaultConfiguration();
+            return false;
+        }
+
+        public IAppConfiguration GetDefaultConfiguration() {
+            return new ImagesAppConfig { Name = "Default", Json = new JObject()};
+        }
+
+        #endregion 
+
         public Section Section { get; set; }
-        public AppConfiguration Configuration { get; set; }
+
         public bool IntegrationMode { get; set; }
         public ICompositeAppInstance ParentApp { get; set; }
-        public string ImageName
-        {
-            get { return Configuration.State.ImageName; }
-            set { Configuration.State.ImageName = value; }
-        }
-        public string ImageNameDigit
-        {
-            get { return Configuration.State.ImageNameDigit; }
-            set { Configuration.State.ImageNameDigit = value; }
-        }
         public int DisplayMode { get; set; }
         
         public ThumbNailImageInfo ThumbNailImage { get; set; }
@@ -45,26 +67,10 @@ namespace GDO.Apps.Images
         public int TileHeight { get; set; }
         public int TileCols { get; set; } // cols of tiles including those not displayed
         public int TileRows { get; set; } // rows of tiles including those not displayed
-        public int Rotate {
-            get { return Configuration.State.Rotate; }
-            set { Configuration.State.Rotate = value; }
-        }
-
-        public DisplayRegionInfo DisplayRegion { get; set; }
-        public DisplayBlockInfo DisplayBlock
-        {
-            get { return Configuration.State.DisplayBlock; }
-            set { Configuration.State.DisplayBlock = value; }
-        }
 
         public void Init()
         {
             this.DisplayMode = (int)Mode.FIT;
-
-            if (Configuration.State == null)
-            {
-                this.Configuration.State = new ImageAppStateConfiguration();
-            }
 
             this.ThumbNailImage = null;
             this.TilesNumInEachBlockRow = 3;
@@ -72,15 +78,15 @@ namespace GDO.Apps.Images
             this.DisplayRegion = new DisplayRegionInfo();
             this.Tiles = null;
 
-            if (this.ImageNameDigit != null)
+            if (this.Configuration.ImageNameDigit != null)
             {
-                FindImageData(this.ImageNameDigit);
+                FindImageData(this.Configuration.ImageNameDigit);
             }
             else
             {
-                this.ImageNameDigit = "";
-                this.Rotate = 0;
-                this.DisplayBlock = new DisplayBlockInfo(Section.Cols, Section.Rows);
+                this.Configuration.ImageNameDigit = "";
+                this.Configuration.Rotate = 0;
+                this.Configuration.DisplayBlock = new DisplayBlockInfo(Section.Cols, Section.Rows);
             }
             String basePath = HttpContext.Current.Server.MapPath("~/Web/Images/images/");
             if (!Directory.Exists(basePath))
@@ -96,12 +102,12 @@ namespace GDO.Apps.Images
             {
                 return;
             }
-            string[] lines = File.ReadAllLines(basePath + this.ImageNameDigit + "\\config.txt");
+            string[] lines = File.ReadAllLines(basePath + this.Configuration.ImageNameDigit + "\\config.txt");
             if (lines.Length != 9)
             {
                 return;
             }
-            this.ImageName = lines[1];
+            this.Configuration.ImageName = lines[1];
             this.ImageNaturalWidth = Convert.ToInt32(lines[3]);
             this.ImageNaturalHeight = Convert.ToInt32(lines[4]);
             this.TileWidth = Convert.ToInt32(lines[5]);
@@ -124,16 +130,5 @@ namespace GDO.Apps.Images
                 }
             }
         }
-    }
-
-    public class ImageAppStateConfiguration
-    {
-        public string ImageName { get; set; }
-
-        public string ImageNameDigit { get; set; }
-
-        public int Rotate { get; set; }
-
-        public DisplayBlockInfo DisplayBlock { get; set; }
     }
 }

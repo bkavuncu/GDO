@@ -75,9 +75,9 @@ namespace GDO
                 });
 
                 var hostname = System.Net.Dns.GetHostName();
-                if (hostname == "dsigdoprod.doc.ic.ac.uk" ||
-                    hostname == "dsigdopreprod.doc.ic.ac.uk" ||
-                    hostname == "dsigdotesting.doc.ic.ac.uk")
+                if (hostname.Contains( "dsigdoprod") ||
+                    hostname.Contains( "dsigdopreprod") ||
+                    hostname.Contains( "dsigdotesting"))
                 {
                     //Change this URL for the generated slack channel
                     string slack_url = "https://hooks.slack.com/services/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";
@@ -112,6 +112,9 @@ namespace GDO
         [ImportMany(typeof(IModuleHub))]
         private List<IModuleHub> _cavemodules { get; set; }
 
+        [ImportMany(typeof(IAppConfiguration))]
+        private List<IAppConfiguration> _configurationTypes { get; set; }
+
         private static readonly ILog Log = LogManager.GetLogger(typeof(Startup));
 
         public IList<Assembly> GetAssemblies()
@@ -125,7 +128,7 @@ namespace GDO
             }
             var ccontainer = new CompositionContainer(catalog);
             try {
-                ccontainer.ComposeParts(this);
+                ccontainer.ComposeParts(this);//COMPOSITION OCCURS HERE! 
             } catch (Exception e) {
 
                 Log.Error("loader Exception ", e);
@@ -166,6 +169,11 @@ namespace GDO
                 Cave.RegisterModule(cavemodule.Name, cavemodule.ModuleType);
                 assemblies.Add(cavemodule.GetType().Assembly);
             }
+            foreach (var configurationType in _configurationTypes) {
+                Cave.RegisterConfigType(configurationType.GetType());
+
+            }
+
             return assemblies;
         }
     }

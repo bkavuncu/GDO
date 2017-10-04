@@ -336,17 +336,18 @@ namespace GDO.Core
         /// Loads the application configurations.
         /// </summary>
         /// <param name="appName">Name of the application.</param>
+        /// <param name="name">optional name if you want to load a single config</param>
         /// <returns></returns>
-        public static List<AppConfiguration> LoadAppConfigurations(string appName)
+        public static List<IAppConfiguration> LoadAllAppConfigurations(string appName,string name =null)
         {
             Log.Info("loading configurations fro App "+appName);
-            List <AppConfiguration> configurations = new List<AppConfiguration>();
+            List<IAppConfiguration> configurations = new List<IAppConfiguration>();
             //TODO Load app configurations from /Configurations/AppName directory
             Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
             String path = Directory.GetCurrentDirectory() + @"\Configurations\" + appName;  // TODO using server.map path
             if (Directory.Exists(path))
             {
-                string[] filePaths = Directory.GetFiles(path, "*.json", SearchOption.AllDirectories);//todo comment why the@ is needed
+                string[] filePaths = Directory.GetFiles(path, name ==null ? "*.json" : name+".json", SearchOption.AllDirectories);
                 foreach (string filePath in filePaths)
                 {
                     JObject json = Utilities.LoadJsonFile(filePath);
@@ -355,49 +356,45 @@ namespace GDO.Core
                         string configurationName = Utilities.RemoveString(filePath, path + "\\");
                         configurationName = Utilities.RemoveString(configurationName, ".json");
                         Log.Info("Found config called "+configurationName+" for app "+appName+" about to load");
-                        Deployment.Apps[appName].Configurations.TryAdd(configurationName, new AppConfiguration(configurationName, json));
+
+                        IAppConfiguration appConfiguration = null;
+
+                        // load custom types of configuration or the generic type... 
+                        JToken configType;
+                        if (json.TryGetValue("ConfigType", out configType)) {
+                            var configTypename = configType.ToString();
+
+
+                            Type type = Deployment.ApplicationConfigTypes.FirstOrDefault(t => t.FullName == configTypename);
+                            if (type != null) {
+                                appConfiguration =
+                                    (IAppConfiguration) JsonConvert.DeserializeObject(json.ToString(), type);
+                            }
+                            else {
+                                Log.Info("could not find config type " + configTypename);
+                            }
+                        }
+                        
+                        if(appConfiguration == null) {
+                            appConfiguration = new AppJsonConfiguration(configurationName, json);
+                        }
+
+                        Deployment.Apps[appName].Configurations.AddOrUpdate(configurationName, appConfiguration,(a,b) => appConfiguration );
                     }
                 }
-            }
+            }   
             return configurations;
         }
 
-        public static List<string> LoadAppConfiguration(string appName, string fileName)
-        {
-            Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
-            String path = Directory.GetCurrentDirectory() + @"\Configurations\" + appName;  // TODO using server.map path
-            if (Directory.Exists(path))
-            {
-                string[] filePaths = Directory.GetFiles(@path, fileName+".json", SearchOption.AllDirectories);//todo comment why the@ is needed
-                foreach (string filePath in filePaths)
-                {
-                    JObject json = Utilities.LoadJsonFile(filePath);
-                    if (json != null)
-                    {
-                        string configurationName = Utilities.RemoveString(filePath, path + "\\");
-                        configurationName = Utilities.RemoveString(configurationName, ".json");
-                        Log.Info("Found config called " + configurationName + " for app " + appName + " about to load");
-                        if (Deployment.Apps[appName].Configurations.ContainsKey(configurationName))
-                        {
-                            Deployment.Apps[appName].Configurations[configurationName] = new AppConfiguration(configurationName,json);
-                        }
-                        else
-                        {
-                            Deployment.Apps[appName].Configurations.TryAdd(configurationName, new AppConfiguration(configurationName, json));
-                        }
-
-                    }
-                }
-            }
-            var configurationList = Deployment.Apps[appName].GetConfigurationList();
-            return configurationList;
+        public static List<string> GetConfigListForApp(string appName) {
+            return Deployment.Apps[appName].GetConfigurationList();
         }
 
         public static List<string> UnloadAppConfiguration(string appName, string configName)
         {
             if (Deployment.Apps[appName].Configurations.ContainsKey(configName))
             {
-                AppConfiguration config;
+                IAppConfiguration config;
                 Deployment.Apps[appName].Configurations.TryRemove(configName, out config);
                 Utilities.RemoveJsonFile(configName, "Configurations\\" + appName);
             }
@@ -445,7 +442,7 @@ namespace GDO.Core
             foreach (KeyValuePair<int, IAppInstance> instaKeyValuePair in Deployment.Instances) {
                 IBaseAppInstance instance = (IBaseAppInstance)instaKeyValuePair.Value;
                 Section section = instance.Section;
-                AppState appState = new AppState(section.Col, section.Row, section.Cols, section.Rows, instance.App.Name, instance.Configuration);
+                AppState appState = new AppState(section.Col, section.Row, section.Cols, section.Rows, instance.App.Name, instance.GetConfiguration());
                 caveState.States.Add(appState);
             }
 
@@ -489,6 +486,10 @@ namespace GDO.Core
                 // do something
             }
             timer.Stop();
+        }
+
+        public static void RegisterConfigType(Type type) {
+            Deployment.ApplicationConfigTypes.Add(type);
         }
     }
 }

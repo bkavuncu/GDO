@@ -13,12 +13,12 @@ namespace GDO.Core.States
         public int Cols { get; set; }
         public int Rows { get; set; }
         public string AppName { get; set; }
-        public AppConfiguration Config { get; set; }
+        public IAppConfiguration Config { get; set; }
 
         public AppState() {
             
         }
-        public AppState(int col, int row, int cols, int rows, string appName, AppConfiguration config)
+        public AppState(int col, int row, int cols, int rows, string appName, IAppConfiguration config)
         {
             this.Col = col;
             this.Row = row;

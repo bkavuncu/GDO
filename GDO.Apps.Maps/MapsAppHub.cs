@@ -162,7 +162,7 @@ namespace GDO.Apps.Maps
                 {
                     MapsApp maps = ((MapsApp)Cave.Deployment.Apps["Maps"].Instances[instanceId]);
                     maps.SaveMap(configName);
-                    Cave.LoadAppConfiguration(Cave.GetAppName(instanceId), configName);
+                    Cave.LoadAllAppConfigurations(Cave.GetAppName(instanceId), configName);
                     maps.ExtractConfigurations();
                     string serializedConfigurations = maps.GetSerializedConfigurations();
                     foreach (KeyValuePair<int,IAppInstance> instanceKeyValue in Cave.Deployment.Apps["Maps"].Instances)

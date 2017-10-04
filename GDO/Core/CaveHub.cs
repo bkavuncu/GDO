@@ -229,7 +229,7 @@ namespace GDO.Core
         /// <param name="appName">Name of the application.</param>
         /// <param name="config">The configuration.</param>
         /// <returns></returns>
-        private int DeployBaseApp(int sectionId, string appName, AppConfiguration config)
+        private int DeployBaseApp(int sectionId, string appName, IAppConfiguration config)
         {
             lock (Cave.ServerLock)
             {
@@ -400,18 +400,25 @@ namespace GDO.Core
             }
         }
 
+        /// <summary>
+        /// Deploys a configuration to an application instance 
+        /// </summary>
+        /// <param name="instanceId">The instance identifier.</param>
+        /// <param name="configName">Name of the configuration.</param>
         public void UseAppConfiguration(int instanceId, string configName)
         {
             lock (Cave.ServerLock)
             {
                 try
                 {
-                    if (Cave.Deployment.ContainsInstance(instanceId))
-                    {
-                        if (Cave.Deployment.Apps[Cave.GetAppName(instanceId)].Configurations.ContainsKey(configName))
+                    if (Cave.Deployment.ContainsInstance(instanceId)) {
+                        var appName = Cave.GetAppName(instanceId);
+                        var app = Cave.Deployment.Apps[appName];    
+                        if (app.Configurations.ContainsKey(configName))
                         {
-                            Cave.Deployment.Apps[Cave.GetAppName(instanceId)].Instances[instanceId].Configuration = Cave.Deployment.Apps[Cave.GetAppName(instanceId)].Configurations[configName];
-                            List<string> configList = Cave.LoadAppConfiguration(Cave.GetAppName(instanceId), configName);
+                            app.Instances[instanceId].SetConfiguration( app.Configurations[configName]);
+                            Cave.LoadAllAppConfigurations(appName, configName);// db805 todo i dont know why this is called
+                            List<string> configList = Cave.GetConfigListForApp(appName);
                             string serializedInstance = GetInstanceUpdate(instanceId);
                             BroadcastAppUpdate(true, instanceId, serializedInstance);
                             Clients.All.receiveAppConfigList(instanceId, JsonConvert.SerializeObject(configList));
@@ -432,9 +439,10 @@ namespace GDO.Core
             {
                 try
                 {
-                    if (Cave.Deployment.ContainsInstance(instanceId))
-                    {
-                        List<string> configList = Cave.LoadAppConfiguration(Cave.GetAppName(instanceId), configName);
+                    if (Cave.Deployment.ContainsInstance(instanceId)) {
+                        var appName = Cave.GetAppName(instanceId);
+                        Cave.LoadAllAppConfigurations(appName, configName);// db805 todo i dont know why this is called
+                        List<string> configList = Cave.GetConfigListForApp(appName);
                         Clients.All.receiveAppConfigList(instanceId, JsonConvert.SerializeObject(configList));
                     }
                 }
@@ -470,10 +478,12 @@ namespace GDO.Core
             {
                 try
                 {
-                    if (Cave.Deployment.ContainsInstance(instanceId))
-                    {
-                        Clients.Caller.receiveAppConfig(instanceId, Cave.GetAppName(instanceId), Cave.Deployment.Apps[Cave.GetAppName(instanceId)].Instances[instanceId].Configuration.Name,
-                            JsonConvert.SerializeObject(Cave.Deployment.Apps[Cave.GetAppName(instanceId)].Instances[instanceId].Configuration.Json.ToString()), true);
+                    if (Cave.Deployment.ContainsInstance(instanceId)) {
+                        var configuration = Cave.Deployment.GetInstancebyID(instanceId).GetConfiguration();
+                        Clients.Caller.receiveAppConfig(instanceId, Cave.GetAppName(instanceId),
+                            configuration.Name,
+                            configuration.GetJsonForBrowsers()
+                            , true);
                     }
                 }
                 catch (Exception e)
@@ -568,7 +578,7 @@ namespace GDO.Core
             }
         }
 
-        private string GetInstanceUpdate(int instanceId)
+        private string GetInstanceUpdate(int instanceId)//todo i wonder if we actually need to be sending a serialized copy of the instance back and forth? 
         {
             try
             {
@@ -730,6 +740,9 @@ namespace GDO.Core
             }
         }
 
+        /// <summary>
+        /// Tells all clients what maintainence mode they should be in 
+        /// </summary>
         public void RequestMaintenanceMode()
         {
             lock (Cave.ServerLock)
@@ -830,7 +843,7 @@ namespace GDO.Core
                 foreach (AppState appState in caveState.States)
                 {
                     CreateSection(appState.Col, appState.Row, (appState.Col + appState.Cols -1),
-                        (appState.Row + appState.Rows -1));
+                                                              (appState.Row + appState.Rows -1));
                     Cave.GetSectionId(appState.Col, appState.Row);
                     DeployBaseApp(Cave.GetSectionId(appState.Col, appState.Row), appState.AppName, appState.Config);
                 }
