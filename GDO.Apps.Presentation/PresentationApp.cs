@@ -1,17 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 using System.Web;
 using GDO.Core;
 using GDO.Core.Apps;
-using GDO.Utility;
-using Microsoft.AspNet.SignalR;
-using Microsoft.Office.Core;
-using Microsoft.Office.Interop.PowerPoint;
 
 namespace GDO.Apps.Presentation
 {
