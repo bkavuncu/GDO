@@ -48,7 +48,11 @@ namespace GDO.Apps.Graph
         public GraphInfo graphinfo = new GraphInfo();
         private List<GraphNode> Nodes = new List<GraphNode>();
         private List<GraphLink> Links = new List<GraphLink>();
-        public string FolderNameDigit;
+
+        public string FolderNameDigit {
+            get { return Configuration.GetProperty<string>("FolderNameDigit"); }
+            set { Configuration.SetProperty<string>("FolderNameDigit",value); }
+        }
 
         public void Init()
         {
@@ -89,8 +93,10 @@ namespace GDO.Apps.Graph
                     if (digitsdict.ContainsKey(filename) && digitsdict[filename].width == sectionWidth
                         && digitsdict[filename].height == sectionHeight) {
                         FolderNameDigit = digitsdict[filename].id;
+                        Log.Info("Graph app Matched a preprocessed file");
                         return this.FolderNameDigit;
                     }
+                    Log.Info("Failed to match graph to index file "+filename+" w"+sectionWidth+" h"+sectionHeight);
                 }
                 catch (Exception e) {
                     Log.Error("graph app failed to parse its database file " + e);
