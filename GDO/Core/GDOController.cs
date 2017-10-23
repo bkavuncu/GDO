@@ -164,6 +164,11 @@ namespace GDO.Core
         }
 
 
+        /// <summary>
+        /// Deploys the given state to the observatory 
+        /// </summary>
+        /// <param name="stateName">Name of the state.</param>
+        /// <returns>success</returns>
         [HttpGet]
         [Route("api/CaveState/Deploy?stateName={stateName}")]
         public bool DeployState(string stateName) {
@@ -179,5 +184,10 @@ namespace GDO.Core
             return true;
 
         }
+
+        // close App
+        // create section and deploy 
+        // close app and close section
+        // send to console 
     }
 }

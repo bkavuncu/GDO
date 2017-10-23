@@ -443,7 +443,7 @@
                                                             string[] database = {};
                                                             if (File.Exists(database_path))
                                                             {
-                                                                database = File.ReadAllLines(database_path);
+                                                                database = File.ReadAllLines(database_path).Where(l=> !string.IsNullOrWhiteSpace(l)).ToArray();
                                                             }
                                                         }
                                                             @foreach (var s in database)
