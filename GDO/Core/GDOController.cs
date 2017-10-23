@@ -1,4 +1,5 @@
-﻿using System.Web.Http;
+﻿using System.Threading;
+using System.Web.Http;
 using GDO.Core.Scenarios;
 using log4net;
 using Newtonsoft.Json;
@@ -162,5 +163,21 @@ namespace GDO.Core
             return res;
         }
 
+
+        [HttpGet]
+        [Route("api/CaveState/Deploy?stateName={stateName}")]
+        public bool DeployState(string stateName) {
+            var hub = GDOAPISingleton.Instance.Hub;
+            if (hub == null) return false;
+
+            Log.Info($"GDO API - about to deploy CaveState {stateName}");
+            hub.ClearCave();
+            Thread.Sleep(1000);
+            hub.RestoreCaveState(stateName);
+            Log.Info($"GDO API - successfully deployed CaveState {stateName}");
+
+            return true;
+
+        }
     }
 }
