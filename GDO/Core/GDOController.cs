@@ -1,6 +1,7 @@
 ﻿using System.Web.Http;
 using GDO.Core.Scenarios;
 using log4net;
+using Newtonsoft.Json;
 
 namespace GDO.Core
 {
@@ -72,10 +73,11 @@ namespace GDO.Core
             return result;
         }
 
-        [HttpGet]
+
         //[Route("api/Section/Create?lowerleft={lowerLeft}&uppoerRight={upperRight}")]
         //public int CreateSectionByScreenID(int lowerLeft, int upperRight) {
-        
+
+        [HttpGet]
         [Route("api/Section/Create?colStart={colStart}&rowStart={rowStart}&width={width}&height={height}")]
         public int CreateSection(int colStart, int rowStart, int width, int height) {
             var hub = GDOAPISingleton.Instance.Hub;
@@ -86,5 +88,53 @@ namespace GDO.Core
 
             return sectionid;
         }
+
+        [HttpGet]
+        [Route("api/Section/Close?id={id}")]
+        public bool CloseSection(int id) {
+            var hub = GDOAPISingleton.Instance.Hub;
+            if (hub == null) return false;
+
+            Log.Info($"GDO API - closing section {id} ");
+            var res = hub.CloseSection(id);
+            Log.Info($"GDO API - closed section {id} "+res);
+
+            return res;
+        }
+
+        /// <summary>
+        /// Runs the step.
+        /// {
+        ///  "IsLoop": false,
+        ///  "Id": 2,
+        ///  "Mod": "gdo.net.app.Images.server",
+        ///  "Func": "findDigits",
+        ///  "Params": [ "0,\"00002\"" ],
+        ///  "DefaultWait": 0.0
+        ///},
+        /// </summary>
+        /// <param name="scriptElement">The script element.</param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("api/Script/RunStep")]
+        public bool RunStep([FromBody] Element scriptElement) {
+            var hub = GDOAPISingleton.Instance.Hub;
+            if (hub == null) return false;
+
+            var script = JsonConvert.SerializeObject(scriptElement);
+            Log.Info($"GDO API - about to run script step "+script);
+            string errors;
+            var res = ScenarioRunner.RunScriptStep(scriptElement ,out errors);
+            if (res) {
+                Log.Info($"GDO API - Successfully Ran script step " + script);
+            }
+            else {
+                Log.Error($"GDO API - Failed Ran script step " + script+ "errors = "+errors);
+            }
+
+            return res;
+        }
+
+
     }
 }
