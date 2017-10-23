@@ -136,5 +136,31 @@ namespace GDO.Core
         }
 
 
+        /// <summary>
+        /// Deploys an application, to a given section
+        /// </summary>
+        /// <param name="sectionId">The section id.</param>
+        /// <param name="appName">Name of the app</param>
+        /// <param name="config">The name of the configuration.</param>
+        /// <returns>the instance id for the created app</returns>
+        [HttpGet]
+        [Route("api/Section/{sectionId}/DeployApp?app={appName}&config={config}")]
+        public int DeployApp(int sectionId, string appName, string config) {
+            var hub = GDOAPISingleton.Instance.Hub;
+            if (hub == null) return -1;
+
+            Log.Info($"GDO API - about to deploy {appName} app to section {sectionId} with config {config}");
+            
+            int res = hub.DeployBaseApp(sectionId, appName, config);
+
+            if (res >=0) {
+                Log.Info($"GDO API - successfully deployed {appName} app to section {sectionId} with config {config}");
+            } else {
+                Log.Error($"GDO API - failed to deploy {appName} app to section {sectionId} with config {config}");
+            }
+
+            return res;
+        }
+
     }
 }

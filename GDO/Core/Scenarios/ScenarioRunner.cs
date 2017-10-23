@@ -34,38 +34,8 @@ namespace GDO.Core.Scenarios {
 
                 
                 foreach (var scriptStep in script) {
-                    if (scriptStep.Func == "goToControlPage") {
-                        continue;
-                    }
-                    if (scriptStep.IsLoop) {
-                        return "we dont support Loops yet";
-                    }
-
-                    try {
-
-                        object hub = FindHub(scriptStep.Mod); // voodoo here
-                        Type type = hub.GetType();
-                        MethodInfo mi = type.GetMethod(scriptStep.Func, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-
-
-                        if (mi == null) {
-                            return "no such method " + scriptStep;
-                        }
-
-
-                        var parameters = scriptStep.ParseParams();
-
-                        var res = mi.Invoke(hub, parameters);// here be dragons! 
-
-                        if (Math.Abs(scriptStep.DefaultWait) > 0.01) {
-                            Thread.Sleep((int) (scriptStep.DefaultWait * 1000));
-                        }
-
-                    }
-                    catch (Exception e) {
-                        return"Exception executing script step "+scriptStep + e;
-
-                    }
+                    string errors;
+                    if (RunScriptStep(scriptStep, out errors)) return errors;
                 }
                 return "Successfully ran script" + name;
 
@@ -73,6 +43,50 @@ namespace GDO.Core.Scenarios {
             catch (Exception e) {
                 return "error " + e;                
             }
+        }
+
+        public static bool RunScriptStep(Element scriptStep, out string errors) {
+            errors = null;
+            if (scriptStep.Func == "goToControlPage") {
+                return false;
+            }
+            if (scriptStep.IsLoop) {
+                {
+                    errors = "we dont support Loops yet";
+                    return true;
+                }
+            }
+
+            try {
+                object hub = FindHub(scriptStep.Mod); // voodoo here
+                Type type = hub.GetType();
+                MethodInfo mi = type.GetMethod(scriptStep.Func,
+                    BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+
+
+                if (mi == null) {
+                    {
+                        errors = "no such method " + scriptStep;
+                        return true;
+                    }
+                }
+
+
+                var parameters = scriptStep.ParseParams();
+
+                var res = mi.Invoke(hub, parameters); // here be dragons! 
+
+                if (Math.Abs(scriptStep.DefaultWait) > 0.01) {
+                    Thread.Sleep((int) (scriptStep.DefaultWait * 1000));
+                }
+            }
+            catch (Exception e) {
+                {
+                    errors = "Exception executing script step " + scriptStep + e;
+                    return true;
+                }
+            }
+            return false;
         }
 
         private static object FindHub(string module) {
