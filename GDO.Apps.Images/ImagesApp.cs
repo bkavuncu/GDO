@@ -12,6 +12,7 @@ namespace GDO.Apps.Images
         public string ImageNameDigit;
         public int Rotate;
         public DisplayBlockInfo DisplayBlock;
+        public DisplayRegionInfo DisplayRegion;
     }
     enum Mode
     {
@@ -56,7 +57,7 @@ namespace GDO.Apps.Images
         public ICompositeAppInstance ParentApp { get; set; }
         public int DisplayMode { get; set; }
 
-        public DisplayRegionInfo DisplayRegion { get; set; }
+        
 
         public ThumbNailImageInfo ThumbNailImage { get; set; }
         public int TilesNumInEachBlockRow { get; set; }
@@ -77,7 +78,6 @@ namespace GDO.Apps.Images
             this.ThumbNailImage = null;
             this.TilesNumInEachBlockRow = 3;
             this.TilesNumInEachBlockCol = 3;
-            this.DisplayRegion = new DisplayRegionInfo();
             this.Tiles = null;
 
             if (this.Configuration.ImageNameDigit != null)
@@ -88,6 +88,7 @@ namespace GDO.Apps.Images
             {
                 this.Configuration.ImageNameDigit = "";
                 this.Configuration.Rotate = 0;
+                this.Configuration.DisplayRegion = new DisplayRegionInfo();
                 this.Configuration.DisplayBlock = new DisplayBlockInfo(Section.Cols, Section.Rows);
             }
             String basePath = HttpContext.Current.Server.MapPath("~/Web/Images/images/");
@@ -96,8 +97,6 @@ namespace GDO.Apps.Images
                 Directory.CreateDirectory(basePath);
             }
         }
-
-        
 
         private void FindImageData(string digits)
         {
