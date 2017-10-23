@@ -46,27 +46,28 @@ namespace GDO.Core
         /// <param name="colEnd">The col end.</param>
         /// <param name="rowEnd">The row end.</param>
         /// <returns></returns>
-        public List<Node> CreateSection(int colStart, int rowStart, int colEnd, int rowEnd)
+        public int CreateSection(int colStart, int rowStart, int colEnd, int rowEnd)
         {
-            List<Node> deployedNodes = new List<Node>();
             if (IsSectionFree(colStart, rowStart, colEnd, rowEnd))
             {
                 int sectionId = Utilities.GetAvailableSlot<Section>(Sections);
                 Section section = new Section(sectionId, colStart, rowStart, colEnd - colStart + 1, rowEnd - rowStart + 1);
+                section.CalculateDimensions();
                 Sections.TryAdd(sectionId, section);
 
-                foreach (KeyValuePair<int, Node> nodeEntry in Cave.Layout.Nodes)
-                {
+                // deploy the nodes.... 
+                foreach (KeyValuePair<int, Node> nodeEntry in Cave.Layout.Nodes) {
                     Node node = nodeEntry.Value;
-                    if (node.Col <= colEnd && node.Col >= colStart && node.Row <= rowEnd && node.Row >= rowStart)
-                    {
-                        deployedNodes.Add(Cave.Layout.DeployNode(section.Id, node.Id, node.Col - colStart, node.Row - rowStart));
+                    if (node.Col <= colEnd && node.Col >= colStart && node.Row <= rowEnd && node.Row >= rowStart) {
+                        Cave.Layout.DeployNode(section.Id, node.Id, node.Col - colStart, node.Row - rowStart);
                     }
                 }
-                section.CalculateDimensions();
+
+                
             }
-            return deployedNodes;
+            return -1;
         }
+        
         /// <summary>
         /// Closes the section.
         /// </summary>

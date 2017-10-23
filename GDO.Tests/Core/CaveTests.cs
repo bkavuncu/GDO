@@ -41,7 +41,9 @@ namespace GDO.Tests.Core
             {
                 Assert.Fail("Cave.Layout.Nodes.Count:" + Cave.Layout.Nodes.Count);
             }
-            List<Node> deployedNodes = Cave.Deployment.CreateSection(2, 2, 3, 3);
+            int sectionid = Cave.Deployment.CreateSection(2, 2, 3, 3);
+            List<Node> deployedNodes = Cave.Deployment.Sections[sectionid].NodeList;
+                
             if (deployedNodes.Count < 4)
             {
                 Assert.Fail("deployedNodes.Count:" + deployedNodes.Count);
@@ -94,7 +96,8 @@ namespace GDO.Tests.Core
         public void GetMapTests()
         {
             Cave.Init();
-            List<Node> deployedNodes = Cave.Deployment.CreateSection(2, 2, 3, 3);
+            int sectionid = Cave.Deployment.CreateSection(2, 2, 3, 3);
+            List<Node> deployedNodes = Cave.Deployment.Sections[sectionid].NodeList;
 
             _nodeMap = Cave.GetNodeMap();
             _sectionMap = Cave.GetSectionMap(1);

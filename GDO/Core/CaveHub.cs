@@ -104,15 +104,16 @@ namespace GDO.Core
         /// <param name="rowStart">The row start.</param>
         /// <param name="colEnd">The col end.</param>
         /// <param name="rowEnd">The row end.</param>
-        /// <returns></returns>
-        public bool CreateSection(int colStart, int rowStart, int colEnd, int rowEnd)
+        /// <returns>the new section id or -1 if error</returns>
+        public int CreateSection(int colStart, int rowStart, int colEnd, int rowEnd)
         {
             lock (Cave.ServerLock)
             {
                 // deploy the section
-                List<Node> deployedNodes = Cave.Deployment.CreateSection(colStart, rowStart, colEnd, rowEnd);
+                int sectionId = Cave.Deployment.CreateSection(colStart, rowStart, colEnd, rowEnd);
+                List<Node> deployedNodes = Cave.Deployment.Sections[sectionId].NodeList;
 
-                if (!deployedNodes.Any()) return false;
+                if (!deployedNodes.Any()) return -1;
 
                 // add the nodes to the signal R connection group for the new section
                 foreach (Node node in deployedNodes)
@@ -126,7 +127,7 @@ namespace GDO.Core
                 // broadcast an update saying that connection is updated. 
                 BroadcastSectionUpdate(Cave.GetSectionId(colStart, rowStart));
 
-                return true;
+                return sectionId;
             }
         }
 
