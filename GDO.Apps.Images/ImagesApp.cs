@@ -57,8 +57,6 @@ namespace GDO.Apps.Images
         public ICompositeAppInstance ParentApp { get; set; }
         public int DisplayMode { get; set; }
 
-        
-
         public ThumbNailImageInfo ThumbNailImage { get; set; }
         public int TilesNumInEachBlockRow { get; set; }
         public int TilesNumInEachBlockCol { get; set; }
