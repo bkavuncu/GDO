@@ -79,7 +79,7 @@ namespace GDO.Core
         //public int CreateSectionByScreenID(int lowerLeft, int upperRight) {
 
         [HttpGet]
-        [Route("api/Section/Create?colStart={colStart}&rowStart={rowStart}&width={width}&height={height}")]
+        [Route("api/Section/Create")]//?colStart={colStart}&rowStart={rowStart}&width={width}&height={height}
         public int CreateSection(int colStart, int rowStart, int width, int height) {
             var hub = GDOAPISingleton.Instance.Hub;
             if (hub == null) return -1;
@@ -91,7 +91,7 @@ namespace GDO.Core
         }
 
         [HttpGet]
-        [Route("api/Section/Close?id={id}")]
+        [Route("api/Section/Close")]//?id={id}
         public bool CloseSection(int id) {
             var hub = GDOAPISingleton.Instance.Hub;
             if (hub == null) return false;
@@ -145,7 +145,7 @@ namespace GDO.Core
         /// <param name="config">The name of the configuration.</param>
         /// <returns>the instance id for the created app</returns>
         [HttpGet]
-        [Route("api/Section/{sectionId}/DeployApp?app={appName}&config={config}")]
+        [Route("api/Section/{sectionId}/DeployApp")]//?app={appName}&config={config}
         public int DeployApp(int sectionId, string appName, string config) {
             var hub = GDOAPISingleton.Instance.Hub;
             if (hub == null) return -1;
@@ -170,7 +170,7 @@ namespace GDO.Core
         /// <param name="stateName">Name of the state.</param>
         /// <returns>success</returns>
         [HttpGet]
-        [Route("api/CaveState/Deploy?stateName={stateName}")]
+        [Route("api/CaveState/Deploy")]//?stateName={stateName}
         public bool DeployState(string stateName) {
             var hub = GDOAPISingleton.Instance.Hub;
             if (hub == null) return false;

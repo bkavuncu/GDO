@@ -52,7 +52,7 @@ namespace GDO.Core
             {
                 int sectionId = Utilities.GetAvailableSlot<Section>(Sections);
                 Section section = new Section(sectionId, colStart, rowStart, colEnd - colStart + 1, rowEnd - rowStart + 1);
-                section.CalculateDimensions();
+                
                 Sections.TryAdd(sectionId, section);
 
                 // deploy the nodes.... 
@@ -62,6 +62,8 @@ namespace GDO.Core
                         Cave.Layout.DeployNode(section.Id, node.Id, node.Col - colStart, node.Row - rowStart);
                     }
                 }
+
+                section.CalculateDimensions();
                 return sectionId;
                 
             }
