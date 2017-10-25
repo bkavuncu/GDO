@@ -61,6 +61,8 @@ namespace GDO.Core.Apps
                     return -1;
                 }
             }
+
+            //TODO BUG we need to copy the instances of the config rather than pass by value :-/ ...
             instance.Id = instanceId;
             instance.App = this;
             instance.AppName = Name;

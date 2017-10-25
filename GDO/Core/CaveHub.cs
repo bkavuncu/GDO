@@ -596,6 +596,7 @@ namespace GDO.Core
             }
             catch (Exception e)
             {
+                Log.Error("failed to get instance update for id "+instanceId+" error was "+e);
                 Console.WriteLine(e);
                 return null;
             }

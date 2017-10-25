@@ -66,6 +66,13 @@ namespace GDO.Core.Apps
 
         }
 
+        /// <summary>
+        /// Gets the property of the given type
+        /// TODO BUG watch out this is not working with basic types like string, int ... in this case some reflection is need and probably the Convert.To method 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key">The key.</param>
+        /// <returns></returns>
         public T GetProperty<T>(string key)
         {
             if (typeof(T).IsGenericType)

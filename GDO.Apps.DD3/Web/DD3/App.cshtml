@@ -577,12 +577,13 @@
                     orderController.orders['createRect'] = function (id, image, w_img, h_img) {
                         var rectG = svg.append('g').attr('id', "r" + id);
                         var id_int = parseInt(id.substr(1, id.length));
-                        let columns = 32;
+                        let columns = 16;
+                        let rows = 4;
                         var col = (id_int - 1) % columns;
                         var row = Math.floor((id_int - 1) / columns);
 
                         var offx = (((width / columns) * col) % width) ;
-                        var offy = (((height / 4) * row) % height);
+                        var offy = (((height / rows) * row) % height);
 
                         
                         

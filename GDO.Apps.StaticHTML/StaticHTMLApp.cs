@@ -36,10 +36,10 @@ namespace GDO.Apps.StaticHTML
         public bool IsResponsiveMode { get; set; } = false;
 
         public string URL {
-            get { return Configuration.GetProperty<string>("url");  }
-            set {
-                Configuration.SetProperty("url",value);
+            get {
+                return Configuration.Json.GetValue("url").ToString();
             }
+            set { Configuration.Json.Property("url").Value = value; }
         }
 
         public void Init()
