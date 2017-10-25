@@ -525,13 +525,13 @@ namespace GDO.Core
                     if (section != null) return section.SerializeJSON();
                 }
 
-                Log.Error("failed to GetNodeUpdate " + sectionId);
+                Log.Error("failed to GetNodeUpdate for a section which doesn't exist " + sectionId);
                 return null;
 
             }
             catch (Exception e) { // dont think this will hit
                 Console.WriteLine(e);
-                Log.Error("failed to GetNodeUpdate", e);
+                Log.Error("failed to GetNodeUpdate "+sectionId, e);
                 return null;
             }
         }

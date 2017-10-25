@@ -1,12 +1,6 @@
-﻿using System;
-using GDO.Core;
-using System.Collections.Generic;
+﻿using GDO.Core;
 using System.Diagnostics;
-using System.Linq;
-using System.IO;
 using GDO.Core.Apps;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace GDO.Apps.StaticHTML
 {
@@ -40,10 +34,16 @@ namespace GDO.Apps.StaticHTML
         public ICompositeAppInstance ParentApp { get; set; }
 
         public bool IsResponsiveMode { get; set; } = false;
-        public string URL { get; set; }
+
+        public string URL {
+            get { return Configuration.GetProperty<string>("url");  }
+            set {
+                Configuration.SetProperty("url",value);
+            }
+        }
+
         public void Init()
         {
-            URL = (string)Configuration.Json.SelectToken("url");
             IsResponsiveMode = (bool)(Configuration.Json.SelectToken("responsiveMode") ?? false);
             Debug.WriteLine("Using responsive mode? " + IsResponsiveMode);
         }

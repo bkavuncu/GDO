@@ -78,13 +78,21 @@ namespace GDO.Core
         //[Route("api/Section/Create?lowerleft={lowerLeft}&uppoerRight={upperRight}")]
         //public int CreateSectionByScreenID(int lowerLeft, int upperRight) {
 
+        /// <summary>
+        /// Creates the section - works from (0,0) is the top left 
+        /// </summary>
+        /// <param name="colStart">The col start.</param>
+        /// <param name="rowStart">The row start 0 is the top row</param>
+        /// <param name="width">The width.</param>
+        /// <param name="height">The height.</param>
+        /// <returns>id of the section created</returns>
         [HttpGet]
         [Route("api/Section/Create")]//?colStart={colStart}&rowStart={rowStart}&width={width}&height={height}
         public int CreateSection(int colStart, int rowStart, int width, int height) {
             var hub = GDOAPISingleton.Instance.Hub;
             if (hub == null) return -1;
             Log.Info($"GDO API - creating section colStart={colStart},  rowStart={rowStart},  width={width},  height={height} ");
-            int sectionid= hub.CreateSection(colStart, rowStart, colStart+width, rowStart+height);
+            int sectionid= hub.CreateSection(colStart, rowStart, colStart+width-1, rowStart+height-1);
             Log.Info($"GDO API - creating sected {sectionid} ");
 
             return sectionid;
@@ -143,7 +151,9 @@ namespace GDO.Core
         /// <param name="sectionId">The section id.</param>
         /// <param name="appName">Name of the app</param>
         /// <param name="config">The name of the configuration.</param>
-        /// <returns>the instance id for the created app</returns>
+        /// <returns>
+        /// the instance id for the created app
+        /// </returns>
         [HttpGet]
         [Route("api/Section/{sectionId}/DeployApp")]//?app={appName}&config={config}
         public int DeployApp(int sectionId, string appName, string config) {
@@ -185,11 +195,18 @@ namespace GDO.Core
 
         }
 
+        /* TODO
+         * DONE make statichtml app save state   
         // close App
         // create section and deploy 
         // close app and close section
         // send to console 
+        // ability to send an app config in the post section 
+        // save a state 
+        // ability to load a whole script via post 
 
         // ability to deploy state within a script 
+
+        */ 
     }
 }

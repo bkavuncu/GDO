@@ -103,7 +103,9 @@ namespace GDO.Core.Apps
         }
 
         public string GetJsonForBrowsers() {
-
+            if (this.Json == null) {
+                this.Json = new JObject();
+            }
             return JsonConvert.SerializeObject(this.Json.ToString());
         }
     }

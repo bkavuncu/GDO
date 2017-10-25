@@ -35,7 +35,7 @@ namespace GDO.Core.Scenarios {
                 
                 foreach (var scriptStep in script) {
                     string errors;
-                    if (RunScriptStep(scriptStep, out errors)) return errors;
+                    if (!RunScriptStep(scriptStep, out errors)) return errors;
                 }
                 return "Successfully ran script" + name;
 
@@ -45,6 +45,12 @@ namespace GDO.Core.Scenarios {
             }
         }
 
+        /// <summary>
+        /// Runs the script step.
+        /// </summary>
+        /// <param name="scriptStep">The script step.</param>
+        /// <param name="errors">The errors.</param>
+        /// <returns>true if executed succesffuly </returns>
         public static bool RunScriptStep(Element scriptStep, out string errors) {
             errors = null;
             if (scriptStep.Func == "goToControlPage") {
@@ -53,7 +59,7 @@ namespace GDO.Core.Scenarios {
             if (scriptStep.IsLoop) {
                 {
                     errors = "we dont support Loops yet";
-                    return true;
+                    return false;
                 }
             }
 
@@ -67,7 +73,7 @@ namespace GDO.Core.Scenarios {
                 if (mi == null) {
                     {
                         errors = "no such method " + scriptStep;
-                        return true;
+                        return false;
                     }
                 }
 
@@ -83,10 +89,10 @@ namespace GDO.Core.Scenarios {
             catch (Exception e) {
                 {
                     errors = "Exception executing script step " + scriptStep + e;
-                    return true;
+                    return false;
                 }
             }
-            return false;
+            return true;
         }
 
         private static object FindHub(string module) {
