@@ -62,7 +62,7 @@ namespace GDO.Core
                         Cave.Layout.DeployNode(section.Id, node.Id, node.Col - colStart, node.Row - rowStart);
                     }
                 }
-
+                return sectionId;
                 
             }
             return -1;

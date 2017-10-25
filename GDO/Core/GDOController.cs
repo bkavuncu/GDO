@@ -189,5 +189,7 @@ namespace GDO.Core
         // create section and deploy 
         // close app and close section
         // send to console 
+
+        // ability to deploy state within a script 
     }
 }
