@@ -5,6 +5,7 @@ using System.Linq;
 using GDO.Utility;
 using log4net;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace GDO.Core.Apps
 {
@@ -40,36 +41,37 @@ namespace GDO.Core.Apps
             Instances = new ConcurrentDictionary<int, IAppInstance>();
         }
 
-        public int CreateAppInstance(dynamic config, int sectionId, bool integrationMode, int parentId) {
-            if (!(config is AppJsonConfiguration) && !Configurations.ContainsKey(config)) {
+        #region create new app instance from configs... 
+
+        public int CreateAppInstance(string config, int sectionId, bool integrationMode, int parentId) {
+            IAppConfiguration conf;
+            Configurations.TryGetValue(config, out conf);
+            conf = Cave.CopyAppConfig(conf); // every deployed app MUST have a new app 
+            if (conf == null) {
+                Log.Error("Failed to find config name " + config);
                 return -1;
             }
+            return CreateAppInstance(conf, sectionId, integrationMode, parentId);
+        }
 
+        public int CreateAppInstance(JObject config, int sectionId, bool integrationMode, int parentId,string configName = "dynamic") {
+            IAppConfiguration conf = Cave.HydrateAppConfiguration(config, configName);
+            return CreateAppInstance(conf, sectionId, integrationMode, parentId);
+        }
+
+        public int CreateAppInstance(IAppConfiguration config, int sectionId, bool integrationMode, int parentId) {
+            
             int instanceId = Utilities.GetAvailableSlot(Cave.Deployment.Instances);
             IBaseAppInstance instance = (IBaseAppInstance)Activator.CreateInstance(AppClassType, new object[0]);
-            IAppConfiguration conf;
+            
             Cave.Deployment.Sections[sectionId].CalculateDimensions();
-            if (config is AppJsonConfiguration)
-            {
-                conf = config;
-            }
-            else
-            {
-                Configurations.TryGetValue(config, out conf);
-                if (conf == null) {
-                    Log.Error("Failed to find config name " + config);
-                    return -1;
-                }
-            }
-
-            //TODO BUG we need to copy the instances of the config rather than pass by value :-/ ...
             instance.Id = instanceId;
             instance.App = this;
             instance.AppName = Name;
             //instance.HubContext = GlobalHost.ConnectionManager.GetHubContext(Name + "Hub");
             //instance.HubContext = (IHubContext) typeof (IConnectionManager).GetMethod("GetHubContext").GetGenericMethodDefinition().MakeGenericMethod(AppHubType).Invoke(GlobalHost.ConnectionManager, null);
             instance.Section = Cave.Deployment.Sections[sectionId];
-            instance.SetConfiguration(conf);
+            instance.SetConfiguration(config);
             instance.IntegrationMode = integrationMode;
             if (integrationMode)
             {
@@ -78,9 +80,11 @@ namespace GDO.Core.Apps
             instance.Init();
             Instances.TryAdd(instanceId,instance);
             Cave.Deployment.Instances.TryAdd(instanceId,instance);
-            Log.Info("created app "+Name+ " instance "+(config is string ? config : config.Name));
+            Log.Info("created app "+Name+ " instance "+ config.Name);
             return instanceId;
         }
+
+        #endregion
 
         public bool DisposeAppInstance(int instanceId) {
             if (!Instances.ContainsKey(instanceId)) {

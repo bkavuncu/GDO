@@ -351,39 +351,59 @@ namespace GDO.Core
                 foreach (string filePath in filePaths)
                 {
                     JObject json = Utilities.LoadJsonFile(filePath);
-                    if (json != null)
-                    {
-                        string configurationName = Utilities.RemoveString(filePath, path + "\\");
-                        configurationName = Utilities.RemoveString(configurationName, ".json");
-                        Log.Info("Found config called "+configurationName+" for app "+appName+" about to load");
+                    if (json == null) continue;
 
-                        IAppConfiguration appConfiguration = null;
+                    string configurationName = Path.GetFileNameWithoutExtension(filePath);
+                    //Utilities.RemoveString(filePath, path + "\\");
+                    //configurationName = Utilities.RemoveString(configurationName, ".json");
 
-                        // load custom types of configuration or the generic type... 
-                        JToken configType;
-                        if (json.TryGetValue("ConfigType", out configType)) {
-                            var configTypename = configType.ToString();
+                    Log.Info("Found config called "+configurationName+" for app "+appName+" about to load");
 
+                    var appConfiguration = HydrateAppConfiguration(json, configurationName);
 
-                            Type type = Deployment.ApplicationConfigTypes.FirstOrDefault(t => t.FullName == configTypename);
-                            if (type != null) {
-                                appConfiguration =
-                                    (IAppConfiguration) JsonConvert.DeserializeObject(json.ToString(), type);
-                            }
-                            else {
-                                Log.Info("could not find config type " + configTypename);
-                            }
-                        }
-                        
-                        if(appConfiguration == null) {
-                            appConfiguration = new AppJsonConfiguration(configurationName, json);
-                        }
-
-                        Deployment.Apps[appName].Configurations.AddOrUpdate(configurationName, appConfiguration,(a,b) => appConfiguration );
-                    }
+                    Deployment.Apps[appName].Configurations.AddOrUpdate(configurationName, appConfiguration,(a,b) => appConfiguration );
                 }
             }   
             return configurations;
+        }
+
+        /// <summary>
+        /// Hydrates the application configuration.
+        /// either using the type definition provided or assuming it is a generic AppJsonConfiguration
+        /// </summary>
+        /// <param name="json">The json.</param>
+        /// <param name="configurationName">Name of the configuration.</param>
+        /// <returns>the app config</returns>
+        internal static IAppConfiguration HydrateAppConfiguration(JObject json, string configurationName) {
+            IAppConfiguration appConfiguration = null;
+
+            // load custom types of configuration or the generic type... 
+            JToken configType;
+            if (json.TryGetValue("ConfigType", out configType)) {
+                var configTypename = configType.ToString();
+
+
+                Type type = Deployment.ApplicationConfigTypes.FirstOrDefault(t => t.FullName == configTypename);
+                if (type != null) {
+                    appConfiguration =
+                        (IAppConfiguration) JsonConvert.DeserializeObject(json.ToString(), type);
+                }
+                else {
+                    Log.Info("could not find config type " + configTypename);
+                }
+            }
+
+            return appConfiguration ?? new AppJsonConfiguration(configurationName, json);
+        }
+
+        /// <summary>
+        /// Copies the application configuration by round tripping to json 
+        /// </summary>
+        /// <param name="conf">The conf.</param>
+        /// <returns>a new copy</returns>
+        public static IAppConfiguration CopyAppConfig(IAppConfiguration conf) {
+            var save = JsonConvert.SerializeObject(conf);
+            return HydrateAppConfiguration(JObject.Parse(save), conf.Name);
         }
 
         public static List<string> GetConfigListForApp(string appName) {
@@ -491,5 +511,7 @@ namespace GDO.Core
         public static void RegisterConfigType(Type type) {
             Deployment.ApplicationConfigTypes.Add(type);
         }
+
+        
     }
 }
