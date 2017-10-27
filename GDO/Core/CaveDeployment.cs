@@ -210,7 +210,7 @@ namespace GDO.Core
             return appList;
         }
 
-        public int CreateBaseAppInstance(int sectionId, string appName, dynamic config)
+        public int CreateBaseAppInstance(int sectionId, string appName, dynamic config)//dynamic keyword is hateful 
         {
             string configName = config is string ? config : config.Name;
 

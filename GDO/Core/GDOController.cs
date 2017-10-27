@@ -1,8 +1,11 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Web.Http;
+using GDO.Core.Apps;
 using GDO.Core.Scenarios;
 using log4net;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace GDO.Core
 {
@@ -33,6 +36,8 @@ namespace GDO.Core
 
         }
 
+        #region maintainence Mode
+
         [HttpGet]
         [Route("api/GDO/MaintainenceModeClear")]
         public string MaintainenceModeClear() {
@@ -57,6 +62,10 @@ namespace GDO.Core
             return "Turned on maintainence mode";
         }
 
+        #endregion
+
+        #region scripting / scenarios 
+
         [HttpGet]
         [Route("api/GDO/Scenario/{name}")]
         public string RunScenario(string name) {
@@ -73,11 +82,42 @@ namespace GDO.Core
 
             return result;
         }
+      
+        /// <summary>
+        /// Runs the step.
+        /// {
+        ///  "IsLoop": false,
+        ///  "Id": 2,
+        ///  "Mod": "gdo.net.app.Images.server",
+        ///  "Func": "findDigits",
+        ///  "Params": [ "0,\"00002\"" ],
+        ///  "DefaultWait": 0.0
+        ///},
+        /// </summary>
+        /// <param name="scriptElement">The script element.</param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("api/Script/RunStep")]
+        public bool RunStep([FromBody] Element scriptElement) {
+            var hub = GDOAPISingleton.Instance.Hub;
+            if (hub == null) return false;
 
+            var script = JsonConvert.SerializeObject(scriptElement);
+            Log.Info($"GDO API - about to run script step " + script);
+            string errors;
+            var res = ScenarioRunner.RunScriptStep(scriptElement, out errors);
+            if (res) {
+                Log.Info($"GDO API - Successfully Ran script step " + script);
+            } else {
+                Log.Error($"GDO API - Failed Ran script step " + script + "errors = " + errors);
+            }
 
-        //[Route("api/Section/Create?lowerleft={lowerLeft}&uppoerRight={upperRight}")]
-        //public int CreateSectionByScreenID(int lowerLeft, int upperRight) {
+            return res;
+        }
 
+        #endregion
+
+        #region Section -  Create and close 
         /// <summary>
         /// Creates the section - works from (0,0) is the top left 
         /// </summary>
@@ -111,39 +151,11 @@ namespace GDO.Core
             return res;
         }
 
-        /// <summary>
-        /// Runs the step.
-        /// {
-        ///  "IsLoop": false,
-        ///  "Id": 2,
-        ///  "Mod": "gdo.net.app.Images.server",
-        ///  "Func": "findDigits",
-        ///  "Params": [ "0,\"00002\"" ],
-        ///  "DefaultWait": 0.0
-        ///},
-        /// </summary>
-        /// <param name="scriptElement">The script element.</param>
-        /// <returns></returns>
-        [HttpPost]
-        [Route("api/Script/RunStep")]
-        public bool RunStep([FromBody] Element scriptElement) {
-            var hub = GDOAPISingleton.Instance.Hub;
-            if (hub == null) return false;
+        #endregion
 
-            var script = JsonConvert.SerializeObject(scriptElement);
-            Log.Info($"GDO API - about to run script step "+script);
-            string errors;
-            var res = ScenarioRunner.RunScriptStep(scriptElement ,out errors);
-            if (res) {
-                Log.Info($"GDO API - Successfully Ran script step " + script);
-            }
-            else {
-                Log.Error($"GDO API - Failed Ran script step " + script+ "errors = "+errors);
-            }
+        #region deploy and close app 
 
-            return res;
-        }
-
+        #region Deploy App (named and posted config)
 
         /// <summary>
         /// Deploys an application, to a given section
@@ -171,8 +183,74 @@ namespace GDO.Core
             }
 
             return res;
+        }    
+
+        [HttpPost]
+        [Route("api/Section/{sectionId}/DeployApp")] //?app={appName}&config={config}
+        public int DeployAppPostConfig(int sectionId, string appName, [FromBody] string config) {
+            var hub = GDOAPISingleton.Instance.Hub;
+            if (hub == null) return -1;
+
+            Log.Info($"GDO API - about to deploy {appName} app to section {sectionId} with config {config}");
+
+            IAppConfiguration appconfig = Cave.HydrateAppConfiguration(JObject.Parse(config), "posted");
+            Log.Info($"GDO API - successfuly parsed config");
+
+            int res = hub.DeployBaseApp(sectionId, appName, appconfig);
+
+            if (res >= 0) {
+                Log.Info($"GDO API - successfully deployed {appName} app to section {sectionId} with posted config - see above");
+            } else {
+                Log.Error($"GDO API - failed to deploy {appName} app to section {sectionId} with config - see above");
+            }
+
+            return res;
         }
 
+        #endregion
+
+        [HttpGet]
+        [Route("api/Section/{sectionId}/SaveState")]
+        public string SaveAppState(int sectionId) {
+            var hub = GDOAPISingleton.Instance.Hub;
+            if (hub == null) return "No Cave State";
+
+            Log.Info($"GDO API - about to Save the state of {sectionId}");
+            if (!Cave.Deployment.Instances.ContainsKey(sectionId)) {
+                Log.Info($"GDO API - could not find the app running on section {sectionId}");
+                return "bad sectionID";
+            }
+            try {
+                var app = Cave.Deployment.Instances[sectionId];
+                var config = app.GetConfiguration();
+                string res = JsonConvert.SerializeObject(config);
+                return res;
+            } catch (Exception e) {
+                Log.Error($"GDO API - failed to get state for section {sectionId} "+e);
+                return "error saving state " + e;
+            }
+
+        }
+
+        [HttpGet]
+        [Route("api/Section/{sectionId}/CloseApp")]
+        public bool CloseApp(int sectionId) {
+            var hub = GDOAPISingleton.Instance.Hub;
+            if (hub == null) return false;
+
+            Log.Info($"GDO API - about to close the app on section {sectionId}");
+
+            bool res = hub.CloseApp(sectionId);
+
+            Log.Info($"GDO API - {(res ? "succesfully" : "Failed to ")} close an app on section {sectionId}");
+
+
+            return res;
+        }
+
+        #endregion
+
+        #region CaveState - load named cavestate
 
         /// <summary>
         /// Deploys the given state to the observatory 
@@ -192,21 +270,28 @@ namespace GDO.Core
             Log.Info($"GDO API - successfully deployed CaveState {stateName}");
 
             return true;
-
         }
 
+        #endregion
+
+
+
         /* TODO
-         * DONE make statichtml app save state   
+         * DONE+tested make statichtml app save state   
+        // ability to send an app config in the post section 
         // close App
+        // save a state of an app
+
         // create section and deploy 
         // close app and close section
         // send to console 
-        // ability to send an app config in the post section 
-        // save a state 
+        
+        
+        // save state of whole cave 
         // ability to load a whole script via post 
 
         // ability to deploy state within a script 
 
-        */ 
+        */
     }
 }

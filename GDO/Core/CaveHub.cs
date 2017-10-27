@@ -200,7 +200,6 @@ namespace GDO.Core
             }
         }
 
-
         /// <summary>
         /// Deploys the application.
         /// </summary>
@@ -208,7 +207,7 @@ namespace GDO.Core
         /// <param name="appName">Name of the application.</param>
         /// <param name="configName">Name of the configuration.</param>
         /// <returns></returns>
-        public int DeployBaseApp(int sectionId, string appName, string configName)
+        public int DeployBaseApp(int sectionId, string appName, dynamic configName)// dynamic is hateful but handy - can be string for name or JSON or an actual state object
         {
             lock (Cave.ServerLock)
             {
@@ -834,23 +833,33 @@ namespace GDO.Core
             }
         }
 
+        /// <summary>
+        /// Clears the Cave and Restores the state of the cave.
+        /// </summary>
+        /// <param name="name">The name of the CAVE State</param>
         public void RestoreCaveState(string name)
         {
-            lock (Cave.ServerLock)
-            {
+            lock (Cave.ServerLock) {
                 State caveState = Cave.States[name];
-                ClearCave();
-                
-                //TODO Composite apps
-                foreach (AppState appState in caveState.States)
-                {
-                    CreateSection(appState.Col, appState.Row, (appState.Col + appState.Cols -1),
-                                                              (appState.Row + appState.Rows -1));
-                    Cave.GetSectionId(appState.Col, appState.Row);
-                    DeployBaseApp(Cave.GetSectionId(appState.Col, appState.Row), appState.AppName, appState.Config);
-                }
+                RestoreCaveState(caveState);
             }
 
+        }
+
+        /// <summary>
+        /// Clears the Cave and Restores the state of the cave.
+        /// </summary>
+        /// <param name="caveState">The state of the CAVE</param>
+        public void RestoreCaveState(State caveState) {
+            ClearCave();
+
+            //TODO Composite apps
+            foreach (AppState appState in caveState.States) {
+                CreateSection(appState.Col, appState.Row, (appState.Col + appState.Cols - 1),
+                    (appState.Row + appState.Rows - 1));
+                Cave.GetSectionId(appState.Col, appState.Row);
+                DeployBaseApp(Cave.GetSectionId(appState.Col, appState.Row), appState.AppName, appState.Config);
+            }
         }
 
         /// <summary>
