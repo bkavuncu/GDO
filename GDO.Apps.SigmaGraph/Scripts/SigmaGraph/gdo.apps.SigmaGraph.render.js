@@ -37,6 +37,37 @@ gdo.net.app["SigmaGraph"].renderGraph = async function () {
     gdo.net.app["SigmaGraph"].server.doneRendering(gdo.controlId);
 }
 
+gdo.net.app["SigmaGraph"].filterGraph = async function (attribute) {
+    console.log('Rendering graph... Filter');
+    // Get location of files containing objects to render.
+    gdo.stopWatch = window.performance.now();
+    const filePaths = await getFilesWithin();
+    console.log('Time to get graph object file paths: ' + (window.performance.now() - gdo.stopWatch));
+
+    // Get the nodes and edges
+    gdo.stopWatch = window.performance.now();
+    let filesGraphObjects = await handleFileGraphObjectsWithAttribute(filePaths, attribute);
+    console.log('Time to download and parse graph object files: ' + (window.performance.now() - gdo.stopWatch));
+    gdo.stopWatch = window.performance.now();
+    filesGraphObjects = filesGraphObjects.reduce((a, b) => a.concat(b), []);
+    console.log('Time to combine web worker results: ' + (window.performance.now() - gdo.stopWatch));
+
+    // Clear the sigma graph
+    gdo.sigmaInstance.graph.clear();
+
+    // Filter and add the nodes and edges to the graph
+    gdo.stopWatch = window.performance.now();
+    filesGraphObjects.forEach(handleFileGraphObjects);
+    gdo.sigmaInstance.graph.nodes().forEach(convertServerCoordsToSigmaCoords);
+    console.log("Time to add objects: " + (window.performance.now() - gdo.stopWatch));
+
+    // Render the new graph
+    gdo.stopWatch = window.performance.now();
+    gdo.sigmaInstance.refresh({ skipIndexation: true });
+
+    gdo.net.app["SigmaGraph"].server.doneRendering(gdo.controlId);
+}
+
 /**
  * Show the spinning icon that indicates that the graph is loading.
  */
@@ -77,6 +108,60 @@ async function getLeafBoxes() {
             });
     });
     return boxes;
+}
+
+function handleFileGraphObjectsWithAttribute(fileGraphObjects, attr) {
+    deletedNode = new Set(fileGraphObjects.nodes.filter(node => {
+        node.attribute[attr] == null || node.attribute[attr] === "0";
+    }).map(node => {
+        node.id
+    }));
+
+    console.log(deletedNode);
+    console.log(deltedNode.size);
+    console.log(attr);
+
+    fileGraphObjects.nodes = fileGraphObjects.nodes.filter(node => {
+        node.attribute[attr] != null && node.attribute[attr] !== "0";
+    });
+
+    fileGraphObjects.nodes.forEach(node => {
+        console.log(node.attribute[attr]);
+        node.x = node.pos.x;
+        node.y = node.pos.y;
+        if (node.r || node.g || node.b) {
+            node.color = "#" +
+                toPaddedHexString(node.r, 2) +
+                toPaddedHexString(node.g, 2) +
+                toPaddedHexString(node.b, 2);
+        } else {
+            node.color = "#89f";
+        }
+        // What should the max be? 5? 12?
+        node.size = Math.min(5, node.size) || 3;
+        try {
+            gdo.sigmaInstance.graph.addNode(node);
+        } catch (err) {
+        }
+    });
+
+    fileGraphObjects.edges.filter(edge => {
+        !(deletedNode.has(edge.source) || deletedNode.has(edge.target));
+    }).forEach(edge => {
+        edge.id = edge.source + " to " + edge.target;
+        if (edge.r || edge.g || edge.b) {
+            edge.color = "#" +
+                toPaddedHexString(edge.r, 2) +
+                toPaddedHexString(edge.g, 2) +
+                toPaddedHexString(edge.b, 2);
+        } else {
+            edge.color = "#339";
+        }
+        try {
+            gdo.sigmaInstance.graph.addEdge(edge);
+        } catch (err) {
+        }
+    });
 }
 
 /**

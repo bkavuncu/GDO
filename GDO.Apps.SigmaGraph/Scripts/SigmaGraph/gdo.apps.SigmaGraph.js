@@ -13,6 +13,10 @@ $(function () {
         gdo.net.app["SigmaGraph"].renderGraph();
     }
 
+    $.connection.sigmaGraphAppHub.client.filterGraph = function (attribute) {
+        gdo.net.app["SigmaGraph"].filterGraph(attribute);
+    }
+
     $.connection.sigmaGraphAppHub.client.pan = gdo.net.app["SigmaGraph"].pan;
 
     $.connection.sigmaGraphAppHub.client.zoom = gdo.net.app["SigmaGraph"].zoom;
@@ -50,8 +54,18 @@ $(function () {
 
     $.connection.sigmaGraphAppHub.client.setAttribute = function (attributes) {
         gdo.consoleOut('.SIGMAGRAPHRENDERER', 1, 'Message from server: set attributes');
+        /*
+        var attributesList = document.getElementById("attributes");
+        for (var i = 0; i < attributes.length; i++) {
+            var entry = new Option(attributes[i], i);
+            attributesList.options.add(entry);
+        }
+        */
         gdo.net.app["SigmaGraph"].attributes = attributes;
     }
+
+
+
 
     $.connection.sigmaGraphAppHub.client.logTime = function (message) {
         var logDom = $("iframe").contents().find("#message_from_server");

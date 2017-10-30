@@ -43,7 +43,7 @@ namespace GDO.Apps.SigmaGraph {
         public bool IntegrationMode { get; set; }
         public ICompositeAppInstance ParentApp { get; set; }
         public string ControllerId { get; set; }
-        public List<String> nodeAttributes { get; private set; }
+        public List<String> nodeAttributes { get; set; }
 
         private string _folderNameDigit;
         private QuadTreeNode<GraphObject> _currentQuadTreeRoot;
@@ -63,6 +63,11 @@ namespace GDO.Apps.SigmaGraph {
             _folderNameDigit = CreateTemporyFolderId(filename, basePath);
             String pathToFolder = basePath + _folderNameDigit;
 
+            GraphInfo graph;
+            string graphMLfile =
+                System.Web.HttpContext.Current.Server.MapPath("~/Web/SigmaGraph/graphmls/" + filename);
+            graph = GraphDataReader.ReadGraphMLData(graphMLfile);
+
             if (Directory.Exists(pathToFolder)) {
                 string savedQuadTree =
                     System.Web.HttpContext.Current.Server.MapPath("~/Web/SigmaGraph/QuadTrees/" + _folderNameDigit +
@@ -74,12 +79,9 @@ namespace GDO.Apps.SigmaGraph {
             }
             else {
                 Directory.CreateDirectory(pathToFolder);
-                string graphMLfile =
-                    System.Web.HttpContext.Current.Server.MapPath("~/Web/SigmaGraph/graphmls/" + filename);
-                var graph = GraphDataReader.ReadGraphMLData(graphMLfile);
                 this._currentQuadTreeRoot = SigmaGraphQuadProcesor.ProcessGraph(graph, basePath + _folderNameDigit).Root;
-                this.nodeAttributes = new List<string>(graph.NodeOtherFields);
             }
+            this.nodeAttributes = new List<string>(graph.NodeOtherFields);
         }
 
         private static string CreateTemporyFolderId(string filename, string basePath) {

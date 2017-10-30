@@ -54,7 +54,6 @@ namespace GDO.Apps.SigmaGraph
                     Clients.Caller.setMessage("Initiating processing of graph data in file: " + filename);
                     ga.ProcessGraph(filename);
                     Clients.Caller.setMessage("Processing of raw graph data is completed.");
-
                     // Clients.Group to broadcast and get all clients to update graph
                     Clients.Group("" + instanceId).renderGraph();
                     Clients.Caller.setMessage("SigmaGraph is now being rendered.");
@@ -118,6 +117,18 @@ namespace GDO.Apps.SigmaGraph
                 // Clients.Caller.setMessage("hello world");
                 if (ga != null)
                 {
+                    List<string> test = new List<string>();
+                    test.Add("hello, world One");
+                    test.Add("hello, world Two");
+                    if (ga.nodeAttributes != null)
+                    {
+                        test.Add("hello, world three");
+                    }
+                    else
+                    {
+                        test.Add("hello, world four");
+                    }
+                    // Clients.Caller.setAttribute(test);
                     Clients.Caller.setAttribute(ga.nodeAttributes);
                 }
             }             
@@ -137,6 +148,25 @@ namespace GDO.Apps.SigmaGraph
                 catch (Exception e)
                 {
                     Clients.Caller.setMessage("Error: Failed to trigger panning action.");
+                    Clients.Caller.setMessage(e.ToString());
+                    Debug.WriteLine(e);
+                }
+            }
+        }
+
+        public void TriggerFilter(int instanceId, string attribute)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Triggering filtering action.");
+                    Clients.Group("" + instanceId).filterGraph(attribute);
+                    Clients.Caller.setMessage("Triggered filtering action.");
+                }
+                catch (Exception e)
+                {
+                    Clients.Caller.setMessage("Error: Failed to render filtered graphml");
                     Clients.Caller.setMessage(e.ToString());
                     Debug.WriteLine(e);
                 }

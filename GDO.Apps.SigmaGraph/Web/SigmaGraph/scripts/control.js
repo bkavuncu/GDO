@@ -1,4 +1,5 @@
-﻿/// <reference path="control.js" />
+﻿/// <reference path="H:\GDO\GDO.Apps.SigmaGraph\Scripts/SigmaGraph/gdo.apps.SigmaGraph.js" />
+/// <reference path="control.js" />
 $(document).on('change', '.btn-file :file', function () {
     var input = $(this),
         numFiles = input.get(0).files ? input.get(0).files.length : 1,
@@ -216,12 +217,25 @@ $(function () {
     });
     
     $("#showAll").click(function () {
+        $("#attributes").empty();
         return new Promise((resolve, reject) => {
             gdo.net.app["SigmaGraph"].server.showAllAttributes(gdo.controlId)
                 .done(function() {
                     console.log(gdo.net.app["SigmaGraph"].attributes);
+                    var attributes = gdo.net.app["SigmaGraph"].attributes;
+                    var attributesList = document.getElementById("attributes");
+                    for (var i = 0; i < attributes.length; i++) {
+                        var entry = new Option(attributes[i], i);
+                        attributesList.options.add(entry);
+                    }
                 });
         });
+    });
+
+    $("#attributes").change(function () {
+        var key = $(this).val();
+        var value = gdo.net.app["SigmaGraph"].attributes[key];
+        gdo.net.app["SigmaGraph"].server.triggerFilter(gdo.controlId, value);
     });
 
     gdo.net.app["SigmaGraph"].initControl();
