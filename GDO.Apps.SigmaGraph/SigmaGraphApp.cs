@@ -43,6 +43,7 @@ namespace GDO.Apps.SigmaGraph {
         public bool IntegrationMode { get; set; }
         public ICompositeAppInstance ParentApp { get; set; }
         public string ControllerId { get; set; }
+        public List<String> nodeAttributes { get; private set; }
 
         private string _folderNameDigit;
         private QuadTreeNode<GraphObject> _currentQuadTreeRoot;
@@ -77,6 +78,7 @@ namespace GDO.Apps.SigmaGraph {
                     System.Web.HttpContext.Current.Server.MapPath("~/Web/SigmaGraph/graphmls/" + filename);
                 var graph = GraphDataReader.ReadGraphMLData(graphMLfile);
                 this._currentQuadTreeRoot = SigmaGraphQuadProcesor.ProcessGraph(graph, basePath + _folderNameDigit).Root;
+                this.nodeAttributes = new List<string>(graph.NodeOtherFields);
             }
         }
 

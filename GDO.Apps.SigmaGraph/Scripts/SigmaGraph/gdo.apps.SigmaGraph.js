@@ -39,12 +39,18 @@ $(function () {
 
     $.connection.sigmaGraphAppHub.client.setMessage = function (message) {
         gdo.consoleOut('.SIGMAGRAPHRENDERER', 1, 'Message from server: ' + message);
+        gdo.net.app["SigmaGraph"].attributes = message;
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             var logDom = $("iframe").contents().find("#message_from_server");
             // Append new "p" element for each msg, instead of replacing existing one
             logDom.empty().append("<p>" + message + "</p>");
             scroll_bottom(logDom[0]);
         }
+    }
+
+    $.connection.sigmaGraphAppHub.client.setAttribute = function (attributes) {
+        gdo.consoleOut('.SIGMAGRAPHRENDERER', 1, 'Message from server: set attributes');
+        gdo.net.app["SigmaGraph"].attributes = attributes;
     }
 
     $.connection.sigmaGraphAppHub.client.logTime = function (message) {
@@ -54,6 +60,8 @@ $(function () {
         scroll_bottom(logDom[0]);
     }
 });
+
+gdo.net.app["SigmaGraph"].attributes = [];
 
 gdo.net.app["SigmaGraph"].initClient = function () {
     gdo.net.app["SigmaGraph"].initInstanceGlobalConstants();

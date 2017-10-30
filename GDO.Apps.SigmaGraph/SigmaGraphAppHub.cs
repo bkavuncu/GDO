@@ -111,6 +111,18 @@ namespace GDO.Apps.SigmaGraph
             }
         }
 
+        public void ShowAllAttributes(int instanceId)
+        { 
+            lock (Cave.AppLocks[instanceId])
+            {
+                // Clients.Caller.setMessage("hello world");
+                if (ga != null)
+                {
+                    Clients.Caller.setAttribute(ga.nodeAttributes);
+                }
+            }             
+        }
+
         public void Pan(int instanceId, double x, double y)
         {
             lock (Cave.AppLocks[instanceId])

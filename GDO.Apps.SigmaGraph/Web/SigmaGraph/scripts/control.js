@@ -1,4 +1,5 @@
-﻿$(document).on('change', '.btn-file :file', function () {
+﻿/// <reference path="control.js" />
+$(document).on('change', '.btn-file :file', function () {
     var input = $(this),
         numFiles = input.get(0).files ? input.get(0).files.length : 1,
         label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
@@ -212,6 +213,15 @@ $(function () {
 
     $("#zoomOut").click(function () {
         gdo.net.app["SigmaGraph"].server.triggerZoomOut(gdo.controlId);
+    });
+    
+    $("#showAll").click(function () {
+        return new Promise((resolve, reject) => {
+            gdo.net.app["SigmaGraph"].server.showAllAttributes(gdo.controlId)
+                .done(function() {
+                    console.log(gdo.net.app["SigmaGraph"].attributes);
+                });
+        });
     });
 
     gdo.net.app["SigmaGraph"].initControl();
