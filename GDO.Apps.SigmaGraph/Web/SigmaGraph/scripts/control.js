@@ -220,6 +220,12 @@ $(function () {
             gdo.net.app["SigmaGraph"].server.showAllAttributes(gdo.controlId)
                 .done(function() {
                     console.log(gdo.net.app["SigmaGraph"].attributes);
+                    var attributes = gdo.net.app["SigmaGraph"].attributes;
+                    var attributesList = document.getElementById("attributes");
+                    for (var i = 0; i < attributes.length; i++) {
+                        var entry = new Option(attributes[i], i);
+                        attributesList.options.add(entry);
+                    }
                 });
         });
     });

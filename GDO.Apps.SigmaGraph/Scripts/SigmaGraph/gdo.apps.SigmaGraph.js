@@ -50,6 +50,13 @@ $(function () {
 
     $.connection.sigmaGraphAppHub.client.setAttribute = function (attributes) {
         gdo.consoleOut('.SIGMAGRAPHRENDERER', 1, 'Message from server: set attributes');
+        /*
+        var attributesList = document.getElementById("attributes");
+        for (var i = 0; i < attributes.length; i++) {
+            var entry = new Option(attributes[i], i);
+            attributesList.options.add(entry);
+        }
+        */
         gdo.net.app["SigmaGraph"].attributes = attributes;
     }
 
