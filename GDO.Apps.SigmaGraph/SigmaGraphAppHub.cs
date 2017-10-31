@@ -117,18 +117,6 @@ namespace GDO.Apps.SigmaGraph
                 // Clients.Caller.setMessage("hello world");
                 if (ga != null)
                 {
-                    List<string> test = new List<string>();
-                    test.Add("hello, world One");
-                    test.Add("hello, world Two");
-                    if (ga.nodeAttributes != null)
-                    {
-                        test.Add("hello, world three");
-                    }
-                    else
-                    {
-                        test.Add("hello, world four");
-                    }
-                    // Clients.Caller.setAttribute(test);
                     Clients.Caller.setAttribute(ga.nodeAttributes);
                 }
             }             
