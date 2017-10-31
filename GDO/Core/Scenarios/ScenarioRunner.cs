@@ -12,8 +12,8 @@ namespace GDO.Core.Scenarios {
         /// <summary>
         /// enables running of scenarios on the Serverside.
         /// </summary>
-        /// <param name="name">The name.</param>
-        /// <returns></returns>
+        /// <param name="name">The name of the server side stored scenario </param>
+        /// <returns>status message</returns>
         public static string RunScript(string name) {
             try {
 
@@ -30,18 +30,49 @@ namespace GDO.Core.Scenarios {
 
                 JObject scenariojson = (JObject) JsonConvert.DeserializeObject(File.ReadAllText(scenariofile));
 
+                return RunScript(name, scenariojson);
+
+            }
+            catch (Exception e) {
+                return "error " + e;                
+            }
+        }
+
+        /// <summary>
+        /// Runs the scenario script passed as a string (json)
+        /// </summary>
+        /// <param name="name">The name of the scenario </param>
+        /// <param name="scenario">The scenario as a string</param>
+        /// <returns>status of the run </returns>
+        public static string RunScript(string name, string scenario) {
+            try {
+                JObject scenariojson = (JObject) JsonConvert.DeserializeObject(scenario);
+                return RunScript(name, scenariojson);
+            }
+            catch (Exception e) {
+                return "failed to parse scenario " + e;
+            }
+        }
+
+        /// <summary>
+        /// Runs the script 
+        /// </summary>
+        /// <param name="name">The name of the script</param>
+        /// <param name="scenariojson">The scenariojson.</param>
+        /// <returns>status of the scenario run /errors</returns>
+        public static string RunScript(string name, JObject scenariojson) {
+            try {
                 var script = scenariojson["Elements"].Select(e => e.ToObject<Element>());
 
-                
+
                 foreach (var scriptStep in script) {
                     string errors;
                     if (!RunScriptStep(scriptStep, out errors)) return errors;
                 }
                 return "Successfully ran script" + name;
 
-            }
-            catch (Exception e) {
-                return "error " + e;                
+            } catch (Exception e) {
+                return "error " + e;
             }
         }
 

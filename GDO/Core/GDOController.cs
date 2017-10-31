@@ -64,25 +64,36 @@ namespace GDO.Core
 
         #endregion
 
-        #region scripting / scenarios 
-
-        [HttpGet]
-        [Route("api/GDO/Scenario/{name}")]
-        public string RunScenario(string name) {
+        #region run script step, make module call, run scenario, post and run scenario 
+        /// <summary>
+        /// Simplified method call 
+        /// {
+        ///  "Mod": "gdo.net.app.Images.server",
+        ///  "Func": "findDigits",
+        ///  "Params": [ "0,\"00002\"" ],
+        ///},
+        /// </summary>
+        /// <param name="scriptElement">The script element.</param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("api/Script/RunMethod")]
+        public bool RunStep([FromBody] HubCall scriptElement) {
             var hub = GDOAPISingleton.Instance.Hub;
-            if (hub == null) return "hub not initialise launch a client to set";
+            if (hub == null) return false;
 
-            Log.Info("GDO API - Clearing Cave to load Script "+name);
+            var script = JsonConvert.SerializeObject(scriptElement);
+            Log.Info($"GDO API - about to run script step " + script);
+            string errors;
+            var res = ScenarioRunner.RunScriptStep(new Element(scriptElement), out errors);
+            if (res) {
+                Log.Info($"GDO API - Successfully Ran script step " + script);
+            } else {
+                Log.Error($"GDO API - Failed Ran script step " + script + "errors = " + errors);
+            }
 
-            ClearCave();
-
-            var result = ScenarioRunner.RunScript(name);
-
-            Log.Info("GDO API - Just Ran Scenario Script " + name + " result was " + result);
-
-            return result;
+            return res;
         }
-      
+
         /// <summary>
         /// Runs the step.
         /// {
@@ -116,30 +127,42 @@ namespace GDO.Core
         }
 
         /// <summary>
-        /// Simplified method call 
-        /// {
-        ///  "Mod": "gdo.net.app.Images.server",
-        ///  "Func": "findDigits",
-        ///  "Params": [ "0,\"00002\"" ],
-        ///},
+        /// Runs the scenario previously saved onto the server
         /// </summary>
-        /// <param name="scriptElement">The script element.</param>
-        /// <returns></returns>
-        [HttpPost]
-        [Route("api/Script/RunMethod")]
-        public bool RunStep([FromBody] HubCall scriptElement) {
+        /// <param name="name">The name of the script</param>
+        /// <returns>status / errors</returns>
+        [HttpGet]
+        [Route("api/GDO/Scenario/{name}")]
+        public string RunScenario(string name) {
             var hub = GDOAPISingleton.Instance.Hub;
-            if (hub == null) return false;
+            if (hub == null) return "hub not initialise launch a client to set";
 
-            var script = JsonConvert.SerializeObject(scriptElement);
-            Log.Info($"GDO API - about to run script step " + script);
-            string errors;
-            var res = ScenarioRunner.RunScriptStep(new Element(scriptElement) , out errors);
-            if (res) {
-                Log.Info($"GDO API - Successfully Ran script step " + script);
-            } else {
-                Log.Error($"GDO API - Failed Ran script step " + script + "errors = " + errors);
-            }
+            Log.Info("GDO API - Clearing Cave to load Script " + name);
+
+            ClearCave();
+
+            var result = ScenarioRunner.RunScript(name);
+
+            Log.Info("GDO API - Just Ran Scenario Script " + name + " result was " + result);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Runs the script posted  - check the Scenario class for format
+        /// </summary>
+        /// <param name="name">The name of the script</param>
+        /// <param name="script">The script.</param>
+        /// <returns>errors / status</returns>
+        [HttpPost]
+        [Route("api/GDO/Script/RunScript")]
+        public string RunScript(string name, [FromBody] Scenario script) {
+
+            var scriptstr = JsonConvert.SerializeObject(script);
+            Log.Info($"GDO API - about to run posted script {name} {scriptstr}");
+
+            var res = ScenarioRunner.RunScript(name, scriptstr);
+            Log.Info($"GDO API - finished running script {name} - result was {res} ");
 
             return res;
         }
@@ -279,7 +302,7 @@ namespace GDO.Core
 
         #endregion
 
-        #region CaveState - load named cavestate
+        #region CaveState - load named cavestate, save state, get state
 
         /// <summary>
         /// Deploys the given state to the observatory 
@@ -348,16 +371,14 @@ namespace GDO.Core
                 DONE superclass the scriptstep api 
         // DONE save state of whole cave 
         // DONE Get Cave State
+        // DONE ability to load a whole script via post 
 
         // create section and deploy 
         // close app and close section
         // send to console 
+              
 
-
-        
-        // ability to load a whole script via post 
-
-        // ability to deploy state within a script 
+        // ability to deploy state within a script << can be done with cavehub.RestoreCaveState
 
         */
     }
