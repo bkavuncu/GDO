@@ -169,7 +169,7 @@ namespace GDO.Core
 
         #endregion
 
-        #region Section -  Create and close 
+        #region Section -  Create and close and destroy
         /// <summary>
         /// Creates the section - works from (0,0) is the top left 
         /// </summary>
@@ -190,7 +190,7 @@ namespace GDO.Core
             return sectionid;
         }
 
-        /// <summary>
+       /// <summary>
         /// Closes the section - note this assumes that the app running in the section is already closed!
         /// if you want to close app and the section in one call please call the destroy method
         /// </summary>
@@ -230,19 +230,63 @@ namespace GDO.Core
 
         #endregion
 
-            #region deploy and close app, save state, set state
+        #region create section and deploy app
 
-            #region Deploy App (named and posted config), Set state
+        /// <summary>
+        /// Creates a section and deploys an app to it
+        /// </summary>
+        /// <param name="appName">Name of the application.</param>
+        /// <param name="config">The configuration.</param>
+        /// <param name="colStart">The col start.</param>
+        /// <param name="rowStart">The row start.</param>
+        /// <param name="width">The width.</param>
+        /// <param name="height">The height.</param>
+        /// <returns>id of the app</returns>
+        [HttpGet]
+        [Route("api/Section/CreateAndDeploy")] //??appName={}&config=,colStart={colStart}&rowStart={rowStart}&width={width}&height={height}
+        public int CreateAndDeploy(string appName, string config, int colStart, int rowStart, int width, int height) {
+            Log.Info("GDO API - Creating and deploying app");
+            var sectionid = CreateSection(colStart, rowStart, width, height);
+            int appid = DeployApp(sectionid, appName, config);
+            return appid;
+        }
 
-            /// <summary>
-            /// Deploys an application, to a given section
-            /// </summary>
-            /// <param name="id">The section id.</param>
-            /// <param name="appName">Name of the app</param>
-            /// <param name="config">The name of the configuration.</param>
-            /// <returns>
-            /// the instance id for the created app
-            /// </returns>
+        /// <summary>
+        /// Creates a section and deploys an app to it using a posted config
+        /// </summary>
+        /// <param name="appName">Name of the application.</param>
+        /// <param name="config">The configuration.</param>
+        /// <param name="colStart">The col start.</param>
+        /// <param name="rowStart">The row start.</param>
+        /// <param name="width">The width.</param>
+        /// <param name="height">The height.</param>
+        /// <returns>id of the app</returns>
+
+        [HttpPost]
+        [Route("api/Section/CreateAndDeploy")] //??appName={}&config=,colStart={colStart}&rowStart={rowStart}&width={width}&height={height}
+        public int CreateAndDeployPost(string appName, [FromBody] string config, int colStart, int rowStart, int width, int height) {
+            Log.Info("GDO API - Creating and deploying app with posted body");
+            var sectionid = CreateSection(colStart, rowStart, width, height);
+            int appid = DeployAppPostConfig(sectionid, appName, config);
+            return appid;
+        }
+
+
+        #endregion
+
+        #region deploy and close app, save state, set state
+
+        #region Deploy App (named and posted config), Set state
+
+        /// <summary>
+        /// Deploys an application, to a given section
+        /// </summary>
+        /// <param name="id">The section id.</param>
+        /// <param name="appName">Name of the app</param>
+        /// <param name="config">The name of the configuration.</param>
+        /// <returns>
+        /// the instance id for the created app
+        /// </returns>
         [HttpGet]
         [Route("api/Section/{id}/DeployApp")]//?app={appName}&config={config}
         public int DeployApp(int id, string appName, string config) {
@@ -434,9 +478,8 @@ namespace GDO.Core
         // DONE ability to load a whole script via post 
         // DONE set state
         // DONE close app and close section = destroy method
-
-
-        // create section and deploy 
+        // DONE create section and deploy 
+           //  DONE  and via post
         // send to console 
               
 
