@@ -237,10 +237,12 @@ namespace GDO.Core
             if (hub == null) return false;
 
             Log.Info($"GDO API - destroying section {id} ");
-            bool res = hub.CloseApp(id); 
+            int appId = hub.GetAppID(id);
+            bool res = false;
+            if (appId >= 0) {
+                res = hub.CloseApp(appId);
+            }
             res= res && hub.CloseSection(id);
-            // Option 1 - App and Section Id as seperate arguments
-            // Option 2 - You add a method to Cave hub to return a app id from given section id or vice versa, to close both with same argument from API
             
             Log.Info($"GDO API - destoryed section {id} " + res);
 
@@ -369,18 +371,20 @@ namespace GDO.Core
             var hub = GDOAPISingleton.Instance.Hub;
             if (hub == null) return "No Cave State";
 
-            Log.Info($"GDO API - about to Save the state of {id}");
-            if (!Cave.Deployment.Instances.ContainsKey(id)) { // again wrong id or it should be api/App/{id}/*
-                Log.Info($"GDO API - could not find the app running on section {id}");
+            int appId = hub.GetAppID(id);
+
+            Log.Info($"GDO API - about to Save the state of section {id} = app id {appId}");
+            if (!Cave.Deployment.Instances.ContainsKey(appId)) { 
+                Log.Info($"GDO API - could not find the app running on section {id} id {appId}");
                 return "bad sectionID";
             }
             try {
-                var app = Cave.Deployment.Instances[id]; // again wrong id or it should be api/App/{id}/*
+                var app = Cave.Deployment.Instances[appId]; 
                 var config = app.GetConfiguration();
                 string res = JsonConvert.SerializeObject(config);
                 return res;
             } catch (Exception e) {
-                Log.Error($"GDO API - failed to get state for section {id} "+e);
+                Log.Error($"GDO API - failed to get state for section {id}  = app id {appId} "+e);
                 return "error saving state " + e;
             }
 
@@ -398,14 +402,16 @@ namespace GDO.Core
             var hub = GDOAPISingleton.Instance.Hub;
             if (hub == null) return false;
 
-            Log.Info($"GDO API - about to deploy a posted app config to section {id} with config {config}");
+            int appId = hub.GetAppID(id);
+
+            Log.Info($"GDO API - about to deploy a posted app config to section {id} with config {config} appid {appId}");
 
             IAppConfiguration appconfig = Cave.HydrateAppConfiguration(JObject.Parse(config), "posted");
             Log.Info($"GDO API - successfuly parsed config");
 
-            var app = Cave.Deployment.GetInstancebyID(id); // again wrong id or it should be api/App/{id}/*
+            var app = Cave.Deployment.GetInstancebyID(appId); 
             if (app == null) {
-                Log.Error($"GDO API - could not find app with {id}");
+                Log.Error($"GDO API - could not find app with {appId}");
                 return false;
             }
            var res = app.SetConfiguration(appconfig);
@@ -433,9 +439,11 @@ namespace GDO.Core
             var hub = GDOAPISingleton.Instance.Hub;
             if (hub == null) return false;
 
-            Log.Info($"GDO API - about to close the app on section {id}");
+            int appId = hub.GetAppID(id);
 
-            bool res = hub.CloseApp(id); // again wrong id or it should be api/App/{id}/*
+            Log.Info($"GDO API - about to close the app on section {id} appid {appId}");
+
+            bool res = hub.CloseApp(appId); 
 
             Log.Info($"GDO API - {(res ? "succesfully" : "Failed to ")} close an app on section {id}");
 

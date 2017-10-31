@@ -946,8 +946,23 @@ namespace GDO.Core
             Clients.Caller.receiveConsoleId(Cave.ConsoleId);
         }
 
-        public string GetAppConfig(int sectionId) {
-            throw new NotImplementedException();
+        /// <summary>
+        /// Converts a section ID to an App ID 
+        /// </summary>
+        /// <param name="sectionId">The section identifier.</param>
+        /// <returns>App Instance Id</returns>
+        public int GetAppID(int sectionId) {
+
+            if (Cave.Deployment.ContainsSection(sectionId)) {
+                Section section;
+                Cave.Deployment.Sections.TryGetValue(sectionId, out section);
+                if (section != null) {
+                    return section.AppInstanceId; 
+                }
+            }
+
+            Log.Error("could not find section Id "+sectionId);
+            return -1;
         }
     }
 }
