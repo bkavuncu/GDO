@@ -205,7 +205,7 @@ namespace GDO.Core
 
         #endregion
 
-        #region deploy and close app 
+        #region deploy and close app, save state
 
         #region Deploy App (named and posted config)
 
@@ -283,6 +283,42 @@ namespace GDO.Core
             }
 
         }
+
+
+        /// <summary>
+        /// Sets the state of the application in sectionId
+        /// </summary>
+        /// <param name="sectionId">The section identifier.</param>
+        /// <param name="config">The configuration - from body</param>
+        /// <returns>success / failure</returns>
+        [HttpPost]
+        [Route("api/Section/{sectionId}/SetState")]
+        public bool SetAppState(int sectionId,  [FromBody] string config) {
+            var hub = GDOAPISingleton.Instance.Hub;
+            if (hub == null) return false;
+
+            Log.Info($"GDO API - about to deploy a posted app config to section {sectionId} with config {config}");
+
+            IAppConfiguration appconfig = Cave.HydrateAppConfiguration(JObject.Parse(config), "posted");
+            Log.Info($"GDO API - successfuly parsed config");
+
+            var app = Cave.Deployment.GetInstancebyID(sectionId);
+            if (app == null) {
+                Log.Error($"GDO API - could not find app with {sectionId}");
+                return false;
+            }
+           var res = app.SetConfiguration(appconfig);
+
+            if (res) {
+                Log.Error("GDO API - failed to set config");
+            }
+            else {
+                Log.Info("GDO API - successfully set config");
+            }
+
+            return res;
+        }
+
 
         [HttpGet]
         [Route("api/Section/{sectionId}/CloseApp")]
@@ -372,6 +408,7 @@ namespace GDO.Core
         // DONE save state of whole cave 
         // DONE Get Cave State
         // DONE ability to load a whole script via post 
+        // DONE set state
 
         // create section and deploy 
         // close app and close section
