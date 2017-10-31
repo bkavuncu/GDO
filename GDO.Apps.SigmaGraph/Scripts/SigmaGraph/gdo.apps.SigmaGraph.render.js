@@ -38,15 +38,15 @@ gdo.net.app["SigmaGraph"].renderGraph = async function () {
 }
 
 gdo.net.app["SigmaGraph"].filterGraph = async function (attribute) {
-    console.log('Rendering graph... Filter');
+    console.log('Rendering graph...');
     // Get location of files containing objects to render.
     gdo.stopWatch = window.performance.now();
     const filePaths = await getFilesWithin();
     console.log('Time to get graph object file paths: ' + (window.performance.now() - gdo.stopWatch));
-
+    console.log(filePaths[0]);
     // Get the nodes and edges
     gdo.stopWatch = window.performance.now();
-    let filesGraphObjects = await handleFileGraphObjectsWithAttribute(filePaths, attribute);
+    let filesGraphObjects = await parseFilesToGraphObjects(filePaths);
     console.log('Time to download and parse graph object files: ' + (window.performance.now() - gdo.stopWatch));
     gdo.stopWatch = window.performance.now();
     filesGraphObjects = filesGraphObjects.reduce((a, b) => a.concat(b), []);
@@ -57,7 +57,7 @@ gdo.net.app["SigmaGraph"].filterGraph = async function (attribute) {
 
     // Filter and add the nodes and edges to the graph
     gdo.stopWatch = window.performance.now();
-    filesGraphObjects.forEach(handleFileGraphObjects);
+    filesGraphObjects.forEach(item => handleFileGraphObjectsWithAttribute(item, attribute));
     gdo.sigmaInstance.graph.nodes().forEach(convertServerCoordsToSigmaCoords);
     console.log("Time to add objects: " + (window.performance.now() - gdo.stopWatch));
 
@@ -111,43 +111,34 @@ async function getLeafBoxes() {
 }
 
 function handleFileGraphObjectsWithAttribute(fileGraphObjects, attr) {
-    deletedNode = new Set(fileGraphObjects.nodes.filter(node => {
-        node.attribute[attr] == null || node.attribute[attr] === "0";
-    }).map(node => {
-        node.id
-    }));
-
-    console.log(deletedNode);
-    console.log(deltedNode.size);
-    console.log(attr);
-
-    fileGraphObjects.nodes = fileGraphObjects.nodes.filter(node => {
-        node.attribute[attr] != null && node.attribute[attr] !== "0";
-    });
+    deletedNode = new Set();
 
     fileGraphObjects.nodes.forEach(node => {
-        console.log(node.attribute[attr]);
-        node.x = node.pos.x;
-        node.y = node.pos.y;
-        if (node.r || node.g || node.b) {
-            node.color = "#" +
-                toPaddedHexString(node.r, 2) +
-                toPaddedHexString(node.g, 2) +
-                toPaddedHexString(node.b, 2);
+        if (node.attrs[attr] != null && node.attrs[attr] !== "0") {
+            console.log(node.attrs[attr]);
+            node.x = node.pos.x;
+            node.y = node.pos.y;
+            if (node.r || node.g || node.b) {
+                node.color = "#" +
+                    toPaddedHexString(node.r, 2) +
+                    toPaddedHexString(node.g, 2) +
+                    toPaddedHexString(node.b, 2);
+            } else {
+                node.color = "#89f";
+            }
+            // What should the max be? 5? 12?
+            node.size = Math.min(5, node.size) || 3;
+            try {
+                gdo.sigmaInstance.graph.addNode(node);
+            } catch (err) {
+            }
         } else {
-            node.color = "#89f";
-        }
-        // What should the max be? 5? 12?
-        node.size = Math.min(5, node.size) || 3;
-        try {
-            gdo.sigmaInstance.graph.addNode(node);
-        } catch (err) {
+            deletedNode.add(node.id);
         }
     });
 
-    fileGraphObjects.edges.filter(edge => {
-        !(deletedNode.has(edge.source) || deletedNode.has(edge.target));
-    }).forEach(edge => {
+    fileGraphObjects.edges
+    .forEach(edge => {
         edge.id = edge.source + " to " + edge.target;
         if (edge.r || edge.g || edge.b) {
             edge.color = "#" +
@@ -158,7 +149,9 @@ function handleFileGraphObjectsWithAttribute(fileGraphObjects, attr) {
             edge.color = "#339";
         }
         try {
-            gdo.sigmaInstance.graph.addEdge(edge);
+            if (!(deletedNode.has(edge.source) || deletedNode.has(edge.target))) {
+                gdo.sigmaInstance.graph.addEdge(edge);
+            }
         } catch (err) {
         }
     });
