@@ -294,12 +294,46 @@ namespace GDO.Core
 
             Log.Info($"GDO API - about to deploy CaveState {stateName}");
             hub.ClearCave();
-            Thread.Sleep(1000);
+            Thread.Sleep(100);
             hub.RestoreCaveState(stateName);
             Log.Info($"GDO API - successfully deployed CaveState {stateName}");
 
             return true;
         }
+
+        [HttpGet]
+        [Route("api/CaveState/Save")] //?stateName={stateName}
+        public bool SaveState(string stateName) {
+
+            var hub = GDOAPISingleton.Instance.Hub;
+            if (hub == null) return false;
+
+            Log.Info($"GDO API - about to save CaveState {stateName}");
+            
+            hub.SaveCaveState(stateName);
+            
+            Log.Info($"GDO API - successfully saved CaveState {stateName}");
+
+            return true;
+        }
+
+
+        /// <summary>
+        /// Returns the Json for the state with statename
+        /// </summary>
+        /// <param name="stateName">Name of the state.</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("api/CaveState/Get")] //?stateName={stateName}
+        public string GetState(string stateName) {
+
+            Log.Info($"GDO API - about to return CaveState {stateName}");
+
+            var state = Cave.States[stateName];
+            string res = JsonConvert.SerializeObject(state);
+            return res;   
+        }
+
 
         #endregion
 
@@ -312,13 +346,15 @@ namespace GDO.Core
         // DONE save a state of an app
         // DONE simplify the script step API 
                 DONE superclass the scriptstep api 
+        // DONE save state of whole cave 
+        // DONE Get Cave State
 
         // create section and deploy 
         // close app and close section
         // send to console 
+
+
         
-        
-        // save state of whole cave 
         // ability to load a whole script via post 
 
         // ability to deploy state within a script 
