@@ -9,11 +9,19 @@ using Newtonsoft.Json.Linq;
 
 namespace GDO.Core
 {
+    /// <summary>
+    /// Main API for interacting with the GDO allows the creation of sections and the deployment of apps
+    /// </summary>
+    /// <seealso cref="System.Web.Http.ApiController" />
     public class GDOController : ApiController {
         private static readonly ILog Log = LogManager.GetLogger(typeof(GDOController));
 
         // http://localhost:12332/api/gdo/
         // GET api/<controller>/5
+        /// <summary>
+        /// Clears the cave - closes all apps and sections 
+        /// </summary>
+        /// <returns>errors or sucess</returns>
         [HttpGet]
         [Route("api/GDO/ClearCave")]
         public string ClearCave() {
@@ -38,6 +46,10 @@ namespace GDO.Core
 
         #region maintainence Mode
 
+        /// <summary>
+        /// Clears Maintainence mode
+        /// </summary>
+        /// <returns>success /errors</returns>
         [HttpGet]
         [Route("api/GDO/MaintainenceModeClear")]
         public string MaintainenceModeClear() {
@@ -50,6 +62,10 @@ namespace GDO.Core
             return "Turned off maintainence mode";
         }
 
+        /// <summary>
+        /// Turns on Maintainence mode
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [Route("api/GDO/MaintainenceModeSet")]
         public string MaintainenceModeSet() {
@@ -307,8 +323,17 @@ namespace GDO.Core
             }
 
             return res;
-        }    
+        }
 
+        /// <summary>
+        /// Deploys an application, to a given section using a posted configuration
+        /// </summary>
+        /// <param name="id">The section id.</param>
+        /// <param name="appName">Name of the app</param>
+        /// <param name="config">The name of the configuration.</param>
+        /// <returns>
+        /// the instance id for the created app
+        /// </returns>
         [HttpPost]
         [Route("api/Section/{id}/DeployApp")] //?app={appName}&config={config}
         public int DeployAppPostConfig(int id, string appName, [FromBody] string config) {
@@ -333,9 +358,14 @@ namespace GDO.Core
 
         #endregion
 
+        /// <summary>
+        /// Returns the state of the application running in the section
+        /// </summary>
+        /// <param name="id">The id of the section.</param>
+        /// <returns>config serialised as a string</returns>
         [HttpGet]
-        [Route("api/Section/{id}/SaveState")]
-        public string SaveAppState(int id) {
+        [Route("api/Section/{id}/GetState")]
+        public string GetAppState(int id) {
             var hub = GDOAPISingleton.Instance.Hub;
             if (hub == null) return "No Cave State";
 
@@ -391,6 +421,12 @@ namespace GDO.Core
         }
 
 
+        /// <summary>
+        /// Closes the App in the given section
+        /// Section remains open
+        /// </summary>
+        /// <param name="id">The id of the section.</param>
+        /// <returns>success</returns>
         [HttpGet]
         [Route("api/Section/{id}/CloseApp")]
         public bool CloseApp(int id) {
@@ -431,6 +467,11 @@ namespace GDO.Core
             return true;
         }
 
+        /// <summary>
+        /// Saves the state of the cave to the server with the given name
+        /// </summary>
+        /// <param name="stateName">Name of the state.</param>
+        /// <returns>success</returns>
         [HttpGet]
         [Route("api/CaveState/Save")] //?stateName={stateName}
         public bool SaveState(string stateName) {

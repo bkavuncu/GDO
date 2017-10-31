@@ -4,8 +4,10 @@ using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Reflection;
 using System.Web.Http;
+using System.Web.Mvc;
 using Autofac;
 using Autofac.Integration.SignalR;
+using GDO.Areas.HelpPage;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
 using Microsoft.Owin;
@@ -23,9 +25,9 @@ namespace GDO
 
     public static class WebApiConfig
     {
-        public static void Register(IAppBuilder app)
+        public static void Register(IAppBuilder app, HttpConfiguration config)
         {
-            HttpConfiguration config = new HttpConfiguration();
+            
             // Web API routes
             config.MapHttpAttributeRoutes();
 
@@ -36,6 +38,7 @@ namespace GDO
             );
 
             app.UseWebApi(config);
+
         }
     }
 
@@ -43,6 +46,8 @@ namespace GDO
     public class Startup
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(Startup));
+        public static HttpConfiguration HttpConfiguration { get; private set; }
+
 
         public void Configuration(IAppBuilder app)
         {
@@ -54,6 +59,7 @@ namespace GDO
                 //http://docs.autofac.org/en/latest/integration/signalr.html
                 var builder = new ContainerBuilder();
                 var config = new HubConfiguration();
+
                 GlobalHost.DependencyResolver.Register(typeof(IAssemblyLocator), () => new AssemblyLocator());
                 builder.RegisterType<AssemblyLocator>().As<IAssemblyLocator>().SingleInstance();
                 builder.RegisterHubs(Assembly.GetExecutingAssembly());
@@ -63,7 +69,12 @@ namespace GDO
                 app.UseAutofacMiddleware(container);
                 //app.MapSignalR("/signalr", config);
                 //config.EnableCors(new EnableCorsAttribute("*", "*", "GET, POST, OPTIONS, PUT, DELETE"));
-                WebApiConfig.Register(app);
+                // set up a new http configuration and then use it
+                HttpConfiguration = new HttpConfiguration();
+                WebApiConfig.Register(app, HttpConfiguration);
+                AreaRegistration.RegisterAllAreas();// this registers the help page area
+                app.UseWebApi(HttpConfiguration);
+
                 app.Map("/signalr", map =>
                 {
                     map.UseCors(CorsOptions.AllowAll);
