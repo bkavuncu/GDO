@@ -223,8 +223,8 @@ namespace GDO.Core
             Log.Info($"GDO API - destroying section {id} ");
             bool res = hub.CloseApp(id); 
             res= res && hub.CloseSection(id);
-            // Option 1 - App and Instance Id as seperate arguments
-            // Option 2 - You add a method to Cave hub to return a app id from given section id or vice versa, to close both with same id
+            // Option 1 - App and Section Id as seperate arguments
+            // Option 2 - You add a method to Cave hub to return a app id from given section id or vice versa, to close both with same argument from API
             
             Log.Info($"GDO API - destoryed section {id} " + res);
 
