@@ -221,8 +221,11 @@ namespace GDO.Core
             if (hub == null) return false;
 
             Log.Info($"GDO API - destroying section {id} ");
-            bool res = hub.CloseApp(id);
+            bool res = hub.CloseApp(id); 
             res= res && hub.CloseSection(id);
+            // Option 1 - App and Instance Id as seperate arguments
+            // Option 2 - You add a method to Cave hub to return a app id from given section id or vice versa, to close both with same id
+            
             Log.Info($"GDO API - destoryed section {id} " + res);
 
             return res;
@@ -337,12 +340,12 @@ namespace GDO.Core
             if (hub == null) return "No Cave State";
 
             Log.Info($"GDO API - about to Save the state of {id}");
-            if (!Cave.Deployment.Instances.ContainsKey(id)) {
+            if (!Cave.Deployment.Instances.ContainsKey(id)) { // again wrong id or it should be api/App/{id}/*
                 Log.Info($"GDO API - could not find the app running on section {id}");
                 return "bad sectionID";
             }
             try {
-                var app = Cave.Deployment.Instances[id];
+                var app = Cave.Deployment.Instances[id]; // again wrong id or it should be api/App/{id}/*
                 var config = app.GetConfiguration();
                 string res = JsonConvert.SerializeObject(config);
                 return res;
@@ -370,7 +373,7 @@ namespace GDO.Core
             IAppConfiguration appconfig = Cave.HydrateAppConfiguration(JObject.Parse(config), "posted");
             Log.Info($"GDO API - successfuly parsed config");
 
-            var app = Cave.Deployment.GetInstancebyID(id);
+            var app = Cave.Deployment.GetInstancebyID(id); // again wrong id or it should be api/App/{id}/*
             if (app == null) {
                 Log.Error($"GDO API - could not find app with {id}");
                 return false;
@@ -396,7 +399,7 @@ namespace GDO.Core
 
             Log.Info($"GDO API - about to close the app on section {id}");
 
-            bool res = hub.CloseApp(id);
+            bool res = hub.CloseApp(id); // again wrong id or it should be api/App/{id}/*
 
             Log.Info($"GDO API - {(res ? "succesfully" : "Failed to ")} close an app on section {id}");
 
