@@ -115,6 +115,35 @@ namespace GDO.Core
             return res;
         }
 
+        /// <summary>
+        /// Simplified method call 
+        /// {
+        ///  "Mod": "gdo.net.app.Images.server",
+        ///  "Func": "findDigits",
+        ///  "Params": [ "0,\"00002\"" ],
+        ///},
+        /// </summary>
+        /// <param name="scriptElement">The script element.</param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("api/Script/RunMethod")]
+        public bool RunStep([FromBody] HubCall scriptElement) {
+            var hub = GDOAPISingleton.Instance.Hub;
+            if (hub == null) return false;
+
+            var script = JsonConvert.SerializeObject(scriptElement);
+            Log.Info($"GDO API - about to run script step " + script);
+            string errors;
+            var res = ScenarioRunner.RunScriptStep(new Element(scriptElement) , out errors);
+            if (res) {
+                Log.Info($"GDO API - Successfully Ran script step " + script);
+            } else {
+                Log.Error($"GDO API - Failed Ran script step " + script + "errors = " + errors);
+            }
+
+            return res;
+        }
+
         #endregion
 
         #region Section -  Create and close 
@@ -278,9 +307,11 @@ namespace GDO.Core
 
         /* TODO
          * DONE+tested make statichtml app save state   
-        // ability to send an app config in the post section 
-        // close App
-        // save a state of an app
+        // DONE ability to send an app config in the post section 
+        // DONE close App
+        // DONE save a state of an app
+        // DONE simplify the script step API 
+                DONE superclass the scriptstep api 
 
         // create section and deploy 
         // close app and close section

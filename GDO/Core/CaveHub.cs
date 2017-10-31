@@ -945,5 +945,9 @@ namespace GDO.Core
         {
             Clients.Caller.receiveConsoleId(Cave.ConsoleId);
         }
+
+        public string GetAppConfig(int sectionId) {
+            throw new NotImplementedException();
+        }
     }
 }

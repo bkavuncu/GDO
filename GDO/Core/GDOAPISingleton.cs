@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using GDO.Core.Apps;
+using log4net;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
 
@@ -11,11 +12,12 @@ namespace GDO.Core {
     /// This class exists to hold references to the Hubs and provide access to them 
     /// </summary>
     public sealed class GDOAPISingleton {
-     
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(GDOAPISingleton));
+
         public CaveHub Hub;
 
         public static IAppHub GetHub(string name) {
-            var hubtypes = GetHubList();
+            Dictionary<string, Type> hubtypes = GetHubList();
             if (!hubtypes.ContainsKey(name)) {
                 return null;
             }
@@ -23,7 +25,10 @@ namespace GDO.Core {
             DefaultHubManager hd = new DefaultHubManager(GlobalHost.DependencyResolver);
             var appHub = (IAppHub) hd.ResolveHub(name+"AppHub");
             var gdoHub = appHub as GDOHub;
-            if (gdoHub == null) return null;
+            if (gdoHub == null) {
+                Logger.Error(" "+appHub.GetType()+" does not extend from GDOHub - cannot call scripts");
+                 throw new Exception("Hub classes must extend from GDOHub");
+            }
             gdoHub.SetStateFrom(GDOAPISingleton.Instance.Hub);
             return appHub;//hd.ResolveHub(name) ??
 
