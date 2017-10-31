@@ -190,6 +190,12 @@ namespace GDO.Core
             return sectionid;
         }
 
+        /// <summary>
+        /// Closes the section - note this assumes that the app running in the section is already closed!
+        /// if you want to close app and the section in one call please call the destroy method
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <returns></returns>
         [HttpGet]
         [Route("api/Section/Close")]//?id={id}
         public bool CloseSection(int id) {
@@ -203,57 +209,76 @@ namespace GDO.Core
             return res;
         }
 
+        /// <summary>
+        /// destroys the section by closing app and closing section
+        /// </summary>
+        /// <param name="id">The identifier of the section</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("api/Section/Destroy")] //?id={id}
+        public bool SectionDestroy(int id) {
+            var hub = GDOAPISingleton.Instance.Hub;
+            if (hub == null) return false;
+
+            Log.Info($"GDO API - destroying section {id} ");
+            bool res = hub.CloseApp(id);
+            res= res && hub.CloseSection(id);
+            Log.Info($"GDO API - destoryed section {id} " + res);
+
+            return res;
+        }
+
         #endregion
 
-        #region deploy and close app, save state
+            #region deploy and close app, save state, set state
 
-        #region Deploy App (named and posted config)
+            #region Deploy App (named and posted config), Set state
 
-        /// <summary>
-        /// Deploys an application, to a given section
-        /// </summary>
-        /// <param name="sectionId">The section id.</param>
-        /// <param name="appName">Name of the app</param>
-        /// <param name="config">The name of the configuration.</param>
-        /// <returns>
-        /// the instance id for the created app
-        /// </returns>
+            /// <summary>
+            /// Deploys an application, to a given section
+            /// </summary>
+            /// <param name="id">The section id.</param>
+            /// <param name="appName">Name of the app</param>
+            /// <param name="config">The name of the configuration.</param>
+            /// <returns>
+            /// the instance id for the created app
+            /// </returns>
         [HttpGet]
-        [Route("api/Section/{sectionId}/DeployApp")]//?app={appName}&config={config}
-        public int DeployApp(int sectionId, string appName, string config) {
+        [Route("api/Section/{id}/DeployApp")]//?app={appName}&config={config}
+        public int DeployApp(int id, string appName, string config) {
             var hub = GDOAPISingleton.Instance.Hub;
             if (hub == null) return -1;
 
-            Log.Info($"GDO API - about to deploy {appName} app to section {sectionId} with config {config}");
+            Log.Info($"GDO API - about to deploy {appName} app to section {id} with config {config}");
             
-            int res = hub.DeployBaseApp(sectionId, appName, config);
+            int res = hub.DeployBaseApp(id, appName, config);
 
             if (res >=0) {
-                Log.Info($"GDO API - successfully deployed {appName} app to section {sectionId} with config {config}");
+                Log.Info($"GDO API - successfully deployed {appName} app to section {id} with config {config}");
             } else {
-                Log.Error($"GDO API - failed to deploy {appName} app to section {sectionId} with config {config}");
+                Log.Error($"GDO API - failed to deploy {appName} app to section {id} with config {config}");
             }
 
             return res;
         }    
 
         [HttpPost]
-        [Route("api/Section/{sectionId}/DeployApp")] //?app={appName}&config={config}
-        public int DeployAppPostConfig(int sectionId, string appName, [FromBody] string config) {
+        [Route("api/Section/{id}/DeployApp")] //?app={appName}&config={config}
+        public int DeployAppPostConfig(int id, string appName, [FromBody] string config) {
             var hub = GDOAPISingleton.Instance.Hub;
             if (hub == null) return -1;
 
-            Log.Info($"GDO API - about to deploy {appName} app to section {sectionId} with config {config}");
+            Log.Info($"GDO API - about to deploy {appName} app to section {id} with config {config}");
 
             IAppConfiguration appconfig = Cave.HydrateAppConfiguration(JObject.Parse(config), "posted");
             Log.Info($"GDO API - successfuly parsed config");
 
-            int res = hub.DeployBaseApp(sectionId, appName, appconfig);
+            int res = hub.DeployBaseApp(id, appName, appconfig);
 
             if (res >= 0) {
-                Log.Info($"GDO API - successfully deployed {appName} app to section {sectionId} with posted config - see above");
+                Log.Info($"GDO API - successfully deployed {appName} app to section {id} with posted config - see above");
             } else {
-                Log.Error($"GDO API - failed to deploy {appName} app to section {sectionId} with config - see above");
+                Log.Error($"GDO API - failed to deploy {appName} app to section {id} with config - see above");
             }
 
             return res;
@@ -262,49 +287,48 @@ namespace GDO.Core
         #endregion
 
         [HttpGet]
-        [Route("api/Section/{sectionId}/SaveState")]
-        public string SaveAppState(int sectionId) {
+        [Route("api/Section/{id}/SaveState")]
+        public string SaveAppState(int id) {
             var hub = GDOAPISingleton.Instance.Hub;
             if (hub == null) return "No Cave State";
 
-            Log.Info($"GDO API - about to Save the state of {sectionId}");
-            if (!Cave.Deployment.Instances.ContainsKey(sectionId)) {
-                Log.Info($"GDO API - could not find the app running on section {sectionId}");
+            Log.Info($"GDO API - about to Save the state of {id}");
+            if (!Cave.Deployment.Instances.ContainsKey(id)) {
+                Log.Info($"GDO API - could not find the app running on section {id}");
                 return "bad sectionID";
             }
             try {
-                var app = Cave.Deployment.Instances[sectionId];
+                var app = Cave.Deployment.Instances[id];
                 var config = app.GetConfiguration();
                 string res = JsonConvert.SerializeObject(config);
                 return res;
             } catch (Exception e) {
-                Log.Error($"GDO API - failed to get state for section {sectionId} "+e);
+                Log.Error($"GDO API - failed to get state for section {id} "+e);
                 return "error saving state " + e;
             }
 
         }
-
-
+        
         /// <summary>
         /// Sets the state of the application in sectionId
         /// </summary>
-        /// <param name="sectionId">The section identifier.</param>
+        /// <param name="id">The section identifier.</param>
         /// <param name="config">The configuration - from body</param>
         /// <returns>success / failure</returns>
         [HttpPost]
-        [Route("api/Section/{sectionId}/SetState")]
-        public bool SetAppState(int sectionId,  [FromBody] string config) {
+        [Route("api/Section/{id}/SetState")]
+        public bool SetAppState(int id,  [FromBody] string config) {
             var hub = GDOAPISingleton.Instance.Hub;
             if (hub == null) return false;
 
-            Log.Info($"GDO API - about to deploy a posted app config to section {sectionId} with config {config}");
+            Log.Info($"GDO API - about to deploy a posted app config to section {id} with config {config}");
 
             IAppConfiguration appconfig = Cave.HydrateAppConfiguration(JObject.Parse(config), "posted");
             Log.Info($"GDO API - successfuly parsed config");
 
-            var app = Cave.Deployment.GetInstancebyID(sectionId);
+            var app = Cave.Deployment.GetInstancebyID(id);
             if (app == null) {
-                Log.Error($"GDO API - could not find app with {sectionId}");
+                Log.Error($"GDO API - could not find app with {id}");
                 return false;
             }
            var res = app.SetConfiguration(appconfig);
@@ -321,16 +345,16 @@ namespace GDO.Core
 
 
         [HttpGet]
-        [Route("api/Section/{sectionId}/CloseApp")]
-        public bool CloseApp(int sectionId) {
+        [Route("api/Section/{id}/CloseApp")]
+        public bool CloseApp(int id) {
             var hub = GDOAPISingleton.Instance.Hub;
             if (hub == null) return false;
 
-            Log.Info($"GDO API - about to close the app on section {sectionId}");
+            Log.Info($"GDO API - about to close the app on section {id}");
 
-            bool res = hub.CloseApp(sectionId);
+            bool res = hub.CloseApp(id);
 
-            Log.Info($"GDO API - {(res ? "succesfully" : "Failed to ")} close an app on section {sectionId}");
+            Log.Info($"GDO API - {(res ? "succesfully" : "Failed to ")} close an app on section {id}");
 
 
             return res;
@@ -398,7 +422,7 @@ namespace GDO.Core
 
 
 
-        /* TODO
+        /* TODO test the following
          * DONE+tested make statichtml app save state   
         // DONE ability to send an app config in the post section 
         // DONE close App
@@ -409,9 +433,10 @@ namespace GDO.Core
         // DONE Get Cave State
         // DONE ability to load a whole script via post 
         // DONE set state
+        // DONE close app and close section = destroy method
+
 
         // create section and deploy 
-        // close app and close section
         // send to console 
               
 
