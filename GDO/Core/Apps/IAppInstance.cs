@@ -25,6 +25,12 @@ namespace GDO.Core.Apps
     /// an interface which apps can implement to say that they accept loading content from a URI
     /// </summary>
     public interface IAppSupportsLoadingURI {
+        /*      filename = Path.GetFileName(file.FileName);
+                    //foldername
+                    Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/Web/Images/images"));
+                    path = System.Web.HttpContext.Current.Server.MapPath("~/Web/Images/images/") + filename;
+                    file.SaveAs(path);
+         * */
         /// <summary>
         /// Loads from URI.
         /// </summary>

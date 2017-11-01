@@ -9,6 +9,10 @@ namespace GDO.Core.Scenarios
         public string Func { get; set; }
         public List<string> Params { get; set; }
 
+        public HubCall() {
+            
+        }
+
         public override string ToString() {
             return $"{nameof(Mod)}: {Mod}, {nameof(Func)}: {Func}, {nameof(Params)}: {Params.Aggregate("", (acc, next) => acc + "|" + next)}";
         }
@@ -41,6 +45,10 @@ namespace GDO.Core.Scenarios
         public int Id { get; set; }
         public double DefaultWait { get; set; }
         public bool IsLoop = false;
+
+        public Element() {
+            
+        }
 
         public Element(int index, string function, int timeout)
         {

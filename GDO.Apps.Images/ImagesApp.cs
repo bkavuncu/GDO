@@ -3,6 +3,8 @@ using System.Web;
 using GDO.Core;
 using GDO.Core.Apps;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json.Linq;
 
 namespace GDO.Apps.Images
@@ -130,6 +132,14 @@ namespace GDO.Apps.Images
                     };
                 }
             }
+        }
+
+        public List<string> GetDatabase() {
+            string database_path = HttpContext.Current.Server.MapPath("~/Web/Images/Images/Database.txt");
+            if (File.Exists(database_path)) {
+                return File.ReadAllLines(database_path).Where(l => !string.IsNullOrWhiteSpace(l)).ToList();
+            }
+            return new List<string>();
         }
     }
 }

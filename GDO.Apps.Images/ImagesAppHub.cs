@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Web;
 using Microsoft.AspNet.SignalR;
 using GDO.Core;
@@ -728,6 +730,12 @@ namespace GDO.Apps.Images
                     Clients.Caller.setMessage(e.GetType().ToString());
                 }
             }
+        }
+
+        public List<string> GetDatabase(int instanceId) {
+
+            ImagesApp ia = (ImagesApp)Cave.Deployment.Apps["Images"].Instances[instanceId];
+            return ia.GetDatabase();
         }
 
         // Set display Mode
