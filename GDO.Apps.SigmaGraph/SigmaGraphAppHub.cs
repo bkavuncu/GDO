@@ -12,7 +12,7 @@ using GDO.Core.Apps;
 namespace GDO.Apps.SigmaGraph
 {
     [Export(typeof(IAppHub))]
-    public class SigmaGraphAppHub : Hub, IBaseAppHub
+    public class SigmaGraphAppHub : GDOHub, IBaseAppHub
     {
         private string ControllerId { get; set; }
         public static SigmaGraphAppHub Self;

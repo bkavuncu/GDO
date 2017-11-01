@@ -70,7 +70,7 @@ namespace GDO.Apps.BasicMaps
             {
                 LayerVisibility[i] = false;
             }
-            SetLayerVisible(10);
+            SetLayerVisible(0); // switch to the Nice Map
         }
 
         public void SetLayerVisible(int id)
