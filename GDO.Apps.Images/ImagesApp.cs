@@ -134,12 +134,16 @@ namespace GDO.Apps.Images
             }
         }
 
-        public List<string> GetDatabase() {
-            string database_path = HttpContext.Current.Server.MapPath("~/Web/Images/Images/Database.txt");
-            if (File.Exists(database_path)) {
-                return File.ReadAllLines(database_path).Where(l => !string.IsNullOrWhiteSpace(l)).ToList();
+        public List<ImageList> GetDatabase() {
+            string databasePath = HttpContext.Current.Server.MapPath("~/Web/Images/Images/Database.txt");
+            if (File.Exists(databasePath)) {
+                return File.ReadAllLines(databasePath).Where(l => !string.IsNullOrWhiteSpace(l)).Select(l => {
+                    var res = l.Split(new[] {"|"}, StringSplitOptions.None);
+                    return new ImageList {Id = res[1], Name = res[0]};
+                }).ToList();
+            
             }
-            return new List<string>();
+            return new List<ImageList>();
         }
     }
 }

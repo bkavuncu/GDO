@@ -58,13 +58,17 @@ namespace GDO
                 Cave.Init();
                 //http://docs.autofac.org/en/latest/integration/signalr.html
                 var builder = new ContainerBuilder();
-                var config = new HubConfiguration();
+                var signalRConfig = new HubConfiguration() {
+                    EnableJSONP = true,
+                    EnableDetailedErrors = true,
+                    EnableJavaScriptProxies = true
+                };
 
                 GlobalHost.DependencyResolver.Register(typeof(IAssemblyLocator), () => new AssemblyLocator());
                 builder.RegisterType<AssemblyLocator>().As<IAssemblyLocator>().SingleInstance();
                 builder.RegisterHubs(Assembly.GetExecutingAssembly());
                 var container = builder.Build();
-                config.Resolver = new AutofacDependencyResolver(container);
+                signalRConfig.Resolver = new AutofacDependencyResolver(container);
                 app.UseCors(CorsOptions.AllowAll);
                 app.UseAutofacMiddleware(container);
                 //app.MapSignalR("/signalr", config);
@@ -78,11 +82,7 @@ namespace GDO
                 app.Map("/signalr", map =>
                 {
                     map.UseCors(CorsOptions.AllowAll);
-                    var hubConfiguration = new HubConfiguration//todo this is never used? 
-                    {
-                        EnableJSONP = true
-                    };
-                    map.RunSignalR(config);
+                    map.RunSignalR(signalRConfig);
                 });
 
                 var hostname = System.Net.Dns.GetHostName();
