@@ -522,7 +522,7 @@ namespace GDO.Core
          * DONE+tested make statichtml app save state   
         // DONE ability to send an app config in the post section 
         // DONE close App
-        // DONE save a state of an app
+        // DONE+tested  save a state of an app
         // DONE simplify the script step API 
                 DONE superclass the scriptstep api 
         // DONE save state of whole cave 
@@ -535,6 +535,7 @@ namespace GDO.Core
         // send to console 
               
 
+        // image load from uri 
         // ability to deploy state within a script << can be done with cavehub.RestoreCaveState
 
         */

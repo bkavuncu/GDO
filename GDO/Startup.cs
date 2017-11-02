@@ -86,14 +86,14 @@ namespace GDO
                 });
 
                 var hostname = System.Net.Dns.GetHostName();
-                if (hostname.Contains( "dsigdoprod") ||
+                if (hostname.Contains( "dsigdoprod") /*|| hush!
                     hostname.Contains( "dsigdopreprod") ||
-                    hostname.Contains( "dsigdotesting"))
+                    hostname.Contains( "dsigdotesting")*/)
                 {
                     //Change this URL for the generated slack channel
                     string slack_url = "https://hooks.slack.com/services/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";
                     //Change content if needed
-                    var slack_json = "{ 'username': 'GDO - Slack bot', 'icon_emoji': ':gear:', 'text': 'Deployed new GDO instance [" + hostname + "]' }";
+                    var slack_json = "{ 'username': 'GDO - Slack bot', 'icon_emoji': ':chipmunk:', 'text': 'Deployed new GDO instance [" + hostname + "]' }";
 
                     var encoding = new System.Text.UTF8Encoding();
                     var slack_payload = encoding.GetBytes(slack_json);
@@ -156,6 +156,11 @@ namespace GDO
             }
 
             assemblies.Add(typeof(CaveHub).Assembly);
+            foreach (var configurationType in _configurationTypes) {
+                Cave.RegisterConfigType(configurationType.GetType());
+
+            }
+
             foreach (var caveapp in _caveapps)
             {
                 if (caveapp is IBaseAppHub)
@@ -180,10 +185,7 @@ namespace GDO
                 Cave.RegisterModule(cavemodule.Name, cavemodule.ModuleType);
                 assemblies.Add(cavemodule.GetType().Assembly);
             }
-            foreach (var configurationType in _configurationTypes) {
-                Cave.RegisterConfigType(configurationType.GetType());
-
-            }
+            
 
             return assemblies;
         }

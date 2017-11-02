@@ -6,7 +6,6 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Web;
-using Microsoft.AspNet.SignalR;
 using GDO.Core;
 using GDO.Core.Apps;
 using Newtonsoft.Json;
@@ -15,8 +14,7 @@ using log4net;
 namespace GDO.Apps.Images
 {
     [Export(typeof(IAppHub))]
-    public class ImagesAppHub : GDOHub, IBaseAppHub, IHubLog
-    {
+    public class ImagesAppHub : GDOHub, IBaseAppHub, IHubLog, IHubSupportsLoadingURI {
 
         public ILog Log { get; set; } = LogManager.GetLogger(typeof(ImagesAppHub));
         public string Name { get; set; } = "Images";
@@ -888,6 +886,16 @@ namespace GDO.Apps.Images
                     Clients.Caller.setMessage(e.GetType().ToString());
                 }
             }
+        }
+
+        public string DownloadLoadFromURI(int instanceId, string uri, bool liveLink = false) {
+            ImagesApp ia = (ImagesApp)Cave.Deployment.Apps["Images"].Instances[instanceId];
+            string errors = ia.DownloadLoadFromURI(uri, liveLink);
+            if (errors != "success") {
+                return errors;
+            }
+            this.ProcessImage(instanceId,ia.Configuration.ImageName);
+            return "success";
         }
     }
 

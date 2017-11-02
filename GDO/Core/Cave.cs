@@ -340,7 +340,7 @@ namespace GDO.Core
         /// <returns></returns>
         public static List<IAppConfiguration> LoadAllAppConfigurations(string appName,string name =null)
         {
-            Log.Info("loading configurations fro App "+appName);
+            Log.Info("loading configurations for App "+appName);
             List<IAppConfiguration> configurations = new List<IAppConfiguration>();
             //TODO Load app configurations from /Configurations/AppName directory
             Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
@@ -390,6 +390,9 @@ namespace GDO.Core
                 }
                 else {
                     Log.Info("could not find config type " + configTypename);
+                    foreach (var appconf in Deployment.ApplicationConfigTypes) {
+                        Log.Info("known config type " + appconf.FullName);
+                    }
                 }
             }
 

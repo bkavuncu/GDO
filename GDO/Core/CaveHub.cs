@@ -856,7 +856,7 @@ namespace GDO.Core
             //TODO Composite apps
             foreach (AppState appState in caveState.States) {
                 CreateSection(appState.Col, appState.Row, (appState.Col + appState.Cols - 1),
-                    (appState.Row + appState.Rows - 1));
+                                                          (appState.Row + appState.Rows - 1));
                 Cave.GetSectionId(appState.Col, appState.Row);
                 DeployBaseApp(Cave.GetSectionId(appState.Col, appState.Row), appState.AppName, appState.Config);
             }
