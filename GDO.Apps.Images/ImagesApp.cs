@@ -66,7 +66,7 @@ namespace GDO.Apps.Images
                 }
                 return true;
             }
-            Log.Info(" Imaage app is loading with a default configuration");
+            Log.Info(" Image app is loading with a default configuration");
             Configuration = (ImagesAppConfig) GetDefaultConfiguration();
             return false;
         }
