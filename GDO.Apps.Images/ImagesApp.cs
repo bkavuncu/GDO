@@ -15,6 +15,10 @@ namespace GDO.Apps.Images
         public int Rotate;
         public DisplayBlockInfo DisplayBlock;
         public DisplayRegionInfo DisplayRegion;
+        /// <summary>
+        /// The image list filter - filter to only images which contain this image
+        /// </summary>
+        public string ImageListFilter;
     }
     enum Mode
     {
@@ -137,11 +141,16 @@ namespace GDO.Apps.Images
         public List<ImageList> GetDatabase() {
             string databasePath = HttpContext.Current.Server.MapPath("~/Web/Images/Images/Database.txt");
             if (File.Exists(databasePath)) {
-                return File.ReadAllLines(databasePath).Where(l => !string.IsNullOrWhiteSpace(l)).Select(l => {
+                var images = File.ReadAllLines(databasePath).Where(l => !string.IsNullOrWhiteSpace(l)).Select(l => {
                     var res = l.Split(new[] {"|"}, StringSplitOptions.None);
                     return new ImageList {Id = res[1], Name = res[0]};
                 }).ToList();
-            
+                // allow filtering of the image list
+                if (!string.IsNullOrWhiteSpace(this.Configuration.ImageListFilter)) {
+                    images = images.Where(i => i.Name.Contains(this.Configuration.ImageListFilter)).ToList();
+                }
+
+                return images;
             }
             return new List<ImageList>();
         }
