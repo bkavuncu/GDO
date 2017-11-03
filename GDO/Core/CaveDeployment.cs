@@ -215,19 +215,26 @@ namespace GDO.Core
             string configName = config is string ? config : config.Name;
 
             Log.Info($"Creating App instance {appName} {configName} on section {sectionId}");
-            if (!Sections[sectionId].IsDeployed() && Apps.ContainsKey(appName))
-            {
-                if (config is AppJsonConfiguration || Apps[appName].Configurations.ContainsKey(configName))
-                {
-                    int instanceId = Apps[appName].CreateAppInstance(config, sectionId, false, -1);
-                    if (instanceId >= 0)
-                    {
-                        ((IBaseAppInstance)Apps[appName].Instances[instanceId]).Section.DeploySection(instanceId);
-                    }
-                    return instanceId;
-                }
+            if (Sections[sectionId].IsDeployed() || !Apps.ContainsKey(appName)) {
+                Log.Error($"Failed to create App instance {appName} {configName} on section {sectionId} either not deployed or bad app name");
+                return -1;
             }
-            return -1;
+            if (!(config is AppJsonConfiguration) && !Apps[appName].Configurations.ContainsKey(configName)) {
+                Log.Error($"Failed to create App instance {appName} {configName} on section {sectionId} bad config");
+                return -1;
+            }
+            try {
+                int instanceId = Apps[appName].CreateAppInstance(config, sectionId, false, -1);
+                if (instanceId >= 0) {
+                    ((IBaseAppInstance)Apps[appName].Instances[instanceId]).Section.DeploySection(instanceId);
+                }
+                return instanceId;
+            }
+            catch (Exception e) {
+                Log.Error($"Failed to create App instance {appName} {configName} on section {sectionId} exception "+e);
+                return -1;
+            }
+            
         }
 
         public int CreateChildAppInstance(int sectionId, string appName, string configName, bool integrationMode, int parentId)

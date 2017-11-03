@@ -381,7 +381,11 @@ namespace GDO.Core
             try {
                 var app = Cave.Deployment.Instances[appId]; 
                 var config = app.GetConfiguration();
+                config = Cave.CopyAppConfig(config);
+                config.Name = $"Dynamic-{DateTime.Now:s}";
+                    
                 string res = JsonConvert.SerializeObject(config);
+                
                 return res;
             } catch (Exception e) {
                 Log.Error($"GDO API - failed to get state for section {id}  = app id {appId} "+e);

@@ -21,10 +21,10 @@ namespace GDO.Apps.SigmaGraph.Domain {
             // TODO this hard limit onmaxobjectPerBag  is questionable and may cause issues if there exists a node with valency > limit 
             //      (or nodes very close spatially with total valency > limit) 
             int maxobjsPerBag = graph.Nodes.Count + graph.Links.Count / 64;
-            if (maxobjsPerBag < 10000) {
+            if (maxobjsPerBag > 10000) {
                 maxobjsPerBag = 10000;
-                
             }
+
             var factory =
                 new ConcurrentQuadTreeFactory<GraphObject>(new QuadCentroid(graph.RectDim.Width, graph.RectDim.Height),
                     maxbags: 1, maxobjectPerBag: maxobjsPerBag);

@@ -354,14 +354,12 @@ namespace GDO.Core
                     if (json == null) continue;
 
                     string configurationName = Path.GetFileNameWithoutExtension(filePath);
-                    //Utilities.RemoveString(filePath, path + "\\");
-                    //configurationName = Utilities.RemoveString(configurationName, ".json");
-
-                    Log.Info("Found config called "+configurationName+" for app "+appName+" about to load");
+                   
+                    Log.Info("Found config file called "+configurationName+" for app "+appName+" about to load");
 
                     var appConfiguration = HydrateAppConfiguration(json, configurationName);
 
-                    Deployment.Apps[appName].Configurations.AddOrUpdate(configurationName, appConfiguration,(a,b) => appConfiguration );
+                    Deployment.Apps[appName].Configurations.AddOrUpdate(appConfiguration.Name, appConfiguration,(a,b) => appConfiguration );
                 }
             }   
             return configurations;

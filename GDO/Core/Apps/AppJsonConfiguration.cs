@@ -109,7 +109,7 @@ namespace GDO.Core.Apps
             }
         }
 
-        public string GetJsonForBrowsers() {
+        public virtual string GetJsonForBrowsers() {
             if (this.Json == null) {
                 this.Json = new JObject();
             }
