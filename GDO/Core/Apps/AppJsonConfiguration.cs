@@ -28,8 +28,8 @@ namespace GDO.Core.Apps
     /// config can either stored in the .JSON property with no rules
     /// or can be stored directly in this class via subclassing 
     /// </summary>
-    [InheritedExport]
-    [Export(typeof(IAppConfiguration))]
+    [InheritedExport(typeof(IAppConfiguration))]
+    //[Export(typeof(IAppConfiguration))]
     public class AppJsonConfiguration : IAppConfiguration {
         public string Name { get; set; }
         public bool IntegrationMode { get; set; }
@@ -109,7 +109,7 @@ namespace GDO.Core.Apps
             }
         }
 
-        public string GetJsonForBrowsers() {
+        public virtual string GetJsonForBrowsers() {
             if (this.Json == null) {
                 this.Json = new JObject();
             }

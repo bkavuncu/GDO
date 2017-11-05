@@ -2280,6 +2280,7 @@ dd3Server.client.receiveGDOConfiguration = function (id) {
 };
 
 dd3Server.client.receiveControllerOrder = function (orders) {
+    gdo.consoleOut('.DD3', 1, 'recevied '+orders);// log it first
     if (orderTransmitter) {
         orders = JSON.parse(orders)
         gdo.consoleOut('.DD3', 1, 'Order received : ' + orders.name + ' [' + orders.args + ']');

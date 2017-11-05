@@ -4,22 +4,17 @@ using System.Linq;
 
 namespace GDO.Core.Scenarios
 {
-    public class Element
-    {
-        public int Id { get; set; }
+    public class HubCall {
         public string Mod { get; set; }
         public string Func { get; set; }
         public List<string> Params { get; set; }
-        public double DefaultWait { get; set; }
-        public bool IsLoop = false;
 
-        public Element(int index, string function, int timeout)
-        {
-            Params = new List<string>();
+        public HubCall() {
+            
         }
 
         public override string ToString() {
-            return $"{nameof(IsLoop)}: {IsLoop}, {nameof(Id)}: {Id}, {nameof(Mod)}: {Mod}, {nameof(Func)}: {Func}, {nameof(Params)}: {Params.Aggregate("", (acc, next) => acc + "|" + next)}, {nameof(DefaultWait)}: {DefaultWait}";
+            return $"{nameof(Mod)}: {Mod}, {nameof(Func)}: {Func}, {nameof(Params)}: {Params.Aggregate("", (acc, next) => acc + "|" + next)}";
         }
 
         /// <summary>
@@ -43,6 +38,33 @@ namespace GDO.Core.Scenarios
                             return int.Parse(p);
                         })
                     .ToArray();
+        }
+    }
+
+    public class Element : HubCall {
+        public int Id { get; set; }
+        public double DefaultWait { get; set; }
+        public bool IsLoop = false;
+
+        public Element() {
+            
+        }
+
+        public Element(int index, string function, int timeout)
+        {
+            Params = new List<string>();
+        }
+
+        public Element(HubCall scriptElement) {
+            this.Id = 0;
+            this.DefaultWait = 0.0;
+            this.Func = scriptElement.Func;
+            this.Mod = scriptElement.Mod;
+            this.Params = scriptElement.Params;
+        }
+
+        public override string ToString() {
+            return $"{nameof(Element.IsLoop)}: {IsLoop}, {nameof(Element.Id)}: {Id}, {nameof(Mod)}: {Mod}, {nameof(Func)}: {Func}, {nameof(Params)}: {Params.Aggregate("", (acc, next) => acc + "|" + next)}, {nameof(Element.DefaultWait)}: {DefaultWait}";
         }
     }
 }

@@ -4,8 +4,10 @@ using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Reflection;
 using System.Web.Http;
+using System.Web.Mvc;
 using Autofac;
 using Autofac.Integration.SignalR;
+using GDO.Areas.HelpPage;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
 using Microsoft.Owin;
@@ -23,9 +25,9 @@ namespace GDO
 
     public static class WebApiConfig
     {
-        public static void Register(IAppBuilder app)
+        public static void Register(IAppBuilder app, HttpConfiguration config)
         {
-            HttpConfiguration config = new HttpConfiguration();
+            
             // Web API routes
             config.MapHttpAttributeRoutes();
 
@@ -36,6 +38,7 @@ namespace GDO
             );
 
             app.UseWebApi(config);
+
         }
     }
 
@@ -43,6 +46,8 @@ namespace GDO
     public class Startup
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(Startup));
+        public static HttpConfiguration HttpConfiguration { get; private set; }
+
 
         public void Configuration(IAppBuilder app)
         {
@@ -53,36 +58,42 @@ namespace GDO
                 Cave.Init();
                 //http://docs.autofac.org/en/latest/integration/signalr.html
                 var builder = new ContainerBuilder();
-                var config = new HubConfiguration();
+                var signalRConfig = new HubConfiguration() {
+                    EnableJSONP = true,
+                    EnableDetailedErrors = true,
+                    EnableJavaScriptProxies = true
+                };
+
                 GlobalHost.DependencyResolver.Register(typeof(IAssemblyLocator), () => new AssemblyLocator());
                 builder.RegisterType<AssemblyLocator>().As<IAssemblyLocator>().SingleInstance();
                 builder.RegisterHubs(Assembly.GetExecutingAssembly());
                 var container = builder.Build();
-                config.Resolver = new AutofacDependencyResolver(container);
+                signalRConfig.Resolver = new AutofacDependencyResolver(container);
                 app.UseCors(CorsOptions.AllowAll);
                 app.UseAutofacMiddleware(container);
                 //app.MapSignalR("/signalr", config);
                 //config.EnableCors(new EnableCorsAttribute("*", "*", "GET, POST, OPTIONS, PUT, DELETE"));
-                WebApiConfig.Register(app);
+                // set up a new http configuration and then use it
+                HttpConfiguration = new HttpConfiguration();
+                WebApiConfig.Register(app, HttpConfiguration);
+                AreaRegistration.RegisterAllAreas();// this registers the help page area
+                app.UseWebApi(HttpConfiguration);
+
                 app.Map("/signalr", map =>
                 {
                     map.UseCors(CorsOptions.AllowAll);
-                    var hubConfiguration = new HubConfiguration//todo this is never used? 
-                    {
-                        EnableJSONP = true
-                    };
-                    map.RunSignalR(config);
+                    map.RunSignalR(signalRConfig);
                 });
 
                 var hostname = System.Net.Dns.GetHostName();
-                if (hostname.Contains( "dsigdoprod") ||
+                if (hostname.Contains( "dsigdoprod") /*|| hush!
                     hostname.Contains( "dsigdopreprod") ||
-                    hostname.Contains( "dsigdotesting"))
+                    hostname.Contains( "dsigdotesting")*/)
                 {
                     //Change this URL for the generated slack channel
                     string slack_url = "https://hooks.slack.com/services/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";
                     //Change content if needed
-                    var slack_json = "{ 'username': 'GDO - Slack bot', 'icon_emoji': ':gear:', 'text': 'Deployed new GDO instance [" + hostname + "]' }";
+                    var slack_json = "{ 'username': 'GDO - Slack bot', 'icon_emoji': ':chipmunk:', 'text': 'Deployed new GDO instance [" + hostname + "]' }";
 
                     var encoding = new System.Text.UTF8Encoding();
                     var slack_payload = encoding.GetBytes(slack_json);
@@ -145,6 +156,11 @@ namespace GDO
             }
 
             assemblies.Add(typeof(CaveHub).Assembly);
+            foreach (var configurationType in _configurationTypes) {
+                Cave.RegisterConfigType(configurationType.GetType());
+
+            }
+
             foreach (var caveapp in _caveapps)
             {
                 if (caveapp is IBaseAppHub)
@@ -169,10 +185,7 @@ namespace GDO
                 Cave.RegisterModule(cavemodule.Name, cavemodule.ModuleType);
                 assemblies.Add(cavemodule.GetType().Assembly);
             }
-            foreach (var configurationType in _configurationTypes) {
-                Cave.RegisterConfigType(configurationType.GetType());
-
-            }
+            
 
             return assemblies;
         }
