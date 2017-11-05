@@ -88,6 +88,7 @@
             //do nothing
         }
     }
+
 });
 
 //gdo.net.app["Images"].display_mode = 0;
@@ -115,6 +116,22 @@ gdo.net.app["Images"].initClient = function () {
 gdo.net.app["Images"].initControl = function () {
     gdo.controlId = parseInt(getUrlVar("controlId"));
     gdo.net.app["Images"].control_status = 0;
+
+    // set up the image database dropdown
+    gdo.net.app["Images"].server.getDatabase(parent.gdo.controlId).done(function(images) {
+        console.log("found " + images);
+        $.each(images,
+            function() {
+
+                console.log(this);
+                var image = this;
+
+                $("iframe").contents().find("#image_digit").append("<option value=\"" + image.Id + "\">" + image.Name + "</option> ");
+            });
+    }).fail(function(error) {
+        console.log('Error: ' + error);
+    });
+
     //gdo.net.app["Images"].server.requestDisplayMode(gdo.controlId);
     gdo.net.app["Images"].server.requestImageName(gdo.controlId);
     gdo.consoleOut('.Images', 1, 'Initializing Image Tiles App Control at Instance ' + gdo.controlId);

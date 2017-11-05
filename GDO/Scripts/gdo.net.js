@@ -96,6 +96,13 @@ $(function() {
         gdo.net.p2pmode = defaultP2PMode;
     }
 
+    // addsignalR error handling - enable in Startup.cs options 
+    //https://stackoverflow.com/questions/19688673/signalr-there-was-an-error-invoking-hub-method-xxx
+    $.connection.hub.error(function (error) {
+        console.log('SignalR error: ' + error);
+    });
+
+
     $.connection.caveHub.client.receiveHeartbeat = function (heartbeat) {
         gdo.net.time.setTime(heartbeat);
         //gdo.consoleOut(".NET", 3, "Received Heartbeat: " + gdo.net.time.getHours() + ":" + gdo.net.time.getMinutes() + ":" + +gdo.net.time.getSeconds() + ":" + gdo.net.time.getMilliseconds());

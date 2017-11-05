@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Web;
-using Microsoft.AspNet.SignalR;
 using GDO.Core;
 using GDO.Core.Apps;
 using Newtonsoft.Json;
@@ -13,8 +14,7 @@ using log4net;
 namespace GDO.Apps.Images
 {
     [Export(typeof(IAppHub))]
-    public class ImagesAppHub : GDOHub, IBaseAppHub, IHubLog
-    {
+    public class ImagesAppHub : GDOHub, IBaseAppHub, IHubLog, IHubSupportsLoadingURI {
 
         public ILog Log { get; set; } = LogManager.GetLogger(typeof(ImagesAppHub));
         public string Name { get; set; } = "Images";
@@ -703,22 +703,16 @@ namespace GDO.Apps.Images
                 try
                 {
                     ImagesApp ia = (ImagesApp)Cave.Deployment.Apps["Images"].Instances[instanceId];
-                    string database_path = HttpContext.Current.Server.MapPath("~/Web/Images/images/Database.txt");
-                    string[] database = { };
-                    // if file is processed
-                    if (File.Exists(database_path))
-                    {
-                        database = File.ReadAllLines(database_path);
-                        foreach (string s in database)
-                        {
-                            if (s.Split('|')[0].Equals(imageName))
-                            {
-                                FindDigits(instanceId, s.Split('|')[1]);
-                                SetMode(instanceId, displayMode);
-                                return;
-                            }
-                        }
+                    // check if we have it in the database
+                    var images = ia.GetDatabase();
+                    if (images.Any(i => i.Name == imageName)) {
+                        ImageList match = images.First(i => i.Name == imageName);
+
+                        FindDigits(instanceId, match.Id);
+                        SetMode(instanceId, displayMode);
+                        return;
                     }
+                    
                     ProcessImage(instanceId, imageName);
                     SetMode(instanceId, displayMode);
                 }
@@ -728,6 +722,22 @@ namespace GDO.Apps.Images
                     Clients.Caller.setMessage(e.GetType().ToString());
                 }
             }
+        }
+
+       
+
+        public IEnumerable<ImageList> GetDatabase(int instanceId) {
+            try {
+                //return new List<ImageList>() {new ImageList() {Id = "123", Name="abc"} };
+                ImagesApp ia = (ImagesApp) Cave.Deployment.Apps["Images"].Instances[instanceId];
+                var aggregate = ia.GetDatabase();
+                
+                return aggregate;
+            }
+            catch (Exception e) {
+                Log.Error("failed to get database "+e);
+            }
+            return new List<ImageList>();
         }
 
         // Set display Mode
@@ -877,5 +887,21 @@ namespace GDO.Apps.Images
                 }
             }
         }
+
+        public string DownloadLoadFromURI(int instanceId, string uri, bool liveLink = false) {
+            ImagesApp ia = (ImagesApp)Cave.Deployment.Apps["Images"].Instances[instanceId];
+            string errors = ia.DownloadLoadFromURI(uri, liveLink);
+            if (errors != "success") {
+                return errors;
+            }
+            this.ProcessImage(instanceId,ia.Configuration.ImageName);
+            return "success";
+        }
+    }
+
+    public class ImageList {
+        public string Id { get; set; }
+        public string Name { get; set; }
+
     }
 }

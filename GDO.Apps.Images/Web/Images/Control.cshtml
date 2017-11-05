@@ -123,7 +123,7 @@
                 }
             });
         });
-        $(function () {
+        $(function() {
 
             /*
             window.onerror = function() {
@@ -133,12 +133,13 @@
 
             var gdo = parent.gdo;
 
-            $("#image_digit_button").click(function (){
+
+            $("#image_digit_button").click(function() {
                 var gdo = parent.gdo;
                 gdo.net.app["Images"].server.findDigits(gdo.controlId, $("#image_digit").val());
             });
 
-            $("#image_digit").keypress(function (e) {
+            $("#image_digit").keypress(function(e) {
                 if (e.keyCode == 13) {
                     $("#image_digit_button").click();
                 }
@@ -146,7 +147,7 @@
 
             $("#fit_mode").click(function() {
                 var gdo = parent.gdo;
-                if (gdo.net.app["Images"].control_status == 1 &&　$('#thumbnail_control > img').attr("src") != "") {
+                if (gdo.net.app["Images"].control_status == 1 && $('#thumbnail_control > img').attr("src") != "") {
                     //gdo.net.app["Images"].display_mode = 1 - gdo.net.app["Images"].display_mode;
                     gdo.consoleOut('.Images', 1, 'Control: ' + gdo.controlId + ', Update display mode: FIT MODE');
                     //gdo.net.app["Images"].server.setDisplayMode(gdo.controlId, gdo.net.app["Images"].display_mode);
@@ -157,7 +158,7 @@
 
             $("#fill_mode").click(function() {
                 var gdo = parent.gdo;
-                if (gdo.net.app["Images"].control_status == 1 &&　$('#thumbnail_control > img').attr("src") != "") {
+                if (gdo.net.app["Images"].control_status == 1 && $('#thumbnail_control > img').attr("src") != "") {
                     //gdo.net.app["Images"].display_mode = 1 - gdo.net.app["Images"].display_mode;
                     gdo.consoleOut('.Images', 1, 'Control: ' + gdo.controlId + ', Update display mode: FILL MODE');
                     //gdo.net.app["Images"].server.setDisplayMode(gdo.controlId, gdo.net.app["Images"].display_mode);
@@ -181,9 +182,9 @@
                 }
             });
 
-            $("#rotate_control").click(function () {
+            $("#rotate_control").click(function() {
                 var gdo = parent.gdo;
-                if (gdo.net.app["Images"].control_status == 1 &&　$('#thumbnail_control > img').attr("src") != "") {
+                if (gdo.net.app["Images"].control_status == 1 && $('#thumbnail_control > img').attr("src") != "") {
                     $('#thumbnail_control > img').cropper('rotate', 90);
                     updateThumbNailImageInfo($('#thumbnail_control > img'));
                 }
@@ -196,36 +197,42 @@
                 var gdo = parent.gdo;
                 if (gdo.net.app["Images"].control_status == 1) {
                     var canvasData = $('#thumbnail_control > img').cropper('getCanvasData');
-                    if(e.keyCode == 97) { // A left
+                    if (e.keyCode == 97) { // A left
                         //alert("left");
-                        $('#thumbnail_control > img').cropper('setCanvasData', {
-                            left: canvasData.left - 1
-                        });
+                        $('#thumbnail_control > img').cropper('setCanvasData',
+                            {
+                                left: canvasData.left - 1
+                            });
                         updateThumbNailImageInfo($('#thumbnail_control > img'));
                     } else if (e.keyCode == 115) { // S down
-                        $('#thumbnail_control > img').cropper('setCanvasData', {
-                            top: canvasData.top + 1
-                        });
+                        $('#thumbnail_control > img').cropper('setCanvasData',
+                            {
+                                top: canvasData.top + 1
+                            });
                         updateThumbNailImageInfo($('#thumbnail_control > img'));
                     } else if (e.keyCode == 100) { // D right
-                        $('#thumbnail_control > img').cropper('setCanvasData', {
-                            left: canvasData.left + 1
-                        });
+                        $('#thumbnail_control > img').cropper('setCanvasData',
+                            {
+                                left: canvasData.left + 1
+                            });
                         updateThumbNailImageInfo($('#thumbnail_control > img'));
                     } else if (e.keyCode == 119) { // W up
-                        $('#thumbnail_control > img').cropper('setCanvasData', {
-                            top: canvasData.top - 1
-                        });
+                        $('#thumbnail_control > img').cropper('setCanvasData',
+                            {
+                                top: canvasData.top - 1
+                            });
                         updateThumbNailImageInfo($('#thumbnail_control > img'));
                     }
                 }
             });
 
+
             gdo.net.app["Images"].initControl();
             //updateThumbNailImageInfo($('#thumbnail_control > img'));
             updateControlButtonBackground();
-        });
 
+           
+        });
         function updateControlButtonBackground() {
             var gdo = parent.gdo;
             if (gdo.net.app["Images"].control_status == 0) {
@@ -438,16 +445,7 @@
                                             <td>
                                                 <div class="input_field_div">
                                                     <select class="input_field" id="image_digit">
-                                                        @{
-                                                            string database_path = System.Web.HttpContext.Current.Server.MapPath("~/Web/Images/Images/Database.txt");
-                                                            string[] database = {};
-                                                            if (File.Exists(database_path))
-                                                            {
-                                                                database = File.ReadAllLines(database_path).Where(l=> !string.IsNullOrWhiteSpace(l)).ToArray();
-                                                            }
-                                                        }
-                                                            @foreach (var s in database)
-                                                            {  <option value="@s.Split('|')[1]">@s.Split('|')[0]</option>  }
+                                                    
                                                     </select>
                                                 </div>
                                             </td>
