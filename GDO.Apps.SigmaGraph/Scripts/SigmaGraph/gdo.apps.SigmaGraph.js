@@ -76,6 +76,9 @@ $(function () {
 });
 
 gdo.net.app["SigmaGraph"].attributes = [];
+gdo.net.app["SigmaGraph"].nodeAttributes = ["Node1", "Node2"]
+gdo.net.app["SigmaGraph"].edgeAttributes = ["Edge1", "Edge2"]
+gdo.net.app["SigmaGraph"].visualAttributes = ["IsVisible"]
 
 gdo.net.app["SigmaGraph"].initClient = function () {
     gdo.net.app["SigmaGraph"].initInstanceGlobalConstants();
