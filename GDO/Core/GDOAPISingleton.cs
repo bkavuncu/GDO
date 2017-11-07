@@ -16,21 +16,29 @@ namespace GDO.Core {
 
         public CaveHub Hub;
 
-        public static IAppHub GetHub(string name) {
-            Dictionary<string, Type> hubtypes = GetHubList();
-            if (!hubtypes.ContainsKey(name)) {
+        public static IAppHub GetAppHubForAppInstance(string name, int instanceId) {
+
+            try {
+                GDOHub gdoHub = CreateHub(name);
+                string appName = Cave.GetAppName(instanceId);
+                var appHub = Cave.Deployment.Apps[appName].Instances[instanceId].App.Hub;
+                var gdoapphub = appHub as GDOHub;
+                gdoHub.SetStateFrom(gdoapphub);
+
+                return (IAppHub) gdoHub;
+            }
+            catch (Exception e) {
+                Logger.Error($"failed to find hub {name} instance {instanceId} "+e);
                 return null;
             }
+        }
 
-            DefaultHubManager hd = new DefaultHubManager(GlobalHost.DependencyResolver);
-            var appHub = (IAppHub) hd.ResolveHub(name+"AppHub");
-            var gdoHub = appHub as GDOHub;
-            if (gdoHub == null) {
-                Logger.Error(" "+appHub.GetType()+" does not extend from GDOHub - cannot call scripts");
-                 throw new Exception("Hub classes must extend from GDOHub");
-            }
+        public static IAppHub GetGDOHub(string name) {
+            GDOHub gdoHub = CreateHub(name);
             gdoHub.SetStateFrom(GDOAPISingleton.Instance.Hub);
-            return appHub;//hd.ResolveHub(name) ??
+            return (IAppHub) gdoHub;
+            
+            //hd.ResolveHub(name) ??
 
             //  var hubContext = GlobalHost.ConnectionManager.GetHubContext(name+"AppHub");
             // hubContext = GlobalHost.ConnectionManager.GetHubContext(name );
@@ -44,6 +52,22 @@ namespace GDO.Core {
             //  MethodInfo generic = method.MakeGenericMethod(t);
             //  return (IAppHub) generic.Invoke(GlobalHost.ConnectionManager,null );
 
+        }
+
+        private static GDOHub CreateHub(string name) {
+            Dictionary<string, Type> hubtypes = GetHubList();
+            if (!hubtypes.ContainsKey(name)) {
+                return null;
+            }
+
+            DefaultHubManager hd = new DefaultHubManager(GlobalHost.DependencyResolver);
+            var appHub = (IAppHub) hd.ResolveHub(name + "AppHub");
+            var gdoHub = appHub as GDOHub;
+            if (gdoHub == null) {
+                Logger.Error(" " + appHub.GetType() + " does not extend from GDOHub - cannot call scripts");
+                throw new Exception("Hub classes must extend from GDOHub");
+            }
+            return gdoHub;
         }
 
         public static Dictionary<string,Type> GetHubList() => Cave.Deployment.Apps.ToDictionary(app => app.Value.Hub.Name, app => app.Value.Hub.GetType());

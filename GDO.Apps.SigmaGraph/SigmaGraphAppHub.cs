@@ -44,7 +44,9 @@ namespace GDO.Apps.SigmaGraph
             {
                 try
                 {
-                    this.ControllerId = Context.ConnectionId;
+                    if (Context != null) {
+                        this.ControllerId = Context.ConnectionId;
+                    }
 
                     // Indicate to clients that a graph is loading
                     Clients.Group("" + instanceId).showSpinner();

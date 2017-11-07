@@ -19,6 +19,7 @@ namespace GDO.Core.Scenarios
 
         /// <summary>
         /// Parses the parameters. e.g. 4,\"Imperial RTSC\"
+        /// // todo this needs to be able to deal with more complex  parameter strings e.g.  0,[-74373.2285214765,6719770.2491205567] in the LondonMap scenario 
         /// </summary>
         /// <returns></returns>
         public object[] ParseParams() {
@@ -45,6 +46,8 @@ namespace GDO.Core.Scenarios
         public int Id { get; set; }
         public double DefaultWait { get; set; }
         public bool IsLoop = false;
+
+        public int InstanceId { get; set; } = -1;
 
         public Element() {
             
