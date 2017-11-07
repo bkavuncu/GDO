@@ -16,7 +16,8 @@ namespace GDO.Apps.SigmaGraph {
 
     public class SigmaGraphAppConfig : AppJsonConfiguration {
         public string FolderNameDigit;
-        
+        public string Filename { get; set; }
+
         public override string GetJsonForBrowsers() {
             return "{}"; // we dont need to send anything to browsers.
         }
@@ -74,6 +75,7 @@ namespace GDO.Apps.SigmaGraph {
 
         public void ProcessGraph(string filename) {
             // deterministically convert filename to a folderid 
+            this.Configuration.Filename = filename;
             this.Configuration.FolderNameDigit = CreateTemporyFolderId(filename);
 
             // if its already proccessed then load it 

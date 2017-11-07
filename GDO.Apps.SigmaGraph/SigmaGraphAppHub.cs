@@ -37,6 +37,12 @@ namespace GDO.Apps.SigmaGraph
             Groups.Remove(Context.ConnectionId, "" + groupId);
         }
 
+        public override void SignalConfigUpdated(int instanceId) {
+            base.SignalConfigUpdated(instanceId);
+            var ga = (SigmaGraphApp)Cave.Deployment.Apps["SigmaGraph"].Instances[instanceId];
+            InitiateProcessing(instanceId, ga.Configuration.Filename);
+        }
+
         public void InitiateProcessing(int instanceId, string filename)
         {
             Log.Info($"SigmaGraph: Server side InitiateProcessing is called {instanceId} {filename}.");
@@ -65,7 +71,7 @@ namespace GDO.Apps.SigmaGraph
                     Clients.Group("" + instanceId).renderGraph();
                     Clients.Caller.setMessage("SigmaGraph is now being rendered.");
 
-                    Log.Info("SigmaGraph: Finished Initiate PRocessing. {instanceId} {filename}.");
+                    Log.Info($"SigmaGraph: Finished Initiate PRocessing. {instanceId} {filename}.");
                 }
                 catch (WebException e)
                 {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
+using System.Net.Http.Headers;
 using System.Reflection;
 using System.Web.Http;
 using System.Web.Mvc;
@@ -105,6 +106,9 @@ namespace GDO
                     slack_stream.Write(slack_payload, 0, slack_payload.Length);
                     slack_stream.Close();
                 }
+
+                // make default return type json 
+                HttpConfiguration.Formatters.JsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html"));
 
             }
             catch (Exception e)
