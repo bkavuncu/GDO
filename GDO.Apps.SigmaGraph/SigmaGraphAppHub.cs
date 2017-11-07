@@ -37,6 +37,11 @@ namespace GDO.Apps.SigmaGraph
             Groups.Remove(Context.ConnectionId, "" + groupId);
         }
 
+        public void SaveGraph(string filename, string contents)
+        {
+            SigmaGraphApp.SaveGraph(filename, contents);
+        }
+
         public void InitiateProcessing(int instanceId, string filename)
         {
             Log.Info($"SigmaGraph: Server side InitiateProcessing is called {instanceId} {filename}.");
