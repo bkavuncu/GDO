@@ -74,15 +74,27 @@ namespace GDO.Apps.SigmaGraph {
             }
         }
 
-        public static void SaveGraph(string filename, System.Web.HttpPostedFileBase file)
+        public static string PrepareGraphMLDir(string filename)
         {
-            Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath(GRAPHML_DIR));
-            var path = System.Web.HttpContext.Current.Server.MapPath(GRAPHML_DIR) + filename;
+            var path = System.Web.HttpContext.Current.Server.MapPath(GRAPHML_DIR);
+            Directory.CreateDirectory(path);
+
+            path += filename;
             if (File.Exists(path))
             {  // if the file already exists, delete it
                 File.Delete(path);
             }
-            file.SaveAs(path);
+            return path;
+        }
+
+        public static void SaveGraph(string filename, System.Web.HttpPostedFileBase file)
+        {
+            file.SaveAs(PrepareGraphMLDir(filename));
+        }
+
+        public static void SaveGraph(string filename, string contents)
+        {
+            File.WriteAllText(PrepareGraphMLDir(filename), contents);
         }
 
         public void ProcessGraph(string filename) {
