@@ -350,6 +350,18 @@ namespace GDO.Core
 
             int res = hub.DeployBaseApp(id, appName, appconfig);
 
+            // signal config changed
+            int appId = hub.GetAppID(res);
+            var app = Cave.Deployment.GetInstancebyID(appId);
+            if (app == null) {
+                Log.Error($"GDO API - could not find app with {appId}");
+            }
+            var set = app.SetConfiguration(appconfig);
+
+            if (!set) {
+                Log.Error($"GDO API - failed to signal set state");
+            }
+
             if (res >= 0) {
                 Log.Info($"GDO API - successfully deployed {appName} app to section {id} with posted config - see above");
             } else {
