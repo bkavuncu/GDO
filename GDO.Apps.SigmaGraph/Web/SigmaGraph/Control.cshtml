@@ -1,6 +1,7 @@
 ﻿@using System.IO
 @using System.Web
 @using GDO.Core
+@using GDO.Apps.SigmaGraph
 <!DOCTYPE html>
 
 <html>
@@ -43,15 +44,9 @@
                 if (file != null && !file.FileName.IsEmpty())   //need to add this check, because it tried to save empty file in subsequent button clicks
                 {
                     filename = Path.GetFileName(file.FileName);
-                    //foldername
-                    Directory.CreateDirectory(HttpContext.Current.Server.MapPath("~/Web/SigmaGraph/graphmls"));
-                    path = HttpContext.Current.Server.MapPath("~/Web/SigmaGraph/graphmls/") + filename;
-                    if (File.Exists(path)) {  // if the file already exists, delete it
-                        File.Delete(path);
-                    }
-                    file.SaveAs(path);
-                    }
+                    SigmaGraphApp.SaveGraph(filename, file);
                 }
+            }
         }
         <div>
             <div class="row">

@@ -61,6 +61,8 @@ namespace GDO.Apps.SigmaGraph {
 
         private QuadTreeNode<GraphObject> CurrentQuadTreeRoot;
 
+        private const String GRAPHML_DIR = "~/Web/SigmaGraph/graphmls/";
+
 
         public void Init() {
             try {
@@ -70,6 +72,17 @@ namespace GDO.Apps.SigmaGraph {
             catch (Exception e) {
                 Log.Error("failed to launch the Graphs App", e);
             }
+        }
+
+        public static void SaveGraph(string filename, System.Web.HttpPostedFileBase file)
+        {
+            Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath(GRAPHML_DIR));
+            var path = System.Web.HttpContext.Current.Server.MapPath(GRAPHML_DIR) + filename;
+            if (File.Exists(path))
+            {  // if the file already exists, delete it
+                File.Delete(path);
+            }
+            file.SaveAs(path);
         }
 
         public void ProcessGraph(string filename) {
