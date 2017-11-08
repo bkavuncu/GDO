@@ -130,6 +130,10 @@ namespace GDO.Apps.SigmaGraph {
                     System.Web.HttpContext.Current.Server.MapPath("~/Web/SigmaGraph/QuadTrees/" +
                                                                   this.Configuration.FolderNameDigit +
                                                                   "/quad.json");
+                if (!File.Exists(savedQuadTree))
+                {
+                    return false;
+                }
                 JsonSerializerSettings settings = new JsonSerializerSettings();
                 settings.Converters.Add(new QuadTreeNodeConverter());
                 this.CurrentQuadTreeRoot =
