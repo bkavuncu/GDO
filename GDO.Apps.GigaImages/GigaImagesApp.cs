@@ -1,45 +1,56 @@
 ﻿using GDO.Core;
 using GDO.Core.Apps;
+using log4net;
+using Newtonsoft.Json.Linq;
 
 namespace GDO.Apps.GigaImages
 {
+    public class GigaImagesAppConfig : AppJsonConfiguration {
+        public Position Position { get; set; }
+        public bool IsInitialized = false;
+    }
+
     public class GigaImagesApp : IBaseAppInstance
     {
+        private static readonly ILog Log = LogManager.GetLogger(typeof(GigaImagesApp));
+
         public int Id { get; set; }
         public string AppName { get; set; }
         public App App { get; set; }
 
         #region config
-        public AppJsonConfiguration Configuration { get; set; }
+
+        public GigaImagesAppConfig Configuration;
         public IAppConfiguration GetConfiguration() {
-            return this.Configuration;
+            return Configuration;
         }
 
         public bool SetConfiguration(IAppConfiguration config) {
-            if (config is AppJsonConfiguration) {
-                this.Configuration = (AppJsonConfiguration) config;
-                // todo signal status change
+            if (config is GigaImagesAppConfig) {
+                Configuration = (GigaImagesAppConfig)config;
+                // todo signal update of config status
+               
                 return true;
             }
-            this.Configuration = (AppJsonConfiguration) GetDefaultConfiguration();
+            Log.Info(" Giga Image app is loading with a default configuration");
+            Configuration = (GigaImagesAppConfig)GetDefaultConfiguration();
             return false;
         }
 
         public IAppConfiguration GetDefaultConfiguration() {
-            return new AppJsonConfiguration();
+            return new GigaImagesAppConfig { Name = "Default", Json = new JObject() };
         }
-        #endregion
+
+        #endregion 
 
         public Section Section { get; set; }
         
         public bool IntegrationMode { get; set; }
         public ICompositeAppInstance ParentApp { get; set; }
-        public Position Position { get; set; }
-        public bool IsInitialized = false;
-
+        
         public void Init()
         {
-            this.Position = new Position {
+            this.Configuration.Position = new Position {
                 TopLeft = {
                     [0] = (float) Configuration.Json.SelectToken("topLeft[0]"),
                     [1] = (float) Configuration.Json.SelectToken("topLeft[1]")
@@ -62,18 +73,18 @@ namespace GDO.Apps.GigaImages
 
         public void SetPosition(float[] topLeft, float[] center, float[] bottomRight, float zoom, float width, float height)
         {
-            IsInitialized = true;
-            Position.TopLeft = topLeft;
-            Position.Center = center;
-            Position.BottomRight = bottomRight;
-            Position.Zoom = zoom;
-            Position.Width = width;
-            Position.Height = height;
+            this.Configuration.IsInitialized = true;
+            this.Configuration.Position.TopLeft = topLeft;
+            this.Configuration.Position.Center = center;
+            this.Configuration.Position.BottomRight = bottomRight;
+            this.Configuration.Position.Zoom = zoom;
+            this.Configuration.Position.Width = width;
+            this.Configuration.Position.Height = height;
         }
 
         public Position GetPosition()
         {
-            return Position;
+            return this.Configuration.Position;
         }
 
     }
