@@ -35,7 +35,7 @@
     <script src="~/Web/SigmaGraph/scripts/control.js"></script>
     <div class="wrapper" style="width: 97%">
         @{
-            var path = "";
+            bool uploaded = false;
             var filename = "";
             if (IsPost)
             {
@@ -45,6 +45,7 @@
                 {
                     filename = Path.GetFileName(file.FileName);
                     SigmaGraphApp.SaveGraph(filename, file);
+                    uploaded = true;
                 }
             }
         }
@@ -198,7 +199,7 @@
             </div>
         </div>
     </div>
-    @if (path != "")
+    @if (uploaded)
     {
         <script>
             $(function () {
