@@ -92,8 +92,7 @@
                                             <div class="input_field_div">
                                                 <select class="input_field" id="graph_digit">
                                                     @{
-                                                        string graphfolder = System.Web.HttpContext.Current.Server.MapPath("~/Web/SigmaGraph/graphmls");
-                                                        string[] files = Directory.GetFiles(graphfolder);
+                                                        string[] files = SigmaGraphApp.GraphMLFileList();
                                                     }
                                                     @foreach (var s in files)
                                                     {  <option value="@s.Split('\\').Last()">@s.Split('\\').Last()</option>  }
