@@ -124,12 +124,19 @@ namespace GDO.Apps.SigmaGraph
             }
         }
 
+        public void SetAllAttributes(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                var ga = (SigmaGraphApp) Cave.Deployment.Apps["SigmaGraph"].Instances[instanceId];
+                Clients.Caller.setAttribute(ga.Configuration.NodeAttributes, ga.Configuration.EdgeAttributes);
+            }
+        }
+
         public void ShowAllAttributes(int instanceId)
         { 
             lock (Cave.AppLocks[instanceId])
             {
-                var ga = (SigmaGraphApp) Cave.Deployment.Apps["SigmaGraph"].Instances[instanceId];
-                Clients.Caller.setAttribute(ga.Configuration.NodeAttributes);
             }             
         }
 
@@ -153,14 +160,21 @@ namespace GDO.Apps.SigmaGraph
             }
         }
 
-        public void TriggerFilter(int instanceId, string attribute)
+        public void TriggerFilter(int instanceId, string objectAttr, string attribute, string visualAttribute, string textFunc)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
                     Clients.Caller.setMessage("Triggering filtering action.");
-                    Clients.Group("" + instanceId).filterGraph(attribute);
+                    // Clients.Caller.setMessage(attribute + " " + visualAttribute + " " + textFunc + " " + objectAttr);
+                    // TODO find a way to pass by map instead of list
+                    List<string> attrs = new List<string>();
+                    attrs.Add(objectAttr);
+                    attrs.Add(attribute);
+                    attrs.Add(visualAttribute);
+                    attrs.Add(textFunc);
+                    Clients.Group("" + instanceId).filterGraph(attrs);
                     Clients.Caller.setMessage("Triggered filtering action.");
                 }
                 catch (Exception e)

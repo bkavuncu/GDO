@@ -233,51 +233,59 @@ $(function () {
     });
 
 
-    $("#attributes").change(function () {
-        var key = $(this).val();
-        var value = gdo.net.app["SigmaGraph"].attributes[key];
-        gdo.net.app["SigmaGraph"].server.triggerFilter(gdo.controlId, value);
-    });
+    // $("#attributes").change(function () {
+    //     var key = $(this).val();
+    //     var value = gdo.net.app["SigmaGraph"].attributes[key];
+    //     gdo.net.app["SigmaGraph"].server.triggerFilter(gdo.controlId, value);
+    // });
 
     $("#select_object").change(function () {
         $("#select_property").empty();
-        $("#select_visual_attribute").empty();
-
+         
         var e = document.getElementById("select_object");
         var value = e.options[e.selectedIndex].value;
-        var attributes = [];
-        if (value == "edge") {
-            attributes = gdo.net.app["SigmaGraph"].edgeAttributes;
-        } else if (value == "node") {
-            attributes = gdo.net.app["SigmaGraph"].nodeAttributes;
-        }
 
-        var attributeList = document.getElementById("select_property");
-        for (var i = 0; i < attributes.length; i++) {
-            var entry = new Option(attributes[i], i);
-            attributeList.options.add(entry);
-        }
+
+        return new Promise((resolve, reject) => {
+            gdo.net.app["SigmaGraph"].server.setAllAttributes(gdo.controlId)
+                .done(function () {
+                    var attributes = [];
+                    if (value == "edge") {
+                        attributes = gdo.net.app["SigmaGraph"].edgeAttributes;
+                    } else if (value == "node") {
+                        attributes = gdo.net.app["SigmaGraph"].nodeAttributes;
+                    }
+
+                    var attributeList = document.getElementById("select_property");
+                    for (var i = 0; i < attributes.length; i++) {
+                        var entry = new Option(attributes[i], attributes[i]);
+                        attributeList.options.add(entry);
+                    }
+            });
+        });
+        
     });
 
     $("#select_property").change(function () {
-        var e = document.getElementById("select_property");
-        var value = e.options[e.selectedIndex].value;
-
-        $("#select_visual_attribute").empty();
-        var attributes = gdo.net.app["SigmaGraph"].visualAttributes;
-        var attributeList = document.getElementById("select_visual_attribute");
-        for (var i = 0; i < attributes.length; i++) {
-            var entry = new Option(attributes[i], attributes[i]);
-            attributeList.options.add(entry);
-        }
-
+        
     });
 
+    $("#select_visual_attribute").change(function () {
+         
+    })
+
     $("#red").click(function () {
-        var text = $("#js_code").val();
-        console.log(text);
-        var func = eval('(' + text + ')');
-        console.log(func());
+        var type = $("#select_object").val();
+        var property = $("#select_property").val();
+        var visual = $("#select_visual_attribute").val();
+        var funcText = $("#js_code").val();
+
+        console.log(type);
+        console.log(property);
+        console.log(visual);
+        console.log(funcText);
+        console.log("hello");
+        gdo.net.app["SigmaGraph"].server.triggerFilter(gdo.controlId, type, property, visual, funcText);
     })
 
     gdo.net.app["SigmaGraph"].initControl();

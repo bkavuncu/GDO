@@ -52,16 +52,10 @@ $(function () {
         }
     }
 
-    $.connection.sigmaGraphAppHub.client.setAttribute = function (attributes) {
+    $.connection.sigmaGraphAppHub.client.setAttribute = function (nodeAttrs, edgeAttrs) {
         gdo.consoleOut('.SIGMAGRAPHRENDERER', 1, 'Message from server: set attributes');
-        /*
-        var attributesList = document.getElementById("attributes");
-        for (var i = 0; i < attributes.length; i++) {
-            var entry = new Option(attributes[i], i);
-            attributesList.options.add(entry);
-        }
-        */
-        gdo.net.app["SigmaGraph"].attributes = attributes;
+        gdo.net.app["SigmaGraph"].nodeAttributes = nodeAttrs;
+        gdo.net.app["SigmaGraph"].edgeAttributes = edgeAttrs;
     }
 
 
@@ -76,10 +70,10 @@ $(function () {
 });
 
 gdo.net.app["SigmaGraph"].attributes = [];
-gdo.net.app["SigmaGraph"].nodeAttributes = ["Node1", "Node2"]
-gdo.net.app["SigmaGraph"].edgeAttributes = ["Edge1", "Edge2"]
-gdo.net.app["SigmaGraph"].visualAttributes = ["IsVisible"]
-
+gdo.net.app["SigmaGraph"].nodeAttributes = [];
+gdo.net.app["SigmaGraph"].edgeAttributes = [];
+gdo.net.app["SigmaGraph"].visualAttributes = ["isVisible"];
+gdo.net.app["SigmaGraph"].filterConfig = {};
 gdo.net.app["SigmaGraph"].initClient = function () {
     gdo.net.app["SigmaGraph"].initInstanceGlobalConstants();
     gdo.consoleOut('.SIGMAGRAPHRENDERER', 1, 'Initializing Graph Renderer App Client at Node ' + gdo.clientId);

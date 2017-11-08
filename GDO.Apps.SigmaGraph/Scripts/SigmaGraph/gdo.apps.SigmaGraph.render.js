@@ -37,8 +37,13 @@ gdo.net.app["SigmaGraph"].renderGraph = async function () {
     gdo.net.app["SigmaGraph"].server.doneRendering(gdo.controlId);
 }
 
-gdo.net.app["SigmaGraph"].filterAttr = async function (objectAttr, propertyAttr, visaulAttr, func) {
-    console.log('Rendering graph...');
+gdo.net.app["SigmaGraph"].filterGraph = async function(attributeList) {
+    var objAttribute = attributeList[0];
+    var attribute = attributeList[1];
+    var visualAttr = attributeList[2];
+    var textFunc = attributeList[3];
+    console.log(attributeList);
+    console.log('Rendering graph...One');
     // Get location of files containing objects to render.
     gdo.stopWatch = window.performance.now();
     const filePaths = await getFilesWithin();
@@ -46,7 +51,6 @@ gdo.net.app["SigmaGraph"].filterAttr = async function (objectAttr, propertyAttr,
     console.log(filePaths[0]);
     // Get the nodes and edges
     gdo.stopWatch = window.performance.now();
-
     let filesGraphObjects = await parseFilesToGraphObjects(filePaths);
     console.log('Time to download and parse graph object files: ' + (window.performance.now() - gdo.stopWatch));
     gdo.stopWatch = window.performance.now();
@@ -55,46 +59,15 @@ gdo.net.app["SigmaGraph"].filterAttr = async function (objectAttr, propertyAttr,
 
     // Clear the sigma graph
     gdo.sigmaInstance.graph.clear();
-
     // Filter and add the nodes and edges to the graph
+    var func = eval('(' + textFunc + ')');
     gdo.stopWatch = window.performance.now();
-    if (objectAttr == "node") {
+    console.log(objAttribute);
+    if (objAttribute == "node") {
         filesGraphObjects.forEach(item => handleFileGraphObjectsVisualAttributeNode(item, attribute, func));
-    } else if (objectAttr == "edge") {
-        // filesGraphObjects.forEach(item => handleFileGraphObjectsVisualAttributeEdge(item, attribute));
+    } else {
+        filesGraphObjects.forEach(handleFileGraphObjects);
     }
-    // filesGraphObjects.forEach(item => handleFileGraphObjectsWithAttribute(item, attribute));
-    gdo.sigmaInstance.graph.nodes().forEach(convertServerCoordsToSigmaCoords);
-    console.log("Time to add objects: " + (window.performance.now() - gdo.stopWatch));
-
-    // Render the new graph
-    gdo.stopWatch = window.performance.now();
-    gdo.sigmaInstance.refresh({ skipIndexation: true });
-
-    gdo.net.app["SigmaGraph"].server.doneRendering(gdo.controlId);
-}
-
-gdo.net.app["SigmaGraph"].filterGraph = async function (attribute) {
-    console.log('Rendering graph...');
-    // Get location of files containing objects to render.
-    gdo.stopWatch = window.performance.now();
-    const filePaths = await getFilesWithin();
-    console.log('Time to get graph object file paths: ' + (window.performance.now() - gdo.stopWatch));
-    console.log(filePaths[0]);
-    // Get the nodes and edges
-    gdo.stopWatch = window.performance.now();
-    let filesGraphObjects = await parseFilesToGraphObjects(filePaths);
-    console.log('Time to download and parse graph object files: ' + (window.performance.now() - gdo.stopWatch));
-    gdo.stopWatch = window.performance.now();
-    filesGraphObjects = filesGraphObjects.reduce((a, b) => a.concat(b), []);
-    console.log('Time to combine web worker results: ' + (window.performance.now() - gdo.stopWatch));
-
-    // Clear the sigma graph
-    gdo.sigmaInstance.graph.clear();
-
-    // Filter and add the nodes and edges to the graph
-    gdo.stopWatch = window.performance.now();
-    filesGraphObjects.forEach(item => handleFileGraphObjectsWithAttribute(item, attribute));
     gdo.sigmaInstance.graph.nodes().forEach(convertServerCoordsToSigmaCoords);
     console.log("Time to add objects: " + (window.performance.now() - gdo.stopWatch));
 
