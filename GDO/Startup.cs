@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
+using System.Net.Http.Headers;
 using System.Reflection;
 using System.Web.Http;
 using System.Web.Mvc;
@@ -106,6 +107,9 @@ namespace GDO
                     slack_stream.Close();
                 }
 
+                // make default return type json 
+                HttpConfiguration.Formatters.JsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html"));
+
             }
             catch (Exception e)
             {
@@ -185,6 +189,10 @@ namespace GDO
                 Cave.RegisterModule(cavemodule.Name, cavemodule.ModuleType);
                 assemblies.Add(cavemodule.GetType().Assembly);
             }
+
+            // finally load the states now that the apps have been registered
+            Cave.LoadScenarios();
+            Cave.LoadStates();
             
 
             return assemblies;

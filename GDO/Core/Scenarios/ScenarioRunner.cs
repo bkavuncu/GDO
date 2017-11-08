@@ -95,7 +95,7 @@ namespace GDO.Core.Scenarios {
             }
 
             try {
-                object hub = FindHub(scriptStep.Mod); // voodoo here
+                object hub = FindHub(scriptStep.Mod,scriptStep.InstanceId); // voodoo here
                 Type type = hub.GetType();
                 MethodInfo mi = type.GetMethod(scriptStep.Func,
                     BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
@@ -126,7 +126,7 @@ namespace GDO.Core.Scenarios {
             return true;
         }
 
-        private static object FindHub(string module) {
+        private static object FindHub(string module, int instanceId = -1) {
             if (module == "gdo.net.server") return GDOAPISingleton.Instance.Hub;
 
             if (module.Contains("gdo.net.app.")) {
@@ -136,8 +136,12 @@ namespace GDO.Core.Scenarios {
                 //   if (hubs.ContainsKey(hubname)) {
                 //     return hubs[hubname];
                 // }
-
-                return GDOAPISingleton.GetHub(hubname);
+                if (instanceId != -1) {
+                    return GDOAPISingleton.GetAppHubForAppInstance(hubname, instanceId);
+                }
+                else {
+                    return GDOAPISingleton.GetGDOHub(hubname);
+                }
             }
             throw new ArgumentException("could not find module " + module);
         }

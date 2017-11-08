@@ -8,16 +8,15 @@ namespace GDO.Core.States
     public class State
     {
         public string Name { get; set; }
-        public List<AppState> States { get; set; }
+        public List<AppState> States { get; set; } = new List<AppState>();
 
         public State() {
-            
+            Name = "uneset";
         }
 
         public State( string name)
         {
             this.Name = name;
-            States = new List<AppState>();
         }
     }
 }

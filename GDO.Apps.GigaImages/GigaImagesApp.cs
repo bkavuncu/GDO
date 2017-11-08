@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Web;
-using GDO.Core;
+﻿using GDO.Core;
 using GDO.Core.Apps;
-using Microsoft.AspNet.SignalR;
 
 namespace GDO.Apps.GigaImages
 {

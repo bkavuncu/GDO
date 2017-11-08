@@ -12,9 +12,19 @@ namespace GDO.Core
             // todo this should only be done if the hubconnectioncontext actually contains NullClientProxy
             
             this.Context = other.Context;
-            this.Clients = other.Clients;
-            this.Groups = other.Groups;// todo i am not sure this is a good idea
+            this.Clients = other.Clients; //todo try to load this from the  Cave.Deployment.Apps[app].Hub.Clients ???
+            this.Groups = other.Groups;
+            
+            // todo i am not sure this is a good idea
         }
+
+        /// <summary>
+        /// Signals the configuration updated - please override to do your signalling
+        /// </summary>
+        public virtual void SignalConfigUpdated(int instanceId) {
+            
+        }
+
 
     }
 }
