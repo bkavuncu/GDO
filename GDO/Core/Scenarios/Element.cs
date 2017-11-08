@@ -48,7 +48,7 @@ namespace GDO.Core.Scenarios
             // Note: spaces not permitted
             if (param.StartsWith("[") && param.EndsWith("]"))
             {
-                param = param.Substring(1, param.Length - 1);
+                param = param.Substring(1, param.Length - 2);
                 var arr = param.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
                 return ParseParams(arr);
             }
@@ -57,19 +57,19 @@ namespace GDO.Core.Scenarios
             if ((param.StartsWith("\"") && param.EndsWith("\"")) ||
                 (param.StartsWith("'") && param.EndsWith("'")))
             {
-                return param.Substring(1, param.Length - 1);
-            }
-
-            float f;
-            if (float.TryParse(param, out f))
-            {
-                return f;
+                return param.Substring(1, param.Length - 2);
             }
 
             int i;
             if (int.TryParse(param, out i))
             {
                 return i;
+            }
+
+            float f;
+            if (float.TryParse(param, out f))
+            {
+                return f;
             }
 
             throw new FormatException(String.Format("Unable to parse parameter `{0}`", param));
