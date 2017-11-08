@@ -22,7 +22,6 @@ namespace GDO.Apps.SigmaGraph
         /// <value>
         /// The controller identifier.
         /// </value>
-        private static SigmaGraphApp ga;
         private string ControllerId { get; set; }
         
         public string Name { get; set; } = "SigmaGraph";
@@ -62,7 +61,7 @@ namespace GDO.Apps.SigmaGraph
                     Clients.Group("" + instanceId).initInstanceGlobalVariables();
 
                     // Create SigmaGraphApp project and call its function to process graph
-                    ga = (SigmaGraphApp) Cave.Deployment.Apps["SigmaGraph"].Instances[instanceId];
+                    var ga = (SigmaGraphApp) Cave.Deployment.Apps["SigmaGraph"].Instances[instanceId];
                    
                     Clients.Caller.setMessage("Initiating processing of graph data in file: " + filename);
                     ga.ProcessGraph(filename);
@@ -129,11 +128,8 @@ namespace GDO.Apps.SigmaGraph
         { 
             lock (Cave.AppLocks[instanceId])
             {
-                // Clients.Caller.setMessage("hello world");
-                if (ga != null)
-                {
-                    Clients.Caller.setAttribute(ga.nodeAttributes);
-                }
+                var ga = (SigmaGraphApp) Cave.Deployment.Apps["SigmaGraph"].Instances[instanceId];
+                Clients.Caller.setAttribute(ga.Configuration.NodeAttributes);
             }             
         }
 

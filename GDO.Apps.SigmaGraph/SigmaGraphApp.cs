@@ -17,6 +17,8 @@ namespace GDO.Apps.SigmaGraph {
     public class SigmaGraphAppConfig : AppJsonConfiguration {
         public string FolderNameDigit;
         public string Filename { get; set; }
+        public List<string> NodeAttributes { get; set; }
+        public List<string> EdgeAttributes { get; set; }
 
         public override string GetJsonForBrowsers() {
             return "{}"; // we dont need to send anything to browsers.
@@ -59,7 +61,6 @@ namespace GDO.Apps.SigmaGraph {
 
         public bool IntegrationMode { get; set; }
         public ICompositeAppInstance ParentApp { get; set; }
-        public List<String> nodeAttributes { get; set; }
 
         private QuadTreeNode<GraphObject> CurrentQuadTreeRoot;
 
@@ -80,7 +81,7 @@ namespace GDO.Apps.SigmaGraph {
             this.Configuration.FolderNameDigit = CreateTemporyFolderId(filename);
 
             // if its already proccessed then load it 
-            if (TryLoadQuadTree()) return;
+            // if (TryLoadQuadTree()) return;
 
             Log.Info($"about to process quadtree '{filename}'");
             Directory.CreateDirectory(GetPathToQuadFolder);
@@ -88,7 +89,8 @@ namespace GDO.Apps.SigmaGraph {
                 System.Web.HttpContext.Current.Server.MapPath("~/Web/SigmaGraph/graphmls/" + filename);
             var graph = GraphDataReader.ReadGraphMLData(graphMLfile);
             this.CurrentQuadTreeRoot = SigmaGraphQuadProcesor.ProcessGraph(graph, BasePath + this.Configuration.FolderNameDigit).Root;
-            this.nodeAttributes = new List<string>(graph.NodeOtherFields);
+            this.Configuration.NodeAttributes = new List<string>(graph.NodeOtherFields);
+            this.Configuration.EdgeAttributes = new List<string>(graph.LinkKeys);
         }
 
         private static string BasePath => System.Web.HttpContext.Current.Server.MapPath("~/Web/SigmaGraph/QuadTrees/");
