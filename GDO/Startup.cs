@@ -189,6 +189,10 @@ namespace GDO
                 Cave.RegisterModule(cavemodule.Name, cavemodule.ModuleType);
                 assemblies.Add(cavemodule.GetType().Assembly);
             }
+
+            // finally load the states now that the apps have been registered
+            Cave.LoadScenarios();
+            Cave.LoadStates();
             
 
             return assemblies;

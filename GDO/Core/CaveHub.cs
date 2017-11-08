@@ -111,6 +111,7 @@ namespace GDO.Core
             {
                 // deploy the section
                 int sectionId = Cave.Deployment.CreateSection(colStart, rowStart, colEnd, rowEnd);
+                Log.Info("created section "+sectionId);
                 List<Node> deployedNodes = Cave.Deployment.Sections[sectionId].NodeList;
 
                 if (!deployedNodes.Any()) return -1;
@@ -839,10 +840,12 @@ namespace GDO.Core
         /// <param name="name">The name of the CAVE State</param>
         public void RestoreCaveState(string name)
         {
-            lock (Cave.ServerLock) {
+            Log.Info("about to restore Cave state "+name);
+           // lock (Cave.ServerLock) { i fear we are double locking here...
+                Log.Info("about to restore Cave state " + name);
                 State caveState = Cave.States[name];
                 RestoreCaveState(caveState);
-            }
+            //}
 
         }
 
@@ -850,15 +853,23 @@ namespace GDO.Core
         /// Clears the Cave and Restores the state of the cave.
         /// </summary>
         /// <param name="caveState">The state of the CAVE</param>
-        public void RestoreCaveState(State caveState) {
+        private void RestoreCaveState(State caveState) {
+            Log.Info("about to restore cave state "+caveState.Name);
             ClearCave();
 
             //TODO Composite apps
             foreach (AppState appState in caveState.States) {
-                CreateSection(appState.Col, appState.Row, (appState.Col + appState.Cols - 1),
-                                                          (appState.Row + appState.Rows - 1));
-                Cave.GetSectionId(appState.Col, appState.Row);
-                DeployBaseApp(Cave.GetSectionId(appState.Col, appState.Row), appState.AppName, appState.Config);
+                try {
+                    Log.Info("creating section");
+                    CreateSection(appState.Col, appState.Row, (appState.Col + appState.Cols - 1),
+                        (appState.Row + appState.Rows - 1));
+                    Cave.GetSectionId(appState.Col, appState.Row);
+                    Log.Info("deploying app " + appState.AppName + " with config " + appState.Config.Name);
+                    DeployBaseApp(Cave.GetSectionId(appState.Col, appState.Row), appState.AppName, appState.Config);
+                }
+                catch (Exception e) {
+                    Log.Error("failed to load app state "+e);
+                }
             }
         }
 

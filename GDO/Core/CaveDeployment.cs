@@ -67,6 +67,7 @@ namespace GDO.Core
                 return sectionId;
                 
             }
+            Log.Error($" tried to create section in an unfree set of nodes col row = {colStart}:{rowStart}  of size {colEnd} cols {rowEnd} rows" );
             return -1;
         }
         
