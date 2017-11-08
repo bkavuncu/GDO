@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Web;
 using System.Web.Http;
 using GDO.Core.Apps;
 using GDO.Core.Scenarios;
@@ -349,6 +350,18 @@ namespace GDO.Core
 
             int res = hub.DeployBaseApp(id, appName, appconfig);
 
+            // signal config changed
+            int appId = hub.GetAppID(res);
+            var app = Cave.Deployment.GetInstancebyID(appId);
+            if (app == null) {
+                Log.Error($"GDO API - could not find app with {appId}");
+            }
+            var set = app.SetConfiguration(appconfig);
+
+            if (!set) {
+                Log.Error($"GDO API - failed to signal set state");
+            }
+
             if (res >= 0) {
                 Log.Info($"GDO API - successfully deployed {appName} app to section {id} with posted config - see above");
             } else {
@@ -406,28 +419,48 @@ namespace GDO.Core
             var hub = GDOAPISingleton.Instance.Hub;
             if (hub == null) return false;
 
-            int appId = hub.GetAppID(id);
+            bool errors = false;
 
-            Log.Info($"GDO API - about to deploy a posted app config to section {id} with config {config} appid {appId}");
+            try {
+                int appId = hub.GetAppID(id);
 
-            IAppConfiguration appconfig = Cave.HydrateAppConfiguration(JObject.Parse(config), "posted");
-            Log.Info($"GDO API - successfuly parsed config");
+                Log.Info(
+                    $"GDO API - about to deploy a posted app config to section {id} with config {config} appid {appId}");
 
-            var app = Cave.Deployment.GetInstancebyID(appId); 
-            if (app == null) {
-                Log.Error($"GDO API - could not find app with {appId}");
-                return false;
+                IAppConfiguration appconfig = Cave.HydrateAppConfiguration(JObject.Parse(config), "posted");
+                Log.Info($"GDO API - successfuly parsed config");
+
+                var app = Cave.Deployment.GetInstancebyID(appId);
+                if (app == null) {
+                    Log.Error($"GDO API - could not find app with {appId}");
+                    return false;
+                }
+                errors = !app.SetConfiguration(appconfig);
+
+                // now signal it has been updated via the hub
+
+                GDOHub apphub = app.App.Hub as GDOHub;
+                if (apphub != null) {
+                    apphub.SignalConfigUpdated(appId);
+                }
+                else {
+                    errors = false;
+                    Log.Error("could not find hub for section " + id);
+                }
+
+                if (errors) {
+                    Log.Error("GDO API - failed to set config");
+                }
+                else {
+                    Log.Info("GDO API - successfully set config");
+                }
             }
-           var res = app.SetConfiguration(appconfig);
-
-            if (res) {
-                Log.Error("GDO API - failed to set config");
+            catch (Exception e) {
+                Log.Error("GDO API error" +e);
+                throw new HttpException(503,e.ToString());
+                return false; 
             }
-            else {
-                Log.Info("GDO API - successfully set config");
-            }
-
-            return res;
+            return errors;
         }
 
 

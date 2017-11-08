@@ -1236,6 +1236,7 @@
     <Content Include="Web\Scenarios.cshtml" />
     <Content Include="Web\Modules.cshtml" />
     <Content Include="Web\ScenariosLauncher.cshtml" />
+    <Content Include="States\gigaimage.json" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Areas\HelpPage\ApiDescriptionExtensions.cs" />
@@ -1314,7 +1315,6 @@
     <Folder Include="Configurations\" />
     <Folder Include="Core\Scripting\" />
     <Folder Include="Data\" />
-    <Folder Include="States\" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

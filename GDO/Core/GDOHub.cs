@@ -18,5 +18,13 @@ namespace GDO.Core
             // todo i am not sure this is a good idea
         }
 
+        /// <summary>
+        /// Signals the configuration updated - please override to do your signalling
+        /// </summary>
+        public virtual void SignalConfigUpdated(int instanceId) {
+            
+        }
+
+
     }
 }

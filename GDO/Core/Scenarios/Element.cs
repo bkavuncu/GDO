@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using log4net;
 
 namespace GDO.Core.Scenarios
 {
     public class HubCall {
+        private static readonly ILog Log = LogManager.GetLogger(typeof(HubCall));
+
+
         public string Mod { get; set; }
         public string Func { get; set; }
         public List<string> Params { get; set; }
@@ -23,22 +27,38 @@ namespace GDO.Core.Scenarios
         /// </summary>
         /// <returns></returns>
         public object[] ParseParams() {
-            return
-                this.Params.SelectMany(l => l.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries))
-                    .Select<string, object>(
-                        p => {
-                            if (p.Contains("\"")) {
-                                // its a string
-                                return p.Replace("\"", "");// yes this will remove all "'s 
-                            }
-                            if (p.Contains(".")) {
-                                // its a float
+            return ParseParams(this.Params);
+        }
+
+        private static object[] ParseParams(IEnumerable<string> ps) {
+            return ps.SelectMany(l => l.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries))
+                .Select<string, object>(
+                    p => {
+                        if (p.StartsWith("[")) {
+                            // its an array
+                            p = p.Replace("[", "").Replace("]", "");// todo  does not deal with nested arrays... 
+                            var arr = p.Split(new[] {","}, StringSplitOptions.RemoveEmptyEntries);
+                            return ParseParams(arr);
+                        }
+
+                        if (p.Contains("\"")) {
+                            // its a string
+                            return p.Replace("\"", "");// yes this will remove all "'s 
+                        }
+                        if (p.Contains(".")) {
+                            // its a float
+                            try {
                                 return float.Parse(p);
                             }
-                            // its an int
-                            return int.Parse(p);
-                        })
-                    .ToArray();
+                            catch (Exception e) {
+                                Log.Error("could not parse "+p+" e");
+                                throw e;
+                            }
+                        }
+                        // its an int
+                        return int.Parse(p);
+                    })
+                .ToArray();
         }
     }
 
