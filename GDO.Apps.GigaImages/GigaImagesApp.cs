@@ -8,6 +8,13 @@ namespace GDO.Apps.GigaImages
     public class GigaImagesAppConfig : AppJsonConfiguration {
         public Position Position { get; set; }
         public bool IsInitialized = false;
+
+        public override string GetJsonForBrowsers() {
+            var jsonForBrowsers = this.Json.ToString();
+            return jsonForBrowsers;
+        }
+
+        //public JObject Properties { get; set; }
     }
 
     public class GigaImagesApp : IBaseAppInstance
@@ -34,6 +41,28 @@ namespace GDO.Apps.GigaImages
             }
             Log.Info(" Giga Image app is loading with a default configuration");
             Configuration = (GigaImagesAppConfig)GetDefaultConfiguration();
+            if (config is AppJsonConfiguration) {
+                Configuration.Json = (config as AppJsonConfiguration).Json;// permit upgrade of files
+                this.Configuration.Position = new Position {
+                    TopLeft = {
+                        [0] = (float) Configuration.Json.SelectToken("topLeft[0]"),
+                        [1] = (float) Configuration.Json.SelectToken("topLeft[1]")
+                    },
+                    Center = {
+                        [0] = (float) Configuration.Json.SelectToken("center[0]"),
+                        [1] = (float) Configuration.Json.SelectToken("center[1]")
+                    },
+                    BottomRight = {
+                        [0] = (float) Configuration.Json.SelectToken("bottomRight[0]"),
+                        [1] = (float) Configuration.Json.SelectToken("bottomRight[1]")
+                    },
+                    Zoom = (float)Configuration.Json.SelectToken("zoom"),
+                    Width = (float)Configuration.Json.SelectToken("width"),
+                    Height = (float)Configuration.Json.SelectToken("height")
+                };
+                return true;
+            }
+            
             return false;
         }
 
@@ -47,26 +76,8 @@ namespace GDO.Apps.GigaImages
         
         public bool IntegrationMode { get; set; }
         public ICompositeAppInstance ParentApp { get; set; }
-        
-        public void Init()
-        {
-            this.Configuration.Position = new Position {
-                TopLeft = {
-                    [0] = (float) Configuration.Json.SelectToken("topLeft[0]"),
-                    [1] = (float) Configuration.Json.SelectToken("topLeft[1]")
-                },
-                Center = {
-                    [0] = (float) Configuration.Json.SelectToken("center[0]"),
-                    [1] = (float) Configuration.Json.SelectToken("center[1]")
-                },
-                BottomRight = {
-                    [0] = (float) Configuration.Json.SelectToken("bottomRight[0]"),
-                    [1] = (float) Configuration.Json.SelectToken("bottomRight[1]")
-                },
-                Zoom = (float) Configuration.Json.SelectToken("zoom"),
-                Width = (float) Configuration.Json.SelectToken("width"),
-                Height = (float) Configuration.Json.SelectToken("height")
-            };
+
+        public void Init() {
         }
 
 
