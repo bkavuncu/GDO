@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Timers;
 using GDO.Core.Apps;
 using GDO.Core.Scenarios;
@@ -8,6 +10,7 @@ using GDO.Core.States;
 using log4net;
 using Microsoft.AspNet.SignalR;
 using Newtonsoft.Json;
+using Timer = System.Timers.Timer;
 
 namespace GDO.Core
 {
@@ -219,6 +222,17 @@ namespace GDO.Core
                     string serializedInstance = GetInstanceUpdate(instanceId);
                     BroadcastAppUpdate(true, instanceId, serializedInstance);
                 }
+
+                //signal config updated
+                
+                Task.Factory.StartNew(() => {
+                    Thread.Sleep(1000);
+                    var appHub = Cave.Deployment.GetInstancebyID(instanceId).App.Hub as GDOHub;
+                    if (appHub != null) {
+                        appHub.SignalConfigUpdated(instanceId);
+                    }
+                });
+
                 return instanceId;
             }
         }
@@ -234,6 +248,7 @@ namespace GDO.Core
         {
             lock (Cave.ServerLock)
             {
+                
                 int instanceId = Cave.Deployment.CreateBaseAppInstance(sectionId, appName, config);
                 Cave.Deployment.SetSectionP2PMode(sectionId, Cave.Deployment.Apps[appName].P2PMode);
                 if (instanceId >= 0)
@@ -241,6 +256,16 @@ namespace GDO.Core
                     string serializedInstance = GetInstanceUpdate(instanceId);
                     BroadcastAppUpdate(true, instanceId, serializedInstance);
                 }
+
+              //signal config updated
+               Task.Factory.StartNew(() => {
+                   Thread.Sleep(1000);
+                    var appHub = Cave.Deployment.GetInstancebyID(instanceId).App.Hub as GDOHub;
+                    if (appHub != null) {
+                        appHub.SignalConfigUpdated(instanceId);
+                    }
+                });
+
                 return instanceId;
             }
         }
