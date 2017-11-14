@@ -22,7 +22,7 @@ namespace GDO.Core.Apps
             AppClassType = appClassType;
             AppType = appType;
             SupportedApps = supportedApps;
-            Configurations = new ConcurrentDictionary<string, AppConfiguration>();
+            Configurations = new ConcurrentDictionary<string, IAppConfiguration>();
             Instances = new ConcurrentDictionary<int, IAppInstance>();
         }
 
@@ -32,19 +32,19 @@ namespace GDO.Core.Apps
             {
                 return -1;
             }
-            int instanceId = Utilities.GetAvailableSlot(Cave.Instances);
+            int instanceId = Utilities.GetAvailableSlot(Cave.Deployment.Instances);
             ICompositeAppInstance instance = (ICompositeAppInstance) Activator.CreateInstance(AppClassType, new object[0]);
-            AppConfiguration conf;
+            IAppConfiguration conf;
             Configurations.TryGetValue(configName, out conf);
             instance.Id = instanceId;
             instance.App = this;
             instance.AppName = Name;
             //instance.HubContext = GlobalHost.ConnectionManager.GetHubContext(Name + "Hub");
             //instance.HubContext = (IHubContext)typeof(IConnectionManager).GetMethod("GetHubContext").GetGenericMethodDefinition().MakeGenericMethod(AppHubType).Invoke(GlobalHost.ConnectionManager, null);
-            instance.Configuration = conf;
+            instance.SetConfiguration(conf);
             instance.Init();
             Instances.TryAdd(instanceId, instance);
-            Cave.Instances.TryAdd(instanceId, instance);
+            Cave.Deployment.Instances.TryAdd(instanceId, instance);
             return instanceId;
         }
     }

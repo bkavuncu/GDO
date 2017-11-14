@@ -96,6 +96,13 @@ $(function() {
         gdo.net.p2pmode = defaultP2PMode;
     }
 
+    // addsignalR error handling - enable in Startup.cs options 
+    //https://stackoverflow.com/questions/19688673/signalr-there-was-an-error-invoking-hub-method-xxx
+    $.connection.hub.error(function (error) {
+        console.log('SignalR error: ' + error);
+    });
+
+
     $.connection.caveHub.client.receiveHeartbeat = function (heartbeat) {
         gdo.net.time.setTime(heartbeat);
         //gdo.consoleOut(".NET", 3, "Received Heartbeat: " + gdo.net.time.getHours() + ":" + gdo.net.time.getMinutes() + ":" + +gdo.net.time.getSeconds() + ":" + gdo.net.time.getMilliseconds());
@@ -136,12 +143,9 @@ $(function() {
         gdo.consoleOut('.NET', 1, 'Reload Node IFrame');
         gdo.reloadNodeIFrame();
     }
-    $.connection.caveHub.client.receiveCaveState = function (caveState, id, exists) {
-        if (exists) {
-            gdo.net.processState(JSON.parse(caveState), id, exists);
-        } else {
-            gdo.net.processState("", id, exists);
-        }
+    $.connection.caveHub.client.receiveCaveState = function (stateName, exists) {
+        gdo.net.processState(stateName, exists);
+        
         gdo.updateSelf();
     }
     $.connection.caveHub.client.receiveCaveUpdate = function (cols,rows, maintenanceMode,blankMode,p2pmode,nodeMap,neighbourMap,moduleList,appList,nodes,sections,modules,apps,instances,states,scenarios) {
@@ -189,8 +193,7 @@ $(function() {
         }
         for (var i = 0; i < states.length; i++) {
             if (states[i] != null) {
-                var state = JSON.parse(states[i]);
-                gdo.net.processState(state, i, true);
+                gdo.net.processState(states[i], true);
             }
         }
         for (var i = 0; i < scenarios.length; i++) {
@@ -254,9 +257,11 @@ $(function() {
 
     $.connection.caveHub.client.receiveAppConfig = function (instanceId, appName, configName, config, exists) {
         if (gdo.net.isNodeInitialized()) {
-            gdo.consoleOut('.NET', 1, 'Received App Config : (id:' + instanceId + ', config: ' + configName + ", exists: " + exists + ")");
+            gdo.consoleOut('.NET', 1, 'Received App Config : (id:' + instanceId + ', config: ' + configName + ", exists: " + exists + " = '"+config+"')");
             if (exists) {
-                gdo.net.app[appName].config[configName] = JSON.parse(JSON.parse(config));
+                var parse = JSON.parse(config);
+                gdo.net.app[appName].config[configName] = parse;
+                gdo.consoleOut('.NET', 1, 'set configok to '+parse);
             } else {
                 gdo.net.app[appName].config[configName] = null;
             }
@@ -656,7 +661,7 @@ gdo.net.isNodeInitialized = function () {
 }
 
 gdo.net.initializeArrays = function (num) {
-    gdo.net.state = new Array(num);
+    gdo.net.state = {};
     gdo.net.scenario = new Array(num);
     gdo.net.node = new Array(num);
     for (var i = 0; i < num; i++) {
@@ -956,16 +961,14 @@ gdo.net.processInstance = function (exists, id, instance) {
 
 }
 
-gdo.net.processState = function (state, id, exists) {
-    gdo.consoleOut('.NET', 2, 'Updating state: ' + state.Id);
+//goal here is to keep a simple list of state names ... 
+gdo.net.processState = function (stateName, exists) {
+    gdo.consoleOut('.NET', 2, 'Updating state: ' + stateName+' which exists='+exists);
+
     if (exists) {
-        gdo.consoleOut('.NET', 1, 'Received Cave State ' + id + ' (exists)');
-        gdo.net.state[id] = {}
-        gdo.net.state[id].Id = state.Id;
-        gdo.net.state[id].Name = state.Name;
+        gdo.net.state[stateName] = stateName;
     } else {
-        gdo.consoleOut('.NET', 1, 'Received Cave State ' + id + ' (does not exist)');
-        gdo.net.state[id] = null;
+        delete gdo.net.state[stateName];
     }
 }
 
@@ -994,7 +997,9 @@ gdo.net.initModules = function () {
         if (!gdo.net.module.hasOwnProperty((index))) {
             continue;
         }
-        gdo.net.module[index].initModule();
+        if (typeof gdo.net.module[index].initModule === "function") {
+            gdo.net.module[index].initModule();
+        }
     }
 }
 

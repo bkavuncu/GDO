@@ -5,6 +5,7 @@ using System.Linq;
 using GDO.Utility;
 using log4net;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace GDO.Core.Apps
 {
@@ -19,7 +20,7 @@ namespace GDO.Core.Apps
         public int AppType { get; set; }
         public int P2PMode { get; set; }
         [JsonIgnore]
-        public ConcurrentDictionary<string,AppConfiguration> Configurations { get; set; }
+        public ConcurrentDictionary<string,IAppConfiguration> Configurations { get; set; }
         public List<string> ConfigurationList { get; set; }
         [JsonIgnore]
         public ConcurrentDictionary<int,IAppInstance> Instances { get; set; }
@@ -36,42 +37,54 @@ namespace GDO.Core.Apps
             AppClassType = appClassType;
             AppType = appType;
             P2PMode = p2pmode;
-            Configurations = new ConcurrentDictionary<string, AppConfiguration>();
+            Configurations = new ConcurrentDictionary<string, IAppConfiguration>();
             Instances = new ConcurrentDictionary<int, IAppInstance>();
         }
 
-        public int CreateAppInstance(string configName, int sectionId, bool integrationMode, int parentId) {
-            if (!Configurations.ContainsKey(configName)) {
-                return -1;
-            }
+        #region create new app instance from configs... 
 
-            int instanceId = Utilities.GetAvailableSlot(Cave.Instances);
-            IBaseAppInstance instance = (IBaseAppInstance) Activator.CreateInstance(AppClassType, new object[0]);
-            AppConfiguration conf;
-            Cave.Sections[sectionId].CalculateDimensions();
-            Configurations.TryGetValue(configName, out conf);
-            if (conf==null) {
-                Log.Error("Failed to find config name "+configName);
+        public int CreateAppInstance(string config, int sectionId, bool integrationMode, int parentId) {
+            IAppConfiguration conf;
+            Configurations.TryGetValue(config, out conf);
+            conf = Cave.CopyAppConfig(conf); // every deployed app MUST have a new app 
+            if (conf == null) {
+                Log.Error("Failed to find config name " + config);
                 return -1;
             }
+            return CreateAppInstance(conf, sectionId, integrationMode, parentId);
+        }
+
+        public int CreateAppInstance(JObject config, int sectionId, bool integrationMode, int parentId,string configName = "dynamic") {
+            IAppConfiguration conf = Cave.HydrateAppConfiguration(config, configName);
+            return CreateAppInstance(conf, sectionId, integrationMode, parentId);
+        }
+
+        public int CreateAppInstance(IAppConfiguration config, int sectionId, bool integrationMode, int parentId) {
+            
+            int instanceId = Utilities.GetAvailableSlot(Cave.Deployment.Instances);
+            IBaseAppInstance instance = (IBaseAppInstance)Activator.CreateInstance(AppClassType, new object[0]);
+            
+            Cave.Deployment.Sections[sectionId].CalculateDimensions();
             instance.Id = instanceId;
             instance.App = this;
             instance.AppName = Name;
             //instance.HubContext = GlobalHost.ConnectionManager.GetHubContext(Name + "Hub");
             //instance.HubContext = (IHubContext) typeof (IConnectionManager).GetMethod("GetHubContext").GetGenericMethodDefinition().MakeGenericMethod(AppHubType).Invoke(GlobalHost.ConnectionManager, null);
-            instance.Section = Cave.Sections[sectionId];
-            instance.Configuration = conf;
+            instance.Section = Cave.Deployment.Sections[sectionId];
+            instance.SetConfiguration(config);
             instance.IntegrationMode = integrationMode;
             if (integrationMode)
             {
-                instance.ParentApp = (ICompositeAppInstance) Cave.Instances[parentId];
+                instance.ParentApp = (ICompositeAppInstance) Cave.Deployment.Instances[parentId];
             }
             instance.Init();
             Instances.TryAdd(instanceId,instance);
-            Cave.Instances.TryAdd(instanceId,instance);
-            Log.Info("created app "+Name+ " instance "+configName);
+            Cave.Deployment.Instances.TryAdd(instanceId,instance);
+            Log.Info("created app "+Name+ " instance "+ config.Name);
             return instanceId;
         }
+
+        #endregion
 
         public bool DisposeAppInstance(int instanceId) {
             if (!Instances.ContainsKey(instanceId)) {
@@ -80,13 +93,8 @@ namespace GDO.Core.Apps
 
             IAppInstance instance;
             Instances.TryRemove(instanceId, out instance);
-            Cave.Instances.TryRemove(instanceId,out instance);
+            Cave.Deployment.Instances.TryRemove(instanceId,out instance);
             return true;
-        }
-
-        public bool LoadConfigurations()
-        {
-            return false;
         }
 
         public List<string> GetConfigurationList() {

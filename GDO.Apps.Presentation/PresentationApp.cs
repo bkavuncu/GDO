@@ -1,20 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 using System.Web;
 using GDO.Core;
 using GDO.Core.Apps;
-using GDO.Utility;
-using Microsoft.AspNet.SignalR;
-using Microsoft.Office.Core;
-using Microsoft.Office.Interop.PowerPoint;
 
 namespace GDO.Apps.Presentation
 {
+    public class PresentationAppStateConfiguration :AppJsonConfiguration{
+        public string FileName { get; set; }
+        public string FileNameDigit { get; set; }
+        public int PageCount { get; set; }
+        public int CurrentPage { get; set; }
+    }
+
     enum Mode
     {
         CROP = 1,
@@ -26,23 +26,44 @@ namespace GDO.Apps.Presentation
         public string AppName { get; set; }
         public App App { get; set; }
         public Section Section { get; set; }
-        public AppConfiguration Configuration { get; set; }
+        #region config
+        public PresentationAppStateConfiguration Configuration { get; set; }
+        public IAppConfiguration GetConfiguration() {
+            return this.Configuration;
+        }
+
+        public bool SetConfiguration(IAppConfiguration config) {
+            if (config is PresentationAppStateConfiguration) {
+                this.Configuration = (PresentationAppStateConfiguration)config;
+                // todo signal status change
+                return true;
+            }
+            this.Configuration = (PresentationAppStateConfiguration)GetDefaultConfiguration();
+            return false;
+        }
+
+        public IAppConfiguration GetDefaultConfiguration() {
+            return new PresentationAppStateConfiguration() {Name = "Default"};
+        }
+        #endregion
         public bool IntegrationMode { get; set; }
         public ICompositeAppInstance ParentApp { get; set; }
         public string BasePath { get; set; }
-        public string FileName { get; set; }
-        public string FileNameDigit { get; set; }
-        public int PageCount { get; set; }
-        public int CurrentPage { get; set; }
 
         public void Init()
         {
             this.BasePath = HttpContext.Current.Server.MapPath("~/Web/Presentation/PPTs/");
-            this.FileName = "";
-            this.FileNameDigit = "";
-            this.PageCount = 0;
-            this.CurrentPage = 0;
-            Directory.CreateDirectory(HttpContext.Current.Server.MapPath("~/Web/Presentation/PPTs"));
+            if (this.Configuration.FileNameDigit == null)
+            {
+                this.Configuration.FileName = "";
+                this.Configuration.FileNameDigit = "";
+                this.Configuration.PageCount = 0;
+                this.Configuration.CurrentPage = 0;
+            }
+            if (!Directory.Exists(this.BasePath))
+            {
+                Directory.CreateDirectory(this.BasePath);
+            }
         }
 
         public void ProcessImage(string imagePath, int pageNumber, int mode)
@@ -51,7 +72,7 @@ namespace GDO.Apps.Presentation
             this.BasePath = HttpContext.Current.Server.MapPath("~/Web/Presentation/PPTs/");
             //create thumnail
             Image thumb = image.GetThumbnailImage(500 * image.Width / image.Height, 500, () => false, IntPtr.Zero);
-            thumb.Save(BasePath + "\\" + FileNameDigit + "\\thumb_" + pageNumber + ".png", ImageFormat.Png);
+            thumb.Save(BasePath + "\\" + this.Configuration.FileNameDigit + "\\thumb_" + pageNumber + ".png", ImageFormat.Png);
 
             double scaleWidth = (Section.Width + 0.000) / image.Width;
             double scaleHeight = (Section.Height + 0.000) / image.Height;
@@ -90,7 +111,7 @@ namespace GDO.Apps.Presentation
                         new Rectangle(i*scaledCroppedImagedWidth - offsetWidth/2, j * scaledCroppedImagedHeight - offsetHeight/2, scaledCroppedImagedWidth, scaledCroppedImagedHeight),
                         GraphicsUnit.Pixel);
                     graphics.Dispose();
-                    string path = BasePath + "\\" + FileNameDigit + "\\" + "crop" + @"_" + pageNumber + @"_" + i + @"_" + j + @".png";
+                    string path = BasePath + "\\" + this.Configuration.FileNameDigit + "\\" + "crop" + @"_" + pageNumber + @"_" + i + @"_" + j + @".png";
                     tile.Save(path, ImageFormat.Png);
                     tile.Dispose();
                 }
@@ -100,21 +121,21 @@ namespace GDO.Apps.Presentation
 
         public void GenerateUniqueDigit(string filename)
         {
-            this.FileName = filename;
+            this.Configuration.FileName = filename;
             this.BasePath = HttpContext.Current.Server.MapPath("~/Web/Presentation/PPTs/");
 
             // generate unique digit id
-            String path1 = BasePath + "\\" + FileName;
+            String path1 = BasePath + "\\" + this.Configuration.FileName;
             Random fileDigitGenerator = new Random();
-            while (Directory.Exists(BasePath + "\\" + FileNameDigit))
+            while (Directory.Exists(BasePath + "\\" + this.Configuration.FileNameDigit))
             {
-                this.FileNameDigit = fileDigitGenerator.Next(10000, 99999).ToString();
+                this.Configuration.FileNameDigit = fileDigitGenerator.Next(10000, 99999).ToString();
             }
-            String path2 = BasePath + "\\" + FileNameDigit + "\\" + FileName;
-            Directory.CreateDirectory(BasePath + "\\" + FileNameDigit);
+            String path2 = BasePath + "\\" + this.Configuration.FileNameDigit + "\\" + this.Configuration.FileName;
+            Directory.CreateDirectory(BasePath + "\\" + this.Configuration.FileNameDigit);
             File.Move(path1, path2);
             
             return;
         }
-    }
+    }   
 }

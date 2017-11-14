@@ -119,6 +119,9 @@ namespace GDO.Utility
                 T temp = (T)obj;
                 string json = JsonConvert.SerializeObject(temp);
                 string path = Directory.GetCurrentDirectory() + @"\\" + folderName + "\\" + fileName + ".json";
+                if (!Directory.Exists(Path.GetDirectoryName(path))) {
+                    Directory.CreateDirectory(Path.GetDirectoryName(path));
+                }
                 File.WriteAllText(path, json);
             }
             catch (Exception e)
@@ -132,7 +135,9 @@ namespace GDO.Utility
             try
             {
                 string path = Directory.GetCurrentDirectory() + @"\\" + folderName + "\\" + fileName + ".json";
-                File.Delete(path);
+                if (File.Exists(path)) {
+                    File.Delete(path);
+                }
             }
             catch (Exception e)
             {

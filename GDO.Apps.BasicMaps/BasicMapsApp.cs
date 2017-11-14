@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 using GDO.Core;
 using GDO.Core.Apps;
-using Microsoft.AspNet.SignalR;
 
 namespace GDO.Apps.BasicMaps
 {
@@ -15,7 +10,33 @@ namespace GDO.Apps.BasicMaps
         public string AppName { get; set; }
         public App App { get; set; }
         public Section Section { get; set; }
-        public AppConfiguration Configuration { get; set; }
+        
+
+        #region config
+
+        public AppJsonConfiguration Configuration;
+        public IAppConfiguration GetConfiguration() {
+            return Configuration;
+        }
+
+        public bool SetConfiguration(IAppConfiguration config) {
+            if (config is AppJsonConfiguration) {
+                Configuration = (AppJsonConfiguration)config;
+                // todo signal update of config status
+                return true;
+            }
+
+            Configuration = (AppJsonConfiguration)GetDefaultConfiguration();
+            return false;
+        }
+
+        public IAppConfiguration GetDefaultConfiguration() {
+            return new AppJsonConfiguration();
+        }
+
+        #endregion 
+
+
         public bool IntegrationMode { get; set; }
         public ICompositeAppInstance ParentApp { get; set; }
         public MapPosition Position { get; set; }
@@ -49,7 +70,7 @@ namespace GDO.Apps.BasicMaps
             {
                 LayerVisibility[i] = false;
             }
-            SetLayerVisible(10);
+            SetLayerVisible(0); // switch to the Nice Map
         }
 
         public void SetLayerVisible(int id)

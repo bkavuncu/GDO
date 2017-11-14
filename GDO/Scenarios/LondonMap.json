@@ -1,6 +1,6 @@
 {
   "Name": "LondonMap",
-  "CurrentElement": 1,
+  "CurrentElement": 0,
   "Elements": [
     {
       "IsLoop": false,
@@ -21,10 +21,18 @@
     {
       "IsLoop": false,
       "Id": 2,
+      "Mod": "gdo.net.app.BasicMaps.server",
+      "Func": "broadcastMapPosition",
+      "Params": [ "0,[-74373.2285214765,6719770.2491205567],[-13607.245513260117,6711275.7124257265],[47926.016734805511,6702571.9177563917],76.437028285176254,1600,225,11" ],
+      "DefaultWait": 2.0
+    },
+    {
+      "IsLoop": false,
+      "Id": 3,
       "Mod": "gdo",
       "Func": "goToControlPage",
       "Params": [ "0" ],
-      "DefaultWait": 0.0
+      "DefaultWait": 1.0
     }
   ]
 }

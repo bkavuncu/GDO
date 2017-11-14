@@ -1,63 +1,101 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Web;
-using GDO.Core;
+﻿using GDO.Core;
 using GDO.Core.Apps;
-using Microsoft.AspNet.SignalR;
+using log4net;
+using Newtonsoft.Json.Linq;
 
 namespace GDO.Apps.GigaImages
 {
-    public class GigaImagesApp : IBaseAppInstance
-    {
-        public int Id { get; set; }
-        public string AppName { get; set; }
-        public App App { get; set; }
-        public Section Section { get; set; }
-        public AppConfiguration Configuration { get; set; }
-        public bool IntegrationMode { get; set; }
-        public ICompositeAppInstance ParentApp { get; set; }
+    public class GigaImagesAppConfig : AppJsonConfiguration {
         public Position Position { get; set; }
         public bool IsInitialized = false;
 
-        public void Init()
-        {
-            this.Position = new Position {
-                TopLeft = {
-                    [0] = (float) Configuration.Json.SelectToken("topLeft[0]"),
-                    [1] = (float) Configuration.Json.SelectToken("topLeft[1]")
-                },
-                Center = {
-                    [0] = (float) Configuration.Json.SelectToken("center[0]"),
-                    [1] = (float) Configuration.Json.SelectToken("center[1]")
-                },
-                BottomRight = {
-                    [0] = (float) Configuration.Json.SelectToken("bottomRight[0]"),
-                    [1] = (float) Configuration.Json.SelectToken("bottomRight[1]")
-                },
-                Zoom = (float) Configuration.Json.SelectToken("zoom"),
-                Width = (float) Configuration.Json.SelectToken("width"),
-                Height = (float) Configuration.Json.SelectToken("height")
-            };
+        public override string GetJsonForBrowsers() {
+            var jsonForBrowsers = this.Json.ToString();
+            return jsonForBrowsers;
+        }
+
+        //public JObject Properties { get; set; }
+    }
+
+    public class GigaImagesApp : IBaseAppInstance
+    {
+        private static readonly ILog Log = LogManager.GetLogger(typeof(GigaImagesApp));
+
+        public int Id { get; set; }
+        public string AppName { get; set; }
+        public App App { get; set; }
+
+        #region config
+
+        public GigaImagesAppConfig Configuration;
+        public IAppConfiguration GetConfiguration() {
+            return Configuration;
+        }
+
+        public bool SetConfiguration(IAppConfiguration config) {
+            if (config is GigaImagesAppConfig) {
+                Configuration = (GigaImagesAppConfig)config;
+                // todo signal update of config status
+               
+                return true;
+            }
+            Log.Info(" Giga Image app is loading with a default configuration");
+            Configuration = (GigaImagesAppConfig)GetDefaultConfiguration();
+            if (config is AppJsonConfiguration) {
+                Configuration.Json = (config as AppJsonConfiguration).Json;// permit upgrade of files
+                this.Configuration.Position = new Position {
+                    TopLeft = {
+                        [0] = (float) Configuration.Json.SelectToken("topLeft[0]"),
+                        [1] = (float) Configuration.Json.SelectToken("topLeft[1]")
+                    },
+                    Center = {
+                        [0] = (float) Configuration.Json.SelectToken("center[0]"),
+                        [1] = (float) Configuration.Json.SelectToken("center[1]")
+                    },
+                    BottomRight = {
+                        [0] = (float) Configuration.Json.SelectToken("bottomRight[0]"),
+                        [1] = (float) Configuration.Json.SelectToken("bottomRight[1]")
+                    },
+                    Zoom = (float)Configuration.Json.SelectToken("zoom"),
+                    Width = (float)Configuration.Json.SelectToken("width"),
+                    Height = (float)Configuration.Json.SelectToken("height")
+                };
+                return true;
+            }
+            
+            return false;
+        }
+
+        public IAppConfiguration GetDefaultConfiguration() {
+            return new GigaImagesAppConfig { Name = "Default", Json = new JObject() };
+        }
+
+        #endregion 
+
+        public Section Section { get; set; }
+        
+        public bool IntegrationMode { get; set; }
+        public ICompositeAppInstance ParentApp { get; set; }
+
+        public void Init() {
         }
 
 
 
         public void SetPosition(float[] topLeft, float[] center, float[] bottomRight, float zoom, float width, float height)
         {
-            IsInitialized = true;
-            Position.TopLeft = topLeft;
-            Position.Center = center;
-            Position.BottomRight = bottomRight;
-            Position.Zoom = zoom;
-            Position.Width = width;
-            Position.Height = height;
+            this.Configuration.IsInitialized = true;
+            this.Configuration.Position.TopLeft = topLeft;
+            this.Configuration.Position.Center = center;
+            this.Configuration.Position.BottomRight = bottomRight;
+            this.Configuration.Position.Zoom = zoom;
+            this.Configuration.Position.Width = width;
+            this.Configuration.Position.Height = height;
         }
 
         public Position GetPosition()
         {
-            return Position;
+            return this.Configuration.Position;
         }
 
     }

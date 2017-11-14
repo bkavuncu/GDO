@@ -77,23 +77,17 @@ gdo.management.states.drawStateInputTable = function () {
 gdo.management.states.drawStateTable = function () {
     $("#state_table_state_list_table")
         .empty();
-    for (var i = 0; i < gdo.net.state.length; i++) {
-        if (gdo.net.state[i] != null) {
-            $("#state_table_state_list_table").append("<tr id='state_table_state_list_table_row_" + i + " row='" + i + "'></tr>");
-            $("#state_table_state_list_table tr:last").append("<td id='state_table_state_list_table_row_" + i + "_col_0' col='0' row='" + i + "'>" + gdo.net.state[i].Id + "</td>");
-            $("#state_table_state_list_table tr:last").append("<td id='state_table_state_list_table_row_" + i + "_col_1' col='1' row='" + i + "'>" + gdo.net.state[i].Name + "</td>");
-            $("#state_table_state_list_table tr:last").append("<td id='state_table_state_list_table_row_" + i + "_col_2' col='2' row='" + i + "'><button type='button' class='btn btn-success' style='width:100%;'><i class='fa fa-repeat fa-fw'></i>&nbsp;Restore</button></td>");
-            $("#state_table_state_list_table tr:last").append("<td id='state_table_state_list_table_row_" + i + "_col_3' col='3' row='" + i + "'><button type='button' class='btn btn-danger' style='width:100%;'><i class='fa fa-times fa-fw'></i>&nbsp;Remove</button></td>");
-        }
+
+    var i = 0;
+    for (var name in gdo.net.state) {
+        if (gdo.net.state.hasOwnProperty(name)) {
+        
+            $("#state_table_state_list_table").append("<tr id='state_table_state_list_table_row_" + i + " rowname='" + name + "'></tr>");
+            $("#state_table_state_list_table tr:last").append("<td id='state_table_state_list_table_row_" + i + "_col_0' col='0'"+" rowname='" + name + "' row='" + i + "'>" + name + "</td>");
+            $("#state_table_state_list_table tr:last").append("<td id='state_table_state_list_table_row_" + i + "_col_1' col='1'"+" rowname='" + name + "' row='" + i + "'><button type='button' class='btn btn-success' style='width:100%;'><i class='fa fa-repeat fa-fw'></i>&nbsp;Restore</button></td>");
+            $("#state_table_state_list_table tr:last").append("<td id='state_table_state_list_table_row_" + i + "_col_2' col='2'"+" rowname='" + name + "' row='" + i + "'><button type='button' class='btn btn-danger' style='width:100%;'><i class='fa fa-times fa-fw'></i>&nbsp;Remove</button></td>");
+        
         $("#state_table_state_list_table_row_" + i + "_col_0")
-            .css("width", "10%")
-            .css("border", "1px solid #222")
-            .css("background", "#333")
-            .css("color", "#FFF")
-            .css('padding', gdo.management.cell_padding)
-            .attr("align", "center")
-            .css({ fontSize: gdo.management.button_font_size * 0.7 });
-        $("#state_table_state_list_table_row_" + i + "_col_1")
             .css("width", "50%")
             .css("border", "1px solid #222")
             .css("background", "#333")
@@ -101,7 +95,7 @@ gdo.management.states.drawStateTable = function () {
             .css('padding', gdo.management.cell_padding)
             .attr("align", "center")
             .css({ fontSize: gdo.management.button_font_size * 0.7 });
-        $("#state_table_state_list_table_row_" + i + "_col_2")
+        $("#state_table_state_list_table_row_" + i + "_col_1")
             .css("width", "20%")
             .css("border", "1px solid #222")
             .css("background", "#333")
@@ -112,10 +106,10 @@ gdo.management.states.drawStateTable = function () {
             .unbind()
             .click(function () {
                 gdo.net.server.clearCave();
-                gdo.consoleOut(".NET", 4, "Requested Restoring Cave State " + $(this).attr('row'));
-                gdo.net.server.restoreCaveState($(this).attr('row'));
+                gdo.consoleOut(".NET", 4, "Requested Restoring Cave State " + $(this).attr('rowname'));
+                gdo.net.server.restoreCaveState($(this).attr('rowname'));
             });
-        $("#state_table_state_list_table_row_" + i + "_col_3")
+        $("#state_table_state_list_table_row_" + i + "_col_2")
             .css("width", "20%")
             .css("border", "1px solid #222")
             .css("background", "#333")
@@ -125,8 +119,9 @@ gdo.management.states.drawStateTable = function () {
             .css({ fontSize: gdo.management.button_font_size * 0.7 })
             .unbind()
             .click(function () {
-                gdo.net.server.removeCaveState($(this).attr('row'));
+                gdo.net.server.removeCaveState($(this).attr('rowname'));
             });
-
+            }
+        i++;
     }
 }

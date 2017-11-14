@@ -1,20 +1,22 @@
 ﻿using System.Collections.Generic;
-using Newtonsoft.Json;
 
 namespace GDO.Core.States
 {
+    /// <summary>
+    /// Stores the state of the deployment on the GDO 
+    ///  </summary>
     public class State
     {
-        public int Id { get; set; }
         public string Name { get; set; }
-        [JsonIgnore]
-        public List<AppState> States { get; set; }
+        public List<AppState> States { get; set; } = new List<AppState>();
 
-        public State(int id, string name)
+        public State() {
+            Name = "uneset";
+        }
+
+        public State( string name)
         {
-            this.Id = id;
             this.Name = name;
-            States = new List<AppState>();
         }
     }
 }

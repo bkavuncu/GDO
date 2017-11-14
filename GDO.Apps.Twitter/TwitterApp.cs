@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using GDO.Core;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Web;
-using GDO.Apps.Twitter.Core;
+using GDO.Core;
 using GDO.Core.Apps;
+using GDO.Core.CaveState;
 using log4net;
 using Newtonsoft.Json;
+using GDO.Apps.Twitter.Core;
 
 namespace GDO.Apps.Twitter
 {
@@ -24,12 +24,32 @@ namespace GDO.Apps.Twitter
         public GDO.Core.Section Section { get; set; }
         public bool IntegrationMode { get; set; }
         public ICompositeAppInstance ParentApp { get; set; }
-        public AppConfiguration Configuration { get; set; }
+        #region config
+        public AppJsonConfiguration Configuration { get; set; }
+        public IAppConfiguration GetConfiguration() {
+            return this.Configuration;
+        }
+
+        public bool SetConfiguration(IAppConfiguration config) {
+            if (config is AppJsonConfiguration) {
+                this.Configuration = (AppJsonConfiguration)config;
+                // todo signal status change
+                return true;
+            }
+            this.Configuration = (AppJsonConfiguration)GetDefaultConfiguration();
+            return false;
+        }
+
+        public IAppConfiguration GetDefaultConfiguration() {
+            return new AppJsonConfiguration();
+        }
+        #endregion
         public string Name { get; set; }
 
         public RestController RestController { get; set; }
-        public PseudoCave PseudoCave { get; set;}
+        public CaveState CaveState { get; set;}
 
+        // for difference app configuration
         public string GraphAppBasePath { get; set; }
         public string StaticHtmlBasePath { get; set; }
         public string ImageAppBasePath { get; set; }
@@ -72,20 +92,24 @@ namespace GDO.Apps.Twitter
             RestController = new RestController(new Uri(apiAddress));
 
             Debug.WriteLine("Using the following address a root api: " + apiAddress);
-            PseudoCave = new PseudoCave(Cave.Nodes, Cave.Sections, Section.Id);
+
+            CaveState = new CaveState(Cave.Layout.Nodes, Cave.Deployment.Sections, Section.Id);
+
         }
 
         #region CaveManagement
 
-        public string GetPseudoCaveStatus()
+        public string GetCaveStateStatus()
         {
             Debug.WriteLine("Getting Twitter App Cave Status");
-            return PseudoCave.CloneCaveState(Cave.Nodes, Cave.Sections, Section.Id).SerializeJSON();
+
+            return CaveState.CloneCaveState(Cave.Layout.Nodes, Cave.Deployment.Sections, Section.Id).SerializeJSON();
+
         }
 
         public void CreateSection(int colStart, int rowStart, int colEnd, int rowEnd)
         {
-            PseudoCave.CreateSection(colStart, rowStart, colEnd, rowEnd);
+            CaveState.CreateSection(colStart, rowStart, colEnd, rowEnd);
         }
 
         public void CreateSections(List<SectionRequest> sectionRequests)
@@ -101,35 +125,35 @@ namespace GDO.Apps.Twitter
             foreach (var sectionRequest in sectionRequests)
             {
                 Debug.WriteLine("Loading visualisation " + sectionRequest.AnalyticsId + " " + sectionRequest.DataSetId);
-                sectionRequest.TwitterVis = GetVisualisation(sectionRequest.AnalyticsId, sectionRequest.DataSetId);
+                sectionRequest.AppInfo = GetVisualisation(sectionRequest.AnalyticsId, sectionRequest.DataSetId);
             }
-            PseudoCave.QueueApps(sectionRequests);
+            CaveState.QueueApps(sectionRequests);
         }
 
 
         public void CloseSections(List<int> sectionIds)
         {
-            PseudoCave.CloseSections(sectionIds);
+            CaveState.CloseSections(sectionIds);
         }
         
         public void DeployApps(List<int> sectionIds)
         {
-            PseudoCave.DeployApps(sectionIds);
+            CaveState.DeployApps(sectionIds);
         }
 
         public void CloseApps(List<int> sectionIds)
         {
-            PseudoCave.CloseApps(sectionIds);
+            CaveState.CloseApps(sectionIds);
         }
 
         public void ConfirmLaunch(List<int> sectionIds)
         {
-            PseudoCave.ConfirmLaunch(sectionIds);
+            CaveState.ConfirmLaunch(sectionIds);
         } 
 
         public void ClearCave()
         {
-            PseudoCave.ClearCave();
+            CaveState.ClearCave();
         }
 
         #endregion
@@ -138,17 +162,17 @@ namespace GDO.Apps.Twitter
 
         public void UnLoadVisualisation(int sectionId)
         {
-            PseudoCave.Sections[sectionId].TwitterVis = new TwitterVis();
+            CaveState.Sections[sectionId].AppInfo = new AppInfo();
         }
 
         public void LoadVisualisation(int sectionId, string analyticsId, string dataSetId)
         {
-            PseudoCave.LoadVisualisation(sectionId);
-            PseudoCave.Sections[sectionId].TwitterVis = GetVisualisation(analyticsId, dataSetId);
+            CaveState.LoadVisualisation(sectionId);
+            CaveState.Sections[sectionId].AppInfo = GetVisualisation(analyticsId, dataSetId);
 
         }
 
-        public TwitterVis GetVisualisation(string analyticsId, string dataSetId)
+        public AppInfo GetVisualisation(string analyticsId, string dataSetId)
         {
             Analytics analytics;
             if (RestController.Analytics != null && RestController.Analytics.ContainsKey(dataSetId) && RestController.Analytics[dataSetId].ContainsKey(analyticsId))
@@ -164,31 +188,32 @@ namespace GDO.Apps.Twitter
             AnalyticsData analyticsData = RestController.GetAnalyticsData(analytics.UriData);
             string url = analyticsData.Urls[analyticsData.PreferedUrl];
 
-            TwitterVis twitterVis = new TwitterVis(analyticsData.PreferedApp);
+            // how AppInfo used
+            AppInfo appInfo = new AppInfo(analyticsData.PreferedApp);
 //            string fileName;
-            switch (twitterVis.AppType) {
+            switch (appInfo.AppType) {
                 case "Graph":
-                    twitterVis.Config = "Default";
-                    twitterVis.FilePath = Download(url, GraphAppBasePath);
+                    appInfo.Config = "Default";
+                    appInfo.FilePath = Download(url, GraphAppBasePath);
                     break;
                 case "FusionChart":
-                    twitterVis.Config = "Default";
-                    twitterVis.FilePath = Download(url, FusionChartAppBasePath);
+                    appInfo.Config = "Default";
+                    appInfo.FilePath = Download(url, FusionChartAppBasePath);
                     break;
                 case "Images":
-                    twitterVis.Config = "Default";
-                    twitterVis.FilePath = Download(url, ImageAppBasePath);
+                    appInfo.Config = "Default";
+                    appInfo.FilePath = Download(url, ImageAppBasePath);
                     break;
                 default:
-                    twitterVis.Config = "ResponsiveBlack";
-                    twitterVis.FilePath = Path.Combine(TwitterRelativePath, Download(url, TwitterBasePath));
+                    appInfo.Config = "ResponsiveBlack";
+                    appInfo.FilePath = Path.Combine(TwitterRelativePath, Download(url, TwitterBasePath));
                     break;
             }
 
-            twitterVis.Id = analyticsId;
-            twitterVis.DataSetId = dataSetId;
-            twitterVis.SubType = analytics.Type;
-            return twitterVis;
+            appInfo.Id = analyticsId;
+            appInfo.DataSetId = dataSetId;
+            appInfo.SubType = analytics.Type;
+            return appInfo;
         }
 
         private string Download(string url, string path)

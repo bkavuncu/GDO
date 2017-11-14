@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using GDO.Core.Apps;
 using Newtonsoft.Json;
 
@@ -12,6 +13,9 @@ namespace GDO.Core
         public int Id { get; set; }
         [JsonIgnore]
         public Node[,] Nodes;
+        [JsonIgnore]
+        public List<Node> NodeList => Nodes.Cast<Node>().ToList();
+
         public int[,] NodeMap { get; set; }
         public int NumNodes { get; set; }
         [JsonIgnore]
@@ -120,7 +124,7 @@ namespace GDO.Core
             this.AppInstanceId = instanceId;
             foreach (int nodeId in this.GetNodeMap())
             {
-                Cave.Nodes[nodeId].AppInstanceId = instanceId;
+                Cave.Layout.Nodes[nodeId].AppInstanceId = instanceId;
             }
         }
         public void FreeSection()
@@ -128,7 +132,7 @@ namespace GDO.Core
             this.AppInstanceId = -1;
             foreach (int nodeId in this.GetNodeMap())
             {
-                Cave.Nodes[nodeId].AppInstanceId = -1;
+                Cave.Layout.Nodes[nodeId].AppInstanceId = -1;
             }
         }
 

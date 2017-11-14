@@ -70,6 +70,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.UKTravel", "GDO.Ap
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.FusionChart", "GDO.Apps.FusionChart\GDO.Apps.FusionChart.csproj", "{990557AF-B778-47E2-8A2B-5F4401E64DD2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.SigmaGraph", "GDO.Apps.SigmaGraph\GDO.Apps.SigmaGraph.csproj", "{557D74E5-A44F-481E-867F-3B5F4303A672}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.SigmaGraphTests", "GDO.Apps.SigmaGraphTests\GDO.Apps.SigmaGraphTests.csproj", "{CEBBCDAD-9A9F-4202-A2A5-535510644B19}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -196,6 +200,14 @@ Global
 		{990557AF-B778-47E2-8A2B-5F4401E64DD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{990557AF-B778-47E2-8A2B-5F4401E64DD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{990557AF-B778-47E2-8A2B-5F4401E64DD2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{557D74E5-A44F-481E-867F-3B5F4303A672}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{557D74E5-A44F-481E-867F-3B5F4303A672}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{557D74E5-A44F-481E-867F-3B5F4303A672}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{557D74E5-A44F-481E-867F-3B5F4303A672}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CEBBCDAD-9A9F-4202-A2A5-535510644B19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CEBBCDAD-9A9F-4202-A2A5-535510644B19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CEBBCDAD-9A9F-4202-A2A5-535510644B19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CEBBCDAD-9A9F-4202-A2A5-535510644B19}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

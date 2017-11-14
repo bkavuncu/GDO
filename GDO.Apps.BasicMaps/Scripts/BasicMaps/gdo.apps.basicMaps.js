@@ -49,6 +49,7 @@ $(function () {
     }
 
     $.connection.basicMapsAppHub.client.receiveMapPosition = function (instanceId, topLeft, center, bottomRight, resolution, width, height, zoom) {
+        gdo.consoleOut('.Maps', 1, 'recevied order ' + instanceId + " " + topLeft + " " + center + " " + bottomRight + " " + resolution + " " + width + " " + height + " " + zoom);// log it first
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE && gdo.net.node[gdo.clientId].appInstanceId == instanceId) {
             var mapCenter = [0, 0];
             var mapResolution = parseFloat(resolution);

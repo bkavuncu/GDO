@@ -2,14 +2,21 @@
 using GDO.Core;
 using System.Diagnostics;
 using System.IO;
-using System.Globalization;
 using System.Web;
 using GDO.Core.Apps;
 using log4net;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace GDO.Apps.FusionChart
 {
+    public class FusionChartAppConfig : AppJsonConfiguration {
+        public string ChartBasePath { get; set; }
+        public double ControlChartX { get; set; }
+        public double ControlChart { get; set; }
+        public string ChartData { get; set; }
+    }
+
     public class FusionChartApp : IBaseAppInstance
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(FusionChartApp));
@@ -19,18 +26,38 @@ namespace GDO.Apps.FusionChart
         public Section Section { get; set; }
         public bool IntegrationMode { get; set; }
         public ICompositeAppInstance ParentApp { get; set; }
-        public AppConfiguration Configuration { get; set; }
+        #region config
 
-        public string ChartBasePath { get; set; }
-        public double ControlChartX { get; set; }
-        public double ControlChart { get; set; }
-        public string ChartData { get; set; }
+        public FusionChartAppConfig Configuration;
+        public IAppConfiguration GetConfiguration() {
+            return Configuration;
+        }
+
+        public bool SetConfiguration(IAppConfiguration config) {
+            if (config is FusionChartAppConfig) {
+                Configuration = (FusionChartAppConfig)config;
+                // todo signal update of config status
+                
+                return true;
+            }
+            Log.Info(" FusionChart app is loading with a default configuration");
+            Configuration = (FusionChartAppConfig)GetDefaultConfiguration();
+            return false;
+        }
+
+        public IAppConfiguration GetDefaultConfiguration() {
+            return new FusionChartAppConfig { Name = "Default", Json = new JObject() };
+        }
+
+        #endregion
+
+       
         public void Init()
         {
-            ChartBasePath = HttpContext.Current.Server.MapPath("~/Web/FusionChart/data/");
+            this.Configuration.ChartBasePath = HttpContext.Current.Server.MapPath("~/Web/FusionChart/data/");
             try
             {
-                Directory.CreateDirectory(ChartBasePath);
+                Directory.CreateDirectory(this.Configuration.ChartBasePath);
             }
             catch (Exception e)
             {
@@ -41,33 +68,26 @@ namespace GDO.Apps.FusionChart
 
         public bool ProcessFile(string fileName)
         {
-            Debug.WriteLine(fileName);
-            string filePath = Path.Combine(ChartBasePath, fileName);
-            Debug.WriteLine("Using file path: " + filePath);
-
+            string filePath = Path.Combine(this.Configuration.ChartBasePath, fileName);
+            
             if (!File.Exists(filePath))
             {
-                Debug.WriteLine("Nothing there " + filePath);
+                Log.Error("FusionChart - could not find file " + filePath);
                 return false;
             }
-
-            using (StreamReader r = new StreamReader(filePath))
-            {
-                ChartData = r.ReadToEnd();
-            }
-
+            
+            this.Configuration.ChartData = File.ReadAllText(filePath);
+            
             return true;
         }
 
-        public bool DeleteFile(string fileName)
-        {
-            Debug.WriteLine(fileName);
-            string filePath = Path.Combine(ChartBasePath, fileName);
-            Debug.WriteLine("Using file path: " + filePath);
+        public bool DeleteFile(string fileName) {
+            string filePath = Path.Combine(this.Configuration.ChartBasePath, fileName);
+            Log.Info("FusionChart app is about to delete file " + filePath);
 
             if (!File.Exists(filePath))
             {
-                Debug.WriteLine("Nothing there " + filePath);
+                Log.Error("FusionChart - could not delete file " + filePath);
                 return false;
             }
 
@@ -78,7 +98,7 @@ namespace GDO.Apps.FusionChart
 
         public string GetChartData()
         {
-            return ChartData;
+            return this.Configuration.ChartData;
         }
 
         public string ProcessMouseEvent(string serialisedMouseEvent)
@@ -97,13 +117,13 @@ namespace GDO.Apps.FusionChart
         {
             try
             {
-                string path = Path.Combine(ChartBasePath, DateTime.Now.ToString("ddMMMyyyy HHmmss") + ".json");
+                string path = Path.Combine(this.Configuration.ChartBasePath, DateTime.Now.ToString("ddMMMyyyy HHmmss") + ".json");
+                Log.Info("FusionChart - saving config to "+path);
                 File.WriteAllText(path, config);
                 return path;
             }
-            catch(Exception e)
-            {
-                Console.WriteLine(e);
+            catch(Exception e) {
+                Log.Info("FusionChart - Error saving configuration " + e);
                 return "";
             }
         }

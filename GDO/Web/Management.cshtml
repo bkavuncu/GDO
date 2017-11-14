@@ -58,12 +58,12 @@
         gdo.net.nodes = {};
         gdo.net.neighbour = {};
         @{
-            foreach (KeyValuePair<string, IModule> moduleEntry in Cave.Modules)
+            foreach (KeyValuePair<string, IModule> moduleEntry in Cave.Layout.Modules)
             {
                 @:gdo.net.module["@moduleEntry.Value.Name"] = {};
                 @:gdo.net.module["@moduleEntry.Value.Name"].name = "@moduleEntry.Value.Name";
             }
-            foreach (KeyValuePair<string, App> appEntry in Cave.Apps)
+            foreach (KeyValuePair<string, App> appEntry in Cave.Deployment.Apps)
             {
                 @:gdo.net.app["@appEntry.Value.Name"] = {};
                 @:gdo.net.app["@appEntry.Value.Name"].name = "@appEntry.Value.Name";
@@ -92,11 +92,11 @@
             }
             $(function () {
                 @{
-                    foreach (KeyValuePair<string, App> appEntry in Cave.Apps)
+                    foreach (KeyValuePair<string, App> appEntry in Cave.Deployment.Apps)
                     {
                         @:gdo.loadScript("@appEntry.Value.Name", "@appEntry.Value.Name", gdo.SCRIPT_TYPE.APP);
                     }
-                    foreach (KeyValuePair<string, IModule> moduleEntry in Cave.Modules)
+                    foreach (KeyValuePair<string, IModule> moduleEntry in Cave.Layout.Modules)
                     {
                         @:gdo.loadScript("@moduleEntry.Value.Name","@moduleEntry.Value.Name", gdo.SCRIPT_TYPE.MODULE);
                     }

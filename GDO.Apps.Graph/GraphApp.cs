@@ -12,6 +12,10 @@ using log4net;
 
 namespace GDO.Apps.Graph
 {
+    public class GraphAppConfig : AppJsonConfiguration {
+        public string FolderNameDigit;
+        public GraphInfo Graphinfo = new GraphInfo();
+    }
 
     public class GraphApp : IBaseAppInstance {
         private static readonly ILog Log = LogManager.GetLogger(typeof(GraphApp));
@@ -20,14 +24,33 @@ namespace GDO.Apps.Graph
         public string AppName { get; set; }
         public App App { get; set; }
         public Section Section { get; set; }
-        public AppConfiguration Configuration { get; set; }
+
+        #region config
+        public GraphAppConfig Configuration { get; set; }
+        public IAppConfiguration GetConfiguration() {
+            return this.Configuration;
+        }
+
+        public bool SetConfiguration(IAppConfiguration config) {
+            if (config is GraphAppConfig) {
+                this.Configuration = (GraphAppConfig)config;
+                // todo signal status change
+                return true;
+            }
+            this.Configuration = (GraphAppConfig)GetDefaultConfiguration();
+            return false;
+        }
+
+        public IAppConfiguration GetDefaultConfiguration() {
+            return new GraphAppConfig();
+        }
+        #endregion
+
         public bool IntegrationMode { get; set; }
         public ICompositeAppInstance ParentApp { get; set; }
 
-        public GraphInfo graphinfo = new GraphInfo();
         private List<GraphNode> Nodes = new List<GraphNode>();
         private List<GraphLink> Links = new List<GraphLink>();
-        public string FolderNameDigit;
 
         public void Init()
         {
@@ -52,7 +75,7 @@ namespace GDO.Apps.Graph
         public string ProcessGraph(string filename, bool zoomed, string folderName, int sectionWidth, int sectionHeight)
         {
             string graphMLfile = System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graphmls/" + filename );
-            GraphDataReader.ReadGraphMLData(graphMLfile, out graphinfo, out Links, out Nodes, out rectDim);
+            GraphDataReader.ReadGraphMLData(graphMLfile, out this.Configuration.Graphinfo, out Links, out Nodes, out rectDim);
 
 
             String indexFile = System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graph/Database.txt");
@@ -63,13 +86,24 @@ namespace GDO.Apps.Graph
                     var digitsdict = File.ReadAllLines(indexFile).Where(s => !string.IsNullOrWhiteSpace(s))
                         .Select(l => l.Split(new[] {"|"}, StringSplitOptions.None))
                         .Where(l => l.Length == 4)
-                        .ToDictionary(l => l[0], l => new {id = l[1], width = int.Parse(l[2]), height = int.Parse(l[3])});
+                        .Select(l =>
+                            new {filename = l[0],
+                                id = l[1],
+                                width = int.Parse(l[2]),
+                                height = int.Parse(l[3])})
+                        .ToList();
 
-                    if (digitsdict.ContainsKey(filename) && digitsdict[filename].width == sectionWidth
-                        && digitsdict[filename].height == sectionHeight) {
-                        FolderNameDigit = digitsdict[filename].id;
-                        return this.FolderNameDigit;
+                    var found = digitsdict.FirstOrDefault(a =>
+                        a.filename == filename &&
+                        a.width == sectionWidth &&
+                        a.height == sectionHeight);
+
+                    if (found != null) {
+                        this.Configuration.FolderNameDigit = found.id;
+                        Log.Info("Graph app Matched a preprocessed file");
+                        return this.Configuration.FolderNameDigit;
                     }
+                    Log.Info("Failed to match graph to index file "+filename+" w"+sectionWidth+" h"+sectionHeight);
                 }
                 catch (Exception e) {
                     Log.Error("graph app failed to parse its database file " + e);
@@ -178,30 +212,32 @@ namespace GDO.Apps.Graph
             GraphAppHub.self.LogTime("Writing partition files");
             String basePath = System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graph/");
             CreateTempFolder(folderName, basePath);
+            basePath += this.Configuration.FolderNameDigit;
 
             // log to index file  
-            File.AppendAllLines(indexFile, new[] { filename + "|" + FolderNameDigit +"|"+sectionWidth +"|"+ sectionHeight });
+            File.AppendAllLines(indexFile, new[] { filename + "|" + this.Configuration.FolderNameDigit + "|"+sectionWidth +"|"+ sectionHeight });
 
             string nodesPath, linksPath;
 
             if (!zoomed)
             {
-                Directory.CreateDirectory(basePath + FolderNameDigit + @"\normal");
-                Directory.CreateDirectory(basePath + FolderNameDigit + @"\normal\nodes");
-                Directory.CreateDirectory(basePath + FolderNameDigit + @"\normal\links");
+                
+                Directory.CreateDirectory(basePath + @"\normal");
+                Directory.CreateDirectory(basePath + @"\normal\nodes");
+                Directory.CreateDirectory(basePath + @"\normal\links");
 
-                nodesPath = basePath + FolderNameDigit + @"\normal\nodes\";
-                linksPath = basePath + FolderNameDigit + @"\normal\links\";
+                nodesPath = basePath + @"\normal\nodes\";
+                linksPath = basePath + @"\normal\links\";
             }
             else
             {
-                Directory.CreateDirectory(basePath + FolderNameDigit + @"\zoomed");
-                Directory.CreateDirectory(basePath + FolderNameDigit + @"\zoomed\nodes");
-                Directory.CreateDirectory(basePath + FolderNameDigit + @"\zoomed\links");
-                Directory.CreateDirectory(basePath + FolderNameDigit + @"\zoomed\labels");
+                Directory.CreateDirectory(basePath + @"\zoomed");
+                Directory.CreateDirectory(basePath + @"\zoomed\nodes");
+                Directory.CreateDirectory(basePath + @"\zoomed\links");
+                Directory.CreateDirectory(basePath + @"\zoomed\labels");
 
-                nodesPath = basePath + FolderNameDigit + @"\zoomed\nodes\";
-                linksPath = basePath + FolderNameDigit + @"\zoomed\links\";
+                nodesPath = basePath + @"\zoomed\nodes\";
+                linksPath = basePath + @"\zoomed\links\";
             }
 
 
@@ -214,7 +250,7 @@ namespace GDO.Apps.Graph
             
             #endregion
 
-            return this.FolderNameDigit;
+            return this.Configuration.FolderNameDigit;
         }
 
         private static void WriteAllNodesFile(string nodesPath, List<GraphNode> nodes)
@@ -285,15 +321,15 @@ namespace GDO.Apps.Graph
             {
                 // Generate random numbers as folder name
                 Random randomDigitGenerator = new Random();
-                while (Directory.Exists(basePath + FolderNameDigit))
+                while (Directory.Exists(basePath + this.Configuration.FolderNameDigit))
                 {
-                    FolderNameDigit = randomDigitGenerator.Next(10000, 99999).ToString();
+                    this.Configuration.FolderNameDigit = randomDigitGenerator.Next(10000, 99999).ToString();
                 }
-                Directory.CreateDirectory(basePath + FolderNameDigit);
+                Directory.CreateDirectory(basePath + this.Configuration.FolderNameDigit);
             }
             else
             {
-                FolderNameDigit = folderName;
+                this.Configuration.FolderNameDigit = folderName;
             }
         }
 

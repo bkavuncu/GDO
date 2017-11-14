@@ -12,6 +12,28 @@
         public int height { get; set; }
     }
 
+    public class DisplayBlockInfo
+    {
+        public DisplayBlockInfo()
+        {
+
+        }
+
+        public DisplayBlockInfo(int cols, int rows)
+        {
+            this.blockRegion = new BlockRegionInfo[cols, rows];
+            for (int i = 0; i < cols; i++)
+            {
+                for (int j = 0; j < rows; j++)
+                {
+                    this.blockRegion[i, j] = new BlockRegionInfo();
+                }
+            }
+        }
+
+        public BlockRegionInfo[,] blockRegion { get; set; }
+    }
+
     public class BlockRegionInfo {
         public BlockRegionInfo() {
             this.left = 0;

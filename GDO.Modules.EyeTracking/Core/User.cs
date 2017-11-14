@@ -84,7 +84,7 @@ namespace GDO.Modules.EyeTracking.Core
                     byte[] bytes = new byte[6144];
                     networkStream.Read(bytes, 0, bytes.Length);
                     string data = System.Text.Encoding.ASCII.GetString(bytes);
-                    if (Cave.Nodes == null)
+                    if (Cave.Layout.Nodes == null)
                     {
                         StopTCPClient();
                     }
@@ -157,10 +157,10 @@ namespace GDO.Modules.EyeTracking.Core
                         else
                         {
                             string point = tmp.Substring(index + 2, 1);
-                            for (int j = 0; j < ((EyeTrackingModule) Cave.Modules["EyeTracking"]).Markers.Length; j++)
+                            for (int j = 0; j < ((EyeTrackingModule) Cave.Layout.Modules["EyeTracking"]).Markers.Length; j++)
                             {
 
-                                if (((EyeTrackingModule) Cave.Modules["EyeTracking"]).Markers[j].Name == markerName)
+                                if (((EyeTrackingModule) Cave.Layout.Modules["EyeTracking"]).Markers[j].Name == markerName)
                                 {
                                     if (axis == "X")
                                     {
@@ -205,7 +205,7 @@ namespace GDO.Modules.EyeTracking.Core
                             {
                                 MarkerData[PacketOrder[j][0]].Y[PacketOrder[j][2]] = Convert.ToDouble(line[j]);
                             }
-                            MarkerData[PacketOrder[j][0]].Angle = ((EyeTrackingModule) Cave.Modules["EyeTracking"]).Markers[PacketOrder[j][0]].Angle;
+                            MarkerData[PacketOrder[j][0]].Angle = ((EyeTrackingModule) Cave.Layout.Modules["EyeTracking"]).Markers[PacketOrder[j][0]].Angle;
 
                         }
                     }
@@ -225,10 +225,10 @@ namespace GDO.Modules.EyeTracking.Core
                         // }
                         //else
                         //{
-                        //    ((EyeTrackingModule)Cave.Modules["EyeTracking"]).CallBackFunction(JsonConvert.SerializeObject(TrackQueue.ToArray()));
+                        //    ((EyeTrackingModule)Cave.Layout.Modules["EyeTracking"]).CallBackFunction(JsonConvert.SerializeObject(TrackQueue.ToArray()));
                         //    TrackQueue.Clear();
                         //}
-                        ((EyeTrackingModule) Cave.Modules["EyeTracking"]).CallBackFunction(
+                        ((EyeTrackingModule) Cave.Layout.Modules["EyeTracking"]).CallBackFunction(
                             JsonConvert.SerializeObject(trackData));
                     }
                 }
@@ -265,11 +265,11 @@ namespace GDO.Modules.EyeTracking.Core
                 PositionData position = new PositionData();
                 for (int i = 0; i < Cave.Cols * Cave.Rows; i++)
                 {
-                    double[] offset = markerData[i].CalculateOffset(eyeData.X, eyeData.Y, ((EyeTrackingModule)Cave.Modules["EyeTracking"]).MarkerSize * 6);
+                    double[] offset = markerData[i].CalculateOffset(eyeData.X, eyeData.Y, ((EyeTrackingModule)Cave.Layout.Modules["EyeTracking"]).MarkerSize * 6);
                     if (offset != null && MaxOffset - offset[2] > 0)
                     {
-                        totalX += (offset[0] + ((EyeTrackingModule)Cave.Modules["EyeTracking"]).Markers[i].X[3] + ((EyeTrackingModule)Cave.Modules["EyeTracking"]).MarkerSize) * (MaxOffset - offset[2]);
-                        totalY += (offset[1] + ((EyeTrackingModule)Cave.Modules["EyeTracking"]).Markers[i].Y[3] + ((EyeTrackingModule)Cave.Modules["EyeTracking"]).MarkerSize) * (MaxOffset - offset[2]);
+                        totalX += (offset[0] + ((EyeTrackingModule)Cave.Layout.Modules["EyeTracking"]).Markers[i].X[3] + ((EyeTrackingModule)Cave.Layout.Modules["EyeTracking"]).MarkerSize) * (MaxOffset - offset[2]);
+                        totalY += (offset[1] + ((EyeTrackingModule)Cave.Layout.Modules["EyeTracking"]).Markers[i].Y[3] + ((EyeTrackingModule)Cave.Layout.Modules["EyeTracking"]).MarkerSize) * (MaxOffset - offset[2]);
                         totalCount += MaxOffset - offset[2];
                     }
                 }

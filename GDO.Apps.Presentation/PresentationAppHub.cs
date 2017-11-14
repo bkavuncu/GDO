@@ -15,7 +15,7 @@ using Microsoft.Office.Interop.PowerPoint;
 namespace GDO.Apps.Presentation
 {
     [Export(typeof(IAppHub))]
-    public class PresentationAppHub : Hub, IBaseAppHub
+    public class PresentationAppHub : GDOHub, IBaseAppHub
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(PresentationAppHub));
 
@@ -24,7 +24,7 @@ namespace GDO.Apps.Presentation
         public Type InstanceType { get; set; } = new PresentationApp().GetType();
         public void JoinGroup(string groupId)
         {
-            Cave.Apps[Name].Hub.Clients = Clients;
+            Cave.Deployment.Apps[Name].Hub.Clients = Clients;
             Groups.Add(Context.ConnectionId, "" + groupId);
         }
         public void ExitGroup(string groupId)
@@ -38,7 +38,7 @@ namespace GDO.Apps.Presentation
             {
                 try
                 {
-                    PresentationApp pa = ((PresentationApp) Cave.Apps["Presentation"].Instances[instanceId]);
+                    PresentationApp pa = ((PresentationApp) Cave.Deployment.Apps["Presentation"].Instances[instanceId]);
 
                     Clients.Caller.setMessage("Generating unique digits for presentation file...");
                     // generate unique digit name of the presentation file
@@ -46,29 +46,29 @@ namespace GDO.Apps.Presentation
 
                     Clients.Caller.setMessage("Initializing presentation procession...");
                     // convert ppt to png
-                    String pptPath = pa.BasePath + "\\" + pa.FileNameDigit + "\\" + pa.FileName;
+                    String pptPath = pa.BasePath + "\\" + pa.Configuration.FileNameDigit + "\\" + pa.Configuration.FileName;
                     Clients.Caller.setMessage("starting powerpoint " + pptPath);
                     Application pptApp = new Application();
                     Clients.Caller.setMessage("attempting to open the powerpoint from " + pptPath);
                     Microsoft.Office.Interop.PowerPoint.Presentation pptFile = pptApp.Presentations.Open(pptPath, MsoTriState.msoFalse, MsoTriState.msoFalse, MsoTriState.msoFalse);
                     Clients.Caller.setMessage("opened the powerpoint from "+ pptPath);
 
-                    pa.PageCount = pptFile.Slides.Count;
-                    pa.CurrentPage = 0;
+                    pa.Configuration.PageCount = pptFile.Slides.Count;
+                    pa.Configuration.CurrentPage = 0;
                     int width = 3072;
                     int height = Convert.ToInt32(width*pptFile.PageSetup.SlideHeight/pptFile.PageSetup.SlideWidth);
                     for (int i = 0; i < pptFile.Slides.Count; i++)
                     {
-                        Clients.Caller.setMessage("Processing presentation file: " + i.ToString() + "/" + pa.PageCount.ToString());
-                        string imagepath = pa.BasePath + "\\" + pa.FileNameDigit + "\\" + "page_" + i + ".png";
+                        Clients.Caller.setMessage("Processing presentation file: " + i.ToString() + "/" + pa.Configuration.PageCount.ToString());
+                        string imagepath = pa.BasePath + "\\" + pa.Configuration.FileNameDigit + "\\" + "page_" + i + ".png";
                         pptFile.Slides[i + 1].Export(imagepath, "png", width, height);
                         // crop pngs
                         pa.ProcessImage(imagepath, i, 0);
                     }
 
                     Clients.Caller.setMessage("Updating presentation information...");
-                    Clients.Group("" + instanceId).receivePptInfo(pa.FileNameDigit, pa.PageCount, pa.CurrentPage);
-                    Clients.Caller.receivePptInfo(pa.FileNameDigit, pa.PageCount, pa.CurrentPage);
+                    Clients.Group("" + instanceId).receivePptInfo(pa.Configuration.FileNameDigit, pa.Configuration.PageCount, pa.Configuration.CurrentPage);
+                    Clients.Caller.receivePptInfo(pa.Configuration.FileNameDigit, pa.Configuration.PageCount, pa.Configuration.CurrentPage);
                     Clients.Caller.setMessage("Success!");
                 }
                 catch (Exception e)
@@ -85,8 +85,8 @@ namespace GDO.Apps.Presentation
             {
                 try
                 {
-                    PresentationApp pa = ((PresentationApp) Cave.Apps["Presentation"].Instances[instanceId]);
-                    Clients.Caller.receivePptInfo(pa.FileNameDigit, pa.PageCount, pa.CurrentPage);
+                    PresentationApp pa = ((PresentationApp) Cave.Deployment.Apps["Presentation"].Instances[instanceId]);
+                    Clients.Caller.receivePptInfo(pa.Configuration.FileNameDigit, pa.Configuration.PageCount, pa.Configuration.CurrentPage);
                 }
                 catch (Exception e)
                 {
@@ -102,9 +102,9 @@ namespace GDO.Apps.Presentation
             {
                 try
                 {
-                    PresentationApp pa = ((PresentationApp) Cave.Apps["Presentation"].Instances[instanceId]);
-                    Clients.Group("" + instanceId).receivePptInfo(pa.FileNameDigit, pa.PageCount, pa.CurrentPage);
-                    Clients.Caller.receivePptInfo(pa.FileNameDigit, pa.PageCount, pa.CurrentPage);
+                    PresentationApp pa = ((PresentationApp) Cave.Deployment.Apps["Presentation"].Instances[instanceId]);
+                    Clients.Group("" + instanceId).receivePptInfo(pa.Configuration.FileNameDigit, pa.Configuration.PageCount, pa.Configuration.CurrentPage);
+                    Clients.Caller.receivePptInfo(pa.Configuration.FileNameDigit, pa.Configuration.PageCount, pa.Configuration.CurrentPage);
                 }
                 catch (Exception e)
                 {
@@ -120,21 +120,21 @@ namespace GDO.Apps.Presentation
             {
                 try
                 {
-                    PresentationApp pa = ((PresentationApp) Cave.Apps["Presentation"].Instances[instanceId]);
-                    if (pa.CurrentPage <= 0)
+                    PresentationApp pa = ((PresentationApp) Cave.Deployment.Apps["Presentation"].Instances[instanceId]);
+                    if (pa.Configuration.CurrentPage <= 0)
                     {
-                        pa.CurrentPage = 0;
+                        pa.Configuration.CurrentPage = 0;
                     }
-                    else if (pa.CurrentPage < pa.PageCount)
+                    else if (pa.Configuration.CurrentPage < pa.Configuration.PageCount)
                     {
-                        pa.CurrentPage -= 1;
+                        pa.Configuration.CurrentPage -= 1;
                     } 
                     else
                     {
-                        pa.CurrentPage = pa.PageCount - 1;
+                        pa.Configuration.CurrentPage = pa.Configuration.PageCount - 1;
                     }
-                    Clients.Group("" + instanceId).receivePptInfo(pa.FileNameDigit, pa.PageCount, pa.CurrentPage);
-                    Clients.Caller.receivePptInfo(pa.FileNameDigit, pa.PageCount, pa.CurrentPage);
+                    Clients.Group("" + instanceId).receivePptInfo(pa.Configuration.FileNameDigit, pa.Configuration.PageCount, pa.Configuration.CurrentPage);
+                    Clients.Caller.receivePptInfo(pa.Configuration.FileNameDigit, pa.Configuration.PageCount, pa.Configuration.CurrentPage);
                 }
                 catch (Exception e)
                 {
@@ -150,7 +150,8 @@ namespace GDO.Apps.Presentation
             {
                 try
                 {
-                    PresentationApp pa = ((PresentationApp) Cave.Apps["Presentation"].Instances[instanceId]);
+                    var pa = ((PresentationApp) Cave.Deployment.Apps["Presentation"].Instances[instanceId]).Configuration;
+
                     if (pa.CurrentPage < 0)
                     {
                         pa.CurrentPage = 0;

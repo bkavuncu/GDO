@@ -1,0 +1,30 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+    <link rel="stylesheet" href="./styles/appStyle.css">
+</head>
+<body unselectable="on" class="unselectable" onload="getTime()">
+<div id="loaderContainer">
+    <div id="loader"></div>
+</div>
+<div id="graphArea"></div>
+<script src="../../Scripts/jquery-2.1.4.min.js"></script>
+<script src="../../Scripts/jquery.signalR-2.2.1.min.js"></script>
+<script>
+    $(function() {
+        $(document).ready(function () {
+            var gdo = parent.gdo;
+            console.log("Start time: " + window.performance.now());
+            gdo.net.app["SigmaGraph"].initClient();
+        });
+    });
+
+    function getTime() {
+        console.log("Intermediate time: " + window.performance.now());
+    }
+</script>
+</body>
+</html>

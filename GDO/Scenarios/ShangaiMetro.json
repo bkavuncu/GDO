@@ -87,7 +87,7 @@
       "Id": 10,
       "Mod": "gdo.net.app.Images.server",
       "Func": "findDigits",
-      "Params": [ "3,10014" ],
+      "Params": [ "3,\"10014\"" ],
       "DefaultWait": 0.0
     },
     {
@@ -191,7 +191,7 @@
       "Id": 23,
       "Mod": "gdo.net.app.Images.server",
       "Func": "findDigits",
-      "Params": [ "7,10015" ],
+      "Params": [ "7,\"10015\"" ],
       "DefaultWait": 0.0
     },
     {
@@ -199,7 +199,7 @@
       "Id": 24,
       "Mod": "gdo.net.app.Images.server",
       "Func": "displayImageByDigit",
-      "Params": [ "7,10015,0" ],
+      "Params": [ "7,\"10015\",0" ],
       "DefaultWait": 0.0
     },
     {
@@ -208,7 +208,23 @@
       "Mod": "gdo.net.app.YoutubeWall.server",
       "Func": "getNextVideos",
       "Params": [ "4" ],
-      "DefaultWait": 0.0
+      "DefaultWait": 1.0
+    },
+    {
+      "IsLoop": false,
+      "Id": 26,
+      "Mod": "gdo.net.app.DD3.server",
+      "Func": "sendOrder",
+      "Params": [ "5,\"{ \\\"name\\\": \\\"launchAnimation\\\", \\\"args\\\":[0,false,true,false]}\",true" ],
+      "DefaultWait": 2.0
+    },
+    {
+      "IsLoop": false,
+      "Id": 27,
+      "Mod": "gdo.net.app.DD3.server",
+      "Func": "sendOrder",
+      "Params": [ "6,\"{ \\\"name\\\": \\\"launchAnimation\\\", \\\"args\\\":[1,false,true,false]}\",true" ],
+      "DefaultWait": 2.0
     }
   ]
 }

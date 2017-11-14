@@ -6,7 +6,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using GDO.Core.Apps;
-using GDO.Core.Modules;
 using GDO.Core.Scenarios;
 using GDO.Core.States;
 using GDO.Utility;
@@ -16,787 +15,558 @@ using Newtonsoft.Json.Linq;
 
 namespace GDO.Core
 {
-    // TODO also check how static controls are recycled during the asp.net lifecycle 
-    /// <summary>
-    /// Cave Object Class
-    /// </summary>
-    public sealed class Cave
-    {
-        private static readonly ILog Log = LogManager.GetLogger(typeof(Cave));
+	// TODO also check how static controls are recycled during the asp.net lifecycle 
+	/// <summary>
+	/// Cave Object Class this stores all of the information about the deployment
+	/// </summary>
+	public sealed class Cave
+	{
+		private static readonly ILog Log = LogManager.GetLogger(typeof(Cave));
 
-        private static Cave Self;
-        public static readonly object ServerLock = new object();
-        public static readonly List<object> AppLocks = new List<object>();
-        public static readonly Dictionary<string,object> ModuleLocks = new Dictionary<string,object>();
+		private static Cave Self;
+		public static readonly object ServerLock = new object();
+		public static readonly List<object> AppLocks = new List<object>();
+		public static readonly Dictionary<string,object> ModuleLocks = new Dictionary<string,object>();
 
-        public static bool MaintenanceMode { get; set; }
-        public static bool BlankMode { get; set; }
-        public static int Cols { get; set; }
-        public static int Rows { get; set; }
-        public static int NodeWidth { get; set; }
-        public static int NodeHeight { get; set; }
-        public static int DefaultP2PMode { get; set; }
-        public static string ConsoleId { get; set; }
-        public static System.Timers.Timer SyncTimer { get; set; }
-        public static bool InitializedSync { get; set; }
-        public static ConcurrentDictionary<string, App> Apps { get; set; }
-        public static ConcurrentDictionary<string, IModule> Modules { get; set; }
-        public static ConcurrentDictionary<int, IAppInstance> Instances { get; set; }
-        public static ConcurrentDictionary<int, Node> Nodes { get; set; }
-        public static ConcurrentDictionary<int, Section> Sections { get; set; }
-        public static ConcurrentDictionary<int, State> States { get; set; }
-        public static ConcurrentDictionary<string, Scenario> Scenarios { get; set; }
+		public static bool MaintenanceMode { get; set; }
+		public static bool BlankMode { get; set; }
+		public static int Cols { get; set; }
+		public static int Rows { get; set; }
+		public static int NodeWidth { get; set; }
+		public static int NodeHeight { get; set; }
+		public static int DefaultP2PMode { get; set; }
+		public static string ConsoleId { get; set; }
+		public static System.Timers.Timer SyncTimer { get; set; }
+		public static bool InitializedSync { get; set; }
+		public static CaveLayout Layout { get; set; }
+		public static CaveDeployment Deployment { get; set; }
+		public static ConcurrentDictionary<string, State> States { get; set; }
+		public static ConcurrentDictionary<string, Scenario> Scenarios { get; set; }
 
-        public enum P2PModes
-        {
-            None = -1,
-            Cave = 1,
-            Section = 2,
-            Neighbours = 3
-        };
-        public enum AppTypes
-        {
-            None = -1,
-            Base = 1,
-            Composite = 2
-        };
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Cave"/> class.
-        /// </summary>
-        public Cave()
-        {
-            //CurrentHeartbeat = 0;
-            //MaximumHeartbeat = 1000000;
-            MaintenanceMode = true;
-            BlankMode = false;
-            Apps = new ConcurrentDictionary<string, App>();
-            Modules = new ConcurrentDictionary<string, IModule>();
-            Instances = new ConcurrentDictionary<int, IAppInstance>();
-            Nodes = new ConcurrentDictionary<int, Node>();
-            Sections = new ConcurrentDictionary<int, Section>();
-            States = new ConcurrentDictionary<int, State>();
-            Scenarios = new ConcurrentDictionary<string, Scenario>();
-            Cols = int.Parse(ConfigurationManager.AppSettings["numCols"]);
-            Rows = int.Parse(ConfigurationManager.AppSettings["numRows"]);
-            NodeWidth = int.Parse(ConfigurationManager.AppSettings["nodeWidth"]);
-            NodeHeight = int.Parse(ConfigurationManager.AppSettings["nodeheight"]);
-            DefaultP2PMode = int.Parse(ConfigurationManager.AppSettings["p2pmode"]);
-            ConsoleId = "-1";
-            InitializedSync = false;
-            /*Assembly asm = Assembly.GetExecutingAssembly();
+		public enum P2PModes
+		{
+			None = -1,
+			Cave = 1,
+			Section = 2,
+			Neighbours = 3
+		};
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Cave"/> class.
+		/// </summary>
+		public Cave()
+		{
+			//CurrentHeartbeat = 0;
+			//MaximumHeartbeat = 1000000;
+			MaintenanceMode = false;//todo note that you can define default maintainence mode here 
+			BlankMode = false;
+			
+			Layout = new CaveLayout();
+			Deployment = new CaveDeployment();
+			States = new ConcurrentDictionary<string, State>();
+			Scenarios = new ConcurrentDictionary<string, Scenario>();
+			Cols = int.Parse(ConfigurationManager.AppSettings["numCols"]);
+			Rows = int.Parse(ConfigurationManager.AppSettings["numRows"]);
+			NodeWidth = int.Parse(ConfigurationManager.AppSettings["nodeWidth"]);
+			NodeHeight = int.Parse(ConfigurationManager.AppSettings["nodeheight"]);
+			DefaultP2PMode = int.Parse(ConfigurationManager.AppSettings["p2pmode"]);
+			ConsoleId = "-1";
+			InitializedSync = false;
+			/*Assembly asm = Assembly.GetExecutingAssembly();
 
-            foreach (Type type in asm.GetTypes())
-            {
-                if (Regex.IsMatch(type.FullName, "GDO.Core.Modules.*Module") && !Regex.IsMatch(type.FullName, "GDO.Core.Modules.*ModuleHub"))
-                {
-                    IModule module = (IModule)Activator.CreateInstance(type, new object[0]);
-                    module.Init();
-                    Modules.TryAdd(module.Name, module);
-                }
-            }*/
+			foreach (Type type in asm.GetTypes())
+			{
+				if (Regex.IsMatch(type.FullName, "GDO.Core.Modules.*Module") && !Regex.IsMatch(type.FullName, "GDO.Core.Modules.*ModuleHub"))
+				{
+					IModule module = (IModule)Activator.CreateInstance(type, new object[0]);
+					module.Init();
+					Modules.TryAdd(module.Name, module);
+				}
+			}*/
 
-            for (int id = 1; id <= Cols * Rows; id++)
-            {
-                string[] s = ConfigurationManager.AppSettings["node" + id].Split(',');
-                int col = int.Parse(s[0]);
-                int row = int.Parse(s[1]);
-                CreateNode(id, col, row);
-                AppLocks.Add(new object());
-            }
-            CreateSection(0, 0, Cols - 1, Rows - 1); //Free Nodes Pool , id=0
-            LoadScenarios();
-            Log.Info("Created new CAVE object");
-        }
+			for (int id = 1; id <= Cols * Rows; id++)
+			{
+				string[] s = ConfigurationManager.AppSettings["node" + id].Split(',');
+				int col = int.Parse(s[0]);
+				int row = int.Parse(s[1]);
+				Layout.CreateNode(id, col, row, NodeWidth, NodeHeight, Rows * Cols);
+				AppLocks.Add(new object());
+			}
+			Deployment.CreateSection(0, 0, Cols - 1, Rows - 1); //Free Nodes Pool , id=0
+			//LoadScenarios();
+			//LoadStates(); these must be done AFTER the apps are loaded - see startup.cs
+			Log.Info("Created new CAVE object");
+		}
 
-        /// <summary>
-        /// Gets the instance.
-        /// </summary>
-        /// <value>
-        /// The instance.
-        /// </value>
-        public static Cave Instance
-        {
-            get
-            {
-                lock (ServerLock)
-                {
-                    return Self ?? (Self = new Cave());
-                }
-            }
-        }
+		/// <summary>
+		/// Gets the instance.
+		/// </summary>
+		/// <value>
+		/// The instance.
+		/// </value>
+		public static Cave Instance
+		{
+			get
+			{
+				lock (ServerLock)
+				{
+					return Self ?? (Self = new Cave());
+				}
+			}
+		}
 
-        /// <summary>
-        /// Initializes the cave.
-        /// </summary>
-        public static void Init()
-        {
-            lock (ServerLock)
-            {
-                if (Self == null)
-                {
-                    Self = new Cave();
-                }
-            }
-        }
+		/// <summary>
+		/// Initializes the cave.
+		/// </summary>
+		public static void Init()
+		{
+			lock (ServerLock)
+			{
+				if (Self == null)
+				{
+					Self = new Cave();
+				}
+			}
+		}
 
-        /// <summary>
-        /// Creates the node.
-        /// </summary>
-        /// <param name="nodeId">The node identifier.</param>
-        /// <param name="col">The col.</param>
-        /// <param name="row">The row.</param>
-        public static void CreateNode(int nodeId, int col, int row)
-        {
-            Node node = new Node(nodeId, col, row, NodeWidth, NodeHeight, Rows * Cols);
-            Nodes.TryAdd(nodeId, node);
-        }
+		public static bool ContainsState(string stateId)
+		{
+			return States.ContainsKey(stateId);
+		}
 
-        /// <summary>
-        /// Gets the node with connectionId.
-        /// </summary>
-        /// <param name="connectionId">The connection identifier.</param>
-        /// <returns></returns>
-        public static Node GetNode(string connectionId) {
-            return
-                (from nodeEntry in Nodes
-                    where connectionId == nodeEntry.Value.ConnectionId
-                    select nodeEntry.Value)
-                    .FirstOrDefault();
-        }
+		public static bool ContainsScenario(string scenarioName)
+		{
+			return Scenarios.ContainsKey(scenarioName);
+		}
 
+		/// <summary>
+		/// Gets the section identifier.
+		/// </summary>
+		/// <param name="col">The col.</param>
+		/// <param name="row">The row.</param>
+		/// <returns></returns>
+		public static int GetSectionId(int col, int row) {
+			return Layout.Nodes[GetNodeId(col, row)].SectionId;
+		}
+		/// <summary>
+		/// Gets the node identifier.
+		/// </summary>
+		/// <param name="col">The col.</param>
+		/// <param name="row">The row.</param>
+		/// <returns></returns>
+		public static int GetNodeId(int col, int row)
+		{
+			foreach (KeyValuePair<int, Node> nodeEntry in Layout.Nodes)
+			{
+				if (nodeEntry.Value.Col == col && nodeEntry.Value.Row == row)
+				{
+					return nodeEntry.Value.Id;
+				}
+			}
+			return -1;
+		}
 
-        /// <summary>
-        /// Deploys the node to a section.
-        /// </summary>
-        /// <param name="sectionId">The section identifier.</param>
-        /// <param name="nodeId">The node identifier.</param>
-        /// <param name="col">The col.</param>
-        /// <param name="row">The row.</param>
-        /// <returns></returns>
-        public static Node DeployNode(int sectionId, int nodeId, int col, int row) {
-            if (Sections.ContainsKey(sectionId) && Nodes.ContainsKey(nodeId)) {
-                if (!Nodes[nodeId].IsDeployed) {
-                    Nodes[nodeId].Deploy(Sections[sectionId], col, row);
-                    Sections[sectionId].Nodes[col, row] = Nodes[nodeId];
-                    return Nodes[nodeId];
-                }
-            }
-            return null;
-        }
+		/// <summary>
+		/// Gets the node map (Matrix of NodeIds in the Cave).
+		/// </summary>
+		/// <returns></returns>
+		public static int[,] GetNodeMap()
+		{
+			int[,] nodeMap = new int[Cols, Rows];
+			foreach (KeyValuePair<int, Node> nodeEntry in Layout.Nodes)
+			{
+				nodeMap[nodeEntry.Value.Col, nodeEntry.Value.Row] = nodeEntry.Value.Id;
+			}
+			return nodeMap;
+		}
 
-        /// <summary>
-        /// Frees the node.
-        /// </summary>
-        /// <param name="nodeId">The node identifier.</param>
-        /// <returns></returns>
-        public static Node FreeNode(int nodeId) {
-            if (Nodes.ContainsKey(nodeId)) {
-                Nodes[nodeId].Free();
-                return Nodes[nodeId];
-            }
-            return null;
-        }
+		/// <summary>
+		/// Gets the section map (Matrix of NodeIds in the Section).
+		/// </summary>
+		/// <param name="sectionId">The section identifier.</param>
+		/// <returns></returns>
+		public static int[,] GetSectionMap(int sectionId)
+		{
+			int[,] sectionMap = null;
+			if (Deployment.ContainsSection(sectionId))
+			{
+				sectionMap = new int[Deployment.Sections[sectionId].Cols, Deployment.Sections[sectionId].Rows];
+				foreach (var nodeEntry in Layout.Nodes)
+				{
+					if (nodeEntry.Value.SectionId == sectionId)
+					{
+						sectionMap[nodeEntry.Value.SectionCol, nodeEntry.Value.SectionRow] = nodeEntry.Value.Id;
+					}
+				}
+			}
+			return sectionMap;
+		}
 
-        /// <summary>
-        /// Sets the node P2P mode.
-        /// </summary>
-        /// <param name="nodeId">The node identifier.</param>
-        /// <param name="p2pmode">The p2pmode.</param>
-        /// <returns></returns>
-        public static Node SetNodeP2PMode(int nodeId, int p2pmode)
-        {
-            Nodes[nodeId].P2PMode = p2pmode;
-            return Nodes[nodeId];
-        }
+		/// <summary>
+		/// Gets the neighbour map (Matrix 3x3 of NodeIds in the Neighbourhood of the Node).
+		/// </summary>
+		/// <param name="nodeId">The node identifier.</param>
+		/// <returns></returns>
+		public static int[,] GetNeighbourMap(int nodeId)
+		{
+			int[,] neighbours = null;
+			if (Layout.ContainsNode(nodeId))
+			{
+				int[,] nodeMap = GetNodeMap();
+				neighbours = new int[3, 3];
+				for (int i = -1; i < 2; i++)
+				{
+					for (int j = -1; j < 2; j++)
+					{
+						Node node = Layout.Nodes[nodeId];
+						int col = node.Col + i;
+						int row = node.Row + j;
+						if (col >= 0 && row >= 0 && col < Cols && row < Rows)
+						{
+							neighbours[i + 1, j + 1] = nodeMap[col, row];
+						}
+						else
+						{
+							neighbours[i + 1, j + 1] = -1;
+						}
+					}
+				}
+			}
+			return neighbours;
+		}
 
-        /// <summary>
-        /// Creates a section.
-        /// </summary>
-        /// <param name="colStart">The col start.</param>
-        /// <param name="rowStart">The row start.</param>
-        /// <param name="colEnd">The col end.</param>
-        /// <param name="rowEnd">The row end.</param>
-        /// <returns></returns>
-        public static List<Node> CreateSection(int colStart, int rowStart, int colEnd, int rowEnd)
-        {
-            List<Node> deployedNodes = new List<Node>();
-            if (IsSectionFree(colStart, rowStart, colEnd, rowEnd))
-            {
-                int sectionId = Utilities.GetAvailableSlot<Section>(Sections);
-                Section section = new Section(sectionId, colStart, rowStart, colEnd - colStart + 1, rowEnd - rowStart + 1);
-                Sections.TryAdd(sectionId, section);
-                    
-                foreach (KeyValuePair<int, Node> nodeEntry in Nodes)
-                {
-                    Node node = nodeEntry.Value;
-                    if (node.Col <= colEnd && node.Col >= colStart && node.Row <= rowEnd && node.Row >= rowStart)
-                    {
-                        deployedNodes.Add(DeployNode(section.Id, node.Id, node.Col - colStart, node.Row - rowStart));
-                    }
-                }
-                section.CalculateDimensions();
-            }
-            return deployedNodes;
-        }
-        /// <summary>
-        /// Closes the section.
-        /// </summary>
-        /// <param name="sectionId">The section identifier.</param>
-        /// <returns></returns>
-        public static List<Node> CloseSection(int sectionId)
-        {
-            List<Node> freedNodes = new List<Node>();
-            if (ContainsSection(sectionId))
-            {
-                if (!Sections[sectionId].IsDeployed())
-                {
-                    foreach (Node node in Sections[sectionId].Nodes)
-                    {
-                        freedNodes.Add(FreeNode(node.Id));
-                    }
-                    Sections[sectionId].Nodes = null;
-                    Section section;
-                    Sections.TryRemove(sectionId, out section);
-                }
-            }
-            return freedNodes;
-        }
+		public static bool LoadStates() {
+			try {
+				Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
+				String path = Directory.GetCurrentDirectory() + @"\States\";  // TODO using server.map path
+				if (Directory.Exists(path)) {
+					string[] filePaths = Directory.GetFiles(path, "*.json", SearchOption.AllDirectories);
+					
+					foreach (string filePath in filePaths) {
+						Log.Info("About to load state at " +filePath);
+						State state = LoadState(JObject.Parse(File.ReadAllText(filePath)));
+						if (state == null) {
+							Log.Info("failed to load state " + filePath);
+						}
+						else {
+							Log.Info("Found state called " + state.Name + " which was loaded successfully");
+							States.TryAdd(state.Name, state);
+						}
+					}
+					return true;
+				}
+				return false;
+			} catch (Exception e) {
+				Log.Debug("failed to load scenarios ", e);
+				return false;
+			}
+		}
 
-        /// <summary>
-        /// Determines whether [is section free] [the specified col start].
-        /// </summary>
-        /// <param name="colStart">The col start.</param>
-        /// <param name="rowStart">The row start.</param>
-        /// <param name="colEnd">The col end.</param>
-        /// <param name="rowEnd">The row end.</param>
-        /// <returns></returns>
-        public static bool IsSectionFree(int colStart, int rowStart, int colEnd, int rowEnd) {
-            foreach (KeyValuePair<int, Node> nodeEntry in Nodes) {
-                Node node = nodeEntry.Value;
-                if (colStart > colEnd || rowStart > rowEnd) {
-                    return false;
-                }
-                if (node.Col <= colEnd && node.Col >= colStart && node.Row <= rowEnd && node.Row >= rowStart) {
-                    if (node.IsDeployed) {
-                        return false;
-                    }
-                }
-            }
-            return true;
-        }
+		private static State LoadState(JObject json) {
 
-        /// <summary>
-        /// Determines whether the specified node identifier contains node.
-        /// </summary>
-        /// <param name="nodeId">The node identifier.</param>
-        /// <returns></returns>
-        public static bool ContainsNode(int nodeId) {
-            return Nodes.ContainsKey(nodeId);
-        }
+			try {
+				State s = new State {Name = json["Name"].ToString()};
+				foreach (var jToken in  (JArray)json["States"]) {
+					var state = (JObject) jToken;
 
-        /// <summary>
-        /// Determines whether the specified section identifier contains section.
-        /// </summary>
-        /// <param name="sectionId">The section identifier.</param>
-        /// <returns></returns>
-        public static bool ContainsSection(int sectionId) {
-            return Sections.ContainsKey(sectionId);
-        }
+					// we need to load the app state seperately because the json serializer does not know which type it is meant to be loading 
+					var configJson = (JObject) state["Config"];
 
-        public static bool ContainsModule(string moduleName)
-        {
-            return Modules.ContainsKey(moduleName);
-        }
+					state.Property("Config").Remove();
 
-        public static bool ContainsApp(string appName) {
-            return Apps.ContainsKey(appName);
-        }
+					AppState appState = JsonConvert.DeserializeObject<AppState>(state.ToString());
 
-        /// <summary>
-        /// Determines whether the specified instance identifier contains instance.
-        /// </summary>
-        /// <param name="instanceId">The instance identifier.</param>
-        /// <returns></returns>
-        public static bool ContainsInstance(int instanceId) {
-            return Apps.Any(appEntry => appEntry.Value.Instances.ContainsKey(instanceId));
-        }
+					IAppConfiguration config = HydrateAppConfiguration(configJson, "stateconfig");
 
-        public static bool ContainsState(int stateId)
-        {
-            return States.ContainsKey(stateId);
-        }
+					appState.Config = config;
+					
+					s.States.Add(appState);
+				}
 
-        public static bool ContainsScenario(string scenarioName)
-        {
-            return Scenarios.ContainsKey(scenarioName);
-        }
+				return s;
+			}
+			catch (Exception e) {
+				Log.Error("failed to load config file "+e);
+				throw;
+			}
 
-        /// <summary>
-        /// Gets the section identifier.
-        /// </summary>
-        /// <param name="col">The col.</param>
-        /// <param name="row">The row.</param>
-        /// <returns></returns>
-        public static int GetSectionId(int col, int row) {
-            return Nodes[GetNodeId(col, row)].SectionId;
-        }
-        /// <summary>
-        /// Gets the node identifier.
-        /// </summary>
-        /// <param name="col">The col.</param>
-        /// <param name="row">The row.</param>
-        /// <returns></returns>
-        public static int GetNodeId(int col, int row)
-        {
-            foreach (KeyValuePair<int, Node> nodeEntry in Nodes)
-            {
-                if (nodeEntry.Value.Col == col && nodeEntry.Value.Row == row)
-                {
-                    return nodeEntry.Value.Id;
-                }
-            }
-            return -1;
-        }
+			/*
+			 {
+	"Name": "usa",
+	"States": [{
+			"Col": 0,
+			"Row": 0,
+			"Cols": 1,
+			"Rows": 4,
+			"AppName": "Twitter",
+			"Config": {
+				"Name": "Default",
+				"IntegrationMode": false,
+				"ConfigType": "GDO.Core.Apps.AppJsonConfiguration",
+				"Json": {
+					"api_address": "http://146.169.32.192:5000/"
+				}
+			}
+			 */
+		}
 
-        /// <summary>
-        /// Sets the section p2p mode.
-        /// </summary>
-        /// <param name="sectionId">The section identifier.</param>
-        /// <param name="p2pmode">The p2pmode.</param>
-        /// <returns></returns>
-        public static List<Node> SetSectionP2PMode(int sectionId, int p2pmode)
-        {
-            List<Node> affectedNodes = new List<Node>();
-            if (ContainsSection(sectionId))
-            {
-                //close app
-                foreach (Node node in Sections[sectionId].Nodes)
-                {
-                    affectedNodes.Add(SetNodeP2PMode(node.Id, p2pmode));
-                }
-            }
-            return affectedNodes;
-        }
+		public static bool LoadScenarios()
+		{
+			try
+			{
+				Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
+				String path = Directory.GetCurrentDirectory() + @"\Scenarios\";  // TODO using server.map path
+				if (Directory.Exists(path))
+				{
+					string[] filePaths = Directory.GetFiles(path, "*.json", SearchOption.AllDirectories);
+					
+					foreach (string filePath in filePaths)
+					{
+						Scenario scenario = Utilities.LoadJsonFile<Scenario>(filePath);
+						if (scenario != null)
+						{
+							Log.Info("Found scenario called " + scenario.Name + " about to load");
+							Scenarios.TryAdd(scenario.Name, scenario);
+						}
+					}
+					return true;
+				}
+				else
+				{
+					return false;
+				}
 
-        /// <summary>
-        /// Gets the node map (Matrix of NodeIds in the Cave).
-        /// </summary>
-        /// <returns></returns>
-        public static int[,] GetNodeMap()
-        {
-            int[,] nodeMap = new int[Cols, Rows];
-            foreach (KeyValuePair<int, Node> nodeEntry in Nodes)
-            {
-                nodeMap[nodeEntry.Value.Col, nodeEntry.Value.Row] = nodeEntry.Value.Id;
-            }
-            return nodeMap;
-        }
+			}
+			catch (Exception e)
+			{
+				Log.Debug("failed to load scenarios ",e);
+				return false;
+			}
+		}
 
-        /// <summary>
-        /// Gets the section map (Matrix of NodeIds in the Section).
-        /// </summary>
-        /// <param name="sectionId">The section identifier.</param>
-        /// <returns></returns>
-        public static int[,] GetSectionMap(int sectionId)
-        {
-            int[,] sectionMap = null;
-            if (ContainsSection(sectionId))
-            {
-                sectionMap = new int[Sections[sectionId].Cols, Sections[sectionId].Rows];
-                foreach (var nodeEntry in Nodes)
-                {
-                    if (nodeEntry.Value.SectionId == sectionId)
-                    {
-                        sectionMap[nodeEntry.Value.SectionCol, nodeEntry.Value.SectionRow] = nodeEntry.Value.Id;
-                    }
-                }
-            }
-            return sectionMap;
-        }
+		public static Scenario SaveScenario(string json)
+		{
+			try
+			{
+				Scenario scenario = JsonConvert.DeserializeObject<Scenario>(json);
+				if (Scenarios.ContainsKey(scenario.Name))
+				{
+					Scenario dump;
+					Scenarios.TryRemove(scenario.Name, out dump);
+				}
+				Scenarios.TryAdd(scenario.Name, scenario);
+				Utilities.SaveJsonFile<Scenario>(scenario.Name, "Scenarios", scenario);
+				return scenario;
+			}
+			catch (Exception e)
+			{
+				Log.Debug("failed to save scenario",e);
+				return null;
+			}
+		}
 
-        /// <summary>
-        /// Gets the neighbour map (Matrix 3x3 of NodeIds in the Neighbourhood of the Node).
-        /// </summary>
-        /// <param name="nodeId">The node identifier.</param>
-        /// <returns></returns>
-        public static int[,] GetNeighbourMap(int nodeId)
-        {
-            int[,] neighbours = null;
-            if (ContainsNode(nodeId))
-            {
-                int[,] nodeMap = GetNodeMap();
-                neighbours = new int[3, 3];
-                for (int i = -1; i < 2; i++)
-                {
-                    for (int j = -1; j < 2; j++)
-                    {
-                        int col = Nodes[nodeId].Col + i;
-                        int row = Nodes[nodeId].Row + j;
-                        if (col >= 0 && row >= 0 && col < Cols && row < Rows)
-                        {
-                            neighbours[i + 1, j + 1] = nodeMap[col, row];
-                        }
-                        else
-                        {
-                            neighbours[i + 1, j + 1] = -1;
-                        }
-                    }
-                }
-            }
-            return neighbours;
-        }
+		public static bool RemoveScenario(string name)
+		{
+			try
+			{
+				if (ContainsScenario(name))
+				{
+					Scenario s;
+					Scenarios.TryRemove(name, out s);
+					Utilities.RemoveJsonFile(name, "Scenarios");
+					return true;
+				}
+				return false;
+			}
+			catch (Exception e)
+			{
+				Log.Error("failed to delete scenario ",e);
+				return false;
+			}
+		}
+
+		/// <summary>
+		/// Loads the application configurations.
+		/// </summary>
+		/// <param name="appName">Name of the application.</param>
+		/// <param name="name">optional name if you want to load a single config</param>
+		/// <returns></returns>
+		public static List<IAppConfiguration> LoadAllAppConfigurations(string appName,string name =null)
+		{
+			Log.Info("loading configurations for App "+appName);
+			List<IAppConfiguration> configurations = new List<IAppConfiguration>();
+			//TODO Load app configurations from /Configurations/AppName directory
+			Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
+			String path = Directory.GetCurrentDirectory() + @"\Configurations\" + appName;  // TODO using server.map path
+			if (Directory.Exists(path))
+			{
+				string[] filePaths = Directory.GetFiles(path, name ==null ? "*.json" : name+".json", SearchOption.AllDirectories);
+				foreach (string filePath in filePaths)
+				{
+					JObject json = Utilities.LoadJsonFile(filePath);
+					if (json == null) continue;
+
+					string configurationName = Path.GetFileNameWithoutExtension(filePath);
+				   
+					Log.Info("Found config file called "+configurationName+" for app "+appName+" about to load");
+
+					var appConfiguration = HydrateAppConfiguration(json, configurationName);
+
+					Deployment.Apps[appName].Configurations.AddOrUpdate(appConfiguration.Name, appConfiguration,(a,b) => appConfiguration );
+				}
+			}   
+			return configurations;
+		}
+
+		/// <summary>
+		/// Hydrates the application configuration.
+		/// either using the type definition provided or assuming it is a generic AppJsonConfiguration
+		/// </summary>
+		/// <param name="json">The json.</param>
+		/// <param name="configurationName">Name of the configuration.</param>
+		/// <returns>the app config</returns>
+		internal static IAppConfiguration HydrateAppConfiguration(JObject json, string configurationName) {
+			IAppConfiguration appConfiguration = null;
+
+			// load custom types of configuration or the generic type... 
+			JToken configType;
+			if (json.TryGetValue("ConfigType", out configType)) {
+				var configTypename = configType.ToString();
 
 
-        public static bool RegisterApp(string name, IAppHub appHub, Type appClassType, bool isComposite, List<string> supportedApps, int p2pmode) {
-            if (!Apps.ContainsKey(name))
-            {
-                var app = isComposite 
-                    ? new CompositeApp(name, appClassType, (int)AppTypes.Composite, supportedApps, p2pmode) 
-                    : new App(name, appClassType, (int)AppTypes.Base, p2pmode);
-                Apps.TryAdd(name, app);
-                List<AppConfiguration> configurations = LoadAppConfigurations(name);
-                foreach (var configuration in configurations)
-                {
-                    Log.Info("registering an app configuration for app " + name + " called " + configuration.Name);
-                    Apps[name].Configurations.TryAdd(configuration.Name, configuration);
-                }
-                Apps[name].Hub = appHub;
-                return true;
-            }
-            return false;
-        }
+				Type type = Deployment.ApplicationConfigTypes.FirstOrDefault(t => t.FullName == configTypename);
+				if (type != null) {
+					appConfiguration =
+						(IAppConfiguration) JsonConvert.DeserializeObject(json.ToString(), type);
+				}
+				else {
+					Log.Info("could not find config type " + configTypename);
+					foreach (var appconf in Deployment.ApplicationConfigTypes) {
+						Log.Info("known config type " + appconf.FullName);
+					}
+				}
+			}
 
-        public static bool RegisterModule(string name, Type moduleClassType)
-        {
-            if (!Modules.ContainsKey(name))
-            {
-                IModule module = (IModule)Activator.CreateInstance(moduleClassType, new object[0]);
-                module.Init();
-                Modules.TryAdd(module.Name, module);
-                ModuleLocks.Add(module.Name, new object());
-                return true;
-            }
-            return false;
-        }
+			return appConfiguration ?? new AppJsonConfiguration(configurationName, json);
+		}
 
-        public static bool LoadScenarios()
-        {
-            try
-            {
-                Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
-                String path = Directory.GetCurrentDirectory() + @"\Scenarios\";  // TODO using server.map path
-                if (Directory.Exists(path))
-                {
-                    string[] filePaths = Directory.GetFiles(path, "*.json", SearchOption.AllDirectories);
-                    //todo comment why the@ is needed
-                    foreach (string filePath in filePaths)
-                    {
-                        Scenario scenario = Utilities.LoadJsonFile<Scenario>(filePath);
-                        if (scenario != null)
-                        {
-                            Log.Info("Found scenario called " + scenario.Name + " about to load");
-                            Scenarios.TryAdd(scenario.Name, scenario);
-                        }
-                    }
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+		/// <summary>
+		/// Copies the application configuration by round tripping to json 
+		/// </summary>
+		/// <param name="conf">The conf.</param>
+		/// <returns>a new copy</returns>
+		public static IAppConfiguration CopyAppConfig(IAppConfiguration conf) {
+			var save = JsonConvert.SerializeObject(conf);
+			return HydrateAppConfiguration(JObject.Parse(save), conf.Name);
+		}
 
-            }
-            catch (Exception e)
-            {
-                Log.Debug("failed to load scenarios ",e);
-                return false;
-            }
-        }
+		public static List<string> GetConfigListForApp(string appName) {
+			return Deployment.Apps[appName].GetConfigurationList();
+		}
 
-        public static Scenario SaveScenario(string json)
-        {
-            try
-            {
-                Scenario scenario = JsonConvert.DeserializeObject<Scenario>(json);
-                if (Scenarios.ContainsKey(scenario.Name))
-                {
-                    Scenario dump;
-                    Scenarios.TryRemove(scenario.Name, out dump);
-                }
-                Scenarios.TryAdd(scenario.Name, scenario);
-                Utilities.SaveJsonFile<Scenario>(scenario.Name, "Scenarios", scenario);
-                return scenario;
-            }
-            catch (Exception e)
-            {
-                Log.Debug("failed to save scenario",e);
-                return null;
-            }
-        }
+		public static List<string> UnloadAppConfiguration(string appName, string configName)
+		{
+			if (Deployment.Apps[appName].Configurations.ContainsKey(configName))
+			{
+				IAppConfiguration config;
+				Deployment.Apps[appName].Configurations.TryRemove(configName, out config);
+				Utilities.RemoveJsonFile(configName, "Configurations\\" + appName);
+			}
+			var configurationList = Deployment.Apps[appName].GetConfigurationList();
+			return configurationList;
+		}
 
-        public static bool RemoveScenario(string name)
-        {
-            try
-            {
-                if (ContainsScenario(name))
-                {
-                    Scenario s;
-                    Scenarios.TryRemove(name, out s);
-                    Utilities.RemoveJsonFile(name, "Scenarios");
-                    return true;
-                }
-                return false;
-            }
-            catch (Exception e)
-            {
-                Log.Error("failed to delete scenario ",e);
-                return false;
-            }
-        }
+		public static List<string> GetModuleList()
+		{
+			return Layout.GetModuleList();
+		}
 
-        /// <summary>
-        /// Loads the application configurations.
-        /// </summary>
-        /// <param name="appName">Name of the application.</param>
-        /// <returns></returns>
-        public static List<AppConfiguration> LoadAppConfigurations(string appName)
-        {
-            Log.Info("loading configurations fro App "+appName);
-            List <AppConfiguration> configurations = new List<AppConfiguration>();
-            //TODO Load app configurations from /Configurations/AppName directory
-            Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
-            String path = Directory.GetCurrentDirectory() + @"\Configurations\" + appName;  // TODO using server.map path
-            if (Directory.Exists(path))
-            {
-                string[] filePaths = Directory.GetFiles(path, "*.json", SearchOption.AllDirectories);//todo comment why the@ is needed
-                foreach (string filePath in filePaths)
-                {
-                    JObject json = Utilities.LoadJsonFile(filePath);
-                    if (json != null)
-                    {
-                        string configurationName = Utilities.RemoveString(filePath, path + "\\");
-                        configurationName = Utilities.RemoveString(configurationName, ".json");
-                        Log.Info("Found config called "+configurationName+" for app "+appName+" about to load");
-                        Apps[appName].Configurations.TryAdd(configurationName, new AppConfiguration(configurationName, json));
-                    }
-                }
-            }
-            return configurations;
-        }
+		public static List<string> GetAppList()
+		{
+			return Deployment.GetAppList();
+		}
 
-        public static List<string> LoadAppConfiguration(string appName, string fileName)
-        {
-            Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
-            String path = Directory.GetCurrentDirectory() + @"\Configurations\" + appName;  // TODO using server.map path
-            if (Directory.Exists(path))
-            {
-                string[] filePaths = Directory.GetFiles(@path, fileName+".json", SearchOption.AllDirectories);//todo comment why the@ is needed
-                foreach (string filePath in filePaths)
-                {
-                    JObject json = Utilities.LoadJsonFile(filePath);
-                    if (json != null)
-                    {
-                        string configurationName = Utilities.RemoveString(filePath, path + "\\");
-                        configurationName = Utilities.RemoveString(configurationName, ".json");
-                        Log.Info("Found config called " + configurationName + " for app " + appName + " about to load");
-                        if (Apps[appName].Configurations.ContainsKey(configurationName))
-                        {
-                            Apps[appName].Configurations[configurationName] = new AppConfiguration(configurationName,json);
-                        }
-                        else
-                        {
-                            Apps[appName].Configurations.TryAdd(configurationName, new AppConfiguration(configurationName, json));
-                        }
+		public static bool RegisterModule(string name, Type moduleClassType)
+		{
+			return Layout.RegisterModule(name, moduleClassType);
+		}
 
-                    }
-                }
-            }
-            var configurationList = Apps[appName].GetConfigurationList();
-            return configurationList;
-        }
+		public static bool RegisterApp(string name, IAppHub appHub, Type appClassType, bool isComposite, List<string> supportedApps, int p2pmode)
+		{
+			return Deployment.RegisterApp(name, appHub, appClassType, isComposite, supportedApps, p2pmode);
+		}
 
-        public static List<string> UnloadAppConfiguration(string appName, string configName)
-        {
-            if (Apps[appName].Configurations.ContainsKey(configName))
-            {
-                AppConfiguration config;
-                Apps[appName].Configurations.TryRemove(configName, out config);
-                Utilities.RemoveJsonFile(configName, "Configurations\\" + appName);
-            }
-            var configurationList = Apps[appName].GetConfigurationList();
-            return configurationList;
-        }
+		/// <summary>
+		/// Gets the name of the application.
+		/// </summary>
+		/// <param name="instanceId">The instance identifier.</param>
+		/// <returns></returns>
+		public static string GetAppName(int instanceId) {
+			return Deployment.GetAppName(instanceId);
+		}
 
+		#region CaveState
 
-        public static List<string> GetModuleList()
-        {
-            List<string> moduleList = Modules.Select(moduleEntry => moduleEntry.Value.Name).ToList();
-            moduleList.Sort();
-            return moduleList;
-        }
+		public static bool SaveCaveState(string name)
+		{
+			Log.Info("Saving CAVE STATE " + name);
 
-        /// <summary>
-        /// Gets the application list.
-        /// </summary>
-        /// <returns></returns>
-        public static List<string> GetAppList()
-        {
-            List<string> appList = Apps.Select(appEntry => appEntry.Value.Name).ToList();
-            appList.Sort();
-            return appList;
-        }
+			//create the CaveState
+			State caveState = new State(name);
+			foreach (KeyValuePair<int, IAppInstance> instaKeyValuePair in Deployment.Instances) {
+				IBaseAppInstance instance = (IBaseAppInstance)instaKeyValuePair.Value;
+				Section section = instance.Section;
+				AppState appState = new AppState(section.Col, section.Row, section.Cols, section.Rows, instance.App.Name, instance.GetConfiguration());
+				caveState.States.Add(appState);
+			}
 
-        public static int CreateBaseAppInstance(int sectionId, string appName, string configName)
-        {
-            Log.Info($"Creating App instance {appName} {configName} on section {sectionId}");
-            if (!Sections[sectionId].IsDeployed() && Apps.ContainsKey(appName))
-            {
-                if (Apps[appName].Configurations.ContainsKey(configName))
-                {
-                    int instanceId =  Apps[appName].CreateAppInstance(configName, sectionId, false, -1);
-                    if (instanceId >= 0)
-                    {
-                        ((IBaseAppInstance)Apps[appName].Instances[instanceId]).Section.DeploySection(instanceId);
-                    }
-                    return instanceId;
-                }
-            }
-            return -1;
-        }
+			// store it
+			Cave.States[name] = caveState;
 
-        public static int CreateChildAppInstance(int sectionId, string appName, string configName, bool integrationMode, int parentId)
-        {
-            Log.Info($"Creating App instance {appName} {configName} on section {sectionId}");
-            if (!Sections[sectionId].IsDeployed() && Apps.ContainsKey(appName))
-            {
-                if (Apps[appName].Configurations.ContainsKey(configName))
-                {
-                    int instanceId = Apps[appName].CreateAppInstance(configName, sectionId, integrationMode, parentId);
-                    if (instanceId >= 0)
-                    {
-                        ((IBaseAppInstance)Apps[appName].Instances[instanceId]).Section.DeploySection(instanceId);
-                    }
-                    return instanceId;
-                }
-            }
-            return -1;
-        }
+			// then save it 
 
-        /// <summary>
-        /// Creates an composite application instance.
-        /// </summary>
-        /// <returns></returns>
-        public static int CreateCompositeAppInstance(List<int> instanceIds, string appName, string configName)
-        {
-            //TODO
-            /*if (!Cave.Sections[sectionId].IsDeployed() && Cave.Apps.ContainsKey(appName))
-            {
-                if (Cave.Apps[appName].Configurations.ContainsKey(configName))
-                {
-                    int instanceId = Apps[appName].CreateAppInstance(configName, sectionId);
-                    if (instanceId >= 0)
-                    {
-                        Apps[appName].Instances[instanceId].Section.DeploySection(instanceId);
-                    }
-                    return instanceId;
-                }
-            }*/
-            return -1;
-        }
+			try {
+				if (ContainsState(name)) {
+					Utilities.RemoveJsonFile(name, "states");
+				}
+				Utilities.SaveJsonFile<State>(name,"states",caveState);
 
-        /// <summary>
-        /// Disposes an application instance.
-        /// </summary>
-        /// <param name="appName">Name of the application.</param>
-        /// <param name="instanceId">The instance identifier.</param>
-        /// <returns></returns>
-        public static bool DisposeAppInstance(string appName, int instanceId)
-        {
-            if (Apps.ContainsKey(appName))
-            {
-                if (Apps[appName].Instances.ContainsKey(instanceId))
-                {
-                    if (Apps[appName].AppType == (int)AppTypes.Base)
-                    {
-                        Section section = ((IBaseAppInstance)Apps[appName].Instances[instanceId]).Section;
-                        if (Apps[appName].DisposeAppInstance(instanceId))
-                        {
-                            section.FreeSection();
-                            return true;
-                        }
-                    }
-                    else if (Apps[appName].AppType == (int)AppTypes.Composite)
-                    {
-                        if (Apps[appName].DisposeAppInstance(instanceId))
-                        {
-                            return true;
-                        }
-                    }
-                    else
-                    {
-                        throw new Exception("Unknown App Type");
-                    }
-                }
-            }
-            return false;
-        }
-        /// <summary>
-        /// Gets the name of the application.
-        /// </summary>
-        /// <param name="instanceId">The instance identifier.</param>
-        /// <returns></returns>
-        public static string GetAppName(int instanceId) {
-            var app = Apps.Values.FirstOrDefault(a => a.Instances.ContainsKey(instanceId));
-            if (app != null) {
-                return app.Name;
-            }
-            Log.Error("unable to find app for instanceID "+instanceId);
-            return "unknown";
-        }
+				Log.Info("Saved CAVE STATE " + name);
+				return true;
 
-        public static App GetApp(string name)
-        {
-            App app = Apps[name];
-            if (app != null)
-            {
-                return app;
-            }
-            Log.Error("unable to find app for name " + name);
-            return null;
-        }
+			} catch (Exception e) {
+				Log.Error("failed to delete scenario ", e);
+				return false; 
+			}
 
-        public static int SaveCaveState(string name)
-        {
-            Log.Info("Saving CAVE STATE "+name);
-            int slot = Utilities.GetAvailableSlot<State>(States);
-            State caveState = new State(slot, name);
-            States.TryAdd(slot, caveState);
-            //TODO Add support composite app
-            foreach(KeyValuePair<int,IAppInstance> instaKeyValuePair in Instances)
-            {
-                IBaseAppInstance instance = (IBaseAppInstance)instaKeyValuePair.Value;
-                Section section = instance.Section;
-                AppState appState = new AppState(section.Col, section.Row, section.Cols, section.Rows, instance.App.Name, instance.Configuration.Name);
-                caveState.States.Add(appState);
-            }
-            return slot;
-        }
+		}
 
-        public static void RemoveCaveState(int id)
-        {
-            State caveState;
-            States.TryRemove(id, out caveState);
-        }
+		public static bool RemoveCaveState(string name)
+		{
+			State caveState;
+			if (States.TryRemove(name, out caveState)) {
+				Utilities.RemoveJsonFile(name, "states");
+				return true;
+			}
+			return false;
+		}
 
-        public static void WaitReady()//TODO delete this???
-        {
-            Stopwatch timer = new Stopwatch();
-            timer.Start();
-            while (timer.Elapsed.TotalSeconds < 10)
-            {
-                // do something
-            }
-            timer.Stop();
-        }
-    }
+		#endregion
+
+		public static void WaitReady()//TODO delete this???
+		{
+			Stopwatch timer = new Stopwatch();
+			timer.Start();
+			while (timer.Elapsed.TotalSeconds < 10)
+			{
+				// do something
+			}
+			timer.Stop();
+		}
+
+		public static void RegisterConfigType(Type type) {
+			Deployment.ApplicationConfigTypes.Add(type);
+		}
+
+		
+	}
 }
