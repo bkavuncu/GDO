@@ -54,6 +54,17 @@ gdo.updateDisplayCanvas = function () {
 
 gdo.loadAppFrame = function (app) {
     gdo.consoleOut(".NODE", 3, "Loading App Frame " + app);
+    if (typeof gdo.net.app[app].initClient !== "function") {
+        gdo.consoleOut(".NODE", 3, "Failed to init - reloading in a few seconds " + app);
+        setTimeout(function () {
+            location.reload();
+        }, 3 * 1000);
+        
+    } else {
+        gdo.consoleOut(".NODE", 3, "check that " + app +" exists");
+    }
+
+
     $('iframe').attr('src', "/Web/"+app+"/app.cshtml");
     $('iframe').fadeIn();
 }

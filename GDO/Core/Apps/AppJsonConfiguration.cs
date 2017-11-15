@@ -113,7 +113,7 @@ namespace GDO.Core.Apps
             if (this.Json == null) {
                 this.Json = new JObject();
             }
-            return JsonConvert.SerializeObject(this.Json.ToString());
+            return this.Json.ToString();
         }
     }
 }

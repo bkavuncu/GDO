@@ -2,14 +2,14 @@
 using System.ComponentModel.Composition;
 using GDO.Core;
 using GDO.Core.Apps;
-
-using Microsoft.AspNet.SignalR;
+using log4net;
 
 namespace GDO.Apps.GigaImages
 {
     [Export(typeof(IAppHub))]
     public class GigaImagesAppHub : GDOHub, IBaseAppHub
     {
+        private static readonly ILog Log = LogManager.GetLogger(typeof(GigaImagesAppHub));
         public string Name { get; set; } = "GigaImages";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.None;
         public Type InstanceType { get; set; } = new GigaImagesApp().GetType();
@@ -33,15 +33,12 @@ namespace GDO.Apps.GigaImages
                     Clients.Caller.receivePosition(instanceId, topLeft, center, bottomRight, zoom, width, height);
                     BroadcastPosition(instanceId, topLeft, center, bottomRight, zoom, width, height);
                 }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
+                catch (Exception e) {
+                    Log.Error("error in giga image upload " + e);
                 }
             }
         }
-
-
-
+        
         public void RequestPosition(int instanceId, bool control)
         {
             lock (Cave.AppLocks[instanceId])
@@ -56,7 +53,7 @@ namespace GDO.Apps.GigaImages
                     }
                     else
                     {
-                        if (((GigaImagesApp)Cave.Deployment.Apps["GigaImages"].Instances[instanceId]).IsInitialized)
+                        if (((GigaImagesApp)Cave.Deployment.Apps["GigaImages"].Instances[instanceId]).Configuration.IsInitialized)
                         {
                             Position position =((GigaImagesApp) Cave.Deployment.Apps["GigaImages"].Instances[instanceId]).GetPosition();
                             Clients.Caller.receivePosition(instanceId, position.TopLeft, position.Center,position.BottomRight, position.Zoom, position.Width, position.Height);
@@ -65,7 +62,7 @@ namespace GDO.Apps.GigaImages
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
+                    Log.Error("error in giga image upload " + e);
                 }
 
             }
@@ -75,6 +72,13 @@ namespace GDO.Apps.GigaImages
         public void BroadcastPosition(int instanceId, float[] topLeft, float[] center, float[] bottomRight, float zoom, float width, float height)
         {
             Clients.Group("" + instanceId).receivePosition(instanceId, topLeft, center, bottomRight, zoom, width, height);
+        }
+
+        public override void SignalConfigUpdated(int instanceId) {
+            Position position =
+                ((GigaImagesApp)Cave.Deployment.Apps["GigaImages"].Instances[instanceId]).GetPosition();
+            UploadPosition(instanceId, position.TopLeft, position.Center, position.BottomRight, position.Zoom,
+                position.Width, position.Height);
         }
     }
 }
