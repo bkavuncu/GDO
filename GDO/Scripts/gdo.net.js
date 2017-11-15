@@ -257,9 +257,11 @@ $(function() {
 
     $.connection.caveHub.client.receiveAppConfig = function (instanceId, appName, configName, config, exists) {
         if (gdo.net.isNodeInitialized()) {
-            gdo.consoleOut('.NET', 1, 'Received App Config : (id:' + instanceId + ', config: ' + configName + ", exists: " + exists + ")");
+            gdo.consoleOut('.NET', 1, 'Received App Config : (id:' + instanceId + ', config: ' + configName + ", exists: " + exists + " = '"+config+"')");
             if (exists) {
-                gdo.net.app[appName].config[configName] = JSON.parse(JSON.parse(config));
+                var parse = JSON.parse(config);
+                gdo.net.app[appName].config[configName] = parse;
+                gdo.consoleOut('.NET', 1, 'set configok to '+parse);
             } else {
                 gdo.net.app[appName].config[configName] = null;
             }
