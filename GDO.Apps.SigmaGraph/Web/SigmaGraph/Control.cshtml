@@ -1,6 +1,7 @@
 ﻿@using System.IO
 @using System.Web
 @using GDO.Core
+@using GDO.Apps.SigmaGraph
 <!DOCTYPE html>
 
 <html>
@@ -34,7 +35,7 @@
     <script src="~/Web/SigmaGraph/scripts/control.js"></script>
     <div class="wrapper" style="width: 97%">
         @{
-            var path = "";
+            bool uploaded = false;
             var filename = "";
             if (IsPost)
             {
@@ -43,15 +44,10 @@
                 if (file != null && !file.FileName.IsEmpty())   //need to add this check, because it tried to save empty file in subsequent button clicks
                 {
                     filename = Path.GetFileName(file.FileName);
-                    //foldername
-                    Directory.CreateDirectory(HttpContext.Current.Server.MapPath("~/Web/SigmaGraph/graphmls"));
-                    path = HttpContext.Current.Server.MapPath("~/Web/SigmaGraph/graphmls/") + filename;
-                    if (File.Exists(path)) {  // if the file already exists, delete it
-                        File.Delete(path);
-                    }
-                    file.SaveAs(path);
-                    }
+                    SigmaGraphApp.SaveGraph(filename, file);
+                    uploaded = true;
                 }
+            }
         }
         <div>
             <div class="row">
@@ -96,8 +92,7 @@
                                             <div class="input_field_div">
                                                 <select class="input_field" id="graph_digit">
                                                     @{
-                                                        string graphfolder = System.Web.HttpContext.Current.Server.MapPath("~/Web/SigmaGraph/graphmls");
-                                                        string[] files = Directory.GetFiles(graphfolder);
+                                                        string[] files = SigmaGraphApp.GraphMLFileList();
                                                     }
                                                     @foreach (var s in files)
                                                     {  <option value="@s.Split('\\').Last()">@s.Split('\\').Last()</option>  }
@@ -220,7 +215,7 @@
             </div>
         </div>
     </div>
-    @if (path != "")
+    @if (uploaded)
     {
         <script>
             $(function () {

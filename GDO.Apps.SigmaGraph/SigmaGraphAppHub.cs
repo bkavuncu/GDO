@@ -37,6 +37,11 @@ namespace GDO.Apps.SigmaGraph
             Groups.Remove(Context.ConnectionId, "" + groupId);
         }
 
+        public void SaveGraph(string filename, string contents)
+        {
+            SigmaGraphApp.SaveGraph(filename, contents);
+        }
+
         public override void SignalConfigUpdated(int instanceId) {
             base.SignalConfigUpdated(instanceId);
             var ga = (SigmaGraphApp)Cave.Deployment.Apps["SigmaGraph"].Instances[instanceId];
