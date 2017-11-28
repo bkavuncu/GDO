@@ -165,6 +165,51 @@ namespace GDO.Apps.SigmaGraph
             }
         }
 
+        public void TriggerColorByFunc(int instanceId, string objectAttr, string attribute, string textFunc)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Triggering Coloring Action");
+                    List<string> attrs = new List<string>();
+                    attrs.Add(objectAttr);
+                    attrs.Add(attribute);
+                    attrs.Add(textFunc);
+                    Clients.Group("" + instanceId).colorByFunc(attrs);
+                    Clients.Caller.setMessage("Triggered Coloring action.");
+                }
+                catch (Exception e)
+                {
+                    Clients.Caller.setMessage("Error: Failed to render coloredByFun graphml");
+                    Clients.Caller.setMessage(e.ToString());
+                    Log.Error(e);
+                }
+            }
+        }
+
+        public void TriggerColorByFilter(int instanceId, string objectAttr, string attribute, string textFunc, string color)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    List<string> attrs = new List<string>();
+                    attrs.Add(objectAttr);
+                    attrs.Add(attribute);
+                    attrs.Add(textFunc);
+                    attrs.Add(color);
+                    Clients.Group("" + instanceId).colorByFilter(attrs);
+                }
+                catch (Exception e)
+                {
+                    Clients.Caller.setMessage("Error: Failed to render coloredByFilter graphml");
+                    Clients.Caller.setMessage(e.ToString());
+                    Log.Error(e);
+                }
+            }
+        }
+
         public void TriggerFilter(int instanceId, string objectAttr, string attribute, string visualAttribute, string textFunc)
         {
             lock (Cave.AppLocks[instanceId])
