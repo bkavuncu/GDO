@@ -37,6 +37,67 @@ gdo.net.app["SigmaGraph"].renderGraph = async function () {
     gdo.net.app["SigmaGraph"].server.doneRendering(gdo.controlId);
 }
 
+gdo.net.app["SigmaGraph"].colorByFunc = async function(params) {
+    var objAttribute = params[0];
+    var attribute = params[1];
+    var textFunc = params[2];
+    var colorFunc = eval('('+textFunc+')');
+
+    // don't clear the sigma graph
+    var helper = function(item, attr, func) {
+        if (item.attrs[attr] != null) {
+            item.color = colorFunc(item.attrs[attr]);
+        }
+    }
+
+    if (objAttribute === "node") {
+        gdo.sigmaInstance.graph.nodes().forEach(node => helper(node, attribute, colorFunc));
+        /*
+        gdo.sigmaInstance.graph.nodes().forEach(node => {
+            if (node.attrs[attribute] != null) {
+                node.color = colorFunc(node.attrs[attribute]);
+            }
+        });
+        */
+    } else if(objAttribute === "edge") {
+        gdo.sigmaInstance.graph.edges().forEach(edge => helper(edge, attribute, colorFunc));
+        /*
+        gdo.sigmaInstance.graph.edges().forEach(edge => {
+            if (edge.attrs[attribute] != null) {
+                edge.color = colorFunc(edge.attrs[attribute]);
+            }
+        });
+        */
+    }
+    //obj attr
+    gdo.sigmaInstance.refresh({ skipIndexation: true });
+    gdo.net.app["SigmaGraph"].server.doneRendering(gdo.controlId);
+}
+
+gdo.net.app["SigmaGraph"].colorByFilter = async function(params) {
+    var objAttribute = params[0];
+    var attribute = params[1];
+    var textFunc = params[2];
+    var setColor = params[3];
+    var colorFunc = eval('('+textFunc+')');
+    
+    var helper = function(item, color, attr, func) {
+        if (item.attrs[attr] != null && func(item.attrs[attr])) {
+            node.color = color;
+        }
+    }
+    if (objAttribute === "node") {
+        gdo.sigmaInstance.graph.nodes().forEach(node => helper(node, setColor, attribute, colorFunc));
+    } else if (objAttribute === "edge") {
+        gdo.sigmaInstance.graph.edges().forEach(edge => helper(edge, setColor, attribute, colorFunc));
+    }
+
+    gdo.sigmaInstance.refresh({ skipIndexation: true });
+    gdo.net.app["SigmaGraph"].server.doneRendering(gdo.controlId);
+
+}
+
+
 gdo.net.app["SigmaGraph"].filterGraph = async function(attributeList) {
     var objAttribute = attributeList[0];
     var attribute = attributeList[1];

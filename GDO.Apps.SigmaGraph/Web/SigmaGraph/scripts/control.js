@@ -279,13 +279,21 @@ $(function () {
         var property = $("#select_property").val();
         var visual = $("#select_visual_attribute").val();
         var funcText = $("#js_code").val();
-
-        console.log(type);
-        console.log(property);
-        console.log(visual);
-        console.log(funcText);
-        console.log("hello");
-        gdo.net.app["SigmaGraph"].server.triggerFilter(gdo.controlId, type, property, visual, funcText);
+        var color = $("select_colour").val();
+        
+        switch (visual) {
+            case "isVisible":
+                gdo.net.app["SigmaGraph"].server.triggerFilter(gdo.controlId, type, property, visual, funcText);
+                break;
+            case "colorByFunc":
+                gdo.net.app["SigmaGraph"].server.triggerColorByFunc(gdo.controlId, type, property, funcText);
+                break;
+            case "colorByFilter":
+                gdo.net.app["SigmaGraph"].server.triggerColorByFilter(gdo.controlId, type, property, funcText, color);
+                break;
+            default:
+                break;
+        }
     })
 
     gdo.net.app["SigmaGraph"].initControl();
