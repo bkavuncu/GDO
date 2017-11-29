@@ -105,3 +105,4 @@ gdo.loadScript('initializeGlobals', 'SigmaGraph', gdo.SCRIPT_TYPE.APP);
 gdo.loadScript('render', 'SigmaGraph', gdo.SCRIPT_TYPE.APP);
 gdo.loadScript('changeFieldOfView', 'SigmaGraph', gdo.SCRIPT_TYPE.APP);
 gdo.loadScript('updateModel', 'SigmaGraph', gdo.SCRIPT_TYPE.APP);
+gdo.loadScript('mapping', 'SigmaGraph', gdo.SCRIPT_TYPE.APP);

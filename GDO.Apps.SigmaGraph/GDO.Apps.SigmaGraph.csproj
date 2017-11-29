@@ -158,6 +158,7 @@
     <Content Include="Scripts\Control\pinch-zoom-canvas.js" />
     <Content Include="Scripts\SigmaGraph\gdo.apps.SigmaGraph.hammer.min.js" />
     <Content Include="Scripts\SigmaGraph\gdo.apps.SigmaGraph.initializeGlobals.js" />
+    <Content Include="Scripts\SigmaGraph\gdo.apps.SigmaGraph.mapping.js" />
     <Content Include="Scripts\SigmaGraph\gdo.apps.SigmaGraph.updateModel.js" />
     <Content Include="Scripts\SigmaGraph\sigma\LICENSE.txt" />
     <Content Include="Scripts\SigmaGraph\sigma\plugins\sigma.exporters.svg.min.js" />
