@@ -3,10 +3,24 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
+
+    <!-- Maps -->
+    <link rel="stylesheet" href="./styles/ol.css" type="text/css" />
+    <link rel="stylesheet" href="./styles/mapStyle.css" type="text/css" />
+    <script src="./scripts/ol.js" type="text/javascript"></script>
+
     <title></title>
     <link rel="stylesheet" href="./styles/appStyle.css">
 </head>
 <body unselectable="on" class="unselectable" onload="getTime()">
+    <div class="container-fluid map" style="z-index:1">
+        <div class="row-fluid map" style="z-index:1">
+            <div class="span12 map" style="z-index:1">
+                <div id="map" class="map" style="z-index:1"></div>
+            </div>
+        </div>
+    </div>
+
     <div id="loaderContainer">
         <div id="loader"></div>
     </div>
@@ -19,6 +33,7 @@
                 var gdo = parent.gdo;
                 console.log("Start time: " + window.performance.now());
                 gdo.net.app["SigmaGraph"].initClient();
+                gdo.net.app["SigmaGraph"].openLayers = ol;
             });
         });
 

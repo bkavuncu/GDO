@@ -170,6 +170,7 @@
     <Content Include="Scripts\SigmaGraph\sigma\sigma.require.js" />
     <Content Include="Web\SigmaGraph\images\06c774b45.jpg" />
     <Content Include="Web\SigmaGraph\scripts\control.js" />
+    <Content Include="Web\SigmaGraph\scripts\ol.js" />
     <Content Include="Web\SigmaGraph\styles\appStyle.css" />
     <Content Include="Web\SigmaGraph\styles\controlStyle.css" />
     <Content Include="README.md" />
@@ -177,6 +178,8 @@
     <Content Include="Configurations\SigmaGraph\Euro.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Web\SigmaGraph\styles\mapStyle.css" />
+    <Content Include="Web\SigmaGraph\styles\ol.css" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

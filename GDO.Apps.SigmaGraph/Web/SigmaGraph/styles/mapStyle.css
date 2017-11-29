@@ -1,0 +1,53 @@
+﻿.unselectable {
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
+.map:-moz-full-screen {
+    height: 100%;
+}
+
+.map:-webkit-full-screen {
+    height: 100%;
+}
+
+.map:-ms-fullscreen {
+    height: 100%;
+}
+
+.ol-rotate {
+    top: 3em;
+}
+
+.map {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0 none;
+    z-index: -1;
+}
+
+div.olMapViewport {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0 none;
+    z-index: -1;
+}
+
+#map {
+    position: absolute;
+    z-index: 0
+}
+
+.popup {
+    position: absolute;
+    z-index: 2
+}
