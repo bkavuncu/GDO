@@ -14,6 +14,7 @@
 <node id="first">
 <data key="label">#f00</data>
 <data key="size">3.0073128</data>
+<data key="bool">0</data>
 <data key="r">153</data>
 <data key="g">153</data>
 <data key="b">153</data>

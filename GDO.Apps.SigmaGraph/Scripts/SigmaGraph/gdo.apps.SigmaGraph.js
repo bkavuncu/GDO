@@ -17,6 +17,14 @@ $(function () {
         gdo.net.app["SigmaGraph"].filterGraph(attribute);
     }
 
+    $.connection.sigmaGraphAppHub.client.colorByFunc = function (attribute) {
+        gdo.net.app["SigmaGraph"].colorByFunc(attribute);
+    }
+
+    $.connection.sigmaGraphAppHub.client.colorByFilter = function (attribute) {
+        gdo.net.app["SigmaGraph"].colorByFilter(attribute);
+    }
+
     $.connection.sigmaGraphAppHub.client.pan = gdo.net.app["SigmaGraph"].pan;
 
     $.connection.sigmaGraphAppHub.client.zoom = gdo.net.app["SigmaGraph"].zoom;

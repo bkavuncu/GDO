@@ -194,11 +194,13 @@ namespace GDO.Apps.SigmaGraph
             {
                 try
                 {
+                    Clients.Caller.setMessage("Triggering Coloring Filter Action");
                     List<string> attrs = new List<string>();
                     attrs.Add(objectAttr);
                     attrs.Add(attribute);
                     attrs.Add(textFunc);
                     attrs.Add(color);
+                    Clients.Caller.setMessage("Triggered Coloring Filter Action");
                     Clients.Group("" + instanceId).colorByFilter(attrs);
                 }
                 catch (Exception e)
