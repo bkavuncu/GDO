@@ -279,20 +279,16 @@ $(function () {
         var property = $("#select_property").val();
         var visual = $("#select_visual_attribute").val();
         var funcText = $("#js_code").val();
-        var color = "#ff0000";//$("select_colour").val();
-        
-        console.log(visual);
+        var color = $("#select_color").val();
+        console.log(color);
         switch (visual) {
             case "isVisible":
-                console.log(visual);
                 gdo.net.app["SigmaGraph"].server.triggerFilter(gdo.controlId, type, property, visual, funcText);
                 break;
             case "colorByFunc":
-                console.log(visual);
                 gdo.net.app["SigmaGraph"].server.triggerColorByFunc(gdo.controlId, type, property, funcText);
                 break;
             case "colorByFilter":
-                console.log(visual);
                 gdo.net.app["SigmaGraph"].server.triggerColorByFilter(gdo.controlId, type, property, funcText, color);
                 break;
             default:
