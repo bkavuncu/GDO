@@ -70,9 +70,15 @@ Number.prototype.toRad = function () {
 gdo.net.app["SigmaGraph"].setZoom = async function (lon1, lat1, lon2, lat2) {
     var ol = gdo.net.app.SigmaGraph.openLayers;
     var screen_width = $(gdo.net.app.SigmaGraph.map_box).width();
-    var width_m = width_metres(lon1, lon2, lat2);
+    var width_m = width_metres(lon1, lon2, (lat1 + lat2) / 2);
     var resolution = width_m / screen_width;
 
     gdo.net.app.SigmaGraph.map.getView().setCenter(ol.proj.fromLonLat([(lon1 + lon2) / 2, (lat1 + lat2) / 2]))
     gdo.net.app.SigmaGraph.map.getView().setResolution(resolution);
+}
+
+
+gdo.net.app["SigmaGraph"].autozoom = async function () {
+    gdo.net.app.SigmaGraph.setZoom(gdo.xCentroid - gdo.xWidth / 2, -gdo.yCentroid - gdo.yWidth / 2,
+        gdo.xCentroid + gdo.xWidth / 2, -gdo.yCentroid + gdo.yWidth / 2);
 }
