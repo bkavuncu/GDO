@@ -58,24 +58,6 @@ gdo.net.app["SigmaGraph"].initMap = async function () {
 
 
 /**
- * Function adapted from Moveable Type under CC license
- * http://www.movable-type.co.uk/scripts/latlong.html
- */
-width_metres = function (lon1, lon2, lat) {
-    var R = 6371 * 1000;
-    var dLon = (lon2 - lon1).toRad();
-    var a = Math.cos(lat.toRad()) * Math.cos(lat.toRad()) *
-        Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    var d = R * c;
-    return d;
-}
-Number.prototype.toRad = function () {
-    return this * Math.PI / 180;
-}
-
-
-/**
  * Zooms map based on top left and bottom right lon, lat
  * Height zoom will be automatic.
  *
