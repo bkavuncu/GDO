@@ -36,6 +36,7 @@ gdo.net.app["SigmaGraph"].initMap = async function () {
 
     var map = new ol.Map({
         target: 'map',
+        controls: [],
         layers: [
             new ol.layer.Tile({
                 visible: true,
