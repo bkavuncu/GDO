@@ -20,7 +20,7 @@ gdo.net.app["SigmaGraph"].showMap = async function () {
     if (gdo.net.app.SigmaGraph.map == null) {
         gdo.net.app.SigmaGraph.initMap();
     }
-    gdo.net.app.SigmaGraph.autozoom();
+    gdo.net.app.SigmaGraph.mapAutozoom();
     gdo.net.app.SigmaGraph.map_box.style.visibility = "visible";
 }
 
@@ -63,7 +63,7 @@ gdo.net.app["SigmaGraph"].initMap = async function () {
  *
  * TODO: make this work for multiple screens
  */
-gdo.net.app["SigmaGraph"].setZoom = async function (lon1, lat1, lon2, lat2) {
+gdo.net.app["SigmaGraph"].mapSetZoom = async function (lon1, lat1, lon2, lat2) {
     var ol = gdo.net.app.SigmaGraph.openLayers;
     var screen_width = $(gdo.net.app.SigmaGraph.map_box).width();
     var tr = ol.proj.fromLonLat([lon1, lat2]);
@@ -78,7 +78,21 @@ gdo.net.app["SigmaGraph"].setZoom = async function (lon1, lat1, lon2, lat2) {
 }
 
 
-gdo.net.app["SigmaGraph"].autozoom = async function () {
-    gdo.net.app.SigmaGraph.setZoom(gdo.xCentroid - gdo.xWidth / 2, -gdo.yCentroid - gdo.yWidth / 2,
+gdo.net.app["SigmaGraph"].mapAutozoom = async function () {
+    gdo.net.app.SigmaGraph.mapRescaleVertices();
+    gdo.net.app.SigmaGraph.mapSetZoom(gdo.xCentroid - gdo.xWidth / 2, -gdo.yCentroid - gdo.yWidth / 2,
         gdo.xCentroid + gdo.xWidth / 2, -gdo.yCentroid + gdo.yWidth / 2);
+}
+
+
+gdo.net.app["SigmaGraph"].mapRescaleVertices = async function () {
+    var xScale = $(gdo.net.app.SigmaGraph.map_box).width() / gdo.xWidth;
+    var yScale = $(gdo.net.app.SigmaGraph.map_box).height() / gdo.yWidth;
+
+    if (xScale > yScale) {
+        gdo.net.app.SigmaGraph.zoomX(gdo.graphXCentroid, yScale / xScale);
+    } else {
+        gdo.net.app.SigmaGraph.zoomY(gdo.graphYCentroid, xScale / yScale);
+    }
+    gdo.net.app.SigmaGraph.renderGraph();
 }

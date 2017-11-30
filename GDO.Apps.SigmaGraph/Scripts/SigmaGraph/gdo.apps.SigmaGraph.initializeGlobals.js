@@ -56,6 +56,8 @@ gdo.net.app["SigmaGraph"].initInstanceGlobalConstants = function () {
  */
 gdo.net.app["SigmaGraph"].initInstanceGlobalVariables = function (xWidth, yWidth, xCentroid, yCentroid) {
     console.log('Initializing instance global variables');
+    gdo.graphXCentroid = xCentroid;
+    gdo.graphYCentroid = yCentroid;
     gdo.xWidth = xWidth / gdo.numCols;
     gdo.yWidth = yWidth / gdo.numRows;
     gdo.xCentroid = gdo.xWidth * gdo.nodeCol + gdo.xWidth / 2 + xCentroid - xWidth / 2;
