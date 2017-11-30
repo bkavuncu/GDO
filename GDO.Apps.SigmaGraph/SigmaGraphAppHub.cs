@@ -45,7 +45,10 @@ namespace GDO.Apps.SigmaGraph
         public override void SignalConfigUpdated(int instanceId) {
             base.SignalConfigUpdated(instanceId);
             var ga = (SigmaGraphApp)Cave.Deployment.Apps["SigmaGraph"].Instances[instanceId];
-            InitiateProcessing(instanceId, ga.Configuration.Filename);
+            if (ga.Configuration.Filename != null)
+            {
+                InitiateProcessing(instanceId, ga.Configuration.Filename);
+            }
         }
 
         public void InitiateProcessing(int instanceId, string filename)
