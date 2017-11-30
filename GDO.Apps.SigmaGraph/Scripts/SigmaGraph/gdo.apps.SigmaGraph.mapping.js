@@ -5,14 +5,28 @@
  */
 
 
+gdo.net.app["SigmaGraph"].toggleMap = function () {
+    console.log("Toggling map");
+    if (gdo.net.app.SigmaGraph.map_box.style.visibility == "hidden") {
+        gdo.net.app.SigmaGraph.showMap();
+    } else {
+        gdo.net.app.SigmaGraph.hideMap();
+    }
+}
+
+
 /* Show the map */
-gdo.net.app.SigmaGraph.showMap = async function () {
+gdo.net.app["SigmaGraph"].showMap = async function () {
+    if (gdo.net.app.SigmaGraph.map == null) {
+        gdo.net.app.SigmaGraph.initMap();
+    }
+    gdo.net.app.SigmaGraph.autozoom();
     gdo.net.app.SigmaGraph.map_box.style.visibility = "visible";
 }
 
 
 /* Hide the map */
-gdo.net.app.SigmaGraph.hideMap = async function () {
+gdo.net.app["SigmaGraph"].hideMap = async function () {
     gdo.net.app.SigmaGraph.map_box.style.visibility = "hidden";
 }
 

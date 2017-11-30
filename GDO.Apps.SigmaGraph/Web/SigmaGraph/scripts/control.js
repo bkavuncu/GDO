@@ -180,6 +180,10 @@ $(function () {
         gdo.net.app["SigmaGraph"].server.showGraphInControlUI(gdo.controlId);
     }
 
+    document.getElementById("map_toggle").onclick = function () {
+        gdo.net.app["SigmaGraph"].server.toggleMap(gdo.controlId);
+    }
+
     $("#image_digit_button").click(function () {
         var gdo = parent.gdo;
         gdo.net.app["SigmaGraph"].server.initiateProcessing(gdo.controlId, $("#graph_digit").val());
@@ -294,7 +298,7 @@ $(function () {
             default:
                 break;
         }
-    })
+    });
 
     gdo.net.app["SigmaGraph"].initControl();
 });

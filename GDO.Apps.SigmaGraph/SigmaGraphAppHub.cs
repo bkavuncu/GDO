@@ -148,6 +148,24 @@ namespace GDO.Apps.SigmaGraph
             }             
         }
 
+        public void ToggleMap(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Toggling map on instance " + instanceId);
+                    Clients.Group("" + instanceId).toggleMap();
+                }
+                catch (Exception e)
+                {
+                    Clients.Caller.setMessage("Error: Failed to toggle map");
+                    Clients.Caller.setMessage(e.ToString());
+                    Log.Error("SigmaGraph: Error in ToggleMap " + e);
+                }
+            }
+        }
+
         public void Pan(int instanceId, double x, double y)
         {
             lock (Cave.AppLocks[instanceId])

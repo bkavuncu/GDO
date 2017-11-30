@@ -29,6 +29,8 @@ $(function () {
 
     $.connection.sigmaGraphAppHub.client.zoom = gdo.net.app["SigmaGraph"].zoom;
 
+    $.connection.sigmaGraphAppHub.client.toggleMap = gdo.net.app["SigmaGraph"].toggleMap;
+
     $.connection.sigmaGraphAppHub.client.showSpinner = gdo.net.app["SigmaGraph"].showSpinner;
 
     $.connection.sigmaGraphAppHub.client.hideSpinner = gdo.net.app["SigmaGraph"].hideSpinner;
