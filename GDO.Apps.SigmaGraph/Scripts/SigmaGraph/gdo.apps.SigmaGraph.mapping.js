@@ -84,10 +84,14 @@ Number.prototype.toRad = function () {
 gdo.net.app["SigmaGraph"].setZoom = async function (lon1, lat1, lon2, lat2) {
     var ol = gdo.net.app.SigmaGraph.openLayers;
     var screen_width = $(gdo.net.app.SigmaGraph.map_box).width();
-    var width_m = width_metres(lon1, lon2, (lat1 + lat2) / 2);
+    var tr = ol.proj.fromLonLat([lon1, lat2]);
+    var bl = ol.proj.fromLonLat([lon2, lat1]);
+    var extent = ol.extent.boundingExtent([bl, tr])
+    var width_m = extent[2] - extent[0]
     var resolution = width_m / screen_width;
 
-    gdo.net.app.SigmaGraph.map.getView().setCenter(ol.proj.fromLonLat([(lon1 + lon2) / 2, (lat1 + lat2) / 2]))
+    gdo.net.app.SigmaGraph.map.getView().setCenter(
+        ol.proj.fromLonLat([(lon1 + lon2) / 2, (lat1 + lat2) / 2]));
     gdo.net.app.SigmaGraph.map.getView().setResolution(resolution);
 }
 
