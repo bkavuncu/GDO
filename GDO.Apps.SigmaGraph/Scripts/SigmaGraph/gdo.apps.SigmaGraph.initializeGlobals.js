@@ -67,5 +67,5 @@ gdo.net.app["SigmaGraph"].initInstanceGlobalVariables = function (xWidth, yWidth
     gdo.xTotalShift = 0;
     gdo.yTotalShift = 0;
     gdo.sigmaInstance.graph.clear();
-    gdo.net.app.SigmaGraph.map = null;
+    gdo.net.app.SigmaGraph.map = gdo.net.app.SigmaGraph.map || null;
 }
