@@ -62,14 +62,17 @@ namespace GDO.Apps.SigmaGraph
                     // Indicate to clients that a graph is loading
                     Clients.Group("" + instanceId).showSpinner();
 
-                    // Tell clients to reset their field of view for a new graph
-                    Clients.Group("" + instanceId).initInstanceGlobalVariables();
-
                     // Create SigmaGraphApp project and call its function to process graph
                     var ga = (SigmaGraphApp) Cave.Deployment.Apps["SigmaGraph"].Instances[instanceId];
                    
                     Clients.Caller.setMessage("Initiating processing of graph data in file: " + filename);
                     ga.ProcessGraph(filename);
+
+                    QuadTree.QuadCentroid centroid = ga.GetCentroid();
+                    // Tell clients to reset their field of view for a new graph
+                    Clients.Group("" + instanceId).initInstanceGlobalVariables(
+                        centroid.xWidth, centroid.yWidth, centroid.xCentroid, centroid.yCentroid);
+
                     Clients.Caller.setMessage("Processing of raw graph data is completed.");
                     // Clients.Group to broadcast and get all clients to update graph
                     Clients.Group("" + instanceId).renderGraph();

@@ -50,13 +50,16 @@ gdo.net.app["SigmaGraph"].initInstanceGlobalConstants = function () {
 
 /**
  * Initialize global variables of this rendering instance.
+ *
+ * Parameters of width, centroid are for the whole graph, not current node
+ * Need to calculate relevant parameters for current node
  */
-gdo.net.app["SigmaGraph"].initInstanceGlobalVariables = function () {
+gdo.net.app["SigmaGraph"].initInstanceGlobalVariables = function (xWidth, yWidth, xCentroid, yCentroid) {
     console.log('Initializing instance global variables');
-    gdo.xWidth = 1 / gdo.numCols;
-    gdo.yWidth = 1 / gdo.numRows;
-    gdo.xCentroid = gdo.xWidth * gdo.nodeCol + gdo.xWidth / 2;
-    gdo.yCentroid = gdo.yWidth * gdo.nodeRow + gdo.yWidth / 2;
+    gdo.xWidth = xWidth / gdo.numCols;
+    gdo.yWidth = yWidth / gdo.numRows;
+    gdo.xCentroid = gdo.xWidth * gdo.nodeCol + gdo.xWidth / 2 + xCentroid - xWidth / 2;
+    gdo.yCentroid = gdo.yWidth * gdo.nodeRow + gdo.yWidth / 2 + yCentroid - yWidth / 2;
     gdo.totalRatio = 1;
     gdo.xTotalShift = 0;
     gdo.yTotalShift = 0;
