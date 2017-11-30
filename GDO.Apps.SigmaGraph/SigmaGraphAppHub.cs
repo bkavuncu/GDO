@@ -288,7 +288,11 @@ namespace GDO.Apps.SigmaGraph
                 {
                     Clients.Caller.setMessage("Triggering rendering of zoomed-in graph.");
 
-                    Clients.Group("" + instanceId).zoom(0.5,0.5,1.25);
+                    // FIXME: after we can pan, we no longer only want to zoom in on the centre
+                    var ga = (SigmaGraphApp)Cave.Deployment.Apps["SigmaGraph"].Instances[instanceId];
+                    QuadTree.QuadCentroid centroid = ga.GetCentroid();
+
+                    Clients.Group("" + instanceId).zoom(centroid.xCentroid, centroid.yCentroid, 1.25);
                     Clients.Caller.setMessage("Zoomed-in graph is now being rendered.");
                 }
                 catch (Exception e)
@@ -307,8 +311,12 @@ namespace GDO.Apps.SigmaGraph
                 try
                 {
                     Clients.Caller.setMessage("Triggering rendering of zoomed-out graph.");
+                    
+                    // FIXME: after we can pan, we no longer only want to zoom in on the centre
+                    var ga = (SigmaGraphApp)Cave.Deployment.Apps["SigmaGraph"].Instances[instanceId];
+                    QuadTree.QuadCentroid centroid = ga.GetCentroid();
 
-                    Clients.Group("" + instanceId).zoom(0.5, 0.5, 1/1.25);
+                    Clients.Group("" + instanceId).zoom(centroid.xCentroid, centroid.yCentroid, 1/1.25);
                     Clients.Caller.setMessage("Zoomed-out graph is now being rendered.");
                 }
                 catch (Exception e)
