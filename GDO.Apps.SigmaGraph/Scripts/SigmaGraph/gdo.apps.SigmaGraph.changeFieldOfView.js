@@ -13,18 +13,28 @@
  * @param {} ratio the ratio at which to zoom
  */
 gdo.net.app["SigmaGraph"].zoom = function (zoomXCenter, zoomYCenter, ratio) {
-    zoomXCenter = zoomXCenter / gdo.totalRatio + gdo.xTotalShift;
-    zoomYCenter = zoomYCenter / gdo.totalRatio + gdo.yTotalShift;
+    gdo.net.app["SigmaGraph"].zoomX(zoomXCenter, ratio);
+    gdo.net.app["SigmaGraph"].zoomY(zoomYCenter, ratio);
 
+    gdo.net.app["SigmaGraph"].renderGraph();
+}
+
+gdo.net.app["SigmaGraph"].zoomX = function (zoomXCenter, ratio) {
+    zoomXCenter = zoomXCenter / gdo.xRatio + gdo.xTotalShift;
     gdo.xCentroid = zoomXCenter + (gdo.xCentroid - zoomXCenter) / ratio;
-    gdo.yCentroid = zoomYCenter + (gdo.yCentroid - zoomYCenter) / ratio;
     gdo.xWidth /= ratio;
+
+    gdo.xRatio *= ratio;
+    gdo.xTotalShift = gdo.xTotalShift / ratio + zoomXCenter * (ratio - 1) / ratio;
+}
+
+gdo.net.app["SigmaGraph"].zoomY = function (zoomYCenter, ratio) {
+    zoomYCenter = zoomYCenter / gdo.yRatio + gdo.yTotalShift;
+    gdo.yCentroid = zoomYCenter + (gdo.yCentroid - zoomYCenter) / ratio;
     gdo.yWidth /= ratio;
 
-    gdo.totalRatio *= ratio;
-    gdo.xTotalShift = gdo.xTotalShift/ratio + zoomXCenter * (ratio - 1) / ratio;
-    gdo.yTotalShift = gdo.yTotalShift/ratio + zoomYCenter * (ratio - 1) / ratio;
-    gdo.net.app["SigmaGraph"].renderGraph();
+    gdo.yRatio *= ratio;
+    gdo.yTotalShift = gdo.yTotalShift / ratio + zoomYCenter * (ratio - 1) / ratio;
 }
 
 /**
@@ -35,10 +45,10 @@ gdo.net.app["SigmaGraph"].zoom = function (zoomXCenter, zoomYCenter, ratio) {
  * @param {} yShift the amount to shift down in control displacements
  */
 gdo.net.app["SigmaGraph"].pan = function (xShift, yShift) {
-    gdo.xCentroid -= xShift / gdo.totalRatio;
-    gdo.yCentroid -= yShift / gdo.totalRatio;
+    gdo.xCentroid -= xShift / gdo.xRatio;
+    gdo.yCentroid -= yShift / gdo.yRatio;
 
-    gdo.xTotalShift -= xShift / gdo.totalRatio;
-    gdo.yTotalShift -= yShift / gdo.totalRatio;
+    gdo.xTotalShift -= xShift / gdo.xRatio;
+    gdo.yTotalShift -= yShift / gdo.yRatio;
     gdo.net.app["SigmaGraph"].renderGraph();
 }

@@ -60,7 +60,8 @@ gdo.net.app["SigmaGraph"].initInstanceGlobalVariables = function (xWidth, yWidth
     gdo.yWidth = yWidth / gdo.numRows;
     gdo.xCentroid = gdo.xWidth * gdo.nodeCol + gdo.xWidth / 2 + xCentroid - xWidth / 2;
     gdo.yCentroid = gdo.yWidth * gdo.nodeRow + gdo.yWidth / 2 + yCentroid - yWidth / 2;
-    gdo.totalRatio = 1;
+    gdo.xRatio = 1;
+    gdo.yRatio = 1;
     gdo.xTotalShift = 0;
     gdo.yTotalShift = 0;
     gdo.sigmaInstance.graph.clear();
