@@ -80,6 +80,11 @@ gdo.net.app["SigmaGraph"].mapSetZoom = async function (lon1, lat1, lon2, lat2) {
 
 gdo.net.app["SigmaGraph"].mapAutozoom = async function () {
     gdo.net.app.SigmaGraph.mapRescaleVertices();
+    gdo.net.app.SigmaGraph.mapRescale();
+}
+
+
+gdo.net.app["SigmaGraph"].mapRescale = async function () {
     gdo.net.app.SigmaGraph.mapSetZoom(gdo.xCentroid - gdo.xWidth / 2, -gdo.yCentroid - gdo.yWidth / 2,
         gdo.xCentroid + gdo.xWidth / 2, -gdo.yCentroid + gdo.yWidth / 2);
 }

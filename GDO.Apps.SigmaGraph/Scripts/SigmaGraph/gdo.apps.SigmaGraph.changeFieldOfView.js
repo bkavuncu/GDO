@@ -17,6 +17,7 @@ gdo.net.app["SigmaGraph"].zoom = function (zoomXCenter, zoomYCenter, ratio) {
     gdo.net.app["SigmaGraph"].zoomY(zoomYCenter, ratio);
 
     gdo.net.app["SigmaGraph"].renderGraph();
+    gdo.net.app["SigmaGraph"].mapRescale();
 }
 
 gdo.net.app["SigmaGraph"].zoomX = function (zoomXCenter, ratio) {
