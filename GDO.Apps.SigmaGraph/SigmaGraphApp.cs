@@ -170,5 +170,10 @@ namespace GDO.Apps.SigmaGraph {
             return this.CurrentQuadTreeRoot.ReturnMatchingLeaves(x, y, xWidth, yWidth)
                 .Select(graphNode => graphNode.Centroid.ToString()).ToList();
         }
+
+        public QuadCentroid GetCentroid()
+        {
+            return this.CurrentQuadTreeRoot.Centroid;
+        }
     }
  }

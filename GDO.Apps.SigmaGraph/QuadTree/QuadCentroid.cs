@@ -63,11 +63,11 @@ namespace GDO.Apps.SigmaGraph.QuadTree
         /// </summary>
         /// <param name="width">The width.</param>
         /// <param name="height">The height.</param>
-        public QuadCentroid(float width, float height) { 
+        public QuadCentroid(float width, float height, float xCentroid, float yCentroid) {
             this.xWidth = width;
             this.yWidth = height;
-            this.xCentroid = width / 2;
-            this.yCentroid = height / 2;
+            this.xCentroid = xCentroid;
+            this.yCentroid = yCentroid;
         }
 
         public override string ToString()

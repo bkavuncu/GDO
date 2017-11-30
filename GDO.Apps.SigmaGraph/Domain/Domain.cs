@@ -12,6 +12,7 @@ namespace GDO.Apps.SigmaGraph.Domain
         public List<GraphNode> Nodes = new List<GraphNode>();
         public List<GraphLink> Links = new List<GraphLink>();
         public RectDimension RectDim;
+        public QuadCentroid Centroid;
     }
 
     public class Position
