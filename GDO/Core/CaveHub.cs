@@ -378,8 +378,9 @@ namespace GDO.Core
         {
             lock (Cave.ServerLock)
             {
-                try
-                {
+                try {
+                    CaveMonitor.ScanNodeHealth();
+
                     List<string> nodes = new List<string>(Cave.Layout.Nodes.Count);
                     nodes.AddRange(Cave.Layout.Nodes.Select(nodeEntry => GetNodeUpdate(nodeEntry.Value.Id)));
                     List<string> sections = new List<string>(Cave.Deployment.Sections.Count);
@@ -1001,4 +1002,5 @@ namespace GDO.Core
             return -1;
         }
     }
+
 }
