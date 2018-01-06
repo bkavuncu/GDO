@@ -239,7 +239,7 @@ $(function () {
     //     gdo.net.app["SigmaGraph"].server.triggerFilter(gdo.controlId, value);
     // });
 
-    $("#select_object").change(function () {
+    $("#select_object").click(function () {
         $("#select_property").empty();
          
         var e = document.getElementById("select_object");
@@ -271,29 +271,66 @@ $(function () {
     });
 
     $("#select_visual_attribute").change(function () {
-         
+        var visual = $("#select_visual_attribute").val();
+        switch (visual) {
+            case "v":
+                setAllDisaplyToNone();
+                setDisPlayTo("v", "block");
+                break;
+            case "cfun":
+                setAllDisaplyToNone();
+                setDisPlayTo("cfun_cf", "block");
+                break;
+            case "cf":
+                setAllDisaplyToNone();
+                setDisPlayTo("cfun_cf", "block");
+                break;
+            case "vn":
+                setAllDisaplyToNone();
+                setDisPlayTo("vn", "block");
+                break;
+        }
     })
 
-    $("#red").click(function () {
+    $("#apply").click(function () {
         var type = $("#select_object").val();
         var property = $("#select_property").val();
         var visual = $("#select_visual_attribute").val();
         var funcText = $("#js_code").val();
+        var funcTextColour = $("#js_code_c").val();
         var color = $("#select_color").val();
-        console.log(color);
         switch (visual) {
-            case "isVisible":
+            case "v":
                 gdo.net.app["SigmaGraph"].server.triggerFilter(gdo.controlId, type, property, visual, funcText);
                 break;
-            case "colorByFunc":
-                gdo.net.app["SigmaGraph"].server.triggerColorByFunc(gdo.controlId, type, property, funcText);
+            case "cfun":
+                gdo.net.app["SigmaGraph"].server.triggerColorByFunc(gdo.controlId, type, property, funcTextColour);
                 break;
-            case "colorByFilter":
-                gdo.net.app["SigmaGraph"].server.triggerColorByFilter(gdo.controlId, type, property, funcText, color);
+            case "cf":
+                gdo.net.app["SigmaGraph"].server.triggerColorByFilter(gdo.controlId, type, property, funcTextColour, color);
+                break;
+            case "vn":
                 break;
             default:
                 break;
         }
+    })
+
+    function setDisPlayTo(id, value) {
+        document.getElementById(id).style.display = value;
+    }
+    
+    function setAllDisaplyToNone() {
+        setDisPlayTo("v", "none")
+        setDisPlayTo("cfun_cf", "none")
+        setDisPlayTo("vn", "none")
+    }
+
+    $("#reset").click(function () {
+        setAllDisaplyToNone();
+        $("#select_property").empty();
+        $("#select_object").value = "default";
+        $("#select_visual_attribute").value = "default";
     })
 
     gdo.net.app["SigmaGraph"].initControl();
