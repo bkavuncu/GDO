@@ -90,7 +90,24 @@ namespace GDO.Apps.SigmaGraph
                 }
             }
         }
+        public void ResetSigmaGraph(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Group("" + instanceId).renderGraph();
+                    Clients.Caller.setMessage("SigmaGraph is resetting.");
+                }
+                catch (Exception e)
+                {
+                    Clients.Caller.setMessage("Error: Processing of raw graph data failed to initiate.");
+                    Clients.Caller.setMessage(e.ToString());
+                    Log.Error("SigmaGraph: Error in sigma processing " + e);
+                }
+            }
 
+        }
         public List<string> GetFilesWithin(int instanceId, double x, double y, double xWidth, double yWidth)
         {
             lock (Cave.AppLocks[instanceId])
@@ -186,6 +203,15 @@ namespace GDO.Apps.SigmaGraph
                     Log.Error(e);
                 }
             }
+        }
+
+        public void TriggerNamingVertices(int insanceId, string objectAttr, string attribute, string textFunc, string color, string fontSize)
+        {
+            lock (Cave.AppLocks[insanceId])
+            {
+                
+            }
+
         }
 
         public void TriggerColorByFilter(int instanceId, string objectAttr, string attribute, string textFunc, string color)

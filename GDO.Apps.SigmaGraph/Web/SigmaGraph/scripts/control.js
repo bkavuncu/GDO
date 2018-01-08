@@ -175,6 +175,9 @@ $(window).ready(function () {
 });
 
 $(function () {
+    var flask = new CodeFlask;
+    flask.runAll('.code', { language: 'javascript', lineNumbers: true })
+    
     var gdo = parent.gdo;
     document.getElementById("showGraph").onclick = function () {
         gdo.net.app["SigmaGraph"].server.showGraphInControlUI(gdo.controlId);
@@ -182,6 +185,7 @@ $(function () {
 
     $("#image_digit_button").click(function () {
         var gdo = parent.gdo;
+        resetSelection();
         gdo.net.app["SigmaGraph"].server.initiateProcessing(gdo.controlId, $("#graph_digit").val());
     });
 
@@ -239,7 +243,7 @@ $(function () {
     //     gdo.net.app["SigmaGraph"].server.triggerFilter(gdo.controlId, value);
     // });
 
-    $("#select_object").click(function () {
+    $("#select_object").change(function () {
         $("#select_property").empty();
          
         var e = document.getElementById("select_object");
@@ -266,10 +270,6 @@ $(function () {
         
     });
 
-    $("#select_property").change(function () {
-        
-    });
-
     $("#select_visual_attribute").change(function () {
         var visual = $("#select_visual_attribute").val();
         switch (visual) {
@@ -292,24 +292,65 @@ $(function () {
         }
     })
 
+    function getCodeFromEditor(codeId) {
+        return document.getElementById(codeId).children[1].innerText;
+    }
+
+    function getFilteringFunction() {
+        var filterValue = $("#filter_value").val();
+        var relation = $("#select_filter").val();
+        if (filterValue == "") {
+            var funcText = getCodeFromEditor("js_code");
+            return funcText;
+        } else {
+            var funcText = "function(x) { x ";
+            var comp = "";
+            switch (filterValue) {
+                case "greater":
+                    comp = ">";
+                    break;
+                case "less":
+                    comp = "<";
+                    break;
+                case "equal":
+                    comp = "==";
+                    break;
+                case "range":
+                    comp = "!==";
+                    break;
+                default:
+                    comp = ">";
+                    break;
+            }
+            funcText += (comp + " " + filterValue + ";}");
+            return funcText;
+        }
+    }
+
     $("#apply").click(function () {
         var type = $("#select_object").val();
         var property = $("#select_property").val();
         var visual = $("#select_visual_attribute").val();
-        var funcText = $("#js_code").val();
-        var funcTextColour = $("#js_code_c").val();
-        var color = $("#select_color").val();
         switch (visual) {
             case "v":
+                var funcText = getFilteringFunction();
+                console.log(funcText);
                 gdo.net.app["SigmaGraph"].server.triggerFilter(gdo.controlId, type, property, visual, funcText);
                 break;
             case "cfun":
+                var funcTextColour = getCodeFromEditor("js_code_c");
                 gdo.net.app["SigmaGraph"].server.triggerColorByFunc(gdo.controlId, type, property, funcTextColour);
                 break;
             case "cf":
+                var color = $("#select_color").val();
+                var funcTextColour = getCodeFromEditor("js_code_c");
                 gdo.net.app["SigmaGraph"].server.triggerColorByFilter(gdo.controlId, type, property, funcTextColour, color);
                 break;
             case "vn":
+                var funcTextVn = getCodeFromEditor("js_code_vn");
+                var fontColor = $("#font_color").val();
+                var fontSize = $("#font_size").val();
+                gdo.net.app["SigmaGraph"].server.triggerNamingVertices(god.controlId, type, property, funcTextVn, fontColor, fontSize);
                 break;
             default:
                 break;
@@ -326,11 +367,18 @@ $(function () {
         setDisPlayTo("vn", "none")
     }
 
-    $("#reset").click(function () {
+    function resetSelection() {
         setAllDisaplyToNone();
         $("#select_property").empty();
-        $("#select_object").value = "default";
-        $("#select_visual_attribute").value = "default";
+        $("#select_object").val("default");
+        $("#select_visual_attribute").val("default");
+        $("#filter_value").val("");
+    }
+
+
+    $("#reset").click(function () {
+        resetSelection();
+        gdo.net.app["SigmaGraph"].server.resetSigmaGraph(gdo.controlId);
     })
 
     gdo.net.app["SigmaGraph"].initControl();

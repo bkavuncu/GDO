@@ -24,6 +24,8 @@
     <!-- Custom Fonts -->
     <link href="../../Bootstrap/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="./styles/controlStyle.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.9.0/themes/prism-solarizedlight.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/CodeFlask.js/0.2.0/codeflask.min.css">
 </head>
 <body unselectable="on" class="unselectable">
     <script src="../../Scripts/jquery-2.1.4.min.js"></script>
@@ -33,6 +35,8 @@
     <script src="../../Bootstrap/dist/js/sb-admin-2.js"></script>
     <script src="../../Bootstrap/bower_components/metisMenu/dist/metisMenu.min.js"></script>
     <script src="~/Web/SigmaGraph/scripts/control.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.9.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/CodeFlask.js/0.1.1/codeflask.min.js"></script>
     <div class="wrapper" style="width: 97%">
         @{
             bool uploaded = false;
@@ -142,7 +146,6 @@
                                     <tr>
                                         <td style="width: 16%">
                                             <select id="select_object" required="" class="input_field">
-                                                <option value="default" hidden></option>
                                                 <option value="node">Node</option>
                                                 <option value="edge">Edge</option>
                                             </select>
@@ -165,10 +168,33 @@
                                             <td style="width: 20%">
                                                 <label>Customized Function</label>
                                             </td>
+                                            <td style="width: 20%">
+                                                <label>Filtering options</label>
+                                            </td>
+                                            <td>
+                                                <label>Value</label>
+                                            </td>
                                         </tr>
                                         <tr>
+                                            <!--
                                             <td style="width: 16%">
                                                 <input id="js_code"  type="text" required="" class="input_field"/>
+                                            </td>
+                                            -->
+                                            <td style="width: 16%">
+                                                <div id="js_code" class="code" style="height:200px;background-color:#222222;caret-color:white;border: 2px solid #2A9FD6"></div>
+                                            </td>
+                                            <td>
+                                                <select id="select_filter" required="" class="input_field">
+                                                    <option value="default" hidden></option>
+                                                    <option value="greater">greater</option>
+                                                    <option value="less">smaller</option>
+                                                    <option value="equal">equal</option>
+                                                    <option value="range">range</option>
+                                                </select>
+                                            </td>
+                                            <td style="width: 16%">
+                                                <input id="filter_value"  type="text" required="" class="input_field"/>
                                             </td>
                                         </tr>
                                     </tbody> 
@@ -183,8 +209,13 @@
                                         </tr>
                                         <tr>
                                             <td style="width: 16%">
+                                                <div id="js_code_c" class="code" style="height:200px;background-color:#222222;caret-color:white;border: 2px solid #2A9FD6"></div>
+                                            </td>
+                                            <!--
+                                            <td style="width: 16%">
                                                 <input id="js_code_c"  type="text" required="" class="input_field"/>
                                             </td>
+                                            -->
                                             <td style="width: 16%">
                                             <select id="select_color" required="" class="input_field">
                                                 <option value="#ff0000">red</option>
@@ -198,6 +229,9 @@
                                     <tbody id="vn" style="display: none">
                                         <tr>
                                             <td style="width: 20%">
+                                                <label>Customized Function</label>
+                                            </td>
+                                            <td style="width: 20%">
                                                 <label>Font Color</label>
                                             </td>
                                             <td style="width: 20%">
@@ -205,6 +239,9 @@
                                             </td>
                                         </tr>
                                         <tr>
+                                            <td style="width: 16%">
+                                                <div id="js_code_vn" class="code" style="height:200px;background-color:#222222;caret-color:white;border: 2px solid #2A9FD6"></div>
+                                            </td>
                                             <td style="width: 16%">
                                                 <select id="font_color" required="" class="input_field">
                                                     <option value="#ff0000">red</option>
