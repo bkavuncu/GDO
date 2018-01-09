@@ -45,8 +45,6 @@ gdo.net.app["SigmaGraph"].nameVertices = async function(params) {
     var fontSize = params[4];
     var labelAttr = params[5];
 
-    // gdo.sigmaInstance.settings({drawLabels: true, labelThreshold: 0, defaultLabelColor: fontColor, defaultLabelSize: parseInt(fontSize)});
-
     function helper(node) {
         return (node.attrs[attribute] != null && func(isNaN(node.attrs[attribute]) ? node.attrs[attribute] : node.attrs[attribute] - "0"));
     }
@@ -55,8 +53,15 @@ gdo.net.app["SigmaGraph"].nameVertices = async function(params) {
             node.label = helper(node) ? node.attrs[labelAttr] || "" : "";
         });
     } 
-    gdo.sigmaInstance.refresh({ skipIndexation: true });
+
+    await gdo.sigmaInstance.settings({drawLabels: true, labelThreshold: 0, defaultLabelColor: fontColor, defaultLabelSize: parseInt(fontSize)});
+
+    // setTimeout(function(){ 
+    gdo.sigmaInstance.refresh();
     gdo.net.app["SigmaGraph"].server.doneRendering(gdo.controlId);
+    // }, 3000);
+    // gdo.sigmaInstance.refresh({ skipIndexation: true });
+    // gdo.net.app["SigmaGraph"].server.doneRendering(gdo.controlId);
 }
 
 gdo.net.app["SigmaGraph"].colorByFunc = async function(params) {
@@ -141,32 +146,6 @@ gdo.net.app["SigmaGraph"].filterGraph = async function(attributeList) {
     } else if (objAttribute == "edge") {
         gdo.sigmaInstance.graph.edges().forEach(filterFunc);
     }
-    /*
-    gdo.stopWatch = window.performance.now();
-    const filePaths = await getFilesWithin();
-    console.log('Time to get graph object file paths: ' + (window.performance.now() - gdo.stopWatch));
-    console.log(filePaths[0]);
-    // Get the nodes and edges
-    gdo.stopWatch = window.performance.now();
-    let filesGraphObjects = await parseFilesToGraphObjects(filePaths);
-    console.log('Time to download and parse graph object files: ' + (window.performance.now() - gdo.stopWatch));
-    gdo.stopWatch = window.performance.now();
-    filesGraphObjects = filesGraphObjects.reduce((a, b) => a.concat(b), []);
-    console.log('Time to combine web worker results: ' + (window.performance.now() - gdo.stopWatch));
-
-    // Clear the sigma graph
-    gdo.sigmaInstance.graph.clear();
-    // Filter and add the nodes and edges to the graph
-    var func = eval('(' + textFunc + ')');
-    gdo.stopWatch = window.performance.now();
-    console.log(objAttribute);
-    if (objAttribute == "node") {
-        filesGraphObjects.forEach(item => handleFileGraphObjectsVisualAttributeNode(item, attribute, func));
-    } else {
-        filesGraphObjects.forEach(handleFileGraphObjects);
-    }
-    gdo.sigmaInstance.graph.nodes().forEach(convertServerCoordsToSigmaCoords);
-    */
     gdo.sigmaInstance.refresh({ skipIndexation: true });
     gdo.net.app["SigmaGraph"].server.doneRendering(gdo.controlId);
 }
@@ -211,53 +190,6 @@ async function getLeafBoxes() {
             });
     });
     return boxes;
-}
-
-function handleFileGraphObjectsVisualAttributeNode(fileGraphObjects, attr, filterFunc) {
-    deletedNode = new Set();
-
-    fileGraphObjects.nodes.forEach(node => {
-        if (node.attrs[attr] != null && filterFunc(isNaN(node.attrs[attr])) ? node.attrs[attr] : node.attrs[attr] - "0") {
-            console.log(node.attrs[attr]);
-            node.x = node.pos.x;
-            node.y = node.pos.y;
-            if (node.r || node.g || node.b) {
-                node.color = "#" +
-                    toPaddedHexString(node.r, 2) +
-                    toPaddedHexString(node.g, 2) +
-                    toPaddedHexString(node.b, 2);
-            } else {
-                node.color = "#89f";
-            }
-            // What should the max be? 5? 12?
-            node.size = Math.min(5, node.size) || 3;
-            try {
-                gdo.sigmaInstance.graph.addNode(node);
-            } catch (err) {
-            }
-        } else {
-            deletedNode.add(node.id);
-        }
-    });
-
-    fileGraphObjects.edges
-    .forEach(edge => {
-        edge.id = edge.source + " to " + edge.target;
-        if (edge.r || edge.g || edge.b) {
-            edge.color = "#" +
-                toPaddedHexString(edge.r, 2) +
-                toPaddedHexString(edge.g, 2) +
-                toPaddedHexString(edge.b, 2);
-        } else {
-            edge.color = "#339";
-        }
-        try {
-            if (!(deletedNode.has(edge.source) || deletedNode.has(edge.target))) {
-                gdo.sigmaInstance.graph.addEdge(edge);
-            }
-        } catch (err) {
-        }
-    });
 }
 
 /**

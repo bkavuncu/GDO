@@ -129,6 +129,16 @@ namespace GDO.Apps.SigmaGraph
             }
         }
 
+        public void SetLabelMode(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                Clients.Caller.setMessage("SigmaGraph is debugging.");
+                Clients.Group("" + instanceId).setLabelMode();
+                Clients.Caller.setMessage("SigmaGraph is debugged.");
+            }
+        }
+
         public void DoneRendering(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])
@@ -153,13 +163,6 @@ namespace GDO.Apps.SigmaGraph
                 var ga = (SigmaGraphApp) Cave.Deployment.Apps["SigmaGraph"].Instances[instanceId];
                 Clients.Caller.setAttribute(ga.Configuration.NodeAttributes, ga.Configuration.EdgeAttributes);
             }
-        }
-
-        public void ShowAllAttributes(int instanceId)
-        { 
-            lock (Cave.AppLocks[instanceId])
-            {
-            }             
         }
 
         public void Pan(int instanceId, double x, double y)

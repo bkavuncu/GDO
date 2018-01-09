@@ -33,12 +33,14 @@ $(function () {
         gdo.net.app["SigmaGraph"].colorByFunc(attribute);
     }
 
-    $.connection.sigmaGraphAppHub.client.nameVertices = function (attribute) {
-        if (gdo.sigmaInstance) {
-            var fontColor = attribute[3];
-            var fontSize = attribute[4];
-            gdo.sigmaInstance.settings({drawLabels: true, labelThreshold: 0, defaultLabelColor: fontColor, defaultLabelSize: parseInt(fontSize)});
+    $.connection.sigmaGraphAppHub.client.setLabelMode = function () {
+        if (gdo.sigmaGraphAppHub) {
+            gdo.sigmaInstance.settings({ labelThreshold: 0 });
         }
+        gdo.net.app["SigmaGraph"].renderGraph();
+    }
+
+    $.connection.sigmaGraphAppHub.client.nameVertices = function (attribute) {
         gdo.net.app["SigmaGraph"].nameVertices(attribute);
     }
 

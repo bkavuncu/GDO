@@ -396,5 +396,9 @@ $(function () {
         gdo.net.app["SigmaGraph"].server.resetSigmaGraph(gdo.controlId);
     })
 
+    $("#debug").click(function () {
+        gdo.net.app["SigmaGraph"].server.setLabelMode(gdo.controlId);
+    })
+
     gdo.net.app["SigmaGraph"].initControl();
 });
