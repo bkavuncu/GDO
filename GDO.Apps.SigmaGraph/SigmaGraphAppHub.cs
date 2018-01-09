@@ -37,6 +37,11 @@ namespace GDO.Apps.SigmaGraph
             Groups.Remove(Context.ConnectionId, "" + groupId);
         }
 
+        public void SaveGraph(string filename, string contents)
+        {
+            SigmaGraphApp.SaveGraph(filename, contents);
+        }
+
         public override void SignalConfigUpdated(int instanceId) {
             base.SignalConfigUpdated(instanceId);
             var ga = (SigmaGraphApp)Cave.Deployment.Apps["SigmaGraph"].Instances[instanceId];
@@ -66,7 +71,6 @@ namespace GDO.Apps.SigmaGraph
                     Clients.Caller.setMessage("Initiating processing of graph data in file: " + filename);
                     ga.ProcessGraph(filename);
                     Clients.Caller.setMessage("Processing of raw graph data is completed.");
-
                     // Clients.Group to broadcast and get all clients to update graph
                     Clients.Group("" + instanceId).renderGraph();
                     Clients.Caller.setMessage("SigmaGraph is now being rendered.");
@@ -86,7 +90,24 @@ namespace GDO.Apps.SigmaGraph
                 }
             }
         }
+        public void ResetSigmaGraph(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Group("" + instanceId).resetAndRender();
+                    Clients.Caller.setMessage("SigmaGraph is resetting.");
+                }
+                catch (Exception e)
+                {
+                    Clients.Caller.setMessage("Error: Processing of raw graph data failed to initiate.");
+                    Clients.Caller.setMessage(e.ToString());
+                    Log.Error("SigmaGraph: Error in sigma processing " + e);
+                }
+            }
 
+        }
         public List<string> GetFilesWithin(int instanceId, double x, double y, double xWidth, double yWidth)
         {
             lock (Cave.AppLocks[instanceId])
@@ -125,6 +146,15 @@ namespace GDO.Apps.SigmaGraph
             }
         }
 
+        public void SetAllAttributes(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                var ga = (SigmaGraphApp) Cave.Deployment.Apps["SigmaGraph"].Instances[instanceId];
+                Clients.Caller.setAttribute(ga.Configuration.NodeAttributes, ga.Configuration.EdgeAttributes);
+            }
+        }
+
         public void Pan(int instanceId, double x, double y)
         {
             lock (Cave.AppLocks[instanceId])
@@ -141,6 +171,96 @@ namespace GDO.Apps.SigmaGraph
                     Clients.Caller.setMessage("Error: Failed to trigger panning action.");
                     Clients.Caller.setMessage(e.ToString());
                     Log.Error("SigmaGraph: Error in Pan " + e);
+                }
+            }
+        }
+
+        public void TriggerColorByFunc(int instanceId, string objectAttr, string attribute, string textFunc)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Triggering Coloring Action");
+                    List<string> attrs = new List<string>();
+                    attrs.Add(objectAttr);
+                    attrs.Add(attribute);
+                    attrs.Add(textFunc);
+                    Clients.Group("" + instanceId).colorByFunc(attrs);
+                    Clients.Caller.setMessage("Triggered Coloring action.");
+                }
+                catch (Exception e)
+                {
+                    Clients.Caller.setMessage("Error: Failed to render coloredByFun graphml");
+                    Clients.Caller.setMessage(e.ToString());
+                    Log.Error(e);
+                }
+            }
+        }
+
+        public void TriggerNameVertices(int insanceId, string objectAttr, string attribute, string textFunc, string color, string fontSize, string labelAttr)
+        {
+            lock (Cave.AppLocks[insanceId])
+            {
+                Clients.Caller.setMessage("Triggering naming vertices Action");
+                List<string> attrs = new List<string>();
+                attrs.Add(objectAttr);
+                attrs.Add(attribute);
+                attrs.Add(textFunc);
+                attrs.Add(color);
+                attrs.Add(fontSize);
+                attrs.Add(labelAttr);
+                Clients.Group("" + insanceId).nameVertices(attrs);
+                Clients.Caller.setMessage("Triggered naming vertices Action");
+            }
+
+        }
+
+        public void TriggerColorByFilter(int instanceId, string objectAttr, string attribute, string textFunc, string color)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Triggering Coloring Filter Action");
+                    List<string> attrs = new List<string>();
+                    attrs.Add(objectAttr);
+                    attrs.Add(attribute);
+                    attrs.Add(textFunc);
+                    attrs.Add(color);
+                    Clients.Caller.setMessage("Triggered Coloring Filter Action");
+                    Clients.Group("" + instanceId).colorByFilter(attrs);
+                }
+                catch (Exception e)
+                {
+                    Clients.Caller.setMessage("Error: Failed to render coloredByFilter graphml");
+                    Clients.Caller.setMessage(e.ToString());
+                    Log.Error(e);
+                }
+            }
+        }
+
+        public void TriggerFilter(int instanceId, string objectAttr, string attribute, string textFunc)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Triggering filtering action.");
+                    // Clients.Caller.setMessage(attribute + " " + visualAttribute + " " + textFunc + " " + objectAttr);
+                    // TODO find a way to pass by map instead of list
+                    List<string> attrs = new List<string>();
+                    attrs.Add(objectAttr);
+                    attrs.Add(attribute);
+                    attrs.Add(textFunc);
+                    Clients.Group("" + instanceId).filterGraph(attrs);
+                    Clients.Caller.setMessage("Triggered filtering action.");
+                }
+                catch (Exception e)
+                {
+                    Clients.Caller.setMessage("Error: Failed to render filtered graphml");
+                    Clients.Caller.setMessage(e.ToString());
+                    Log.Error(e);
                 }
             }
         }

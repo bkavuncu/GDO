@@ -1,6 +1,7 @@
 ﻿@using System.IO
 @using System.Web
 @using GDO.Core
+@using GDO.Apps.SigmaGraph
 <!DOCTYPE html>
 
 <html>
@@ -23,6 +24,8 @@
     <!-- Custom Fonts -->
     <link href="../../Bootstrap/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="./styles/controlStyle.css">
+    <link rel="stylesheet" href="./styles/prism-solarizedlight.min.css">
+    <link rel="stylesheet" href="./styles/codeflask.min.css">
 </head>
 <body unselectable="on" class="unselectable">
     <script src="../../Scripts/jquery-2.1.4.min.js"></script>
@@ -32,9 +35,11 @@
     <script src="../../Bootstrap/dist/js/sb-admin-2.js"></script>
     <script src="../../Bootstrap/bower_components/metisMenu/dist/metisMenu.min.js"></script>
     <script src="~/Web/SigmaGraph/scripts/control.js"></script>
+    <script src="../../Scripts/CodeEditor/prism.min.js"></script>
+    <script src="../../Scripts/CodeEditor/codeflask.min.js"></script>
     <div class="wrapper" style="width: 97%">
         @{
-            var path = "";
+            bool uploaded = false;
             var filename = "";
             if (IsPost)
             {
@@ -43,15 +48,10 @@
                 if (file != null && !file.FileName.IsEmpty())   //need to add this check, because it tried to save empty file in subsequent button clicks
                 {
                     filename = Path.GetFileName(file.FileName);
-                    //foldername
-                    Directory.CreateDirectory(HttpContext.Current.Server.MapPath("~/Web/SigmaGraph/graphmls"));
-                    path = HttpContext.Current.Server.MapPath("~/Web/SigmaGraph/graphmls/") + filename;
-                    if (File.Exists(path)) {  // if the file already exists, delete it
-                        File.Delete(path);
-                    }
-                    file.SaveAs(path);
-                    }
+                    SigmaGraphApp.SaveGraph(filename, file);
+                    uploaded = true;
                 }
+            }
         }
         <div>
             <div class="row">
@@ -96,8 +96,7 @@
                                             <div class="input_field_div">
                                                 <select class="input_field" id="graph_digit">
                                                     @{
-                                                        string graphfolder = System.Web.HttpContext.Current.Server.MapPath("~/Web/SigmaGraph/graphmls");
-                                                        string[] files = Directory.GetFiles(graphfolder);
+                                                        string[] files = SigmaGraphApp.GraphMLFileList();
                                                     }
                                                     @foreach (var s in files)
                                                     {  <option value="@s.Split('\\').Last()">@s.Split('\\').Last()</option>  }
@@ -141,29 +140,143 @@
                                             <label>Property</label>
                                         </td>
                                         <td style="width: 20%">
-                                            <label>Visual Attribute</label>
-                                        </td>
-                                        <td style="width: 20%">
-                                            <label>Value</label>
+                                            <label>Visual Function</label>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td style="width: 20%">
-                                            <select id="select_object" required="" class="input_field"></select>
+                                        <td style="width: 16%">
+                                            <select id="select_object" required="" class="input_field">
+                                                <option value="default" hidden></option>
+                                                <option value="node">Node</option>
+                                                <option value="edge">Edge</option>
+                                            </select>
                                         </td>
-                                        <td style="width: 20%">
+                                        <td style="width: 16%">
                                             <select id="select_property" required="" class="input_field"></select>
                                         </td>
-                                        <td style="width: 20%">
-                                            <select id="select_visual_attribute" required="" class="input_field"></select>
-                                        </td>
-                                        <td style="width: 20%">
-                                            <select id="select_value" required="" class="input_field"></select>
-                                        </td>
-                                        <td style="width: 20%">
-                                            <button class="btn btn-danger" id="red">Apply</button>
+                                        <td style="width: 16%">
+                                            <select id="select_visual_attribute" required="" class="input_field">
+                                                <option value="default" hidden></option>
+                                                <option value="v">isVisible</option>
+                                                <option value="cfun">colorByFunc</option>
+                                                <option value="cf">colorByFilter</option>
+                                                <option value="vn">showVertexName</option>
+                                            </select>
                                         </td>
                                     </tr>
+                                    <tbody id="v" style="display: none">
+                                        <tr>
+                                            <td style="width: 20%">
+                                                <label>Customized Function</label>
+                                            </td>
+                                            <td style="width: 20%">
+                                                <label>Filtering options</label>
+                                            </td>
+                                            <td>
+                                                <label>Value</label>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <!--
+                                            <td style="width: 16%">
+                                                <input id="js_code"  type="text" required="" class="input_field"/>
+                                            </td>
+                                            -->
+                                            <td style="width: 16%">
+                                                <div id="js_code" class="code" style="height:200px;background-color:#222222;caret-color:white;border: 2px solid #2A9FD6"></div>
+                                            </td>
+                                            <td>
+                                                <select id="select_filter" required="" class="input_field">
+                                                    <option value="default" hidden></option>
+                                                    <option value="greater">greater</option>
+                                                    <option value="less">smaller</option>
+                                                    <option value="equal">equal</option>
+                                                    <option value="range">range</option>
+                                                </select>
+                                            </td>
+                                            <td style="width: 16%">
+                                                <input id="filter_value"  type="text" required="" class="input_field"/>
+                                            </td>
+                                        </tr>
+                                    </tbody> 
+                                    <tbody id="cfun_cf" style="display: none">
+                                        <tr>
+                                            <td style="width: 20%">
+                                                <label>Customized Function</label>
+                                            </td>
+                                            <td style="width: 20%">
+                                                <label>Color</label>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width: 16%">
+                                                <div id="js_code_c" style="height:200px;background-color:#222222;caret-color:white;border: 2px solid #2A9FD6"></div>
+                                            </td>
+                                            <!--
+                                            <td style="width: 16%">
+                                                <input id="js_code_c"  type="text" required="" class="input_field"/>
+                                            </td>
+                                            -->
+                                            <td style="width: 16%">
+                                            <select id="select_color" required="" class="input_field">
+                                                <option value="#ff0000">red</option>
+                                                <option value="#008000">green</option>
+                                                <option value="#0000ff">blue</option>
+                                                <option value="#ffff00">yellow</option>
+                                            </select>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tbody id="vn" style="display: none">
+                                        <tr>
+                                            <td style="width: 20%">
+                                                <label>Font Color</label>
+                                            </td>
+                                            <td style="width: 20%">
+                                                <label>Font Size</label>
+                                            </td>
+                                            <td style="width: 20%">
+                                                <label>Label Attribute</label>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <!--
+                                            <td style="width: 16%">
+                                                <div id="js_code_vn" class="code" style="height:200px;background-color:#222222;caret-color:white;border: 2px solid #2A9FD6"></div>
+                                            </td>
+                                            -->
+                                            <td style="width: 16%">
+                                                <select id="font_color" required="" class="input_field">
+                                                    <option value="#ff0000">red</option>
+                                                    <option value="#008000">green</option>
+                                                    <option value="#0000ff">blue</option>
+                                                    <option value="#ffff00">yellow</option>
+                                                </select>
+                                            </td>
+                                            <td style="width: 16%">
+                                                <select id="font_size" required="" class="input_field">
+                                                    <option value="14">Default</option>
+                                                    <option value="35">Large</option>
+                                                    <option value="22">Medium</option>
+                                                    <option value="6">Small</option>
+                                                    <option value="45">Presentation</option>
+                                                </select>
+                                            </td>
+                                            <td style="width: 16%">
+                                                <select id="select_label_property" required="" class="input_field"></select>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tbody id="final" style="display: block">
+                                        <tr>
+                                            <td style="width: 16%">
+                                                <button class="btn btn-primary" id="apply">Apply</button>
+                                            </td>
+                                            <td style="width: 16%">
+                                                <button class="btn btn-danger" id="reset">Reset</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
                                     <tr>
                                         <td>
                                             <label> Toggle panning (these buttons do not work)</label> <br/>
@@ -203,7 +316,7 @@
             </div>
         </div>
     </div>
-    @if (path != "")
+    @if (uploaded)
     {
         <script>
             $(function () {

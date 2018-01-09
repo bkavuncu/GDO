@@ -17,6 +17,8 @@ namespace GDO.Apps.SigmaGraph {
     public class SigmaGraphAppConfig : AppJsonConfiguration {
         public string FolderNameDigit;
         public string Filename { get; set; }
+        public List<string> NodeAttributes { get; set; }
+        public List<string> EdgeAttributes { get; set; }
 
         public override string GetJsonForBrowsers() {
             return "{}"; // we dont need to send anything to browsers.
@@ -62,15 +64,46 @@ namespace GDO.Apps.SigmaGraph {
 
         private QuadTreeNode<GraphObject> CurrentQuadTreeRoot;
 
+        private const String GRAPHML_DIR = "~/Web/SigmaGraph/graphmls/";
+        private const String QUADTREE_DIR = "~/Web/SigmaGraph/QuadTrees/";
+
 
         public void Init() {
             try {
-                Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/Web/SigmaGraph/graph"));
-                Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/Web/SigmaGraph/graphmls"));
+                Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath(GRAPHML_DIR));
             }
             catch (Exception e) {
-                Log.Error("failed to launch the Graphs App", e);
+                Log.Error("failed to launch the SigmaGraph App", e);
             }
+        }
+
+        public static string[] GraphMLFileList()
+        {
+            string graphfolder = System.Web.HttpContext.Current.Server.MapPath(GRAPHML_DIR);
+            return Directory.GetFiles(graphfolder);
+        }
+
+        public static string PrepareGraphMLDir(string filename)
+        {
+            var path = System.Web.HttpContext.Current.Server.MapPath(GRAPHML_DIR);
+            Directory.CreateDirectory(path);
+
+            path += filename;
+            if (File.Exists(path))
+            {  // if the file already exists, delete it
+                File.Delete(path);
+            }
+            return path;
+        }
+
+        public static void SaveGraph(string filename, System.Web.HttpPostedFileBase file)
+        {
+            file.SaveAs(PrepareGraphMLDir(filename));
+        }
+
+        public static void SaveGraph(string filename, string contents)
+        {
+            File.WriteAllText(PrepareGraphMLDir(filename), contents);
         }
 
         public void ProcessGraph(string filename) {
@@ -79,17 +112,19 @@ namespace GDO.Apps.SigmaGraph {
             this.Configuration.FolderNameDigit = CreateTemporyFolderId(filename);
 
             // if its already proccessed then load it 
-            if (TryLoadQuadTree()) return;
+            // if (TryLoadQuadTree()) return;
 
             Log.Info($"about to process quadtree '{filename}'");
             Directory.CreateDirectory(GetPathToQuadFolder);
             string graphMLfile =
-                System.Web.HttpContext.Current.Server.MapPath("~/Web/SigmaGraph/graphmls/" + filename);
+                System.Web.HttpContext.Current.Server.MapPath(GRAPHML_DIR + filename);
             var graph = GraphDataReader.ReadGraphMLData(graphMLfile);
             this.CurrentQuadTreeRoot = SigmaGraphQuadProcesor.ProcessGraph(graph, BasePath + this.Configuration.FolderNameDigit).Root;
+            this.Configuration.NodeAttributes = new List<string>(graph.NodeOtherFields);
+            this.Configuration.EdgeAttributes = new List<string>(graph.LinkKeys);
         }
 
-        private static string BasePath => System.Web.HttpContext.Current.Server.MapPath("~/Web/SigmaGraph/QuadTrees/");
+        private static string BasePath => System.Web.HttpContext.Current.Server.MapPath(QUADTREE_DIR);
         private string GetPathToQuadFolder => BasePath + this.Configuration.FolderNameDigit;
 
         /// <summary>
@@ -102,9 +137,13 @@ namespace GDO.Apps.SigmaGraph {
 
             if (Directory.Exists(GetPathToQuadFolder)) {
                 string savedQuadTree =
-                    System.Web.HttpContext.Current.Server.MapPath("~/Web/SigmaGraph/QuadTrees/" +
+                    System.Web.HttpContext.Current.Server.MapPath(QUADTREE_DIR +
                                                                   this.Configuration.FolderNameDigit +
                                                                   "/quad.json");
+                if (!File.Exists(savedQuadTree))
+                {
+                    return false;
+                }
                 JsonSerializerSettings settings = new JsonSerializerSettings();
                 settings.Converters.Add(new QuadTreeNodeConverter());
                 this.CurrentQuadTreeRoot =
