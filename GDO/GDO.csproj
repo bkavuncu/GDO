@@ -1271,6 +1271,7 @@
     <Compile Include="Core\Apps\IHubLog.cs" />
     <Compile Include="Core\CaveDeployment.cs" />
     <Compile Include="Core\CaveLayout.cs" />
+    <Compile Include="Core\CaveMonitor.cs" />
     <Compile Include="Core\GDOAPISingleton.cs" />
     <Compile Include="Core\Scenarios\Element.cs" />
     <Compile Include="Core\Apps\ICompositeAppHub.cs" />

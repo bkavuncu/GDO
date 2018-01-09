@@ -13,12 +13,28 @@ $(function () {
         gdo.net.app["SigmaGraph"].renderGraph();
     }
 
+    $.connection.sigmaGraphAppHub.client.resetAndRender = function () {
+        if (gdo.sigmaInstance) {
+            gdo.sigmaInstance.settings({
+                labelThreshold: 8,
+                defaultLabelColor: "#000",
+                defaultLabelSize: 14
+            });
+            gdo.sigmaInstance.refresh();
+        }
+        gdo.net.app["SigmaGraph"].renderGraph();
+    }
+
     $.connection.sigmaGraphAppHub.client.filterGraph = function (attribute) {
         gdo.net.app["SigmaGraph"].filterGraph(attribute);
     }
 
     $.connection.sigmaGraphAppHub.client.colorByFunc = function (attribute) {
         gdo.net.app["SigmaGraph"].colorByFunc(attribute);
+    }
+
+    $.connection.sigmaGraphAppHub.client.nameVertices = function (attribute) {
+        gdo.net.app["SigmaGraph"].nameVertices(attribute);
     }
 
     $.connection.sigmaGraphAppHub.client.colorByFilter = function (attribute) {

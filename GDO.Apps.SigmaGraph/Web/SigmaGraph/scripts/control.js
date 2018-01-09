@@ -175,17 +175,23 @@ $(window).ready(function () {
 });
 
 $(function () {
+    var flaskOne = new CodeFlask;
+    flaskOne.run('#js_code', { language: 'javascript', lineNumbers: true });
+    
+    var flaskTwo = new CodeFlask;
+    flaskTwo.run('#js_code_c', { language: 'javascript', lineNumbers: true });
     var gdo = parent.gdo;
     document.getElementById("showGraph").onclick = function () {
         gdo.net.app["SigmaGraph"].server.showGraphInControlUI(gdo.controlId);
     }
 
-    document.getElementById("map_toggle").onclick = function () {
+    $("#map_toggle").click(function () {
         gdo.net.app["SigmaGraph"].server.toggleMap(gdo.controlId);
-    }
+    });
 
     $("#image_digit_button").click(function () {
         var gdo = parent.gdo;
+        resetSelection();
         gdo.net.app["SigmaGraph"].server.initiateProcessing(gdo.controlId, $("#graph_digit").val());
     });
 
@@ -245,7 +251,7 @@ $(function () {
 
     $("#select_object").change(function () {
         $("#select_property").empty();
-         
+        $("#select_label_property").empty();
         var e = document.getElementById("select_object");
         var value = e.options[e.selectedIndex].value;
 
@@ -260,45 +266,139 @@ $(function () {
                         attributes = gdo.net.app["SigmaGraph"].nodeAttributes;
                     }
 
-                    var attributeList = document.getElementById("select_property");
-                    for (var i = 0; i < attributes.length; i++) {
-                        var entry = new Option(attributes[i], attributes[i]);
-                        attributeList.options.add(entry);
-                    }
+                    function helper(attributeList) {
+                        for (var i = 0; i < attributes.length; i++) {
+                            var entry = new Option(attributes[i], attributes[i]);
+                            attributeList.options.add(entry);
+                        }
+                    };
+                    helper(document.getElementById("select_property"));
+                    helper(document.getElementById("select_label_property"));
             });
         });
         
     });
 
-    $("#select_property").change(function () {
-        
-    });
-
     $("#select_visual_attribute").change(function () {
-         
+        var visual = $("#select_visual_attribute").val();
+        switch (visual) {
+            case "v":
+                setAllDisaplyToNone();
+                setDisPlayTo("v", "block");
+                break;
+            case "cfun":
+                setAllDisaplyToNone();
+                setDisPlayTo("cfun_cf", "block");
+                break;
+            case "cf":
+                setAllDisaplyToNone();
+                setDisPlayTo("cfun_cf", "block");
+                break;
+            case "vn":
+                setAllDisaplyToNone();
+                setDisPlayTo("v", "block");
+                setDisPlayTo("vn", "block");
+                break;
+        }
     })
 
-    $("#red").click(function () {
+    function getCodeFromEditor(codeId) {
+        var str = document.getElementById(codeId).children[1].innerText;
+        return str.replace(/\n/g, '');
+    }
+
+    function getFilteringFunction() {
+        var filterValue = $("#filter_value").val();
+        var relation = $("#select_filter").val();
+        if (filterValue == "") {
+            var funcText = getCodeFromEditor("js_code");
+            return funcText;
+        } else {
+            var funcText = "function(x) { return x ";
+            var comp = "";
+            switch (relation) {
+                case "greater":
+                    comp = ">";
+                    break;
+                case "less":
+                    comp = "<";
+                    break;
+                case "equal":
+                    comp = "==";
+                    break;
+                case "range":
+                    comp = "!==";
+                    break;
+                case "range":
+                    var res = filterValue.split("-");
+                    var small = res[0];
+                    var big = res[1];
+                    return "function(x) { return x > " + small + " && x < " + big + ";}"
+                default:
+                    comp = ">";
+                    break;
+            }
+            funcText += (comp + " " + filterValue + ";}");
+            return funcText;
+        }
+    }
+
+    $("#apply").click(function () {
         var type = $("#select_object").val();
         var property = $("#select_property").val();
         var visual = $("#select_visual_attribute").val();
-        var funcText = $("#js_code").val();
-        var color = $("#select_color").val();
-        console.log(color);
         switch (visual) {
-            case "isVisible":
-                gdo.net.app["SigmaGraph"].server.triggerFilter(gdo.controlId, type, property, visual, funcText);
+            case "v":
+                var funcText = getFilteringFunction();
+                console.log(funcText);
+                gdo.net.app["SigmaGraph"].server.triggerFilter(gdo.controlId, type, property, funcText);
                 break;
-            case "colorByFunc":
-                gdo.net.app["SigmaGraph"].server.triggerColorByFunc(gdo.controlId, type, property, funcText);
+            case "cfun":
+                var funcTextColour = getCodeFromEditor("js_code_c");
+                gdo.net.app["SigmaGraph"].server.triggerColorByFunc(gdo.controlId, type, property, funcTextColour);
                 break;
-            case "colorByFilter":
-                gdo.net.app["SigmaGraph"].server.triggerColorByFilter(gdo.controlId, type, property, funcText, color);
+            case "cf":
+                var color = $("#select_color").val();
+                var funcTextColour = getCodeFromEditor("js_code_c");
+                gdo.net.app["SigmaGraph"].server.triggerColorByFilter(gdo.controlId, type, property, funcTextColour, color);
+                break;
+            case "vn":
+                var funcTextVn = getFilteringFunction() || "function(x) {return true;}";
+                console.log(funcTextVn.length);
+                var fontColor = $("#font_color").val();
+                var fontSize = $("#font_size").val();
+                var labelAttr = $("#select_label_property").val();
+                gdo.net.app["SigmaGraph"].server.triggerNameVertices(gdo.controlId, type, property, funcTextVn, fontColor, fontSize, labelAttr);
                 break;
             default:
                 break;
         }
     });
+
+    function setDisPlayTo(id, value) {
+        document.getElementById(id).style.display = value;
+    }
+    
+    function setAllDisaplyToNone() {
+        setDisPlayTo("v", "none")
+        setDisPlayTo("cfun_cf", "none")
+        setDisPlayTo("vn", "none")
+    }
+
+    function resetSelection() {
+        setAllDisaplyToNone();
+        $("#select_property").empty();
+        $("#select_label_property").empty();
+        $("#select_object").val("default");
+        $("#select_visual_attribute").val("default");
+        $("#filter_value").val("");
+    }
+
+
+    $("#reset").click(function () {
+        resetSelection();
+        gdo.net.app["SigmaGraph"].server.resetSigmaGraph(gdo.controlId);
+    })
 
     gdo.net.app["SigmaGraph"].initControl();
 });

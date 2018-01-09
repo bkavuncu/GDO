@@ -24,6 +24,8 @@
     <!-- Custom Fonts -->
     <link href="../../Bootstrap/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="./styles/controlStyle.css">
+    <link rel="stylesheet" href="./styles/prism-solarizedlight.min.css">
+    <link rel="stylesheet" href="./styles/codeflask.min.css">
 </head>
 <body unselectable="on" class="unselectable">
     <script src="../../Scripts/jquery-2.1.4.min.js"></script>
@@ -33,6 +35,8 @@
     <script src="../../Bootstrap/dist/js/sb-admin-2.js"></script>
     <script src="../../Bootstrap/bower_components/metisMenu/dist/metisMenu.min.js"></script>
     <script src="~/Web/SigmaGraph/scripts/control.js"></script>
+    <script src="../../Scripts/CodeEditor/prism.min.js"></script>
+    <script src="../../Scripts/CodeEditor/codeflask.min.js"></script>
     <div class="wrapper" style="width: 97%">
         @{
             bool uploaded = false;
@@ -136,75 +140,143 @@
                                             <label>Property</label>
                                         </td>
                                         <td style="width: 20%">
-                                            <label>Visual Attribute</label>
-                                        </td>
-                                        <td style="width: 20%">
-                                            <label>Value</label>
+                                            <label>Visual Function</label>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td style="width: 16%">
                                             <select id="select_object" required="" class="input_field">
-                                                <option hidden></option>
+                                                <option value="default" hidden></option>
                                                 <option value="node">Node</option>
                                                 <option value="edge">Edge</option>
                                             </select>
                                         </td>
-                                        
-                                        
                                         <td style="width: 16%">
                                             <select id="select_property" required="" class="input_field"></select>
                                         </td>
-                                        
-                                        
                                         <td style="width: 16%">
                                             <select id="select_visual_attribute" required="" class="input_field">
-                                                <option value="isVisible">isVisible</option>
-                                                <option value="colorByFunc">colorByFunc</option>
-                                                <option value="colorByFilter">colorByFilter</option>
+                                                <option value="default" hidden></option>
+                                                <option value="v">isVisible</option>
+                                                <option value="cfun">colorByFunc</option>
+                                                <option value="cf">colorByFilter</option>
+                                                <option value="vn">showVertexName</option>
                                             </select>
                                         </td>
-                                        
-                                        
-                                        <td style="width: 16%">
+                                    </tr>
+                                    <tbody id="v" style="display: none">
+                                        <tr>
+                                            <td style="width: 20%">
+                                                <label>Customized Function</label>
+                                            </td>
+                                            <td style="width: 20%">
+                                                <label>Filtering options</label>
+                                            </td>
+                                            <td>
+                                                <label>Value</label>
+                                            </td>
+                                        </tr>
+                                        <tr>
                                             <!--
-                                            <select id="select_value" required="" class="input_field"></select>
+                                            <td style="width: 16%">
+                                                <input id="js_code"  type="text" required="" class="input_field"/>
+                                            </td>
                                             -->
-                                            <input id="js_code"  type="text" required="" class="input_field" />
-                                            
+                                            <td style="width: 16%">
+                                                <div id="js_code" class="code" style="height:200px;background-color:#222222;caret-color:white;border: 2px solid #2A9FD6"></div>
+                                            </td>
+                                            <td>
+                                                <select id="select_filter" required="" class="input_field">
+                                                    <option value="default" hidden></option>
+                                                    <option value="greater">greater</option>
+                                                    <option value="less">smaller</option>
+                                                    <option value="equal">equal</option>
+                                                    <option value="range">range</option>
+                                                </select>
+                                            </td>
+                                            <td style="width: 16%">
+                                                <input id="filter_value"  type="text" required="" class="input_field"/>
+                                            </td>
+                                        </tr>
+                                    </tbody> 
+                                    <tbody id="cfun_cf" style="display: none">
+                                        <tr>
+                                            <td style="width: 20%">
+                                                <label>Customized Function</label>
+                                            </td>
+                                            <td style="width: 20%">
+                                                <label>Color</label>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width: 16%">
+                                                <div id="js_code_c" style="height:200px;background-color:#222222;caret-color:white;border: 2px solid #2A9FD6"></div>
+                                            </td>
                                             <!--
-                                            <div class="form-group">
-                                                <textarea class="form-control" rows="5" id="js_code" 
-                                                    placeholder="function(x) { return true; }"
-                                                 ></textarea>
-                                            </div>
-                                        -->
-                                        </td>
-                                        
-
-                                        <td style="width: 16%">
+                                            <td style="width: 16%">
+                                                <input id="js_code_c"  type="text" required="" class="input_field"/>
+                                            </td>
+                                            -->
+                                            <td style="width: 16%">
                                             <select id="select_color" required="" class="input_field">
                                                 <option value="#ff0000">red</option>
+                                                <option value="#008000">green</option>
+                                                <option value="#0000ff">blue</option>
+                                                <option value="#ffff00">yellow</option>
                                             </select>
-                                        </td>
-
-
-                                        
-                                        <td style="width: 16%">
-                                            <button class="btn btn-danger" id="red">Apply</button>
-                                        </td>
-
-                                        
-
-                                        <!--
-                                        <td style="width: 20%">
-                                            <select id="attributes" required="" class="input_field"></select>
-                                        </td>
-                                        <td style="width: 20%">
-                                            <button class="btn btn-default" id="showAll">&nbsp;Show All</button>
-                                        </td>
-                                        -->
-                                    </tr>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tbody id="vn" style="display: none">
+                                        <tr>
+                                            <td style="width: 20%">
+                                                <label>Font Color</label>
+                                            </td>
+                                            <td style="width: 20%">
+                                                <label>Font Size</label>
+                                            </td>
+                                            <td style="width: 20%">
+                                                <label>Label Attribute</label>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <!--
+                                            <td style="width: 16%">
+                                                <div id="js_code_vn" class="code" style="height:200px;background-color:#222222;caret-color:white;border: 2px solid #2A9FD6"></div>
+                                            </td>
+                                            -->
+                                            <td style="width: 16%">
+                                                <select id="font_color" required="" class="input_field">
+                                                    <option value="#ff0000">red</option>
+                                                    <option value="#008000">green</option>
+                                                    <option value="#0000ff">blue</option>
+                                                    <option value="#ffff00">yellow</option>
+                                                </select>
+                                            </td>
+                                            <td style="width: 16%">
+                                                <select id="font_size" required="" class="input_field">
+                                                    <option value="14">Default</option>
+                                                    <option value="35">Large</option>
+                                                    <option value="22">Medium</option>
+                                                    <option value="6">Small</option>
+                                                    <option value="45">Presentation</option>
+                                                </select>
+                                            </td>
+                                            <td style="width: 16%">
+                                                <select id="select_label_property" required="" class="input_field"></select>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tbody id="final" style="display: block">
+                                        <tr>
+                                            <td style="width: 16%">
+                                                <button class="btn btn-primary" id="apply">Apply</button>
+                                            </td>
+                                            <td style="width: 16%">
+                                                <button class="btn btn-danger" id="reset">Reset</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
                                     <tr>
                                         <td>
                                             <label> Toggle panning (these buttons do not work)</label> <br/>

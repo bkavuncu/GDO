@@ -96,7 +96,24 @@ namespace GDO.Apps.SigmaGraph
                 }
             }
         }
+        public void ResetSigmaGraph(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Group("" + instanceId).resetAndRender();
+                    Clients.Caller.setMessage("SigmaGraph is resetting.");
+                }
+                catch (Exception e)
+                {
+                    Clients.Caller.setMessage("Error: Processing of raw graph data failed to initiate.");
+                    Clients.Caller.setMessage(e.ToString());
+                    Log.Error("SigmaGraph: Error in sigma processing " + e);
+                }
+            }
 
+        }
         public List<string> GetFilesWithin(int instanceId, double x, double y, double xWidth, double yWidth)
         {
             lock (Cave.AppLocks[instanceId])
@@ -212,6 +229,24 @@ namespace GDO.Apps.SigmaGraph
             }
         }
 
+        public void TriggerNameVertices(int insanceId, string objectAttr, string attribute, string textFunc, string color, string fontSize, string labelAttr)
+        {
+            lock (Cave.AppLocks[insanceId])
+            {
+                Clients.Caller.setMessage("Triggering naming vertices Action");
+                List<string> attrs = new List<string>();
+                attrs.Add(objectAttr);
+                attrs.Add(attribute);
+                attrs.Add(textFunc);
+                attrs.Add(color);
+                attrs.Add(fontSize);
+                attrs.Add(labelAttr);
+                Clients.Group("" + insanceId).nameVertices(attrs);
+                Clients.Caller.setMessage("Triggered naming vertices Action");
+            }
+
+        }
+
         public void TriggerColorByFilter(int instanceId, string objectAttr, string attribute, string textFunc, string color)
         {
             lock (Cave.AppLocks[instanceId])
@@ -236,7 +271,7 @@ namespace GDO.Apps.SigmaGraph
             }
         }
 
-        public void TriggerFilter(int instanceId, string objectAttr, string attribute, string visualAttribute, string textFunc)
+        public void TriggerFilter(int instanceId, string objectAttr, string attribute, string textFunc)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -248,7 +283,6 @@ namespace GDO.Apps.SigmaGraph
                     List<string> attrs = new List<string>();
                     attrs.Add(objectAttr);
                     attrs.Add(attribute);
-                    attrs.Add(visualAttribute);
                     attrs.Add(textFunc);
                     Clients.Group("" + instanceId).filterGraph(attrs);
                     Clients.Caller.setMessage("Triggered filtering action.");
