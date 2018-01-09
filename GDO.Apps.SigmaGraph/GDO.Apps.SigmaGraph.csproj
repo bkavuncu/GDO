@@ -117,6 +117,10 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Configurations\SigmaGraph\Default.json" />
+    <Content Include="Web\SigmaGraph\styles\codeflask.min.css" />
+    <Content Include="Scripts\CodeEditor\codeflask.min.js" />
+    <Content Include="Web\SigmaGraph\styles\prism-solarizedlight.min.css" />
+    <Content Include="Scripts\CodeEditor\prism.min.js" />
     <Content Include="Scripts\Control\fieldOfViewCanvas.js" />
     <Content Include="Scripts\Control\openseadragon\images\button_grouphover.png" />
     <Content Include="Scripts\Control\openseadragon\images\button_hover.png" />
@@ -197,6 +201,8 @@
     <Content Include="Web\SigmaGraph\graphmls\marvel_heroes.graphml" />
     <Content Include="Web\SigmaGraph\graphmls\N22963E48436.graphml" />
     <Content Include="Web\SigmaGraph\graphmls\sample.graphml" />
+    <Content Include="Web\SigmaGraph\graphmls\testfilterOne.graphml" />
+    <Content Include="Web\SigmaGraph\graphmls\testfilterTwo.graphml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Scripts\SigmaGraph\gdo.apps.SigmaGraph.js" />
