@@ -180,9 +180,9 @@ $(function () {
         gdo.net.app["SigmaGraph"].server.showGraphInControlUI(gdo.controlId);
     }
 
-    document.getElementById("map_toggle").onclick = function () {
+    $("#map_toggle").click(function () {
         gdo.net.app["SigmaGraph"].server.toggleMap(gdo.controlId);
-    }
+    });
 
     $("#image_digit_button").click(function () {
         var gdo = parent.gdo;
