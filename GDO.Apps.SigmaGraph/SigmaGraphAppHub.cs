@@ -129,16 +129,6 @@ namespace GDO.Apps.SigmaGraph
             }
         }
 
-        public void SetLabelMode(int instanceId)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                Clients.Caller.setMessage("SigmaGraph is debugging.");
-                Clients.Group("" + instanceId).setLabelMode();
-                Clients.Caller.setMessage("SigmaGraph is debugged.");
-            }
-        }
-
         public void DoneRendering(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])

@@ -33,13 +33,6 @@ $(function () {
         gdo.net.app["SigmaGraph"].colorByFunc(attribute);
     }
 
-    $.connection.sigmaGraphAppHub.client.setLabelMode = function () {
-        if (gdo.sigmaGraphAppHub) {
-            gdo.sigmaInstance.settings({ labelThreshold: 0 });
-        }
-        gdo.net.app["SigmaGraph"].renderGraph();
-    }
-
     $.connection.sigmaGraphAppHub.client.nameVertices = function (attribute) {
         gdo.net.app["SigmaGraph"].nameVertices(attribute);
     }
