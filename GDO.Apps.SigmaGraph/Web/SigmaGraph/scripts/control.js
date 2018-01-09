@@ -175,9 +175,11 @@ $(window).ready(function () {
 });
 
 $(function () {
-    var flask = new CodeFlask;
-    flask.runAll('.code', { language: 'javascript', lineNumbers: true })
+    var flaskOne = new CodeFlask;
+    flaskOne.run('#js_code', { language: 'javascript', lineNumbers: true });
     
+    var flaskTwo = new CodeFlask;
+    flaskTwo.run('#js_code_c', { language: 'javascript', lineNumbers: true });
     var gdo = parent.gdo;
     document.getElementById("showGraph").onclick = function () {
         gdo.net.app["SigmaGraph"].server.showGraphInControlUI(gdo.controlId);
@@ -245,7 +247,7 @@ $(function () {
 
     $("#select_object").change(function () {
         $("#select_property").empty();
-         
+        $("#select_label_property").empty();
         var e = document.getElementById("select_object");
         var value = e.options[e.selectedIndex].value;
 
@@ -260,11 +262,14 @@ $(function () {
                         attributes = gdo.net.app["SigmaGraph"].nodeAttributes;
                     }
 
-                    var attributeList = document.getElementById("select_property");
-                    for (var i = 0; i < attributes.length; i++) {
-                        var entry = new Option(attributes[i], attributes[i]);
-                        attributeList.options.add(entry);
-                    }
+                    function helper(attributeList) {
+                        for (var i = 0; i < attributes.length; i++) {
+                            var entry = new Option(attributes[i], attributes[i]);
+                            attributeList.options.add(entry);
+                        }
+                    };
+                    helper(document.getElementById("select_property"));
+                    helper(document.getElementById("select_label_property"));
             });
         });
         
@@ -287,13 +292,15 @@ $(function () {
                 break;
             case "vn":
                 setAllDisaplyToNone();
+                setDisPlayTo("v", "block");
                 setDisPlayTo("vn", "block");
                 break;
         }
     })
 
     function getCodeFromEditor(codeId) {
-        return document.getElementById(codeId).children[1].innerText;
+        var str = document.getElementById(codeId).children[1].innerText;
+        return str.replace(/\n/g, '');
     }
 
     function getFilteringFunction() {
@@ -303,9 +310,9 @@ $(function () {
             var funcText = getCodeFromEditor("js_code");
             return funcText;
         } else {
-            var funcText = "function(x) { x ";
+            var funcText = "function(x) { return x ";
             var comp = "";
-            switch (filterValue) {
+            switch (relation) {
                 case "greater":
                     comp = ">";
                     break;
@@ -318,6 +325,11 @@ $(function () {
                 case "range":
                     comp = "!==";
                     break;
+                case "range":
+                    var res = filterValue.split("-");
+                    var small = res[0];
+                    var big = res[1];
+                    return "function(x) { return x > " + small + " && x < " + big + ";}"
                 default:
                     comp = ">";
                     break;
@@ -335,7 +347,7 @@ $(function () {
             case "v":
                 var funcText = getFilteringFunction();
                 console.log(funcText);
-                gdo.net.app["SigmaGraph"].server.triggerFilter(gdo.controlId, type, property, visual, funcText);
+                gdo.net.app["SigmaGraph"].server.triggerFilter(gdo.controlId, type, property, funcText);
                 break;
             case "cfun":
                 var funcTextColour = getCodeFromEditor("js_code_c");
@@ -347,10 +359,12 @@ $(function () {
                 gdo.net.app["SigmaGraph"].server.triggerColorByFilter(gdo.controlId, type, property, funcTextColour, color);
                 break;
             case "vn":
-                var funcTextVn = getCodeFromEditor("js_code_vn");
+                var funcTextVn = getFilteringFunction() || "function(x) {return true;}";
+                console.log(funcTextVn.length);
                 var fontColor = $("#font_color").val();
                 var fontSize = $("#font_size").val();
-                gdo.net.app["SigmaGraph"].server.triggerNamingVertices(god.controlId, type, property, funcTextVn, fontColor, fontSize);
+                var labelAttr = $("#select_label_property").val();
+                gdo.net.app["SigmaGraph"].server.triggerNameVertices(gdo.controlId, type, property, funcTextVn, fontColor, fontSize, labelAttr);
                 break;
             default:
                 break;
@@ -370,6 +384,7 @@ $(function () {
     function resetSelection() {
         setAllDisaplyToNone();
         $("#select_property").empty();
+        $("#select_label_property").empty();
         $("#select_object").val("default");
         $("#select_visual_attribute").val("default");
         $("#filter_value").val("");

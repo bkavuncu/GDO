@@ -96,7 +96,7 @@ namespace GDO.Apps.SigmaGraph
             {
                 try
                 {
-                    Clients.Group("" + instanceId).renderGraph();
+                    Clients.Group("" + instanceId).resetAndRender();
                     Clients.Caller.setMessage("SigmaGraph is resetting.");
                 }
                 catch (Exception e)
@@ -205,11 +205,20 @@ namespace GDO.Apps.SigmaGraph
             }
         }
 
-        public void TriggerNamingVertices(int insanceId, string objectAttr, string attribute, string textFunc, string color, string fontSize)
+        public void TriggerNameVertices(int insanceId, string objectAttr, string attribute, string textFunc, string color, string fontSize, string labelAttr)
         {
             lock (Cave.AppLocks[insanceId])
             {
-                
+                Clients.Caller.setMessage("Triggering naming vertices Action");
+                List<string> attrs = new List<string>();
+                attrs.Add(objectAttr);
+                attrs.Add(attribute);
+                attrs.Add(textFunc);
+                attrs.Add(color);
+                attrs.Add(fontSize);
+                attrs.Add(labelAttr);
+                Clients.Group("" + insanceId).nameVertices(attrs);
+                Clients.Caller.setMessage("Triggered naming vertices Action");
             }
 
         }
@@ -238,7 +247,7 @@ namespace GDO.Apps.SigmaGraph
             }
         }
 
-        public void TriggerFilter(int instanceId, string objectAttr, string attribute, string visualAttribute, string textFunc)
+        public void TriggerFilter(int instanceId, string objectAttr, string attribute, string textFunc)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -250,7 +259,6 @@ namespace GDO.Apps.SigmaGraph
                     List<string> attrs = new List<string>();
                     attrs.Add(objectAttr);
                     attrs.Add(attribute);
-                    attrs.Add(visualAttribute);
                     attrs.Add(textFunc);
                     Clients.Group("" + instanceId).filterGraph(attrs);
                     Clients.Caller.setMessage("Triggered filtering action.");
