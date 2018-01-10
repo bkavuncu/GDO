@@ -13,9 +13,39 @@ $(function () {
         gdo.net.app["SigmaGraph"].renderGraph();
     }
 
+    $.connection.sigmaGraphAppHub.client.resetAndRender = function () {
+        if (gdo.sigmaInstance) {
+            gdo.sigmaInstance.settings({
+                labelThreshold: 8,
+                defaultLabelColor: "#000",
+                defaultLabelSize: 14
+            });
+            gdo.sigmaInstance.refresh();
+        }
+        gdo.net.app["SigmaGraph"].renderGraph();
+    }
+
+    $.connection.sigmaGraphAppHub.client.filterGraph = function (attribute) {
+        gdo.net.app["SigmaGraph"].filterGraph(attribute);
+    }
+
+    $.connection.sigmaGraphAppHub.client.colorByFunc = function (attribute) {
+        gdo.net.app["SigmaGraph"].colorByFunc(attribute);
+    }
+
+    $.connection.sigmaGraphAppHub.client.nameVertices = function (attribute) {
+        gdo.net.app["SigmaGraph"].nameVertices(attribute);
+    }
+
+    $.connection.sigmaGraphAppHub.client.colorByFilter = function (attribute) {
+        gdo.net.app["SigmaGraph"].colorByFilter(attribute);
+    }
+
     $.connection.sigmaGraphAppHub.client.pan = gdo.net.app["SigmaGraph"].pan;
 
     $.connection.sigmaGraphAppHub.client.zoom = gdo.net.app["SigmaGraph"].zoom;
+
+    $.connection.sigmaGraphAppHub.client.toggleMap = gdo.net.app["SigmaGraph"].toggleMap;
 
     $.connection.sigmaGraphAppHub.client.showSpinner = gdo.net.app["SigmaGraph"].showSpinner;
 
@@ -39,6 +69,7 @@ $(function () {
 
     $.connection.sigmaGraphAppHub.client.setMessage = function (message) {
         gdo.consoleOut('.SIGMAGRAPHRENDERER', 1, 'Message from server: ' + message);
+        gdo.net.app["SigmaGraph"].attributes = message;
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             var logDom = $("iframe").contents().find("#message_from_server");
             // Append new "p" element for each msg, instead of replacing existing one
@@ -46,6 +77,15 @@ $(function () {
             scroll_bottom(logDom[0]);
         }
     }
+
+    $.connection.sigmaGraphAppHub.client.setAttribute = function (nodeAttrs, edgeAttrs) {
+        gdo.consoleOut('.SIGMAGRAPHRENDERER', 1, 'Message from server: set attributes');
+        gdo.net.app["SigmaGraph"].nodeAttributes = nodeAttrs;
+        gdo.net.app["SigmaGraph"].edgeAttributes = edgeAttrs;
+    }
+
+
+
 
     $.connection.sigmaGraphAppHub.client.logTime = function (message) {
         var logDom = $("iframe").contents().find("#message_from_server");
@@ -55,6 +95,11 @@ $(function () {
     }
 });
 
+gdo.net.app["SigmaGraph"].attributes = [];
+gdo.net.app["SigmaGraph"].nodeAttributes = [];
+gdo.net.app["SigmaGraph"].edgeAttributes = [];
+gdo.net.app["SigmaGraph"].visualAttributes = ["isVisible"];
+gdo.net.app["SigmaGraph"].filterConfig = {};
 gdo.net.app["SigmaGraph"].initClient = function () {
     gdo.net.app["SigmaGraph"].initInstanceGlobalConstants();
     gdo.consoleOut('.SIGMAGRAPHRENDERER', 1, 'Initializing Graph Renderer App Client at Node ' + gdo.clientId);
@@ -78,3 +123,4 @@ gdo.loadScript('initializeGlobals', 'SigmaGraph', gdo.SCRIPT_TYPE.APP);
 gdo.loadScript('render', 'SigmaGraph', gdo.SCRIPT_TYPE.APP);
 gdo.loadScript('changeFieldOfView', 'SigmaGraph', gdo.SCRIPT_TYPE.APP);
 gdo.loadScript('updateModel', 'SigmaGraph', gdo.SCRIPT_TYPE.APP);
+gdo.loadScript('mapping', 'SigmaGraph', gdo.SCRIPT_TYPE.APP);
