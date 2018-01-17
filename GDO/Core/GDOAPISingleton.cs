@@ -22,10 +22,11 @@ namespace GDO.Core {
                 GDOHub gdoHub = CreateHub(name);
                 string appName = Cave.GetAppName(instanceId);
                 var appHub = Cave.Deployment.Apps[appName].Instances[instanceId].App.Hub;
+                             //Cave.Deployment.Apps[Name].Hub.Clients.Group("0").renderLabels(field,color)
                 var gdoapphub = appHub as GDOHub;
-                gdoHub.SetStateFrom(gdoapphub);
+                //gdoHub.SetStateFrom(gdoapphub); todovdavid is testing this 
 
-                return (IAppHub) gdoHub;
+                return (IAppHub) gdoapphub;//todo try returning hub directly, i fear this may be stale as it was created on original deployment 
             }
             catch (Exception e) {
                 Logger.Error($"failed to find hub {name} instance {instanceId} "+e);

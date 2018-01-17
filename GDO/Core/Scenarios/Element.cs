@@ -11,15 +11,13 @@ namespace GDO.Core.Scenarios
 
         public string Mod { get; set; }
         public string Func { get; set; }
+        public int InstanceId { get; set; } = -1;
         public List<string> Params { get; set; }
 
         public HubCall() {
             
         }
-
-        public override string ToString() {
-            return $"{nameof(Mod)}: {Mod}, {nameof(Func)}: {Func}, {nameof(Params)}: {Params.Aggregate("", (acc, next) => acc + "|" + next)}";
-        }
+        
 
         /// <summary>
         /// Parses the parameters. e.g. 4,\"Imperial RTSC\"
@@ -74,6 +72,10 @@ namespace GDO.Core.Scenarios
 
             throw new FormatException(String.Format("Unable to parse parameter `{0}`", param));
         }
+
+        public override string ToString() {
+            return $"{nameof(Mod)}: {Mod}, {nameof(Func)}: {Func}, {nameof(InstanceId)}: {InstanceId}, {nameof(Params)}: {Params}";
+        }
     }
 
     public class Element : HubCall {
@@ -81,7 +83,7 @@ namespace GDO.Core.Scenarios
         public double DefaultWait { get; set; }
         public bool IsLoop = false;
 
-        public int InstanceId { get; set; } = -1;
+        
 
         public Element() {
             
@@ -98,6 +100,7 @@ namespace GDO.Core.Scenarios
             this.Func = scriptElement.Func;
             this.Mod = scriptElement.Mod;
             this.Params = scriptElement.Params;
+            this.InstanceId = scriptElement.InstanceId;
         }
 
         public override string ToString() {

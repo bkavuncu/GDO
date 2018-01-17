@@ -10,10 +10,12 @@ namespace GDO.Core
         /// <param name="other">The other.</param>
         public void SetStateFrom(Hub other) {
             // todo this should only be done if the hubconnectioncontext actually contains NullClientProxy
-            
+            // https://github.com/SignalR/SignalR/search?utf8=%E2%9C%93&q=NullClientProxy+&type= but it is hard to get it ...
+         //   Cave.Deployment.Apps[Name].Hub.Clients.Group("0").renderLabels(field,color)
             this.Context = other.Context;
             this.Clients = other.Clients; 
             this.Groups = other.Groups;
+            
         }
 
         /// <summary>

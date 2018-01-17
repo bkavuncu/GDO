@@ -13,6 +13,8 @@ namespace GDO.Core {
      * if we find a dead one we trigger a reboot of the browsers on that machine (so need some de-dupe)
      */
     public sealed class MonitorSingleton {
+        public static bool Enabled = false;
+
         private static readonly Lazy<MonitorSingleton> lazy =
             new Lazy<MonitorSingleton>(() => new MonitorSingleton());
 
@@ -34,6 +36,8 @@ namespace GDO.Core {
         private static ILog Log { get; set; } = LogManager.GetLogger(typeof(CaveMonitor));
 
         public static void ScanNodeHealth() {
+            if (!MonitorSingleton.Enabled) return;
+
             if (MonitorSingleton.MayProceed()) {
                 MonitorSingleton.Instance.LastupdateTime = DateTime.Now;
                 if (MonitorSingleton.Instance.Semaphore.Wait(10)) {

@@ -235,9 +235,9 @@ namespace GDO.Apps.Graph
                 }
                 catch (Exception e)
                 {
+                    Debug.WriteLine(e);
                     Clients.Caller.setMessage("Error: Failed to render labels.");
                     Clients.Caller.setMessage(e.ToString());
-                    Debug.WriteLine(e);
                 }
             }
         }

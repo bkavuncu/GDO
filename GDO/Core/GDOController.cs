@@ -95,20 +95,29 @@ namespace GDO.Core
         [HttpPost]
         [Route("api/Script/RunMethod")]
         public bool RunStep([FromBody] HubCall scriptElement) {
-            var hub = GDOAPISingleton.Instance.Hub;
-            if (hub == null) return false;
+            try {
 
-            var script = JsonConvert.SerializeObject(scriptElement);
-            Log.Info($"GDO API - about to run script step " + script);
-            string errors;
-            var res = ScenarioRunner.RunScriptStep(new Element(scriptElement), out errors);
-            if (res) {
-                Log.Info($"GDO API - Successfully Ran script step " + script);
-            } else {
-                Log.Error($"GDO API - Failed Ran script step " + script + "errors = " + errors);
+                var hub = GDOAPISingleton.Instance.Hub;
+                if (hub == null) return false;
+
+                var script = JsonConvert.SerializeObject(scriptElement);
+                Log.Info($"GDO API - about to run script step " + script);
+                string errors;
+                var res = ScenarioRunner.RunScriptStep(new Element(scriptElement), out errors);
+                if (res) {
+                    Log.Info($"GDO API - Successfully Ran script step " + script);
+                }
+                else {
+                    Log.Error($"GDO API - Failed Ran script step " + script + "errors = " + errors);
+                    throw new HttpException("error "+errors);
+                }
+
+                return res;
             }
-
-            return res;
+            catch (Exception e) {
+                throw new HttpException("error "+e);
+            }
+            
         }
 
         /// <summary>
