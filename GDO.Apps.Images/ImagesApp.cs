@@ -97,6 +97,7 @@ namespace GDO.Apps.Images
         public int TileRows { get; set; } // rows of tiles including those not displayed
 
         private const string IMAGES_DIR = "~/Web/Images/images/";
+        private static string IMAGES_PATH;
 
         public void Init()
         {
@@ -118,17 +119,14 @@ namespace GDO.Apps.Images
                 this.Configuration.DisplayRegion = new DisplayRegionInfo();
                 this.Configuration.DisplayBlock = new DisplayBlockInfo(Section.Cols, Section.Rows);
             }
-            String basePath = HttpContext.Current.Server.MapPath(IMAGES_DIR);
-            if (!Directory.Exists(basePath))
-            {
-                Directory.CreateDirectory(basePath);
-            }
+            IMAGES_PATH = HttpContext.Current.Server.MapPath(IMAGES_DIR);
+            Directory.CreateDirectory(IMAGES_PATH);
         }
 
         public static void SaveImage(string filename, HttpPostedFileBase file)
         {
-            Directory.CreateDirectory(HttpContext.Current.Server.MapPath(IMAGES_DIR));
-            var path = HttpContext.Current.Server.MapPath(IMAGES_DIR) + filename;
+            Directory.CreateDirectory(IMAGES_PATH); // This shouldn't be needed
+            var path = IMAGES_PATH + filename;
             file.SaveAs(path);
         }
 
@@ -162,8 +160,7 @@ namespace GDO.Apps.Images
         {
             using (var md5 = MD5.Create())
             {
-                String basePath = HttpContext.Current.Server.MapPath(IMAGES_DIR);
-                using (var file = File.OpenRead(basePath + Configuration.ImageName))
+                using (var file = File.OpenRead(IMAGES_PATH + Configuration.ImageName))
                 {
                     var sum = md5.ComputeHash(file);
                     return BitConverter.ToString(sum).Replace("-", "").ToLowerInvariant();
@@ -173,12 +170,11 @@ namespace GDO.Apps.Images
 
         private void FindImageData(string digits)
         {
-            String basePath = HttpContext.Current.Server.MapPath(IMAGES_DIR);
-            if (digits == "" || !Directory.Exists(basePath + digits))
+            if (digits == "" || !Directory.Exists(IMAGES_PATH + digits))
             {
                 return;
             }
-            string[] lines = File.ReadAllLines(basePath + this.Configuration.ImageNameDigit + "\\config.txt");
+            string[] lines = File.ReadAllLines(IMAGES_PATH + this.Configuration.ImageNameDigit + "\\config.txt");
             if (lines.Length != 9)
             {
                 return;
@@ -239,9 +235,8 @@ namespace GDO.Apps.Images
                 var filename = Guid.NewGuid() + ".png";
 
                 Log.Info("Images App - downloading image from "+uri);
-                var imagesPath = HttpContext.Current.Server.MapPath(IMAGES_DIR);
-                Directory.CreateDirectory(imagesPath);
-                var savePath = imagesPath + filename;
+                Directory.CreateDirectory(IMAGES_PATH); // This should not be necessary
+                var savePath = IMAGES_PATH + filename;
 
                 //download the image and save as a PNG
                 using (WebClient webClient = new WebClient()) {
