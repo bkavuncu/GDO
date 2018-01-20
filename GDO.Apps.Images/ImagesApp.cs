@@ -10,6 +10,7 @@ using System.Linq;
 using System.Net;
 using log4net;
 using Newtonsoft.Json.Linq;
+using System.Security.Cryptography;
 
 namespace GDO.Apps.Images
 {
@@ -159,15 +160,15 @@ namespace GDO.Apps.Images
 
         private string GenerateImageDigits()
         {
-            // FIXME: make deterministic; take image as input
-            String basePath = HttpContext.Current.Server.MapPath(IMAGES_DIR);
-            Random imgDigitGenerator = new Random();
-
-            while (Directory.Exists(basePath + Configuration.ImageNameDigit))
+            using (var md5 = MD5.Create())
             {
-                Configuration.ImageNameDigit = imgDigitGenerator.Next(10000, 99999).ToString();
+                String basePath = HttpContext.Current.Server.MapPath(IMAGES_DIR);
+                using (var file = File.OpenRead(basePath + Configuration.ImageName))
+                {
+                    var sum = md5.ComputeHash(file);
+                    return BitConverter.ToString(sum).Replace("-", "").ToLowerInvariant();
+                }
             }
-            return Configuration.ImageNameDigit;
         }
 
         private void FindImageData(string digits)
