@@ -131,6 +131,45 @@ namespace GDO.Apps.Images
             file.SaveAs(path);
         }
 
+        /// <summary>
+        /// Post-save processing of image
+        /// </summary>
+        /// <param name="imageName"></param>
+        /// <returns>digits</returns>
+        public string ProcessImage(string imageName)
+        {
+            Configuration.ImageName = imageName;
+            Configuration.ImageNameDigit = GenerateImageDigits();
+
+            String basePath = HttpContext.Current.Server.MapPath(IMAGES_DIR);
+            String path1 = basePath + Configuration.ImageName;
+            String path2 = basePath + Configuration.ImageNameDigit + "\\origin.png";
+            Directory.CreateDirectory(basePath + Configuration.ImageNameDigit);
+            Image img1 = Image.FromFile(path1);
+            img1.Save(path2, ImageFormat.Png);
+            img1.Dispose();
+            Log.Info("Generated id " + Configuration.ImageNameDigit + " for a new uploaded image");
+
+            // log to index file
+            String indexFile = HttpContext.Current.Server.MapPath("~/Web/Images/images/Database.txt");
+            File.AppendAllLines(indexFile, new[] { Configuration.ImageName + "|" + Configuration.ImageNameDigit });
+
+            return Configuration.ImageNameDigit;
+        }
+
+        private string GenerateImageDigits()
+        {
+            // FIXME: make deterministic; take image as input
+            String basePath = HttpContext.Current.Server.MapPath(IMAGES_DIR);
+            Random imgDigitGenerator = new Random();
+
+            while (Directory.Exists(basePath + Configuration.ImageNameDigit))
+            {
+                Configuration.ImageNameDigit = imgDigitGenerator.Next(10000, 99999).ToString();
+            }
+            return Configuration.ImageNameDigit;
+        }
+
         private void FindImageData(string digits)
         {
             String basePath = HttpContext.Current.Server.MapPath(IMAGES_DIR);
