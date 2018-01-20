@@ -139,18 +139,14 @@ namespace GDO.Apps.Images
         {
             Configuration.ImageName = imageName;
             Configuration.ImageNameDigit = GenerateImageDigits();
-
-            String basePath = HttpContext.Current.Server.MapPath(IMAGES_DIR);
-            String path1 = basePath + Configuration.ImageName;
-            String path2 = basePath + Configuration.ImageNameDigit + "\\origin.png";
-            Directory.CreateDirectory(basePath + Configuration.ImageNameDigit);
-            Image img1 = Image.FromFile(path1);
-            img1.Save(path2, ImageFormat.Png);
-            img1.Dispose();
             Log.Info("Generated id " + Configuration.ImageNameDigit + " for a new uploaded image");
 
-            // log to index file
-            String indexFile = HttpContext.Current.Server.MapPath("~/Web/Images/images/Database.txt");
+            Directory.CreateDirectory(IMAGES_PATH + Configuration.ImageNameDigit);
+            Image image = Image.FromFile(IMAGES_PATH + imageName);
+            image.Save(IMAGES_PATH + Configuration.ImageNameDigit + "/origin.png", ImageFormat.Png);
+            image.Dispose();
+
+            String indexFile = IMAGES_PATH + "/Database.txt";
             File.AppendAllLines(indexFile, new[] { Configuration.ImageName + "|" + Configuration.ImageNameDigit });
 
             return Configuration.ImageNameDigit;
