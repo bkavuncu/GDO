@@ -95,6 +95,8 @@ namespace GDO.Apps.Images
         public int TileCols { get; set; } // cols of tiles including those not displayed
         public int TileRows { get; set; } // rows of tiles including those not displayed
 
+        private const string IMAGES_DIR = "~/Web/Images/images/";
+
         public void Init()
         {
             this.DisplayMode = (int)Mode.FIT;
@@ -115,7 +117,7 @@ namespace GDO.Apps.Images
                 this.Configuration.DisplayRegion = new DisplayRegionInfo();
                 this.Configuration.DisplayBlock = new DisplayBlockInfo(Section.Cols, Section.Rows);
             }
-            String basePath = HttpContext.Current.Server.MapPath("~/Web/Images/images/");
+            String basePath = HttpContext.Current.Server.MapPath(IMAGES_DIR);
             if (!Directory.Exists(basePath))
             {
                 Directory.CreateDirectory(basePath);
@@ -124,7 +126,7 @@ namespace GDO.Apps.Images
 
         private void FindImageData(string digits)
         {
-            String basePath = HttpContext.Current.Server.MapPath("~/Web/Images/images/");
+            String basePath = HttpContext.Current.Server.MapPath(IMAGES_DIR);
             if (digits == "" || !Directory.Exists(basePath + digits))
             {
                 return;
@@ -190,7 +192,7 @@ namespace GDO.Apps.Images
                 var filename = Guid.NewGuid() + ".png";
 
                 Log.Info("Images App - downloading image from "+uri);
-                var imagesPath = HttpContext.Current.Server.MapPath("~/Web/Images/images");
+                var imagesPath = HttpContext.Current.Server.MapPath(IMAGES_DIR);
                 Directory.CreateDirectory(imagesPath);
                 var savePath = imagesPath + filename;
 
