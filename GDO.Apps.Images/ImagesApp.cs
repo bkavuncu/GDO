@@ -124,6 +124,13 @@ namespace GDO.Apps.Images
             }
         }
 
+        public static void SaveImage(string filename, HttpPostedFileBase file)
+        {
+            Directory.CreateDirectory(HttpContext.Current.Server.MapPath(IMAGES_DIR));
+            var path = HttpContext.Current.Server.MapPath(IMAGES_DIR) + filename;
+            file.SaveAs(path);
+        }
+
         private void FindImageData(string digits)
         {
             String basePath = HttpContext.Current.Server.MapPath(IMAGES_DIR);

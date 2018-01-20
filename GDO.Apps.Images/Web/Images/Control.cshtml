@@ -1,4 +1,5 @@
-﻿@{
+﻿@using GDO.Apps.Images
+@{
     Layout = null;
 }
 
@@ -388,7 +389,7 @@
     </script>
     <div class="wrapper" style="width:97%">
         @{
-            var path = "";
+            bool uploaded = false;
             var filename = "";
             if (IsPost)
             {
@@ -397,10 +398,8 @@
                 if (file != null)
                 {
                     filename = Path.GetFileName(file.FileName);
-                    //foldername
-                    Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/Web/Images/images"));
-                    path = System.Web.HttpContext.Current.Server.MapPath("~/Web/Images/images/") + filename;
-                    file.SaveAs(path);
+                    ImagesApp.SaveImage(filename, file);
+                    uploaded = true;
                 }
             }
         }
@@ -556,7 +555,7 @@
             </form>
         </div>
     </div>
-    @if (path != "")
+    @if (uploaded)
     {
         <script>
             $(function () {
