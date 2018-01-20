@@ -164,6 +164,16 @@ namespace GDO.Apps.Images
             }
         }
 
+        public void CreateThumbnail()
+        {
+            int THUMBNAIL_HEIGHT = 500;
+            using (Image image = Image.FromFile(IMAGES_PATH + Configuration.ImageNameDigit + "/origin.png"))
+            {
+                using (Image thumb = image.GetThumbnailImage(THUMBNAIL_HEIGHT * image.Width / image.Height, THUMBNAIL_HEIGHT, () => false, IntPtr.Zero))
+                    thumb.Save(IMAGES_PATH + Configuration.ImageNameDigit + "/thumb.png", ImageFormat.Png);
+            }
+        }
+
         private void FindImageData(string digits)
         {
             if (digits == "" || !Directory.Exists(IMAGES_PATH + digits))

@@ -45,23 +45,15 @@ namespace GDO.Apps.Images
                     Clients.Caller.setDigitText(instanceId, digits);
                     Clients.Caller.setMessage("Image saved with digits: `" + digits + "`");
 
+                    Clients.Caller.setMessage("Loading the image and creating thumbnail...");
+                    ia.CreateThumbnail();
+
                     // FIXME: remove once refactored
                     var config = ia.Configuration;
                     String basePath = HttpContext.Current.Server.MapPath("~/Web/Images/images/");
                     String path1 = basePath + config.ImageName;
                     String path2 = basePath + config.ImageNameDigit + "\\origin.png";
-
-                    Clients.Caller.setMessage("Loading the image and creating thumbnail...");
-                    //create origin
-                    Image originImage = Image.FromFile(path2);
-                    Image image = originImage;
-
-                    //create thumbnail
-                    int thumbHeight = 500;
-                    Image thumb = image.GetThumbnailImage(thumbHeight*image.Width/image.Height, thumbHeight, () => false,
-                        IntPtr.Zero);
-                    thumb.Save(basePath + config.ImageNameDigit + "\\thumb.png", ImageFormat.Png);
-                    thumb.Dispose();
+                    Image image = Image.FromFile(path2);
 
                     ia.ImageNaturalWidth = image.Width;
                     ia.ImageNaturalHeight = image.Height;
@@ -179,7 +171,6 @@ namespace GDO.Apps.Images
                             Clients.Caller.setMessage(ex.Message + ex.StackTrace);
                         }
                     }*/
-                    originImage.Dispose();
                     image.Dispose();
                     ia.ThumbNailImage = null;
                     using (StreamWriter file = new StreamWriter(basePath + config.ImageNameDigit + "\\config.txt"))
