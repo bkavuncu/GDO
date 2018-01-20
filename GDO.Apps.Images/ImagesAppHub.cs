@@ -51,9 +51,7 @@ namespace GDO.Apps.Images
                     // FIXME: remove once refactored
                     var config = ia.Configuration;
                     String basePath = HttpContext.Current.Server.MapPath("~/Web/Images/images/");
-                    String path1 = basePath + config.ImageName;
-                    String path2 = basePath + config.ImageNameDigit + "\\origin.png";
-                    Image image = Image.FromFile(path2);
+                    Image image = Image.FromFile(basePath + config.ImageNameDigit + "\\origin.png");
 
                     ia.ImageNaturalWidth = image.Width;
                     ia.ImageNaturalHeight = image.Height;
@@ -138,14 +136,14 @@ namespace GDO.Apps.Images
                                             ia.TileHeight),
                                         GraphicsUnit.Pixel);
                                     graphics.Dispose();
-                                    path2 = basePath + config.ImageNameDigit + "\\" + "crop" + @"_" + col +
+                                    String path = basePath + config.ImageNameDigit + "\\" + "crop" + @"_" + col +
                                             @"_" + row +
                                             @".png";
                                     ia.Tiles[col, row].left = col*ia.TileWidth;
                                     ia.Tiles[col, row].top = row*ia.TileHeight;
                                     ia.Tiles[col, row].cols = col;
                                     ia.Tiles[col, row].rows = row;
-                                    curTile.Save(path2, ImageFormat.Png);
+                                    curTile.Save(path, ImageFormat.Png);
 
                                     success = 1;
                                 }
