@@ -837,7 +837,11 @@ gdo.net.app["BasicMaps"].uploadMapPosition = function (instanceId) {
     var size = gdo.net.instance[instanceId].map.getSize();
     var width = size[0];
     var height = size[1];
-    gdo.net.app["BasicMaps"].server.uploadMapPosition(instanceId, topLeft, center, bottomRight, gdo.net.instance[instanceId].map.getView().getResolution(), width, height, gdo.net.instance[instanceId].map.getView().getZoom());
+    if (topLeft == null || bottomRight == null) {
+        setTimeout(function () { gdo.net.app["BasicMaps"].uploadMapPosition (instanceId)}, 70);
+    } else {
+        gdo.net.app["BasicMaps"].server.uploadMapPosition(instanceId, topLeft, center, bottomRight, gdo.net.instance[instanceId].map.getView().getResolution(), width, height, gdo.net.instance[instanceId].map.getView().getZoom());
+    }
 }
 
 gdo.net.app["BasicMaps"].changeEvent = function (instanceId) {
