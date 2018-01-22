@@ -205,8 +205,7 @@ namespace GDO.Apps.YoutubeWall
             yRequest.Method = "GET";
             //Console.WriteLine(yURL);
 
-            Stream yStream;
-            yStream = yRequest.GetResponse().GetResponseStream();
+            var yStream = yRequest.GetResponse().GetResponseStream();
             StreamReader yReader = new StreamReader(yStream);
             string yResponse = "";
             string yLine = "";

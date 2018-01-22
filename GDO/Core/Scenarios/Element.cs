@@ -51,6 +51,14 @@ namespace GDO.Core.Scenarios
                 return ParseParams(arr);
             }
 
+            if (param.ToLowerInvariant() == "\"false\"" ||  param.ToLowerInvariant()=="false") {
+                return false; 
+            } 
+
+            if (param.ToLowerInvariant() == "\"true\"" ||  param.ToLowerInvariant()=="true") {
+                return true; 
+            }
+
             // Strings of the form "abc" or 'abc'
             if ((param.StartsWith("\"") && param.EndsWith("\"")) ||
                 (param.StartsWith("'") && param.EndsWith("'")))
