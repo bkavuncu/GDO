@@ -713,6 +713,12 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
                new ol.interaction.DragZoom({ duration: 0 })
         ])
     });
+    
+    //Gray screen bug temp fix
+    if (gdo.net.instance[instanceId].layers[0].U.source.a.a == null) {
+        gdo.consoleOut('.BasicMaps', 1, 'Bing Maps Bug detected thus reloading');
+        location.reload();
+    }
 
     gdo.net.instance[instanceId].positionFeature = new ol.Feature();
     if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
