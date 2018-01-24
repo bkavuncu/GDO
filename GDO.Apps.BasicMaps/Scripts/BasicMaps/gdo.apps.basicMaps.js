@@ -713,12 +713,6 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
                new ol.interaction.DragZoom({ duration: 0 })
         ])
     });
-    
-    //Gray screen bug temp fix
-    if (gdo.net.instance[instanceId].layers[0].U.source.a.a == null) {
-        gdo.consoleOut('.BasicMaps', 1, 'Bing Maps Bug detected thus reloading');
-        location.reload();
-    }
 
     gdo.net.instance[instanceId].positionFeature = new ol.Feature();
     if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
@@ -760,6 +754,57 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
     gdo.net.instance[instanceId].map = map;
     gdo.net.app["BasicMaps"].server.requestLayersVisible(instanceId);
     gdo.net.app["BasicMaps"].server.requestMarkerPosition(instanceId);
+    gdo.net.app["BasicMaps"].fixBingBug(instanceId);
+}
+
+gdo.net.app["BasicMaps"].fixBingBug = function (instanceId) {
+    setTimeout(function () {
+        if (gdo.net.instance[instanceId].layers[0].getSource().getState() == "loading" ||
+            gdo.net.instance[instanceId].layers[1].getSource().getState() == "loading" ||
+            gdo.net.instance[instanceId].layers[2].getSource().getState() == "loading" ||
+            gdo.net.instance[instanceId].layers[3].getSource().getState() == "loading" ||
+            gdo.net.instance[instanceId].layers[4].getSource().getState() == "loading"
+            ) {
+                gdo.consoleOut('.BasicMaps', 4, 'Bing Maps Bug Detected - Reloading sources');
+                gdo.net.instance[instanceId].layers[0].setSource(new ol.source.BingMaps({
+                    key: 'At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM',
+                    imagerySet: 'Aerial',
+                    maxZoom: 19
+                }));
+                gdo.net.instance[instanceId].layers[1].setSource(new ol.source.BingMaps({
+                    key: 'At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM',
+                    imagerySet: 'AerialWithLabels',
+                    maxZoom: 19
+                }));
+                gdo.net.instance[instanceId].layers[2].setSource(new ol.source.BingMaps({
+                    key: 'At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM',
+                    imagerySet: 'Road',
+                    maxZoom: 19
+                }));
+                gdo.net.instance[instanceId].layers[3].setSource(new ol.source.BingMaps({
+                    key: 'At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM',
+                    imagerySet: 'collinsBart',
+                    maxZoom: 19
+                }));
+                gdo.net.instance[instanceId].layers[3].setSource(new ol.source.BingMaps({
+                    key: 'At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM',
+                    imagerySet: 'ordnanceSurvey',
+                    maxZoom: 19
+                }));
+            }
+            setTimeout(function () {
+                if (gdo.net.instance[instanceId].layers[0].getSource().getState() == "loading" ||
+                    gdo.net.instance[instanceId].layers[1].getSource().getState() == "loading" ||
+                    gdo.net.instance[instanceId].layers[2].getSource().getState() == "loading" ||
+                    gdo.net.instance[instanceId].layers[3].getSource().getState() == "loading" ||
+                    gdo.net.instance[instanceId].layers[4].getSource().getState() == "loading"
+                    ) {
+                    gdo.consoleOut('.BasicMaps', 5, 'Bing Maps Bug Detected - Reloading sources failed reloading page');
+                    location.reload();
+                }
+            }, 700);
+    }, 350);
+
 }
 
 gdo.net.app["BasicMaps"].calculateLocalCenter = function (topLeft, bottomRight) {
