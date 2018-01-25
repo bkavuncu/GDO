@@ -414,7 +414,7 @@ gdo.net.initPeer = function () {
     });
     gdo.net.peer.on('close', function(err) {
         gdo.net.node[gdo.clientId].isConnectedToPeerServer = false;
-        gdo.consoleOut('.NET', 5,'ERROR'+ err);
+        gdo.consoleOut('.NET', 5, 'Connection to PeerServer closed (Reason: ' + err + ')');
     });
     gdo.net.peer.on('connection', gdo.net.receiveConn);
 }
