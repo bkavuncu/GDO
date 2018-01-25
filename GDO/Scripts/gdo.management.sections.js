@@ -403,7 +403,7 @@ gdo.management.sections.drawButtonTable = function () {
         .attr("align", "center")
         .attr("onfocus", "this.value=''")
         .attr("value", gdo.net.getNodeId(gdo.management.colStart, gdo.management.rowEnd))
-        .css({ fontSize: gdo.management.button_font_size * 1.4 });
+        .css({ fontSize: gdo.management.button_font_size * 2.1 });
 
     $("#section_coordinate_table_end_input")
         .css("height", "100%")
@@ -418,7 +418,7 @@ gdo.management.sections.drawButtonTable = function () {
         .attr("align", "center")
         .attr("onfocus", "this.value=''")
         .attr("value", gdo.net.getNodeId(gdo.management.colEnd, gdo.management.rowStart))
-        .css({ fontSize: gdo.management.button_font_size * 1.4 });
+        .css({ fontSize: gdo.management.button_font_size * 2.1 });
 
     $("#section_coordinate_table_select")
         .empty()
@@ -426,7 +426,7 @@ gdo.management.sections.drawButtonTable = function () {
         .css("height", "100%")
         .css("width", "100%")
         .css("color", "#FFF")
-        .css('padding-top', 1)
+        .css('padding-top', 2)
         .attr("align", "center");
     $(".select_button").unbind();
     $(".select_button").click(function() {
