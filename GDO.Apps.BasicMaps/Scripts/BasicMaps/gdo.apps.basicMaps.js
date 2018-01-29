@@ -492,9 +492,10 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
     //Open Railway Map (Standard)
     gdo.net.instance[instanceId].layers[30] = new ol.layer.Tile({
         visible: false,
-        source: new ol.source.OSM({
+        source: new ol.source.XYZ({
             crossOrigin: null,
-            url: 'http://{a-c}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png'
+            url: 'http://{a-c}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png',
+            tileSize: [512,512]
         })
     });
     gdo.net.instance[instanceId].layers[30].wms = true;
@@ -502,9 +503,10 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
     //Open Railway Map (Speed)
     gdo.net.instance[instanceId].layers[31] = new ol.layer.Tile({
         visible: false,
-        source: new ol.source.OSM({
+        source: new ol.source.XYZ({
             crossOrigin: null,
-            url: 'http://{a-c}.tiles.openrailwaymap.org/maxspeed/{z}/{x}/{y}.png'
+            url: 'http://{a-c}.tiles.openrailwaymap.org/maxspeed/{z}/{x}/{y}.png',
+            tileSize: [512,512]
         })
     });
     gdo.net.instance[instanceId].layers[31].wms = true;
