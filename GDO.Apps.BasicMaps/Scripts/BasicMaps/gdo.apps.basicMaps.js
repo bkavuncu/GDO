@@ -552,9 +552,10 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
     //Strava Bike Heatmap (Orange)
     gdo.net.instance[instanceId].layers[36] = new ol.layer.Tile({
         visible: false,
-        source: new ol.source.OSM({
+        source: new ol.source.XYZ({
             crossOrigin: null,
-            url: 'http://globalheat.strava.com/tiles/cycling/color8/{z}/{x}/{y}.png?v=19'
+            url: 'http://heatmap-external-{a-c}.strava.com/tiles/ride/hot/{z}/{x}/{y}@2.png?v=19',
+            tileSize: [512,512]
         })
     });
     gdo.net.instance[instanceId].layers[36].wms = true;
@@ -562,9 +563,10 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
     //Strava Running Heatmap (Orange)
     gdo.net.instance[instanceId].layers[37] = new ol.layer.Tile({
         visible: false,
-        source: new ol.source.OSM({
+        source: new ol.source.XYZ({
             crossOrigin: null,
-            url: 'http://globalheat.strava.com/tiles/running/color8/{z}/{x}/{y}.png?v=19'
+            url: 'http://heatmap-external-{a-c}.strava.com/tiles/run/hot/{z}/{x}/{y}@2.png?v=19',
+            tileSize: [512,512]
         })
     });
     gdo.net.instance[instanceId].layers[37].wms = true;
