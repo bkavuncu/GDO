@@ -514,7 +514,7 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
         visible: false,
         source: new ol.source.OSM({
             crossOrigin: null,
-            url: 'http://globalheat.strava.com/tiles/cycling/color1/{z}/{x}/{y}.png?v=6'
+            url: 'http://globalheat.strava.com/tiles/cycling/color1/{z}/{x}/{y}.png?v=19'
         })
     });
     gdo.net.instance[instanceId].layers[32].wms = true;
@@ -524,7 +524,7 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
         visible: false,
         source: new ol.source.OSM({
             crossOrigin: null,
-            url: 'http://globalheat.strava.com/tiles/running/color1/{z}/{x}/{y}.png?v=6'
+            url: 'http://globalheat.strava.com/tiles/running/color1/{z}/{x}/{y}.png?v=19'
         })
     });
     gdo.net.instance[instanceId].layers[33].wms = true;
@@ -534,7 +534,7 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
         visible: false,
         source: new ol.source.OSM({
             crossOrigin: null,
-            url: 'http://globalheat.strava.com/tiles/cycling/color2/{z}/{x}/{y}.png?v=6'
+            url: 'http://globalheat.strava.com/tiles/cycling/color2/{z}/{x}/{y}.png?v=19'
         })
     });
     gdo.net.instance[instanceId].layers[34].wms = true;
@@ -544,7 +544,7 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
         visible: false,
         source: new ol.source.OSM({
             crossOrigin: null,
-            url: 'http://globalheat.strava.com/tiles/running/color2/{z}/{x}/{y}.png?v=6'
+            url: 'http://globalheat.strava.com/tiles/running/color2/{z}/{x}/{y}.png?v=19'
         })
     });
     gdo.net.instance[instanceId].layers[35].wms = true;
@@ -554,7 +554,7 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
         visible: false,
         source: new ol.source.OSM({
             crossOrigin: null,
-            url: 'http://globalheat.strava.com/tiles/cycling/color8/{z}/{x}/{y}.png?v=6'
+            url: 'http://globalheat.strava.com/tiles/cycling/color8/{z}/{x}/{y}.png?v=19'
         })
     });
     gdo.net.instance[instanceId].layers[36].wms = true;
@@ -564,7 +564,7 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
         visible: false,
         source: new ol.source.OSM({
             crossOrigin: null,
-            url: 'http://globalheat.strava.com/tiles/running/color8/{z}/{x}/{y}.png?v=6'
+            url: 'http://globalheat.strava.com/tiles/running/color8/{z}/{x}/{y}.png?v=19'
         })
     });
     gdo.net.instance[instanceId].layers[37].wms = true;
@@ -574,7 +574,7 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
         visible: false,
         source: new ol.source.OSM({
             crossOrigin: null,
-            url: 'http://globalheat.strava.com/tiles/cycling/color7/{z}/{x}/{y}.png?v=6'
+            url: 'http://globalheat.strava.com/tiles/cycling/color7/{z}/{x}/{y}.png?v=19'
         })
     });
     gdo.net.instance[instanceId].layers[38].wms = true;
@@ -584,7 +584,7 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
         visible: false,
         source: new ol.source.OSM({
             crossOrigin: null,
-            url: 'http://globalheat.strava.com/tiles/running/color7/{z}/{x}/{y}.png?v=6'
+            url: 'http://globalheat.strava.com/tiles/running/color7/{z}/{x}/{y}.png?v=19'
         })
     });
     gdo.net.instance[instanceId].layers[39].wms = true;
