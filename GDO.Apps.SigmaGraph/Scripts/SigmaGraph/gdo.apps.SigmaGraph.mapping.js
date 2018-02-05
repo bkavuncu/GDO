@@ -42,7 +42,7 @@ gdo.net.app["SigmaGraph"].initMap = async function () {
                 visible: true,
                 preload: Infinity,
                 source: new ol.source.BingMaps({
-                    key: 'AqJrkrOTlDJUTbioyay25R6bC-LoZaAggCaAGRV19SxySzPpMUpuukTvAiW6ldny',
+                    key: 'At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM',
                     imagerySet: 'CanvasDark',
                     maxZoom: 19
                 })
