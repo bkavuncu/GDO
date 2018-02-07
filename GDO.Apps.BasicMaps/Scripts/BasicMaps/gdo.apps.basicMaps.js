@@ -188,7 +188,7 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
         preload: Infinity,
         visible: false,
         source: new ol.source.BingMaps({
-            key: 'At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM',
+            key: 'AqJrkrOTlDJUTbioyay25R6bC-LoZaAggCaAGRV19SxySzPpMUpuukTvAiW6ldny',
             imagerySet: 'Aerial',
             maxZoom: 19
         })
@@ -200,7 +200,7 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
         preload: Infinity,
         visible: false,
         source: new ol.source.BingMaps({
-            key: 'At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM',
+            key: 'AqJrkrOTlDJUTbioyay25R6bC-LoZaAggCaAGRV19SxySzPpMUpuukTvAiW6ldny',
             imagerySet: 'AerialWithLabels',
             maxZoom: 19
         })
@@ -212,7 +212,7 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
         preload: Infinity,
         visible: false,
         source: new ol.source.BingMaps({
-            key: 'At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM',
+            key: 'AqJrkrOTlDJUTbioyay25R6bC-LoZaAggCaAGRV19SxySzPpMUpuukTvAiW6ldny',
             imagerySet: 'Road',
             maxZoom: 19
         })
@@ -224,7 +224,7 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
         preload: Infinity,
         visible: false,
         source: new ol.source.BingMaps({
-            key: 'At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM',
+            key: 'AqJrkrOTlDJUTbioyay25R6bC-LoZaAggCaAGRV19SxySzPpMUpuukTvAiW6ldny',
             imagerySet: 'collinsBart',
             maxZoom: 19
         })
@@ -236,7 +236,7 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
         preload: Infinity,
         visible: false,
         source: new ol.source.BingMaps({
-            key: 'At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM',
+            key: 'AqJrkrOTlDJUTbioyay25R6bC-LoZaAggCaAGRV19SxySzPpMUpuukTvAiW6ldny',
             imagerySet: 'ordnanceSurvey',
             maxZoom: 19
         })
@@ -771,27 +771,27 @@ gdo.net.app["BasicMaps"].fixBingBug = function (instanceId) {
             ) {
                 gdo.consoleOut('.BasicMaps', 4, 'Bing Maps Bug Detected - Reloading sources');
                 gdo.net.instance[instanceId].layers[0].setSource(new ol.source.BingMaps({
-                    key: 'At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM',
+                    key: 'AqJrkrOTlDJUTbioyay25R6bC-LoZaAggCaAGRV19SxySzPpMUpuukTvAiW6ldny',
                     imagerySet: 'Aerial',
                     maxZoom: 19
                 }));
                 gdo.net.instance[instanceId].layers[1].setSource(new ol.source.BingMaps({
-                    key: 'At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM',
+                    key: 'AqJrkrOTlDJUTbioyay25R6bC-LoZaAggCaAGRV19SxySzPpMUpuukTvAiW6ldny',
                     imagerySet: 'AerialWithLabels',
                     maxZoom: 19
                 }));
                 gdo.net.instance[instanceId].layers[2].setSource(new ol.source.BingMaps({
-                    key: 'At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM',
+                    key: 'AqJrkrOTlDJUTbioyay25R6bC-LoZaAggCaAGRV19SxySzPpMUpuukTvAiW6ldny',
                     imagerySet: 'Road',
                     maxZoom: 19
                 }));
                 gdo.net.instance[instanceId].layers[3].setSource(new ol.source.BingMaps({
-                    key: 'At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM',
+                    key: 'AqJrkrOTlDJUTbioyay25R6bC-LoZaAggCaAGRV19SxySzPpMUpuukTvAiW6ldny',
                     imagerySet: 'collinsBart',
                     maxZoom: 19
                 }));
                 gdo.net.instance[instanceId].layers[3].setSource(new ol.source.BingMaps({
-                    key: 'At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM',
+                    key: 'AqJrkrOTlDJUTbioyay25R6bC-LoZaAggCaAGRV19SxySzPpMUpuukTvAiW6ldny',
                     imagerySet: 'ordnanceSurvey',
                     maxZoom: 19
                 }));

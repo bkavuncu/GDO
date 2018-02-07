@@ -39,8 +39,8 @@ namespace GDO.Apps.Maps.Core.Sources
                 Priority = (int)GDO.Utility.Priorities.Required,
                 IsEditable = false,
                 IsVisible = true,
-                DefaultValue = "At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM",
-                Value = "At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM",
+                DefaultValue = "AqJrkrOTlDJUTbioyay25R6bC-LoZaAggCaAGRV19SxySzPpMUpuukTvAiW6ldny",
+                Value = "AqJrkrOTlDJUTbioyay25R6bC-LoZaAggCaAGRV19SxySzPpMUpuukTvAiW6ldny",
                 IsNull = false,
             };
             ImagerySet = new DatalistParameter
