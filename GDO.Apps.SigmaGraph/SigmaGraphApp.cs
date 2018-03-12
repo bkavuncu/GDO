@@ -112,7 +112,7 @@ namespace GDO.Apps.SigmaGraph {
             this.Configuration.FolderNameDigit = CreateTemporyFolderId(filename);
 
             // if its already proccessed then load it 
-            // if (TryLoadQuadTree()) return;
+            if (TryLoadQuadTree()) return;
 
             Log.Info($"about to process quadtree '{filename}'");
             Directory.CreateDirectory(GetPathToQuadFolder);
