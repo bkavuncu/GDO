@@ -110,14 +110,20 @@ namespace GDO.Apps.SigmaGraph {
             // deterministically convert filename to a folderid 
             this.Configuration.Filename = filename;
             this.Configuration.FolderNameDigit = CreateTemporyFolderId(filename);
-
-            // if its already proccessed then load it 
-            if (TryLoadQuadTree()) return;
-
-            Log.Info($"about to process quadtree '{filename}'");
             Directory.CreateDirectory(GetPathToQuadFolder);
             string graphMLfile =
                 System.Web.HttpContext.Current.Server.MapPath(GRAPHML_DIR + filename);
+
+            // if its already proccessed then load it 
+            if (TryLoadQuadTree())
+            {
+                this.Configuration.NodeAttributes = GraphDataReader.GetAttrOnly(graphMLfile)[0];
+                this.Configuration.EdgeAttributes = GraphDataReader.GetAttrOnly(graphMLfile)[1];
+                return;
+            }
+
+            Log.Info($"about to process quadtree '{filename}'");
+            
             var graph = GraphDataReader.ReadGraphMLData(graphMLfile);
             this.CurrentQuadTreeRoot = SigmaGraphQuadProcesor.ProcessGraph(graph, BasePath + this.Configuration.FolderNameDigit).Root;
             this.Configuration.NodeAttributes = new List<string>(graph.NodeOtherFields);

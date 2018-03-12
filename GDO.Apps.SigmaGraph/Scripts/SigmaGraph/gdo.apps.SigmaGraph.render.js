@@ -66,7 +66,7 @@ gdo.net.app["SigmaGraph"].nameVertices = async function(params) {
 }
 
 gdo.net.app["SigmaGraph"].colorByValue = async function (params) {
-    // TODO: parse date, skip invalid parameter (do nothing but return message), change the hub and control file
+    //  change the hub and control file
     console.log('start color by Func');
     var objAttribute = params[0];
     var attribute = params[1];
@@ -74,14 +74,16 @@ gdo.net.app["SigmaGraph"].colorByValue = async function (params) {
     var upperBound = parseFloat(params[3]);
 
     var parseDate = function(list) {
-        var result = list.filter(function(node) {
-            if (isNaN(Date.parse(node.attrs["date"]))) {
-                node.color = "#696969";
-                return false;
+        console.log(list.length);
+        for (var i = list.length - 1; i >= 0; i--)
+        {
+            if (isNaN(Date.parse(list[i].attrs["date"]))) {
+                list[i].color = "#696969";
+                list.splice(i,1);
             }
-            return true;
-        });
-        return result;
+        }
+        console.log(list.length);
+        return list;
     }
 
     var expDateValue = function(value) {
@@ -89,56 +91,62 @@ gdo.net.app["SigmaGraph"].colorByValue = async function (params) {
     }
 
 
-    var valueRange = function (objattr, attr) {
-        var max, min, list;
+        var valueRange = function (objattr, attr) {
+            var max = -Infinity, min = Infinity, arr;
+            var list = [];
 
-        if (objattr == 'node') {
-            list = gdo.sigmaInstance.graph.nodes().filter(function(node) {
-                if (node.attrs[attr] != null) {
-                    return true;
+            if (objattr == 'node') {
+                for (var i = 0; i < gdo.sigmaInstance.graph.nodes().length; i++) {
+                    if (gdo.sigmaInstance.graph.nodes()[i].attrs[attr] != null) {
+                        list.push(gdo.sigmaInstance.graph.nodes()[i]);
+                    } else {
+                        gdo.sigmaInstance.graph.nodes()[i].color = "#696969";
+                    }
+                }
+                console.log(list.length);
+
+                if (attr == "date") {
+                    list = parseDate(list);
+                    arr = list.map(a => Date.parse(a.attrs[attr]));
+                    for (var i = 0; i < arr.length; i++) if (arr[i] > max) max = arr[i];
+                    max = expDateValue(max);
+
+                    for (var j = 0; j < arr.length; j++) if (arr[j] < min) min = arr[j];
+                    min = expDateValue(min);
+                    console.log(max);
                 } else {
-                    node.color = "#696969";
+                    arr = list.map(a => a.attrs[attr]);
+                    for (var i = 0; i < arr.length; i++) if (arr[i] > max) max = arr[i];
+                    max = expDateValue(max);
+                    for (var j = 0; j < arr.length; j++) if (arr[j] < min) min = arr[j];
+                    min = expDateValue(min);
                 }
-            });
 
-            if (attr == "date") {
-                list = parseDate(list);
-                max = expDateValue(Math.max.apply(Math,
-                    parseDate(list).map(a => Date.parse(a.attrs[attr]))));
+                // TODO change as above, avoid too many edge (exceed apply method range)
+            } else if (objattr == 'edge') {
+                list = gdo.sigmaInstance.graph.edges().filter(function (node) {
+                    if (node.attrs[attr] != null) {
+                        return true;
+                    }
+                    return false;
+                });
 
-                min = expDateValue(Math.min.apply(Math,
-                    parseDate(list).map(a => Date.parse(a.attrs[attr]))));
-            } else {
-                max = Math.max.apply(Math,
-                    list.map(a => a.attrs[attr]));
-                min = Math.min.apply(Math,
-                    list.map(a => a.attrs[attr]));
-            }
 
-        } else if (objattr == 'edge') {
-            list = gdo.sigmaInstance.graph.edges().filter(function (node) {
-                if (node.attrs[attr] != null) {
-                    return true;
+                if (attr == "date") {
+                    list = parseDate(list);
+                    max = Math.max.apply(Math,
+                        parseDate(list).map(a => Date.parse(a.attrs[attr])));
+
+                    min = Math.min.apply(Math,
+                        parseDate(list).map(a => Date.parse(a.attrs[attr])));
+                } else {
+                    max = Math.max.apply(Math,
+                        list.map(a => a.attrs[attr]));
+                    min = Math.min.apply(Math,
+                        list.map(a => a.attrs[attr]));
                 }
-                return false;
-            });
-
-
-            if (attr == "date") {
-                list = parseDate(list);
-                max = Math.max.apply(Math,
-                    parseDate(list).map(a => Date.parse(a.attrs[attr])));
-
-                min = Math.min.apply(Math,
-                    parseDate(list).map(a => Date.parse(a.attrs[attr])));
-            } else {
-                max = Math.max.apply(Math,
-                    list.map(a => a.attrs[attr]));
-                min = Math.min.apply(Math,
-                    list.map(a => a.attrs[attr]));
             }
-        }
-        return [max, min, list];
+            return [max, min, list];
     }
 
     /**

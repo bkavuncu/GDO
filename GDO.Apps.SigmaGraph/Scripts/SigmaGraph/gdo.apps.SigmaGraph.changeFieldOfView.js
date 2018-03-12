@@ -18,6 +18,8 @@ gdo.net.app["SigmaGraph"].zoom = function (zoomXCenter, zoomYCenter, ratio) {
 
     gdo.net.app["SigmaGraph"].renderGraph();
     gdo.net.app["SigmaGraph"].mapRescale();
+    // REDO filtering
+    //gdo.net.app["SigmaGraph"]'.redofiltering();
 }
 
 gdo.net.app["SigmaGraph"].zoomX = function (zoomXCenter, ratio) {

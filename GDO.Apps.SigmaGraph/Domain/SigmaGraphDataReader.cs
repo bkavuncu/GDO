@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.Dynamic;
+using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
@@ -17,6 +20,51 @@ namespace GDO.Apps.SigmaGraph.Domain
                 return data;
             }
         }
+
+        public static List<List<string>> GetAttrOnly(string graphmlfile)
+        {
+            List<string> nodeattr, edgeattr;
+            List<List<string>> attrs = new List<List<string>>();
+
+            XNamespace ns = @"http://graphml.graphdrawing.org/xmlns";
+
+
+            string meta = "";
+            foreach (var l in File.ReadLines(graphmlfile)) {
+                meta += l + Environment.NewLine;
+                if (l.Contains("</node>")) {
+                    break;
+                }
+            }
+            meta += "</graph></graphml>";
+
+
+            var xreader = XmlReader.Create(new StringReader(meta));
+            XDocument doc = XDocument.Load(xreader);
+
+            var keys = doc.Root.Elements(ns + "key").Select(k =>
+                new {
+                    id = k.Attribute("id").Value,
+                    name = k.Attribute("attr.name").Value,
+                    type = k.Attribute("attr.type").Value,
+                    appliesTo = k.Attribute("for").Value,
+                }).ToList();
+
+            var nodekeys = keys.Where(k => k.appliesTo == "node").ToList();
+            var edgekeys = keys.Where(k => k.appliesTo == "edge").ToList(); 
+            var mandatoryNodeKeys = new[] { "x", "y", "r", "g", "b", "size" };
+
+
+            nodeattr = nodekeys.Where(f => !mandatoryNodeKeys.Contains(f.name)).Select(a => a.name).ToList();
+            edgeattr = edgekeys.Select(f => f.name).ToList();
+            attrs.Add(nodeattr);
+            attrs.Add(edgeattr);
+
+            return attrs;
+        }
+
+
+
         /// <summary>
         /// Reads the graphml XML file into c# classes we can work with
         /// </summary>

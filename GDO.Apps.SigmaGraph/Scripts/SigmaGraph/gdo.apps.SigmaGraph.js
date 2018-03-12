@@ -100,6 +100,7 @@ gdo.net.app["SigmaGraph"].nodeAttributes = [];
 gdo.net.app["SigmaGraph"].edgeAttributes = [];
 gdo.net.app["SigmaGraph"].validity = true;
 gdo.net.app["SigmaGraph"].filterConfig = {};
+gdo.net.app["SigmaGraph"].filterlist = [];
 gdo.net.app["SigmaGraph"].initClient = function () {
     gdo.net.app["SigmaGraph"].initInstanceGlobalConstants();
     gdo.consoleOut('.SIGMAGRAPHRENDERER', 1, 'Initializing Graph Renderer App Client at Node ' + gdo.clientId);
