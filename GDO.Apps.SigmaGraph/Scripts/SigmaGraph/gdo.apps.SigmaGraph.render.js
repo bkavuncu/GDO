@@ -65,39 +65,159 @@ gdo.net.app["SigmaGraph"].nameVertices = async function(params) {
     // gdo.net.app["SigmaGraph"].server.doneRendering(gdo.controlId);
 }
 
-gdo.net.app["SigmaGraph"].colorByFunc = async function(params) {
+gdo.net.app["SigmaGraph"].colorByValue = async function (params) {
+    // TODO: parse date, skip invalid parameter (do nothing but return message), change the hub and control file
     console.log('start color by Func');
     var objAttribute = params[0];
     var attribute = params[1];
-    var textFunc = params[2];
-    var colorFunc = eval('('+textFunc+')');
-    
-    console.log(attribute);
+    var lowerBound = parseFloat(params[2]);
+    var upperBound = parseFloat(params[3]);
+
+    var parseDate = function(list) {
+        var result = list.filter(function(node) {
+            if (isNaN(Date.parse(node.attrs["date"]))) {
+                node.color = "#696969";
+                return false;
+            }
+            return true;
+        });
+        return result;
+    }
+
+    var expDateValue = function(value) {
+        return Math.exp(1.0 * value / 1E12);
+    }
+
+
+    var valueRange = function (objattr, attr) {
+        var max, min, list;
+
+        if (objattr == 'node') {
+            list = gdo.sigmaInstance.graph.nodes().filter(function(node) {
+                if (node.attrs[attr] != null) {
+                    return true;
+                } else {
+                    node.color = "#696969";
+                }
+            });
+
+            if (attr == "date") {
+                list = parseDate(list);
+                max = expDateValue(Math.max.apply(Math,
+                    parseDate(list).map(a => Date.parse(a.attrs[attr]))));
+
+                min = expDateValue(Math.min.apply(Math,
+                    parseDate(list).map(a => Date.parse(a.attrs[attr]))));
+            } else {
+                max = Math.max.apply(Math,
+                    list.map(a => a.attrs[attr]));
+                min = Math.min.apply(Math,
+                    list.map(a => a.attrs[attr]));
+            }
+
+        } else if (objattr == 'edge') {
+            list = gdo.sigmaInstance.graph.edges().filter(function (node) {
+                if (node.attrs[attr] != null) {
+                    return true;
+                }
+                return false;
+            });
+
+
+            if (attr == "date") {
+                list = parseDate(list);
+                max = Math.max.apply(Math,
+                    parseDate(list).map(a => Date.parse(a.attrs[attr])));
+
+                min = Math.min.apply(Math,
+                    parseDate(list).map(a => Date.parse(a.attrs[attr])));
+            } else {
+                max = Math.max.apply(Math,
+                    list.map(a => a.attrs[attr]));
+                min = Math.min.apply(Math,
+                    list.map(a => a.attrs[attr]));
+            }
+        }
+        return [max, min, list];
+    }
+
+    /**
+    * https://gist.github.com/mjackson/5311256
+    * Converts an HSL color value to RGB. Conversion formula
+    * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
+    * Assumes h, s, and l are contained in the set [0, 1] and
+    * returns r, g, and b in the set [0, 255].
+     *
+    * @param   Number  h       The hue
+    * @param   Number  s       The saturation
+    * @param   Number  l       The lightness
+    * @return  Array           The RGB representation
+    */
+    function hslToRgb(h, s, l) {
+        var r, g, b;
+
+        if (s == 0) {
+            r = g = b = l; // achromatic
+        } else {
+            function hue2rgb(p, q, t) {
+                if (t < 0) t += 1;
+                if (t > 1) t -= 1;
+                if (t < 1 / 6) return p + (q - p) * 6 * t;
+                if (t < 1 / 2) return q;
+                if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+                return p;
+            }
+
+            var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+            var p = 2 * l - q;
+
+            r = hue2rgb(p, q, h + 1 / 3);
+            g = hue2rgb(p, q, h);
+            b = hue2rgb(p, q, h - 1 / 3);
+        }
+
+        return [Math.floor(r * 255), Math.floor(g * 255), Math.floor(b * 255)];
+    }
+
+    var color = function ( node, attr, max, min, lowerBound, upperBound) {
+        var h, s, l;
+        s = 1;
+        l = 0.5;
+        if (attr == "date") {
+            h = lowerBound + ((expDateValue(Date.parse(node.attrs[attr])) - min) / (max - min)) * (upperBound - lowerBound);
+        } else {
+            h = lowerBound + ((node.attrs[attr] - min) / (max - min)) * (upperBound - lowerBound);
+        }
+        var rgb = hslToRgb(h, s, l);
+        var color = '#' +
+            toPaddedHexString(rgb[0], 2) +
+            toPaddedHexString(rgb[1], 2) +
+            toPaddedHexString(rgb[2], 2);
+        return color;
+    }
+
     // don't clear the sigma graph
-    var helper = function(item, attr, func) {
+    var helper = function(item, attr, max, min , lb, ub) {
         if (item.attrs[attr] != null) {
-            item.color = colorFunc(item.attrs[attr]);
+            item.color = color(item, attr, max, min , lb, ub);
         }
     }
 
-    if (objAttribute === "node") {
-        // gdo.sigmaInstance.graph.nodes().forEach(node => helper(node, attribute, colorFunc));
-        gdo.sigmaInstance.graph.nodes().forEach(node => {
-            if (node.attrs[attribute] != null) {
-                node.color = colorFunc(node.attrs[attribute]);
-            }
-        });
-    } else if(objAttribute === "edge") {
-        // gdo.sigmaInstance.graph.edges().forEach(edge => helper(edge, attribute, colorFunc));
-        gdo.sigmaInstance.graph.edges().forEach(edge => {
-            if (edge.attrs[attribute] != null) {
-                edge.color = colorFunc(edge.attrs[attribute]);
-            }
-        });
+    var range = valueRange(objAttribute, attribute);
+    var max = range[0];
+    var min = range[1];
+    var objlist = range[2];
+
+    if (!isNaN(max)) {
+        gdo.net.app["SigmaGraph"].validity = true;
+        objlist.forEach(node => helper(node, attribute, max, min, lowerBound, upperBound));       
+        gdo.sigmaInstance.refresh({ skipIndexation: true });
+        gdo.net.app["SigmaGraph"].server.doneRendering(gdo.controlId);
+    } else {
+        gdo.net.app["SigmaGraph"].validity = false;
+        gdo.net.app["SigmaGraph"].server.reportInvalidity(gdo.controlId);
     }
-    //obj attr
-    gdo.sigmaInstance.refresh({ skipIndexation: true });
-    gdo.net.app["SigmaGraph"].server.doneRendering(gdo.controlId);
+    
 }
 
 gdo.net.app["SigmaGraph"].colorByFilter = async function(params) {
@@ -123,7 +243,14 @@ gdo.net.app["SigmaGraph"].colorByFilter = async function(params) {
 
 }
 
+gdo.net.app["SigmaGraph"].filterGraph = async function (attributeList) {
+    console.log(gdo.controlId);
+    gdo.sigmaInstance.graph.filterobj(attributeList);
 
+    gdo.sigmaInstance.refresh({ skipIndexation: true });
+    gdo.net.app["SigmaGraph"].server.doneRendering(gdo.controlId);
+}
+/*
 gdo.net.app["SigmaGraph"].filterGraph = async function(attributeList) {
     var objAttribute = attributeList[0];
     var attribute = attributeList[1];
@@ -150,7 +277,7 @@ gdo.net.app["SigmaGraph"].filterGraph = async function(attributeList) {
     gdo.sigmaInstance.refresh({ skipIndexation: true });
     gdo.net.app["SigmaGraph"].server.doneRendering(gdo.controlId);
 }
-
+*/
 /**
  * Show the spinning icon that indicates that the graph is loading.
  */
@@ -282,7 +409,7 @@ function handleFileGraphObjects(fileGraphObjects) {
             node.color = "#89f";
         }
         // What should the max be? 5? 12?
-        node.size = Math.min(5, node.size) || 3;
+        node.size = Math.min(12, node.size) || 3;
         try {
             gdo.sigmaInstance.graph.addNode(node);
         } catch (err) {

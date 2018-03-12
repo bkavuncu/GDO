@@ -158,15 +158,16 @@
                                             <select id="select_visual_attribute" required="" class="input_field">
                                                 <option value="default" hidden></option>
                                                 <option value="v">isVisible</option>
-                                                <option value="cfun">colorByFunc</option>
+                                                <option value="colorv">colorByValue</option>
                                                 <option value="cf">colorByFilter</option>
                                                 <option value="vn">showVertexName</option>
                                             </select>
                                         </td>
                                     </tr>
+
                                     <tbody id="v" style="display: none">
                                         <tr>
-                                            <td style="width: 20%">
+                                            <td style="width: 50%">
                                                 <label>Customized Function</label>
                                             </td>
                                             <td style="width: 20%">
@@ -199,9 +200,37 @@
                                             </td>
                                         </tr>
                                     </tbody> 
-                                    <tbody id="cfun_cf" style="display: none">
+                                    <tbody id="colorv" style="display: none">
                                         <tr>
                                             <td style="width: 20%">
+                                                <label>Color Showing Lowest</label>
+                                            </td>
+                                            <td style="width: 20%">
+                                                <label>Color Showing Highest</label>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width: 16%">
+                                                <select id="select_color1" required="" class="input_field">
+                                                    <option value="default" hidden></option>
+                                                    <option value="0">red</option>
+                                                    <option value=" 0.1666">yellow</option>
+                                                    <option value="0.3333">green</option>
+                                                    <option value="0.5">aqua</option>
+                                                    <option value="0.6666">blue</option>
+                                                    <option value="0.8333">purple</option>
+                                                </select>
+                                            </td>
+
+                                            <td style="width: 16%">
+                                                <select id="select_color2" required="" class="input_field">
+                                                </select>
+                                            </td>                                           
+                                        </tr>
+                                    </tbody>
+                                    <tbody id="cfun_cf" style="display: none">
+                                        <tr>
+                                            <td style="width: 50%">
                                                 <label>Customized Function</label>
                                             </td>
                                             <td style="width: 20%">
@@ -227,6 +256,7 @@
                                             </td>
                                         </tr>
                                     </tbody>
+
                                     <tbody id="vn" style="display: none">
                                         <tr>
                                             <td style="width: 20%">
@@ -241,10 +271,10 @@
                                         </tr>
                                         <tr>
                                             <!--
-                                            <td style="width: 16%">
-                                                <div id="js_code_vn" class="code" style="height:200px;background-color:#222222;caret-color:white;border: 2px solid #2A9FD6"></div>
-                                            </td>
-                                            -->
+        <td style="width: 16%">
+            <div id="js_code_vn" class="code" style="height:200px;background-color:#222222;caret-color:white;border: 2px solid #2A9FD6"></div>
+        </td>
+        -->
                                             <td style="width: 16%">
                                                 <select id="font_color" required="" class="input_field">
                                                     <option value="#ff0000">red</option>
@@ -267,6 +297,22 @@
                                             </td>
                                         </tr>
                                     </tbody>
+                                    
+                                    <tbody id="criterias" style="display:block">
+                                        <tr>
+                                            <td style="width: 16%">
+                                                <label>
+                                                    Filter Criterias
+                                                </label>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <ul id="filters"></ul>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+
                                     <tbody id="final" style="display: block">
                                         <tr>
                                             <td style="width: 16%">

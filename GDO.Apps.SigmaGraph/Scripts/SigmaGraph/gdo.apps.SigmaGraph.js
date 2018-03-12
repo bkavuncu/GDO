@@ -29,8 +29,8 @@ $(function () {
         gdo.net.app["SigmaGraph"].filterGraph(attribute);
     }
 
-    $.connection.sigmaGraphAppHub.client.colorByFunc = function (attribute) {
-        gdo.net.app["SigmaGraph"].colorByFunc(attribute);
+    $.connection.sigmaGraphAppHub.client.colorByValue = function (attribute) {
+        gdo.net.app["SigmaGraph"].colorByValue(attribute);
     }
 
     $.connection.sigmaGraphAppHub.client.nameVertices = function (attribute) {
@@ -98,7 +98,7 @@ $(function () {
 gdo.net.app["SigmaGraph"].attributes = [];
 gdo.net.app["SigmaGraph"].nodeAttributes = [];
 gdo.net.app["SigmaGraph"].edgeAttributes = [];
-gdo.net.app["SigmaGraph"].visualAttributes = ["isVisible"];
+gdo.net.app["SigmaGraph"].validity = true;
 gdo.net.app["SigmaGraph"].filterConfig = {};
 gdo.net.app["SigmaGraph"].initClient = function () {
     gdo.net.app["SigmaGraph"].initInstanceGlobalConstants();

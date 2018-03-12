@@ -3994,6 +3994,76 @@ if (typeof exports !== 'undefined') {
     return this;
   });
 
+
+
+  /**
+   * This method drops a node from the graph. It does not remove edges that are
+   * bound to it. An error is thrown if the node does not exist.
+   * This is copied from the dropNode method.
+   *
+   * @param  {string} id The node id.
+   * @return {object}    The graph instance.
+   */
+  graph.addMethod('dropNodeOnly', function (id) {
+      // Check that the arguments are valid:
+      if ((typeof id !== 'string' && typeof id !== 'number') ||
+          arguments.length !== 1)
+          throw 'dropNodeOnly: Wrong arguments.';
+
+      if (!this.nodesIndex[id])
+          throw 'The node "' + id + '" does not exist.';
+
+      var i, k, l;
+
+      // Remove the node from indexes:
+      delete this.nodesIndex[id];
+      for (i = 0, l = this.nodesArray.length; i < l; i++)
+          if (this.nodesArray[i].id === id) {
+              this.nodesArray.splice(i, 1);
+              break;
+          }
+
+      return this;
+  });
+
+  /**
+   * This method filter objects based on need. 
+   * TO DO: throw exceptions; finish edge filtering
+   *
+   * @param  {list} attributeList a list of strings contain information of filtering criteria
+   * @return {object}    The graph instance.
+   */
+  graph.addMethod('filterobj', function (attributeList) {
+      var objAttribute = attributeList[0];
+      var attribute = attributeList[1];
+      var textFunc = attributeList[2];
+      var func = eval('(' + textFunc + ')');
+
+      var helper = function (node) {
+          return node.attrs[attribute] != null && func(isNaN(node.attrs[attribute]) ? node.attrs[attribute] : node.attrs[attribute] - "0");
+      }
+
+      console.log(this.nodesArray.length);
+      var i;
+      if (objAttribute == 'node') {
+          for (i = this.nodesArray.length - 1; i >= 0; i--)
+              if (!helper(this.nodesArray[i])) {
+                  delete this.nodesIndex[this.nodesArray[i].id];
+                  this.nodesArray.splice(i,1);
+
+              }
+      } else if (objAttribute == 'edge') {
+          for (i = this.edgesArray.length - 1; i >= 0; i--)
+              if (!helper(this.edgesArray[i])) {
+                  delete this.edgesIndex[this.nodesArray[i].id];
+                  this.edgesArray.splice(i,1);
+
+              }
+      }
+      console.log(this.nodesArray.length);
+      return this;
+  });
+  
   /**
    * This method drops an edge from the graph. An error is thrown if the edge
    * does not exist.

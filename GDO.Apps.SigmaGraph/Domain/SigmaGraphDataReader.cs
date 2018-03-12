@@ -9,6 +9,14 @@ namespace GDO.Apps.SigmaGraph.Domain
 {
     public static class GraphDataReader
     {
+        private static object TryParseFloat(string data) {
+            float f;
+            if (float.TryParse(data, out f)) {
+                return f;
+            } else {
+                return data;
+            }
+        }
         /// <summary>
         /// Reads the graphml XML file into c# classes we can work with
         /// </summary>
@@ -72,8 +80,7 @@ namespace GDO.Apps.SigmaGraph.Domain
                 };
 
                 graphinfo.Nodes = graphelem.Elements(ns + "node").Select(xn =>
-                    new
-                    {
+                    new {
                         id = xn.Attribute("id").Value,
                         data = xn.Elements(ns + "data").ToDictionary(
                             xdata => xdata.Attribute("key").Value,
@@ -83,7 +90,7 @@ namespace GDO.Apps.SigmaGraph.Domain
                         {
                             ID = n.id,
                             Attrs = n.data.Where(a => !mandatoryNodeKeys.Contains(a.Key))
-                                    .ToDictionary(a => a.Key, a => a.Value),
+                                    .ToDictionary(a => a.Key, a => TryParseFloat(a.Value)),
                             // remove attrs that have their own field (R,G,B, size)
                             Label = hasLabel && n.data.ContainsKey("label") ? n.data["label"] : "",
                             // leave labels blank
@@ -144,7 +151,7 @@ namespace GDO.Apps.SigmaGraph.Domain
                         {
                             Source = l.source,
                             Target = l.target,
-                            Attrs = l.data,
+                            Attrs = l.data.ToDictionary(a => a.Key, a => TryParseFloat(a.Value)),
                             Weight = edgeHasWeight ? float.Parse(l.data["weight"]) : DEFAULT_LINKWIDTH,
                             R = edgeHascolour ? int.Parse(l.data["r"]) : DEFAULT_EDGE_COLOR.r,
                             G = edgeHascolour ? int.Parse(l.data["g"]) : DEFAULT_EDGE_COLOR.g,

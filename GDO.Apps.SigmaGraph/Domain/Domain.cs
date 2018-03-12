@@ -78,7 +78,7 @@ namespace GDO.Apps.SigmaGraph.Domain
         public int R { get; set; }
         public int G { get; set; }
         public int B { get; set; }
-        public Dictionary<string, string> Attrs { get; set; }
+        public Dictionary<string, Object> Attrs { get; set; }
         public int NumLinks { get; set; }
         public List<string> Adj { get; set; }
 
@@ -138,7 +138,7 @@ namespace GDO.Apps.SigmaGraph.Domain
         public int R { get; set; }
         public int G { get; set; }
         public int B { get; set; }
-        public Dictionary<string, string> Attrs { get; set; }
+        public Dictionary<string, object> Attrs { get; set; }
         private const double Epsilon = 1E-6;
 
         public override bool IsWithin<T>(QuadTreeNode<T> quadTreeNode)

@@ -206,7 +206,16 @@ namespace GDO.Apps.SigmaGraph
             }
         }
 
-        public void TriggerColorByFunc(int instanceId, string objectAttr, string attribute, string textFunc)
+
+        public void ReportInvalidity(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                Clients.Caller.setMessage("Invalid attribute");
+            }
+        }
+
+        public void TriggerColorByValue(int instanceId, string objectAttr, string attribute, string lowerBound, string upperBound)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -216,13 +225,15 @@ namespace GDO.Apps.SigmaGraph
                     List<string> attrs = new List<string>();
                     attrs.Add(objectAttr);
                     attrs.Add(attribute);
-                    attrs.Add(textFunc);
-                    Clients.Group("" + instanceId).colorByFunc(attrs);
-                    Clients.Caller.setMessage("Triggered Coloring action.");
+                    attrs.Add(lowerBound);
+                    attrs.Add(upperBound);
+                    Clients.Group("" + instanceId).colorByValue(attrs);
+                    Clients.Caller.setMessage("Triggered Coloring Action");
+                    // how to set message based on javascript?
                 }
                 catch (Exception e)
                 {
-                    Clients.Caller.setMessage("Error: Failed to render coloredByFun graphml");
+                    Clients.Caller.setMessage("Error: Failed to render coloredByValue graphml");
                     Clients.Caller.setMessage(e.ToString());
                     Log.Error(e);
                 }

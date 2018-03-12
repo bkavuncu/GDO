@@ -1,4 +1,4 @@
-﻿/// <reference path="H:\GDO\GDO.Apps.SigmaGraph\Scripts/SigmaGraph/gdo.apps.SigmaGraph.js" />
+/// <reference path="H:\GDO\GDO.Apps.SigmaGraph\Scripts/SigmaGraph/gdo.apps.SigmaGraph.js" />
 /// <reference path="control.js" />
 $(document).on('change', '.btn-file :file', function () {
     var input = $(this),
@@ -196,7 +196,7 @@ $(function () {
     });
 
     $("#graph_digit").keypress(function (e) {
-        if (e.keyCode == 13) {
+        if (e.keyCode === 13) {
             $("#image_digit_button").click();
         }
     });
@@ -260,9 +260,9 @@ $(function () {
             gdo.net.app["SigmaGraph"].server.setAllAttributes(gdo.controlId)
                 .done(function () {
                     var attributes = [];
-                    if (value == "edge") {
+                    if (value === "edge") {
                         attributes = gdo.net.app["SigmaGraph"].edgeAttributes;
-                    } else if (value == "node") {
+                    } else if (value === "node") {
                         attributes = gdo.net.app["SigmaGraph"].nodeAttributes;
                     }
 
@@ -280,15 +280,15 @@ $(function () {
     });
 
     $("#select_visual_attribute").change(function () {
-        var visual = $("#select_visual_attribute").val();
+        var visual =  $("#select_visual_attribute").val();
         switch (visual) {
             case "v":
                 setAllDisaplyToNone();
                 setDisPlayTo("v", "block");
                 break;
-            case "cfun":
+            case "colorv":
                 setAllDisaplyToNone();
-                setDisPlayTo("cfun_cf", "block");
+                setDisPlayTo("colorv", "block");
                 break;
             case "cf":
                 setAllDisaplyToNone();
@@ -310,11 +310,12 @@ $(function () {
     function getFilteringFunction() {
         var filterValue = $("#filter_value").val();
         var relation = $("#select_filter").val();
-        if (filterValue == "") {
-            var funcText = getCodeFromEditor("js_code");
+        var funcText;
+        if (filterValue === "") {
+            funcText = getCodeFromEditor("js_code");
             return funcText;
         } else {
-            var funcText = "function(x) { return x ";
+            funcText = "function(x) { return x ";
             var comp = "";
             switch (relation) {
                 case "greater":
@@ -327,9 +328,6 @@ $(function () {
                     comp = "==";
                     break;
                 case "range":
-                    comp = "!==";
-                    break;
-                case "range":
                     var res = filterValue.split("-");
                     var small = res[0];
                     var big = res[1];
@@ -340,27 +338,60 @@ $(function () {
             }
             funcText += (comp + " " + filterValue + ";}");
             return funcText;
+
         }
     }
 
+    $("#select_color1").change(function() {
+
+        // $("#select_color2").empty() not working here ??
+        while (document.getElementById("select_color2").options.length > 0) {
+            document.getElementById("select_color2").remove(0);
+        } 
+        var fromSelect = document.getElementById("select_color1");
+
+        for (var i = fromSelect.selectedIndex + 1; i < fromSelect.options.length; i++) {
+            var newOptionValue = fromSelect.options[i].value;
+            var newOptionTxt = fromSelect.options[i].innerHTML;
+            document.getElementById("select_color2").options.add(new Option(newOptionTxt,newOptionValue));
+        }
+    });
+    
+
     $("#apply").click(function () {
+        var filterlist = document.getElementById("filters");
         var type = $("#select_object").val();
         var property = $("#select_property").val();
         var visual = $("#select_visual_attribute").val();
+        var newnode = document.createElement("li");
+        var condition;
         switch (visual) {
             case "v":
                 var funcText = getFilteringFunction();
                 console.log(funcText);
-                gdo.net.app["SigmaGraph"].server.triggerFilter(gdo.controlId, type, property, funcText);
+                gdo.net.app["SigmaGraph"].server.triggerFilter(gdo.controlId, type, property, funcText);              
+                condition = String(type) + ' ' + String(property) + ' ' + String(funcText);
+                newnode.appendChild(document.createTextNode(condition));
+                filterlist.appendChild(newnode);   
                 break;
-            case "cfun":
-                var funcTextColour = getCodeFromEditor("js_code_c");
-                gdo.net.app["SigmaGraph"].server.triggerColorByFunc(gdo.controlId, type, property, funcTextColour);
+            case "colorv":
+                var lowerBound = $("#select_color1").val();
+                var upperBound = $("#select_color2").val();
+                gdo.net.app["SigmaGraph"].server.triggerColorByValue(gdo.controlId, type, property, lowerBound, upperBound);
+                if (gdo.net.app["SigmaGraph"].validity)
+                {
+                    condition = 'Color by Value' + String(property);
+                    newnode.appendChild(document.createTextNode(condition));
+                    filterlist.appendChild(newnode);
+                }
                 break;
             case "cf":
                 var color = $("#select_color").val();
                 var funcTextColour = getCodeFromEditor("js_code_c");
                 gdo.net.app["SigmaGraph"].server.triggerColorByFilter(gdo.controlId, type, property, funcTextColour, color);
+                condition = String(type) + ' ' + String(property) + ' ' + String(funcTextColour) +' '+ String(color);
+                newnode.appendChild(document.createTextNode(condition));
+                filterlist.appendChild(newnode);   
                 break;
             case "vn":
                 var funcTextVn = getFilteringFunction() || "function(x) {return true;}";
@@ -369,6 +400,9 @@ $(function () {
                 var fontSize = $("#font_size").val();
                 var labelAttr = $("#select_label_property").val();
                 gdo.net.app["SigmaGraph"].server.triggerNameVertices(gdo.controlId, type, property, funcTextVn, fontColor, fontSize, labelAttr);
+                condition = String(type) + ' ' + String(property) + ' ' + String(funcTextVn) + 'show label';
+                newnode.appendChild(document.createTextNode(condition));
+                filterlist.appendChild(newnode);   
                 break;
             default:
                 break;
@@ -380,9 +414,10 @@ $(function () {
     }
     
     function setAllDisaplyToNone() {
-        setDisPlayTo("v", "none")
-        setDisPlayTo("cfun_cf", "none")
-        setDisPlayTo("vn", "none")
+        setDisPlayTo("v", "none");
+        setDisPlayTo("colorv", "none");
+        setDisPlayTo("cfun_cf", "none");
+        setDisPlayTo("vn", "none");
     }
 
     function resetSelection() {
@@ -392,6 +427,9 @@ $(function () {
         $("#select_object").val("default");
         $("#select_visual_attribute").val("default");
         $("#filter_value").val("");
+        $("#filters").empty();
+        $("#select_color1").val("default");
+        $("#select_color2").empty();
     }
 
 
