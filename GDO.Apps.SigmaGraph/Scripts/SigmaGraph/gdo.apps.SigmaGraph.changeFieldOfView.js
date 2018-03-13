@@ -15,11 +15,13 @@
 gdo.net.app["SigmaGraph"].zoom = function (zoomXCenter, zoomYCenter, ratio) {
     gdo.net.app["SigmaGraph"].zoomX(zoomXCenter, ratio);
     gdo.net.app["SigmaGraph"].zoomY(zoomYCenter, ratio);
-
     gdo.net.app["SigmaGraph"].renderGraph();
-    gdo.net.app["SigmaGraph"].mapRescale();
-    // REDO filtering
-    //gdo.net.app["SigmaGraph"]'.redofiltering();
+    gdo.net.app["SigmaGraph"].redofiltering();
+
+    //not sure about how this work
+    //gdo.net.app["SigmaGraph"].mapRescale();
+    
+    
 }
 
 gdo.net.app["SigmaGraph"].zoomX = function (zoomXCenter, ratio) {
@@ -54,4 +56,28 @@ gdo.net.app["SigmaGraph"].pan = function (xShift, yShift) {
     gdo.xTotalShift -= xShift / gdo.xRatio;
     gdo.yTotalShift -= yShift / gdo.yRatio;
     gdo.net.app["SigmaGraph"].renderGraph();
+}
+
+
+gdo.net.app["SigmaGraph"].redofiltering = function () {
+    var filters = gdo.net.app["SigmaGraph"].filterlist;
+    var type, attr;
+    for (i = 0; i < filters.length; i++) {
+        type = filters[i].key;
+        attr = filters[i].value;
+        switch (type) {
+            case "f":
+                gdo.net.app["SigmaGraph"].filterGraph(attr)
+                break;
+            case "cv":
+                gdo.net.app["SigmaGraph"].colorByValue(attr)
+                break;
+            case "cf":
+                gdo.net.app["SigmaGraph"].colorByFilter(attr)
+                break;
+            case "vn":
+                gdo.net.app["SigmaGraph"].nameVertices(attr)
+                break;
+        }
+    }
 }

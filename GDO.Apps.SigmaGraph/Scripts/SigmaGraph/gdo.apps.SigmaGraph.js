@@ -41,6 +41,14 @@ $(function () {
         gdo.net.app["SigmaGraph"].colorByFilter(attribute);
     }
 
+    $.connection.sigmaGraphAppHub.client.addfilter = function (attributelist) {
+        gdo.net.app["SigmaGraph"].filterlist.push({
+            key: attributelist[0],
+            value: attributelist.slice(1)
+        });
+        console.log(gdo.net.app["SigmaGraph"].filterlist);
+    }
+
     $.connection.sigmaGraphAppHub.client.pan = gdo.net.app["SigmaGraph"].pan;
 
     $.connection.sigmaGraphAppHub.client.zoom = gdo.net.app["SigmaGraph"].zoom;
@@ -98,8 +106,7 @@ $(function () {
 gdo.net.app["SigmaGraph"].attributes = [];
 gdo.net.app["SigmaGraph"].nodeAttributes = [];
 gdo.net.app["SigmaGraph"].edgeAttributes = [];
-gdo.net.app["SigmaGraph"].validity = true;
-gdo.net.app["SigmaGraph"].filterConfig = {};
+gdo.net.app["SigmaGraph"].validity = null;
 gdo.net.app["SigmaGraph"].filterlist = [];
 gdo.net.app["SigmaGraph"].initClient = function () {
     gdo.net.app["SigmaGraph"].initInstanceGlobalConstants();
@@ -118,6 +125,9 @@ gdo.net.app["SigmaGraph"].terminateClient = function () {
 gdo.net.app["SigmaGraph"].ternminateControl = function () {
     gdo.consoleOut('.SIGMAGRAPHRENDERER', 1, 'Terminating Graph Renderer App Control at Instance ' + gdo.controlId);
 }
+
+
+
 
 gdo.loadScript('sigma.min', 'SigmaGraph', gdo.SCRIPT_TYPE.APP);
 gdo.loadScript('initializeGlobals', 'SigmaGraph', gdo.SCRIPT_TYPE.APP);

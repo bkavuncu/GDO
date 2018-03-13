@@ -222,12 +222,17 @@ namespace GDO.Apps.SigmaGraph
                 try
                 {
                     Clients.Caller.setMessage("Triggering Coloring Action");
-                    List<string> attrs = new List<string>();
-                    attrs.Add(objectAttr);
-                    attrs.Add(attribute);
-                    attrs.Add(lowerBound);
-                    attrs.Add(upperBound);
+                    List<string> attrs = new List<string> {
+                        objectAttr,
+                        attribute,
+                        lowerBound,
+                        upperBound
+                    };
+                    List<string> filter = new List<string> {
+                        "cv" };
+                    filter.AddRange(attrs);
                     Clients.Group("" + instanceId).colorByValue(attrs);
+                    Clients.Group("" + instanceId).addfilter(filter);
                     Clients.Caller.setMessage("Triggered Coloring Action");
                     // how to set message based on javascript?
                 }
@@ -240,19 +245,24 @@ namespace GDO.Apps.SigmaGraph
             }
         }
 
-        public void TriggerNameVertices(int insanceId, string objectAttr, string attribute, string textFunc, string color, string fontSize, string labelAttr)
+        public void TriggerNameVertices(int instanceId, string objectAttr, string attribute, string textFunc, string color, string fontSize, string labelAttr)
         {
-            lock (Cave.AppLocks[insanceId])
+            lock (Cave.AppLocks[instanceId])
             {
                 Clients.Caller.setMessage("Triggering naming vertices Action");
-                List<string> attrs = new List<string>();
-                attrs.Add(objectAttr);
-                attrs.Add(attribute);
-                attrs.Add(textFunc);
-                attrs.Add(color);
-                attrs.Add(fontSize);
-                attrs.Add(labelAttr);
-                Clients.Group("" + insanceId).nameVertices(attrs);
+                List<string> attrs = new List<string> {
+                    objectAttr,
+                    attribute,
+                    textFunc,
+                    color,
+                    fontSize,
+                    labelAttr
+                };
+                List<string> filter = new List<string> {
+                        "vn" };
+                filter.AddRange(attrs);
+                Clients.Group("" + instanceId).nameVertices(attrs);
+                Clients.Group("" + instanceId).addfilter(filter);
                 Clients.Caller.setMessage("Triggered naming vertices Action");
             }
 
@@ -265,13 +275,18 @@ namespace GDO.Apps.SigmaGraph
                 try
                 {
                     Clients.Caller.setMessage("Triggering Coloring Filter Action");
-                    List<string> attrs = new List<string>();
-                    attrs.Add(objectAttr);
-                    attrs.Add(attribute);
-                    attrs.Add(textFunc);
-                    attrs.Add(color);
-                    Clients.Caller.setMessage("Triggered Coloring Filter Action");
+                    List<string> attrs = new List<string> {
+                        objectAttr,
+                        attribute,
+                        textFunc,
+                        color
+                    };
+                    List<string> filter = new List<string> {
+                        "cf" };
+                    filter.AddRange(attrs);
                     Clients.Group("" + instanceId).colorByFilter(attrs);
+                    Clients.Group("" + instanceId).addfilter(filter);
+                    Clients.Caller.setMessage("Triggered Coloring Filter Action");
                 }
                 catch (Exception e)
                 {
@@ -291,11 +306,16 @@ namespace GDO.Apps.SigmaGraph
                     Clients.Caller.setMessage("Triggering filtering action.");
                     // Clients.Caller.setMessage(attribute + " " + visualAttribute + " " + textFunc + " " + objectAttr);
                     // TODO find a way to pass by map instead of list
-                    List<string> attrs = new List<string>();
-                    attrs.Add(objectAttr);
-                    attrs.Add(attribute);
-                    attrs.Add(textFunc);
+                    List<string> attrs = new List<string> {
+                        objectAttr,
+                        attribute,
+                        textFunc
+                    };
+                    List<string> filter = new List<string> {
+                        "f" };
+                    filter.AddRange(attrs);
                     Clients.Group("" + instanceId).filterGraph(attrs);
+                    Clients.Caller.setMessage("Triggered Coloring Filter Action");
                     Clients.Caller.setMessage("Triggered filtering action.");
                 }
                 catch (Exception e)

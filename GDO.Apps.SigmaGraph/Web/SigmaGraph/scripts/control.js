@@ -282,17 +282,17 @@ $(function () {
     $("#select_visual_attribute").change(function () {
         var visual =  $("#select_visual_attribute").val();
         switch (visual) {
-            case "v":
+            case "f":
                 setAllDisaplyToNone();
-                setDisPlayTo("v", "block");
+                setDisPlayTo("f", "block");
                 break;
-            case "colorv":
+            case "cv":
                 setAllDisaplyToNone();
-                setDisPlayTo("colorv", "block");
+                setDisPlayTo("cv", "block");
                 break;
             case "cf":
                 setAllDisaplyToNone();
-                setDisPlayTo("cfun_cf", "block");
+                setDisPlayTo("cf", "block");
                 break;
             case "vn":
                 setAllDisaplyToNone();
@@ -366,7 +366,7 @@ $(function () {
         var newnode = document.createElement("li");
         var condition;
         switch (visual) {
-            case "v":
+            case "f":
                 var funcText = getFilteringFunction();
                 console.log(funcText);
                 gdo.net.app["SigmaGraph"].server.triggerFilter(gdo.controlId, type, property, funcText);              
@@ -374,7 +374,7 @@ $(function () {
                 newnode.appendChild(document.createTextNode(condition));
                 filterlist.appendChild(newnode);   
                 break;
-            case "colorv":
+            case "cv":
                 var lowerBound = $("#select_color1").val();
                 var upperBound = $("#select_color2").val();
                 gdo.net.app["SigmaGraph"].server.triggerColorByValue(gdo.controlId, type, property, lowerBound, upperBound);
@@ -414,9 +414,9 @@ $(function () {
     }
     
     function setAllDisaplyToNone() {
-        setDisPlayTo("v", "none");
-        setDisPlayTo("colorv", "none");
-        setDisPlayTo("cfun_cf", "none");
+        setDisPlayTo("f", "none");
+        setDisPlayTo("cv", "none");
+        setDisPlayTo("cf", "none");
         setDisPlayTo("vn", "none");
     }
 
@@ -436,6 +436,7 @@ $(function () {
     $("#reset").click(function () {
         resetSelection();
         gdo.net.app["SigmaGraph"].server.resetSigmaGraph(gdo.controlId);
+        gdo.net.app["SigmaGraph"].filterlist = [];
     })
 
     gdo.net.app["SigmaGraph"].initControl();
