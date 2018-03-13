@@ -33,7 +33,7 @@ gdo.net.app["SigmaGraph"].renderGraph = async function () {
     gdo.stopWatch = window.performance.now();
     // gdo.sigmaInstance.refresh({ skipIndexation: true });
     gdo.sigmaInstance.refresh();
-
+    gdo.net.app["SigmaGraph"].redoFiltering();  //recover the filters (if there is any)
     gdo.net.app["SigmaGraph"].server.doneRendering(gdo.controlId);
 }
 
@@ -288,6 +288,32 @@ gdo.net.app["SigmaGraph"].filterGraph = async function(attributeList) {
     gdo.net.app["SigmaGraph"].server.doneRendering(gdo.controlId);
 }
 */
+
+
+gdo.net.app["SigmaGraph"].redoFiltering = function () {
+    console.log("recover filters");
+    var filters = gdo.net.app["SigmaGraph"].filterlist;
+    var type, attr;
+    for (i = 0; i < filters.length; i++) {
+        type = filters[i].key;
+        attr = filters[i].value;
+        switch (type) {
+            case "f":
+                gdo.net.app["SigmaGraph"].filterGraph(attr);
+                break;
+            case "cv":
+                gdo.net.app["SigmaGraph"].colorByValue(attr);
+                break;
+            case "cf":
+                gdo.net.app["SigmaGraph"].colorByFilter(attr);
+                break;
+            case "vn":
+                gdo.net.app["SigmaGraph"].nameVertices(attr);
+                break;
+        }
+    }
+}
+
 /**
  * Show the spinning icon that indicates that the graph is loading.
  */

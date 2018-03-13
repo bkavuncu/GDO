@@ -296,7 +296,7 @@ $(function () {
                 break;
             case "vn":
                 setAllDisaplyToNone();
-                setDisPlayTo("v", "block");
+                setDisPlayTo("f", "block");
                 setDisPlayTo("vn", "block");
                 break;
         }
@@ -436,7 +436,6 @@ $(function () {
     $("#reset").click(function () {
         resetSelection();
         gdo.net.app["SigmaGraph"].server.resetSigmaGraph(gdo.controlId);
-        gdo.net.app["SigmaGraph"].filterlist = [];
     })
 
     gdo.net.app["SigmaGraph"].initControl();

@@ -23,6 +23,7 @@ $(function () {
             gdo.sigmaInstance.refresh();
         }
         gdo.net.app["SigmaGraph"].renderGraph();
+        gdo.net.app["SigmaGraph"].filterlist=[];
     }
 
     $.connection.sigmaGraphAppHub.client.filterGraph = function (attribute) {
@@ -41,13 +42,15 @@ $(function () {
         gdo.net.app["SigmaGraph"].colorByFilter(attribute);
     }
 
-    $.connection.sigmaGraphAppHub.client.addfilter = function (attributelist) {
+    $.connection.sigmaGraphAppHub.client.addFilter = function (attributelist) {
         gdo.net.app["SigmaGraph"].filterlist.push({
             key: attributelist[0],
             value: attributelist.slice(1)
         });
         console.log(gdo.net.app["SigmaGraph"].filterlist);
     }
+    
+    $.connection.sigmaGraphAppHub.client.redoFiltering = gdo.net.app["SigmaGraph"].redoFiltering;
 
     $.connection.sigmaGraphAppHub.client.pan = gdo.net.app["SigmaGraph"].pan;
 

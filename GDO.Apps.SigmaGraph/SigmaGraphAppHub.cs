@@ -232,7 +232,7 @@ namespace GDO.Apps.SigmaGraph
                         "cv" };
                     filter.AddRange(attrs);
                     Clients.Group("" + instanceId).colorByValue(attrs);
-                    Clients.Group("" + instanceId).addfilter(filter);
+                    Clients.Group("" + instanceId).addFilter(filter);
                     Clients.Caller.setMessage("Triggered Coloring Action");
                     // how to set message based on javascript?
                 }
@@ -262,7 +262,7 @@ namespace GDO.Apps.SigmaGraph
                         "vn" };
                 filter.AddRange(attrs);
                 Clients.Group("" + instanceId).nameVertices(attrs);
-                Clients.Group("" + instanceId).addfilter(filter);
+                Clients.Group("" + instanceId).addFilter(filter);
                 Clients.Caller.setMessage("Triggered naming vertices Action");
             }
 
@@ -285,7 +285,7 @@ namespace GDO.Apps.SigmaGraph
                         "cf" };
                     filter.AddRange(attrs);
                     Clients.Group("" + instanceId).colorByFilter(attrs);
-                    Clients.Group("" + instanceId).addfilter(filter);
+                    Clients.Group("" + instanceId).addFilter(filter);
                     Clients.Caller.setMessage("Triggered Coloring Filter Action");
                 }
                 catch (Exception e)
@@ -315,7 +315,7 @@ namespace GDO.Apps.SigmaGraph
                         "f" };
                     filter.AddRange(attrs);
                     Clients.Group("" + instanceId).filterGraph(attrs);
-                    Clients.Caller.setMessage("Triggered Coloring Filter Action");
+                    Clients.Group("" + instanceId).addFilter(filter);
                     Clients.Caller.setMessage("Triggered filtering action.");
                 }
                 catch (Exception e)
@@ -326,6 +326,7 @@ namespace GDO.Apps.SigmaGraph
                 }
             }
         }
+
 
         public void Zoom(int instanceId, double x, double y, double ratio)
         {
@@ -377,7 +378,6 @@ namespace GDO.Apps.SigmaGraph
                     // FIXME: after we can pan, we no longer only want to zoom in on the centre
                     var ga = (SigmaGraphApp)Cave.Deployment.Apps["SigmaGraph"].Instances[instanceId];
                     QuadTree.QuadCentroid centroid = ga.GetCentroid();
-
                     Clients.Group("" + instanceId).zoom(centroid.xCentroid, centroid.yCentroid, 1.25);
                     Clients.Caller.setMessage("Zoomed-in graph is now being rendered.");
                 }
@@ -403,6 +403,7 @@ namespace GDO.Apps.SigmaGraph
                     QuadTree.QuadCentroid centroid = ga.GetCentroid();
 
                     Clients.Group("" + instanceId).zoom(centroid.xCentroid, centroid.yCentroid, 1/1.25);
+                    Clients.Group("" + instanceId).redoFiltering();
                     Clients.Caller.setMessage("Zoomed-out graph is now being rendered.");
                 }
                 catch (Exception e)
