@@ -78,7 +78,7 @@ namespace GDO.Core.Scenarios
                 return f;
             }
 
-            throw new FormatException(String.Format("Unable to parse parameter `{0}`", param));
+            throw new FormatException(String.Format("Unable to parse parameter `{0}` try wrapping strings with ' marks", param));
         }
 
         public override string ToString() {

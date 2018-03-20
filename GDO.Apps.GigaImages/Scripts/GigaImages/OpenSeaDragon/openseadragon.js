@@ -11531,6 +11531,14 @@ $.extend( $.DziTileSource.prototype, $.TileSource.prototype, /** @lends OpenSead
             // here we undo Bentley's hack
             // return [ this.tilesUrl, level, '/', x, '_', y, '.', this.fileFormat, this.queryParams ].join( '' );
             return [ this.tilesUrl, level, '/', x, '/', x, '_', y, '.', this.fileFormat, this.queryParams ].join( '' );
+        } else if (this.tilesUrl.includes("bitcoinimg/tileimgs")) {// dans madness 
+            return "http://146.169.32.183/bitcoinimg/tileimgs/" +
+                (level-8) + "/" + y + "/" +
+                (level-8) + "_" + x + "_" + y + ".png";
+
+            //https://dsi-bitcoin.doc.ic.ac.uk/tileimgs/1_0_0.png
+            //return [this.tilesUrl, (level-8),"_" , x, '_', y, '.', this.fileFormat, this.queryParams].join('');
+            //"tileimgs/"+ (level-8) +"_"+ x +"_"+ y +".png"
         } else {
             return [this.tilesUrl, level, '/', x, '_', y, '.', this.fileFormat, this.queryParams].join('');
         }
