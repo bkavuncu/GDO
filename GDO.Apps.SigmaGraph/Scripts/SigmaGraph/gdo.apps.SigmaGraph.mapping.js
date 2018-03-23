@@ -34,7 +34,7 @@ gdo.net.app["SigmaGraph"].hideMap = async function () {
 gdo.net.app["SigmaGraph"].initMap = async function () {
     var ol = gdo.net.app.SigmaGraph.openLayers;
 
-    var map = new ol.Map({
+    var map = new ol.Map({  
         target: 'map',
         controls: [],
         layers: [

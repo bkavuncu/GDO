@@ -34,8 +34,25 @@ gdo.net.app["SigmaGraph"].renderGraph = async function () {
     // gdo.sigmaInstance.refresh({ skipIndexation: true });
     gdo.sigmaInstance.refresh();
     gdo.net.app["SigmaGraph"].redoFiltering();  //recover the filters (if there is any)
+    //gdo.net.app["SigmaGraph"].setaxis(); some function to move the axis back
     gdo.net.app["SigmaGraph"].server.doneRendering(gdo.controlId);
 }
+
+gdo.net.app["SigmaGraph"].setAxis = async function () {
+    if (gdo.net.app["SigmaGraph"].attributes.indexOf("type") > -1) {
+
+        list = gdo.sigmaInstance.graph.nodes().filter(function (node) {
+            if (node.attrs["type"] != "axis") {
+                return true;
+            }
+            return false;
+        });
+        
+
+    }
+}
+
+
 
 gdo.net.app["SigmaGraph"].nameVertices = async function(params) {
     var objAttribute = params[0];
@@ -225,9 +242,8 @@ gdo.net.app["SigmaGraph"].colorByValue = async function (params) {
         gdo.net.app["SigmaGraph"].server.doneRendering(gdo.controlId);
     } else {
         gdo.net.app["SigmaGraph"].validity = false;
-        gdo.net.app["SigmaGraph"].server.reportInvalidity(gdo.controlId);
     }
-    console.log(gdo.net.app["SigmaGraph"].validity);
+    
 }
 
 gdo.net.app["SigmaGraph"].colorByFilter = async function(params) {
@@ -334,7 +350,7 @@ gdo.net.app["SigmaGraph"].hideSpinner = function () {
  */
 async function getFilesWithin() {
     const filePaths = await new Promise((resolve, reject) => {
-        gdo.net.app["SigmaGraph"].server.getFilesWithin(gdo.controlId, gdo.xCentroid, gdo.yCentroid, gdo.xWidth, gdo.yWidth)
+        gdo.net.app["SigmaGraph"].server.getSparseFilesWithin(gdo.controlId, gdo.xCentroid, gdo.yCentroid, gdo.xWidth, gdo.yWidth,15)
             .done(function(filePaths) {
                 resolve(filePaths);
             });

@@ -47,7 +47,6 @@ $(function () {
             key: attributelist[0],
             value: attributelist.slice(1)
         });
-        console.log(gdo.net.app["SigmaGraph"].filterlist);
     }
     
     $.connection.sigmaGraphAppHub.client.redoFiltering = gdo.net.app["SigmaGraph"].redoFiltering;

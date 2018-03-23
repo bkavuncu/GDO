@@ -170,6 +170,10 @@ namespace GDO.Apps.SigmaGraph {
             return this.CurrentQuadTreeRoot.ReturnMatchingLeaves(x, y, xWidth, yWidth)
                 .Select(graphNode => this.Configuration.FolderNameDigit + "/" + graphNode.Guid + ".json").ToList();
         }
+        public List<string> GetSparseFilesWithin(double x, double y, double xWidth, double yWidth, int bags) {
+            return this.CurrentQuadTreeRoot.ReturnSparseMatchingLeaves(x, y, xWidth, yWidth, bags)
+                .Select(graphNode => this.Configuration.FolderNameDigit + "/" + graphNode.Guid + ".json").ToList();
+        }
 
         public IEnumerable<string> GetLeafBoxes(double x, double y, double xWidth, double yWidth)
         {

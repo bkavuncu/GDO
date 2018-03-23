@@ -125,7 +125,18 @@ namespace GDO.Apps.SigmaGraph
             }
         }
 
-        public IEnumerable<string> GetLeafBoxes(int instanceId, double x, double y, double xWidth, double yWidth)
+        public List<string> GetSparseFilesWithin(int instanceId, double x, double y, double xWidth, double yWidth, int bags)
+        {
+            // lock (Cave.AppLocks[instanceId])todo testing removal of locks... nothing here is writing. 
+            // {
+            var ga = (SigmaGraphApp)Cave.Deployment.Apps["SigmaGraph"].Instances[instanceId];
+            IEnumerable<string> filePaths = ga.GetSparseFilesWithin(x, y, xWidth, yWidth, bags)
+                .Select(filePath => "Web/SigmaGraph/QuadTrees/" + filePath);
+            return filePaths.ToList();
+            //}
+        }
+
+    public IEnumerable<string> GetLeafBoxes(int instanceId, double x, double y, double xWidth, double yWidth)
         {
             lock (Cave.AppLocks[instanceId])
             {
