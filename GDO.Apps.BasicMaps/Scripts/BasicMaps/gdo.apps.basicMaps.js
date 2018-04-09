@@ -759,17 +759,27 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
     gdo.net.app["BasicMaps"].server.requestLayersVisible(instanceId);
     gdo.net.app["BasicMaps"].server.requestMarkerPosition(instanceId);
     gdo.net.app["BasicMaps"].fixBingBug(instanceId);
+	
+	   
 }
 
 gdo.net.app["BasicMaps"].fixBingBug = function (instanceId) {
+	
     setTimeout(function () {
+		    	gdo.consoleOut('.BasicMaps', 4, 'About to Detect Bing Maps Bug');
+				
+				gdo.consoleOut('.BasicMaps', 4, 'About to Detect Bing Maps Bug '+ gdo.net.instance[instanceId].layers[0].getSource().getState());
         if (gdo.net.instance[instanceId].layers[0].getSource().getState() == "loading" ||
-            gdo.net.instance[instanceId].layers[1].getSource().getState() == "loading" ||
-            gdo.net.instance[instanceId].layers[2].getSource().getState() == "loading" ||
-            gdo.net.instance[instanceId].layers[3].getSource().getState() == "loading" ||
-            gdo.net.instance[instanceId].layers[4].getSource().getState() == "loading"
+            gdo.net.instance[instanceId].layers[0].getSource().getState() == "error" 
+            
             ) {
-                gdo.consoleOut('.BasicMaps', 4, 'Bing Maps Bug Detected - Reloading sources');
+				gdo.consoleOut('.BasicMaps', 4, 'Bing Maps Bug Detected');
+                gdo.consoleOut('.BasicMaps', 4, 'Bing Maps Bug Detected - Reloading sources '+
+				gdo.net.instance[instanceId].layers[0].getSource().getState()
+				);
+				
+				//setTimeout(function () {  location.reload();},500);
+					// try the hard reset first as sometimes this first test reports errors but the 2nd does not (ie the layers have now loaded but are still not being rendered)
                 gdo.net.instance[instanceId].layers[0].setSource(new ol.source.BingMaps({
                     key: 'AqJrkrOTlDJUTbioyay25R6bC-LoZaAggCaAGRV19SxySzPpMUpuukTvAiW6ldny',
                     imagerySet: 'Aerial',
@@ -790,22 +800,29 @@ gdo.net.app["BasicMaps"].fixBingBug = function (instanceId) {
                     imagerySet: 'collinsBart',
                     maxZoom: 19
                 }));
-                gdo.net.instance[instanceId].layers[3].setSource(new ol.source.BingMaps({
+                gdo.net.instance[instanceId].layers[4].setSource(new ol.source.BingMaps({
                     key: 'AqJrkrOTlDJUTbioyay25R6bC-LoZaAggCaAGRV19SxySzPpMUpuukTvAiW6ldny',
                     imagerySet: 'ordnanceSurvey',
                     maxZoom: 19
                 }));
+				
+				setTimeout(function () {
+	           				gdo.net.instance[instanceId].layers[0].setVisible(true);
+				}
+					,3000);
             }
             setTimeout(function () {
+				// david test 
+				//gdo.net.app["BasicMaps"].server.requestLayersVisible(instanceId);
+				//gdo.net.app["BasicMaps"].server.requestMarkerPosition(instanceId);
+				
                 if (gdo.net.instance[instanceId].layers[0].getSource().getState() == "loading" ||
-                    gdo.net.instance[instanceId].layers[1].getSource().getState() == "loading" ||
-                    gdo.net.instance[instanceId].layers[2].getSource().getState() == "loading" ||
-                    gdo.net.instance[instanceId].layers[3].getSource().getState() == "loading" ||
-                    gdo.net.instance[instanceId].layers[4].getSource().getState() == "loading"
+          			gdo.net.instance[instanceId].layers[0].getSource().getState() == "error" 
+            
                     ) {
                     gdo.consoleOut('.BasicMaps', 5, 'Bing Maps Bug Detected - Reloading sources failed reloading page');
                     location.reload();
-                }
+                } 
             }, 700);
     }, 350);
 
