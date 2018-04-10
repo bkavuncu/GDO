@@ -309,14 +309,14 @@ namespace GDO.Apps.SigmaGraph.QuadTree {
             List<QuadTreeNode<T>> matchingleaves = new List<QuadTreeNode<T>> { this };
 
             //Need to ensure all the quads has bags in it otherwise the json file can not be found
-            
+          
+            // todo this method is a hack which is filtering out all of the sparse quad tree bags               
             matchingleaves = ClearEmptyNode(matchingleaves, xcenter, ycenter, xWidth, yWidth);
-
-
+            
             bool changes = true;
             while (matchingleaves.Count < bags && changes) {
 
-                matchingleaves.Sort((a, b) => -a.ItemsInThisTree.CompareTo(b.ItemsInThisTree));// sort descending with the - todo check
+                matchingleaves.Sort((a, b) => -a.ItemsInThisTree.CompareTo(b.ItemsInThisTree));// sort descending with the - todo check logic of how this occurs 
                 changes = false;
 
                 var array = matchingleaves.ToArray();
