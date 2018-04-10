@@ -186,13 +186,13 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
     //Bing Maps (Aerial)
 
     // replace below with three new keys.
-    var bingMapKeys = ['AqJrkrOTlDJUTbioyay25R6bC-LoZaAggCaAGRV19SxySzPpMUpuukTvAiW6ldny', 'AqJrkrOTlDJUTbioyay25R6bC-LoZaAggCaAGRV19SxySzPpMUpuukTvAiW6ldny', 'AqJrkrOTlDJUTbioyay25R6bC-LoZaAggCaAGRV19SxySzPpMUpuukTvAiW6ldny', 'AqJrkrOTlDJUTbioyay25R6bC-LoZaAggCaAGRV19SxySzPpMUpuukTvAiW6ldny'];
+    gdo.net.instance[instanceId].bingMapKeys = ['AqJrkrOTlDJUTbioyay25R6bC-LoZaAggCaAGRV19SxySzPpMUpuukTvAiW6ldny', 'AqJrkrOTlDJUTbioyay25R6bC-LoZaAggCaAGRV19SxySzPpMUpuukTvAiW6ldny', 'AqJrkrOTlDJUTbioyay25R6bC-LoZaAggCaAGRV19SxySzPpMUpuukTvAiW6ldny', 'AqJrkrOTlDJUTbioyay25R6bC-LoZaAggCaAGRV19SxySzPpMUpuukTvAiW6ldny'];
 
     gdo.net.instance[instanceId].layers[0] = new ol.layer.Tile({
         preload: Infinity,
         visible: false,
         source: new ol.source.BingMaps({
-            key: bingMapKeys[instanceId % bingMapKeys.length],
+            key: gdo.net.instance[instanceId].bingMapKeys[gdo.clientId % gdo.net.instance[instanceId].bingMapKeys.length],
             imagerySet: 'Aerial',
             maxZoom: 19
         })
@@ -204,7 +204,7 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
         preload: Infinity,
         visible: false,
         source: new ol.source.BingMaps({
-            key: bingMapKeys[instanceId % bingMapKeys.length],
+            key: gdo.net.instance[instanceId].bingMapKeys[gdo.clientId % gdo.net.instance[instanceId].bingMapKeys.length],
             imagerySet: 'AerialWithLabels',
             maxZoom: 19
         })
@@ -216,7 +216,7 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
         preload: Infinity,
         visible: false,
         source: new ol.source.BingMaps({
-            key: bingMapKeys[instanceId % bingMapKeys.length],
+            key: gdo.net.instance[instanceId].bingMapKeys[gdo.clientId % gdo.net.instance[instanceId].bingMapKeys.length],
             imagerySet: 'Road',
             maxZoom: 19
         })
@@ -228,7 +228,7 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
         preload: Infinity,
         visible: false,
         source: new ol.source.BingMaps({
-            key: bingMapKeys[instanceId % bingMapKeys.length],
+            key: gdo.net.instance[instanceId].bingMapKeys[gdo.clientId % gdo.net.instance[instanceId].bingMapKeys.length],
             imagerySet: 'collinsBart',
             maxZoom: 19
         })
@@ -240,7 +240,7 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
         preload: Infinity,
         visible: false,
         source: new ol.source.BingMaps({
-            key: bingMapKeys[instanceId % bingMapKeys.length],
+            key: gdo.net.instance[instanceId].bingMapKeys[gdo.clientId % gdo.net.instance[instanceId].bingMapKeys.length],
             imagerySet: 'ordnanceSurvey',
             maxZoom: 19
         })
