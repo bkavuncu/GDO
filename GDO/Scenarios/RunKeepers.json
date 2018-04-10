@@ -1,5 +1,5 @@
 {
-	"Name": "LondonMap",
+	"Name": "RunKeepers",
 	"CurrentElement": -1,
 	"Elements": [{
 			"IsLoop": false,
@@ -25,6 +25,14 @@
 			"Func": "broadcastMapPosition",
 			"InstanceId": -1,
 			"Params": ["0,[-74373.2285214765,6719770.2491205567],[-13607.245513260117,6711275.7124257265],[47926.016734805511,6702571.9177563917],76.437028285176254,1600,225,11"]
+		}, {
+			"IsLoop": false,
+			"Id": 3,
+			"DefaultWait": 1.0,
+			"Mod": "gdo.net.app.BasicMaps.server",
+			"Func": "setLayerVisible",
+			"InstanceId": -1,
+			"Params": ["0,12"]
 		}, {
 			"IsLoop": false,
 			"Id": 4,
