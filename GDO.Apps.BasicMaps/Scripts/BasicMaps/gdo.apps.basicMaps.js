@@ -763,8 +763,21 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
     gdo.net.app["BasicMaps"].server.requestLayersVisible(instanceId);
     gdo.net.app["BasicMaps"].server.requestMarkerPosition(instanceId);
     gdo.net.app["BasicMaps"].fixBingBug(instanceId);
-	
-	   
+    //gdo.net.app["BasicMaps"].checkBingStatus(instanceId);		   
+}
+
+gdo.net.app["BasicMaps"].checkBingStatus = function (instanceId) {
+    setTimeout(function () {
+        if (gdo.net.instance[instanceId].layers[0].getSource().getState() == "loading") {
+            gdo.consoleOut('.BasicMaps', 4, 'Bing Maps: ' + gdo.net.instance[instanceId].layers[0].getSource().getState());
+        }else if (gdo.net.instance[instanceId].layers[0].getSource().getState() == "error") {
+            gdo.consoleOut('.BasicMaps', 5, 'Bing Maps: ' + gdo.net.instance[instanceId].layers[0].getSource().getState());
+        } else if (gdo.net.instance[instanceId].layers[0].getSource().getState() == "ready") {
+            gdo.consoleOut('.BasicMaps', 0, 'Bing Maps: ' + gdo.net.instance[instanceId].layers[0].getSource().getState());
+        } else {
+            gdo.consoleOut('.BasicMaps', 1, 'Bing Maps: ' + gdo.net.instance[instanceId].layers[0].getSource().getState());
+        }
+    }, 700);
 }
 
 gdo.net.app["BasicMaps"].fixBingBug = function (instanceId) {
