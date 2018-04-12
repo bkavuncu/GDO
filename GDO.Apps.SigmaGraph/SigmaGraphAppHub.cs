@@ -146,6 +146,35 @@ namespace GDO.Apps.SigmaGraph
             }
         }
 
+        public struct Range
+        {
+            public long min;
+            public long max;
+        }
+
+        public static Dictionary<int, Range> minmax = new Dictionary<int, Range>();
+
+        public void SetMinMax(int instanceId, long min, long max)
+        {
+            Range temp = new Range();
+            temp.min = min;
+            temp.max = max;
+            minmax[instanceId] = temp;
+        }
+
+        public long[] GetMinMax(int instanceId)
+        {
+            if (minmax.Keys.Count > 10)
+            {
+                return new long[]{ minmax.Aggregate((x, y) => x.Value.min < y.Value.min ? x : y).Value.min,
+                minmax.Aggregate((x, y) => x.Value.max > y.Value.max ? x : y).Value.max};
+            }
+            else
+            {
+                return new long[] { 0, 0 };
+            }
+        }
+
         public void DoneRendering(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])
