@@ -314,27 +314,32 @@ namespace GDO.Apps.SigmaGraph.QuadTree {
            // matchingleaves = ClearEmptyNode(matchingleaves, xcenter, ycenter, xWidth, yWidth);
             
             bool changes = true;
+            //todo if we make sparse bags bigger than normal then we would need to have this condition as follows:
+            // matchingleaves.Sum(l => l.IsLeaf() ? 1 : 4); 
+
+            // todo alternatively we could simply count the number of objects contained 
             while (matchingleaves.Count < bags && changes) {
                 
                 changes = false;
 
                 var array = matchingleaves.OrderByDescending(b => b.ItemsInThisTree).ToArray();
-                for (int expansionfactor = 1; expansionfactor <= 4 && !changes; expansionfactor++) {// todo note this may cause issues with blocks of density
-                    for (var q = 0; q < array.Length && !changes; q++) {
-                        // move to array to stop messing with the underlying collection
-                        // exit after a single change - the ordering above will help us move through the tree
-                        var leaf = array[q];
+                //ef  done we could optimise to do direct 1-1 child replacements 
+     //ef           for (int expansionfactor = 1; expansionfactor <= 4 && !changes; expansionfactor++) {// todo note this may cause issues with blocks of density
+                for (var q = 0; q < array.Length && !changes; q++) {
+                    // move to array to stop messing with the underlying collection
+                    // exit after a single change - the ordering above will help us move through the tree
+                    var leaf = array[q];
 
-                        if (leaf.IsLeaf()) continue;
-                        var matchingChildren = leaf.ReturnMatchingQuadrants(xcenter, ycenter, xWidth, yWidth);
-                        if (matchingChildren.Length == expansionfactor) {
-                            matchingleaves.Remove(leaf);
-                            matchingleaves.AddRange(matchingChildren);
-                            changes = true;
-                        }
-                    }
+                    if (leaf.IsLeaf()) continue;
+                    var matchingChildren = leaf.ReturnMatchingQuadrants(xcenter, ycenter, xWidth, yWidth);
+                    //ef                   if (matchingChildren.Length == expansionfactor) {
+                    matchingleaves.Remove(leaf);
+                    matchingleaves.AddRange(matchingChildren);
+                    changes = true;
+                    //ef                   }
+                    //ef               }
                 }
-                // done we could optimise to do direct 1-1 child replacements 
+                
                 // todo we should do sort order by height in the quad tree? 
             
             }
