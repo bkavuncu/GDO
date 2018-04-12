@@ -148,13 +148,13 @@ namespace GDO.Apps.SigmaGraph
 
         public struct Range
         {
-            public long min;
-            public long max;
+            public double min;
+            public double max;
         }
 
         public static Dictionary<int, Range> minmax = new Dictionary<int, Range>();
 
-        public void SetMinMax(int instanceId, long min, long max)
+        public void SetMinMax(int instanceId, double min, double max)
         {
             Range temp = new Range();
             temp.min = min;
@@ -162,16 +162,16 @@ namespace GDO.Apps.SigmaGraph
             minmax[instanceId] = temp;
         }
 
-        public long[] GetMinMax(int instanceId)
+        public double[] GetMinMax(int instanceId)
         {
             if (minmax.Keys.Count > 10)
             {
-                return new long[]{ minmax.Aggregate((x, y) => x.Value.min < y.Value.min ? x : y).Value.min,
+                return new double[]{ minmax.Aggregate((x, y) => x.Value.min < y.Value.min ? x : y).Value.min,
                 minmax.Aggregate((x, y) => x.Value.max > y.Value.max ? x : y).Value.max};
             }
             else
             {
-                return new long[] { 0, 0 };
+                return new double[] { -1, -1 };
             }
         }
 

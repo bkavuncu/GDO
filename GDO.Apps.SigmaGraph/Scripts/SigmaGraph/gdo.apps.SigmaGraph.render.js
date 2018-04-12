@@ -109,10 +109,18 @@ gdo.net.app["SigmaGraph"].colorByValue = async function (params) {
     var valueRange = function (objattr, attr) {
         var max = -Infinity, min = Infinity, list, arr;
 
-        var minmax = gdo.net.app["SigmaGraph"].server.getMinMax(gdo.controlId);
-        if (minmax[0] != -1 && minmax[1] != -1) {
-            min = minmax[0];
-            max = minmax[1];
+        try {
+            console.info("Test 1: Min: " + min, " Max: " + max);
+            var minmax = gdo.net.app["SigmaGraph"].server.getMinMax(gdo.controlId);
+            if (minmax[0] != -1 && minmax[1] != -1) {
+                min = minmax[0];
+                max = minmax[1];
+            }
+            console.info("Test 2: Min: " + min, " Max: " + max);
+        }
+        catch (e)
+        {
+            console.error(e);
         }
 
         if (objattr == 'node') {
@@ -171,7 +179,13 @@ gdo.net.app["SigmaGraph"].colorByValue = async function (params) {
                     list.map(a => a.attrs[attr]));
             }
         }
-        gdo.net.app["SigmaGraph"].server.setMinMax(gdo.controlId, min, max);
+        try {
+            gdo.net.app["SigmaGraph"].server.setMinMax(gdo.controlId, min, max);
+        }
+        catch (e)
+        {
+            console.error(e);
+        }
         return [max, min, list];
     }
 
