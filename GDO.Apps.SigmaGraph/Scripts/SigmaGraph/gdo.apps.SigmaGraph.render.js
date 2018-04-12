@@ -111,12 +111,12 @@ gdo.net.app["SigmaGraph"].colorByValue = async function (params) {
 
         try {
             console.info("Test 1: Min: " + min, " Max: " + max);
-            var minmax = gdo.net.app["SigmaGraph"].server.getMinMax(gdo.controlId);
-            if (minmax[0] != -1 && minmax[1] != -1) {
-                min = minmax[0];
-                max = minmax[1];
+            var tempmin = gdo.net.app["SigmaGraph"].server.getMin(gdo.controlId);
+            var tempmax = gdo.net.app["SigmaGraph"].server.getMax(gdo.controlId);
+            if (tempmin != -1 && tempmax != -1) {
+                min = tempmin;
+                max = tempmax;
             }
-            console.info("Test 2: " + minmax); 
             console.info("Test 3: Min: " + min, " Max: " + max);
         }
         catch (e)

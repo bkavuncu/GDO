@@ -160,14 +160,10 @@ namespace GDO.Apps.SigmaGraph
             {
                 try
                 {
-
-                    if (minmax.Keys.Count > 10)
-                    {
-                        Range temp = new Range();
-                        temp.min = min;
-                        temp.max = max;
-                        minmax[instanceId] = temp;
-                    }
+                    Range temp = new Range();
+                    temp.min = min;
+                    temp.max = max;
+                    minmax[instanceId] = temp;
                 }
                 catch (Exception e)
                 {
@@ -176,23 +172,40 @@ namespace GDO.Apps.SigmaGraph
             }
         }
 
-        public double[] GetMinMax(int instanceId)
+        public double GetMin(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-
                     if (minmax.Keys.Count > 10)
                     {
-                        return new double[]{ minmax.Aggregate((x, y) => x.Value.min < y.Value.min ? x : y).Value.min,
-                        minmax.Aggregate((x, y) => x.Value.max > y.Value.max ? x : y).Value.max};
+                        return minmax.Aggregate((x, y) => x.Value.min < y.Value.min ? x : y).Value.min;
                     }
                 } catch (Exception e)
                 {
-                    Log.Error("SigmaGraph: Error in GetMinMax " + e);
+                    Log.Error("SigmaGraph: Error in GetMin " + e);
                 }
-                return new double[] { -1, -1 };
+                return -1;
+            }
+        }
+
+        public double GetMax(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    if (minmax.Keys.Count > 10)
+                    {
+                        return minmax.Aggregate((x, y) => x.Value.max > y.Value.max ? x : y).Value.max;
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Error("SigmaGraph: Error in GetMax " + e);
+                }
+                return -1;
             }
         }
 
