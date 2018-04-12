@@ -172,7 +172,7 @@ namespace GDO.Apps.SigmaGraph
             }
         }
 
-        public double GetMin(int instanceId)
+        public void GetMinMax(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -180,32 +180,17 @@ namespace GDO.Apps.SigmaGraph
                 {
                     if (minmax.Keys.Count > 10)
                     {
-                        return minmax.Aggregate((x, y) => x.Value.min < y.Value.min ? x : y).Value.min;
+                        Clients.Caller.getMinMax(
+                            minmax.Aggregate((x, y) => x.Value.min < y.Value.min ? x : y).Value.min,
+                            minmax.Aggregate((x, y) => x.Value.max > y.Value.max ? x : y).Value.max);
+                    } else
+                    {
+                        Clients.Caller.getMinMax(-1, -1);
                     }
                 } catch (Exception e)
                 {
-                    Log.Error("SigmaGraph: Error in GetMin " + e);
+                    Log.Error("SigmaGraph: Error in GetMinMax " + e);
                 }
-                return -1;
-            }
-        }
-
-        public double GetMax(int instanceId)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    if (minmax.Keys.Count > 10)
-                    {
-                        return minmax.Aggregate((x, y) => x.Value.max > y.Value.max ? x : y).Value.max;
-                    }
-                }
-                catch (Exception e)
-                {
-                    Log.Error("SigmaGraph: Error in GetMax " + e);
-                }
-                return -1;
             }
         }
 

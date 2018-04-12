@@ -105,19 +105,20 @@ gdo.net.app["SigmaGraph"].colorByValue = async function (params) {
         return Math.exp(1.0 * value / 1E12);
     }
 
-
     var valueRange = function (objattr, attr) {
         var max = -Infinity, min = Infinity, list, arr;
 
+        gdo.net.app["SigmaGraph"].server.getMinMax(gdo.clientId);
+
         try {
             console.info("Test 1: Min: " + min, " Max: " + max);
-            var tempmin = gdo.net.app["SigmaGraph"].server.getMin(gdo.controlId);
-            var tempmax = gdo.net.app["SigmaGraph"].server.getMax(gdo.controlId);
-            if (tempmin != -1 && tempmax != -1) {
+            var tempmin = gdo.net.app["SigmaGraph"].min;
+            var tempmax = gdo.net.app["SigmaGraph"].max;
+            if (tempmin && tempmin != -1 && tempmax && tempmax != -1) {
                 min = tempmin;
                 max = tempmax;
             }
-            console.info("Test 3: Min: " + min, " Max: " + max);
+            console.info("Test 2: Min: " + min, " Max: " + max);
         }
         catch (e)
         {
@@ -181,7 +182,8 @@ gdo.net.app["SigmaGraph"].colorByValue = async function (params) {
             }
         }
         try {
-            gdo.net.app["SigmaGraph"].server.setMinMax(gdo.controlId, min, max);
+            gdo.net.app["SigmaGraph"].server.setMinMax(gdo.clientId, min, max);
+            gdo.net.app["SigmaGraph"].server.getMinMax(gdo.clientId);
         }
         catch (e)
         {
