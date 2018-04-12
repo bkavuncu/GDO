@@ -116,7 +116,8 @@ gdo.net.app["SigmaGraph"].colorByValue = async function (params) {
                 min = minmax[0];
                 max = minmax[1];
             }
-            console.info("Test 2: Min: " + min, " Max: " + max);
+            console.info("Test 2: " + minmax); 
+            console.info("Test 3: Min: " + min, " Max: " + max);
         }
         catch (e)
         {

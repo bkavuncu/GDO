@@ -156,21 +156,42 @@ namespace GDO.Apps.SigmaGraph
 
         public void SetMinMax(int instanceId, double min, double max)
         {
-            Range temp = new Range();
-            temp.min = min;
-            temp.max = max;
-            minmax[instanceId] = temp;
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+
+                    if (minmax.Keys.Count > 10)
+                    {
+                        Range temp = new Range();
+                        temp.min = min;
+                        temp.max = max;
+                        minmax[instanceId] = temp;
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Error("SigmaGraph: Error in SetMinMax " + e);
+                }
+            }
         }
 
         public double[] GetMinMax(int instanceId)
         {
-            if (minmax.Keys.Count > 10)
+            lock (Cave.AppLocks[instanceId])
             {
-                return new double[]{ minmax.Aggregate((x, y) => x.Value.min < y.Value.min ? x : y).Value.min,
-                minmax.Aggregate((x, y) => x.Value.max > y.Value.max ? x : y).Value.max};
-            }
-            else
-            {
+                try
+                {
+
+                    if (minmax.Keys.Count > 10)
+                    {
+                        return new double[]{ minmax.Aggregate((x, y) => x.Value.min < y.Value.min ? x : y).Value.min,
+                        minmax.Aggregate((x, y) => x.Value.max > y.Value.max ? x : y).Value.max};
+                    }
+                } catch (Exception e)
+                {
+                    Log.Error("SigmaGraph: Error in GetMinMax " + e);
+                }
                 return new double[] { -1, -1 };
             }
         }
