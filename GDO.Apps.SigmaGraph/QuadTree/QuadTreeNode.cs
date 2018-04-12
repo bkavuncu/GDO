@@ -331,6 +331,8 @@ namespace GDO.Apps.SigmaGraph.QuadTree {
             while (matchingleaves.Count < bags && changes) {
                 changes = false;
 
+                List<QuadTreeNode<T>> next = new List<QuadTreeNode<T>>();
+
                 //var array = matchingleaves.OrderByDescending(b => b.ItemsInThisTree).ToArray();
                 var array = matchingleaves.OrderBy(b => b.Depth).ToArray();
                 //ef  done we could optimise to do direct 1-1 child replacements 
@@ -343,13 +345,16 @@ namespace GDO.Apps.SigmaGraph.QuadTree {
                     if (leaf.IsLeaf()) continue;
                     var matchingChildren = leaf.ReturnMatchingQuadrants(xcenter, ycenter, xWidth, yWidth);
                     //ef                   if (matchingChildren.Length == expansionfactor) {
-                    matchingleaves.Remove(leaf);
-                    matchingleaves.AddRange(matchingChildren);
+                    //matchingleaves.Remove(leaf);
+                    //matchingleaves.AddRange(matchingChildren);
+                    next.AddRange(matchingChildren);
                     changes = true;
                     //ef                   }
                     //ef               }
                 }
 
+                matchingleaves.Clear();
+                matchingleaves.AddRange(next);// now we only do it as  group
                 // todo we should do sort order by height in the quad tree? 
             }
         }
