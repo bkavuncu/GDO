@@ -463,7 +463,7 @@ function handleFileGraphObjects(fileGraphObjects) {
         // What should the max be? 5? 12?
         // node.size = Math.min(12, node.size) || 3;
         // Fixed the above line since it did not look correct - Senaka
-        node.size = Math.max(3, Math.min(12, node.size));
+        node.size = Math.max(1, Math.min(12, node.size));
         try {
             gdo.sigmaInstance.graph.addNode(node);
         } catch (err) {
