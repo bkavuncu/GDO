@@ -21,6 +21,9 @@ namespace GDO.Apps.SigmaGraph.QuadTree {
         public readonly ConcurrentDictionary<string, int> Counters = new ConcurrentDictionary<string, int>();
         public int ItemsInThisTree { get; set; }
 
+        public string SparseBagId { get; set; }
+        public int Depth { get; set; }
+
         public string TreeId { get; set; }
 
         public QuadTreeNode(double xCentroid, double yCentroid, double xWidth, double yWidth) : this(new QuadCentroid(xCentroid, yCentroid, xWidth, yWidth)) { }
@@ -322,7 +325,8 @@ namespace GDO.Apps.SigmaGraph.QuadTree {
                 
                 changes = false;
 
-                var array = matchingleaves.OrderByDescending(b => b.ItemsInThisTree).ToArray();
+                //var array = matchingleaves.OrderByDescending(b => b.ItemsInThisTree).ToArray();
+                var array = matchingleaves.OrderBy(b => b.Depth).ToArray();
                 //ef  done we could optimise to do direct 1-1 child replacements 
      //ef           for (int expansionfactor = 1; expansionfactor <= 4 && !changes; expansionfactor++) {// todo note this may cause issues with blocks of density
                 for (var q = 0; q < array.Length && !changes; q++) {
