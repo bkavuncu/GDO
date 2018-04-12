@@ -94,7 +94,7 @@ $(function () {
         gdo.net.app["SigmaGraph"].edgeAttributes = edgeAttrs;
     }
 
-    $.connection.youtubeAppHub.client.getMinMax = function (min, max) {
+    $.connection.sigmaGraphAppHub.client.getMinMax = function (min, max) {
         gdo.net.app["SigmaGraph"].min = min;
         gdo.net.app["SigmaGraph"].min = max;
     }
