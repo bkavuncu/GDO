@@ -229,6 +229,7 @@
     <Compile Include="QuadTree\QuadTree.cs" />
     <Compile Include="QuadTree\QuadTreeBag.cs" />
     <Compile Include="QuadTree\QuadTreeNode.cs" />
+    <Compile Include="QuadTree\Range.cs" />
     <Compile Include="QuadTree\Utilities\QuadPrinter.cs" />
     <Compile Include="SigmaGraphApp.cs" />
     <Compile Include="SigmaGraphAppHub.cs" />
