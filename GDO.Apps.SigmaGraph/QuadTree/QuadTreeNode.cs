@@ -316,20 +316,28 @@ namespace GDO.Apps.SigmaGraph.QuadTree {
             // todo this method is a hack which is filtering out all of the sparse quad tree bags               
            // matchingleaves = ClearEmptyNode(matchingleaves, xcenter, ycenter, xWidth, yWidth);
             
+          //  FindSparsifiedNodes(xcenter, ycenter, xWidth, yWidth, bags, matchingleaves);
+            FindSparsifiedNodes(xcenter, ycenter, xWidth, yWidth, bags, matchingleaves);
+            return matchingleaves;
+        }
+
+        private static void FindSparsifiedNodes_equal_level(double xcenter, double ycenter, double xWidth, double yWidth, int bags,
+            List<QuadTreeNode<T>> matchingleaves) {
             bool changes = true;
             //todo if we make sparse bags bigger than normal then we would need to have this condition as follows:
             // matchingleaves.Sum(l => l.IsLeaf() ? 1 : 4); 
 
             // todo alternatively we could simply count the number of objects contained 
             while (matchingleaves.Count < bags && changes) {
-                
                 changes = false;
+
+                List<QuadTreeNode<T>> next = new List<QuadTreeNode<T>>();
 
                 //var array = matchingleaves.OrderByDescending(b => b.ItemsInThisTree).ToArray();
                 var array = matchingleaves.OrderBy(b => b.Depth).ToArray();
                 //ef  done we could optimise to do direct 1-1 child replacements 
-     //ef           for (int expansionfactor = 1; expansionfactor <= 4 && !changes; expansionfactor++) {// todo note this may cause issues with blocks of density
-                for (var q = 0; q < array.Length && !changes; q++) {
+                //ef           for (int expansionfactor = 1; expansionfactor <= 4 && !changes; expansionfactor++) {// todo note this may cause issues with blocks of density
+                for (var q = 0; q < array.Length ; q++) {
                     // move to array to stop messing with the underlying collection
                     // exit after a single change - the ordering above will help us move through the tree
                     var leaf = array[q];
@@ -337,18 +345,54 @@ namespace GDO.Apps.SigmaGraph.QuadTree {
                     if (leaf.IsLeaf()) continue;
                     var matchingChildren = leaf.ReturnMatchingQuadrants(xcenter, ycenter, xWidth, yWidth);
                     //ef                   if (matchingChildren.Length == expansionfactor) {
-                    matchingleaves.Remove(leaf);
-                    matchingleaves.AddRange(matchingChildren);
+                    //matchingleaves.Remove(leaf);
+                    //matchingleaves.AddRange(matchingChildren);
+                    next.AddRange(matchingChildren);
                     changes = true;
                     //ef                   }
                     //ef               }
                 }
-                
+
+                matchingleaves.Clear();
+                matchingleaves.AddRange(next);// now we only do it as  group
                 // todo we should do sort order by height in the quad tree? 
-            
             }
-            return matchingleaves;
         }
+
+        private static void FindSparsifiedNodes(double xcenter, double ycenter, double xWidth, double yWidth, int bags,
+            List<QuadTreeNode<T>> matchingleaves) {
+            bool changes = true;
+            //todo if we make sparse bags bigger than normal then we would need to have this condition as follows:
+            // matchingleaves.Sum(l => l.IsLeaf() ? 1 : 4); 
+
+            // todo alternatively we could simply count the number of objects contained 
+            while (matchingleaves.Count < bags && changes) {
+                changes = false;
+
+                //   var array = matchingleaves.OrderByDescending(b => b.ItemsInThisTree).ToArray();
+                var array = matchingleaves.OrderBy(b => b.Depth).ToArray();
+                //  done we could optimise to do direct 1-1 child replacements 
+                for (int expansionfactor = 4; expansionfactor == 1 && !changes; expansionfactor--) {
+                    // todo note this may cause issues with blocks of density
+                    for (var q = 0; q < array.Length && !changes; q++) {
+                        // move to array to stop messing with the underlying collection
+                        // exit after a single change - the ordering above will help us move through the tree
+                        var leaf = array[q];
+
+                        if (leaf.IsLeaf()) continue;
+                        var matchingChildren = leaf.ReturnMatchingQuadrants(xcenter, ycenter, xWidth, yWidth);
+                        if (matchingChildren.Length == expansionfactor) {
+                            matchingleaves.Remove(leaf);
+                            matchingleaves.AddRange(matchingChildren);
+                            changes = true;
+                        }
+                    }
+                }
+
+                // todo we should do sort order by height in the quad tree? 
+            }
+        }
+
         private static List<QuadTreeNode<T>> ClearEmptyNode(List<QuadTreeNode<T>> nodelist, double xcenter, double ycenter, double xWidth, double yWidth) {
             var somelist = new List<QuadTreeNode<T>>();
             var nodeArrBefore = somelist.ToArray();
