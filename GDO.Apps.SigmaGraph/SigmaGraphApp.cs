@@ -64,6 +64,8 @@ namespace GDO.Apps.SigmaGraph {
 
         private QuadTreeNode<GraphObject> CurrentQuadTreeRoot;
 
+        private Range Range = new Range();
+
         private const String GRAPHML_DIR = "~/Web/SigmaGraph/graphmls/";
         private const String QUADTREE_DIR = "~/Web/SigmaGraph/QuadTrees/";
 
@@ -184,6 +186,11 @@ namespace GDO.Apps.SigmaGraph {
         public QuadCentroid GetCentroid()
         {
             return this.CurrentQuadTreeRoot.Centroid;
+        }
+
+        public Range GetRange()
+        {
+            return this.Range;
         }
     }
  }

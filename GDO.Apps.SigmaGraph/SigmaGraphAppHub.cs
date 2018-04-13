@@ -146,24 +146,14 @@ namespace GDO.Apps.SigmaGraph
             }
         }
 
-        public struct Range
-        {
-            public double min;
-            public double max;
-        }
-
-        public static Dictionary<int, Range> minmax = new Dictionary<int, Range>();
-
-        public void SetMinMax(int instanceId, double min, double max)
+        public void SetMinMax(int instanceId, int clientId, double min, double max)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    Range temp = new Range();
-                    temp.min = min;
-                    temp.max = max;
-                    minmax[instanceId] = temp;
+                    var ga = (SigmaGraphApp)Cave.Deployment.Apps["SigmaGraph"].Instances[instanceId];
+                    ga.GetRange().SetNodeMinMax(clientId, min, max);
                 }
                 catch (Exception e)
                 {
@@ -178,14 +168,12 @@ namespace GDO.Apps.SigmaGraph
             {
                 try
                 {
-                    if (minmax.Keys.Count > 10)
+                    var ga = (SigmaGraphApp)Cave.Deployment.Apps["SigmaGraph"].Instances[instanceId];
+                    double min = ga.GetRange().GetGlobalMin();
+                    double max = ga.GetRange().GetGlobalMax();
+                    if (min != double.NaN && max != double.NaN)
                     {
-                        Clients.Caller.getMinMax(
-                            minmax.Aggregate((x, y) => x.Value.min < y.Value.min ? x : y).Value.min,
-                            minmax.Aggregate((x, y) => x.Value.max > y.Value.max ? x : y).Value.max);
-                    } else
-                    {
-                        Clients.Caller.getMinMax(-1, -1);
+                        Clients.Caller.getMinMax(min, max);
                     }
                 } catch (Exception e)
                 {

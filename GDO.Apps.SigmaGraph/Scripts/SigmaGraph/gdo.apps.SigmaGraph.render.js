@@ -108,22 +108,8 @@ gdo.net.app["SigmaGraph"].colorByValue = async function (params) {
     var valueRange = function (objattr, attr) {
         var max = -Infinity, min = Infinity, list, arr;
 
-        gdo.net.app["SigmaGraph"].server.getMinMax(gdo.clientId);
-
-        try {
-            console.info("Test 1: Min: " + min, " Max: " + max);
-            var tempmin = gdo.net.app["SigmaGraph"].min;
-            var tempmax = gdo.net.app["SigmaGraph"].max;
-            if (tempmin && tempmin != -1 && tempmax && tempmax != -1) {
-                min = tempmin;
-                max = tempmax;
-            }
-            console.info("Test 2: Min: " + min, " Max: " + max);
-        }
-        catch (e)
-        {
-            console.error(e);
-        }
+        // Try pulling min/max at the start.
+        gdo.net.app["SigmaGraph"].server.getMinMax(gdo.controlId);
 
         if (objattr == 'node') {
             list = gdo.sigmaInstance.graph.nodes().filter(function(node) {
@@ -182,14 +168,18 @@ gdo.net.app["SigmaGraph"].colorByValue = async function (params) {
             }
         }
         try {
-            gdo.net.app["SigmaGraph"].server.setMinMax(gdo.clientId, min, max);
-            gdo.net.app["SigmaGraph"].server.getMinMax(gdo.clientId);
+            if (min != Infinity && max != -Infinity) {
+                gdo.net.app["SigmaGraph"].server.setMinMax(gdo.controlId, gdo.clientId, min, max);
+            
+                // Try pulling min/max after the update.
+                gdo.net.app["SigmaGraph"].server.getMinMax(gdo.controlId);
+            }
         }
         catch (e)
         {
             console.error(e);
         }
-        return [max, min, list];
+        return [gdo.net.app["SigmaGraph"].max || max, gdo.net.app["SigmaGraph"].min || min, list];
     }
 
     /**
