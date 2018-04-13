@@ -317,7 +317,7 @@ namespace GDO.Apps.SigmaGraph.QuadTree {
            // matchingleaves = ClearEmptyNode(matchingleaves, xcenter, ycenter, xWidth, yWidth);
             
           //  FindSparsifiedNodes(xcenter, ycenter, xWidth, yWidth, bags, matchingleaves);
-            FindSparsifiedNodes_equal_level(xcenter, ycenter, xWidth, yWidth, bags, matchingleaves);
+            FindSparsifiedNodes(xcenter, ycenter, xWidth, yWidth, bags, matchingleaves);
             return matchingleaves;
         }
 
@@ -369,23 +369,24 @@ namespace GDO.Apps.SigmaGraph.QuadTree {
             while (matchingleaves.Count < bags && changes) {
                 changes = false;
 
-                //var array = matchingleaves.OrderByDescending(b => b.ItemsInThisTree).ToArray();
+                //   var array = matchingleaves.OrderByDescending(b => b.ItemsInThisTree).ToArray();
                 var array = matchingleaves.OrderBy(b => b.Depth).ToArray();
-                //ef  done we could optimise to do direct 1-1 child replacements 
-                //ef           for (int expansionfactor = 1; expansionfactor <= 4 && !changes; expansionfactor++) {// todo note this may cause issues with blocks of density
-                for (var q = 0; q < array.Length && !changes; q++) {
-                    // move to array to stop messing with the underlying collection
-                    // exit after a single change - the ordering above will help us move through the tree
-                    var leaf = array[q];
+                //  done we could optimise to do direct 1-1 child replacements 
+                for (int expansionfactor = 4; expansionfactor == 1 && !changes; expansionfactor--) {
+                    // todo note this may cause issues with blocks of density
+                    for (var q = 0; q < array.Length && !changes; q++) {
+                        // move to array to stop messing with the underlying collection
+                        // exit after a single change - the ordering above will help us move through the tree
+                        var leaf = array[q];
 
-                    if (leaf.IsLeaf()) continue;
-                    var matchingChildren = leaf.ReturnMatchingQuadrants(xcenter, ycenter, xWidth, yWidth);
-                    //ef                   if (matchingChildren.Length == expansionfactor) {
-                    matchingleaves.Remove(leaf);
-                    matchingleaves.AddRange(matchingChildren);
-                    changes = true;
-                    //ef                   }
-                    //ef               }
+                        if (leaf.IsLeaf()) continue;
+                        var matchingChildren = leaf.ReturnMatchingQuadrants(xcenter, ycenter, xWidth, yWidth);
+                        if (matchingChildren.Length == expansionfactor) {
+                            matchingleaves.Remove(leaf);
+                            matchingleaves.AddRange(matchingChildren);
+                            changes = true;
+                        }
+                    }
                 }
 
                 // todo we should do sort order by height in the quad tree? 
