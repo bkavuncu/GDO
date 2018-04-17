@@ -64,7 +64,8 @@ gdo.net.app["SigmaGraph"].nameVertices = async function(params) {
     var labelAttr = params[5];
 
     function helper(node) {
-        return (node.attrs[attribute] != null && func(isNaN(node.attrs[attribute]) ? node.attrs[attribute] : node.attrs[attribute] - "0"));
+        //return (node.attrs[attribute] != null && func(isNaN(node.attrs[attribute]) ? node.attrs[attribute] : node.attrs[attribute] - "0"));
+        return (node.attrs[attribute] != null && func({node: node, attribute: attribute}));
     }
     if (objAttribute === "node") {
         gdo.sigmaInstance.graph.nodes().forEach(function(node) {
