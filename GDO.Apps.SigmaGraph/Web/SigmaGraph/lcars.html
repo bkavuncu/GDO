@@ -1,59 +1,62 @@
-<!DOCTYPE html>
-<html><head>
-<title>Map of Universe</title>
-<meta charset="UTF-8">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="StyleSheet.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
-<style>
-    body, h1, h2, h3, h4, h5 {
-        font-family: "Raleway", sans-serif
-    }
-    centered {
-        display: block;
-        margin-left: auto;
-        margin-right: auto
-                             }
-              h1 {
-        font-weight: bold;
-        font-size: 72px;
-    }
-    h2 {
-        font-weight: bold;
-        font-size: 48px;
-    }
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Map of Universe</title>
+    <meta charset="UTF-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="StyleSheet.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+    <style>
+        body, h1, h2, h3, h4, h5 {
+            font-family: "Raleway", sans-serif;
+        }
 
-</style>
-<script>
+        centered {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        h1 {
+            font-weight: bold;
+            font-size: 72px;
+        }
+
+        h2 {
+            font-weight: bold;
+            font-size: 48px;
+        }
+    </style>
+    <script>
 // only need this list if you have not preset it using the gdo control
- 
+
     function LoadScenario(name) {
         var xmlhttp = new XMLHttpRequest();
- 
+
         xmlhttp.onreadystatechange = function () {
- 
+
                              if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
                              console.log("succesfully loaded scenario "+xmlhttp.responseText);
-               
+
             } else {
                                            console.log("failed to load scenario "+xmlhttp.responseText);
                                            }
- 
-           
+
+
         }
         xmlhttp.open("GET", "http://dsigdoprod.doc.ic.ac.uk/api/CaveState/Deploy?stateName="+name, true);
-                                                                                                                                                              
+
         xmlhttp.send();
     }
               function post(path,json) {
                              $.post(path, json);
               }
- 
-var url = 'http://dsigdoprod.doc.ic.ac.uk/api/Script/RunMethod';
+
+var url = 'http://146.169.32.119/api/Script/RunMethod';
 var numvideos = 5;
               function PlayAllVideos(loop) {
-             
+
                              for (v = 20; v < numvideos + 20; v++) {
                                            post(url,
                                            { "Mod": "gdo.net.app.Youtube.server", "Func": "playVideo", "Params": [""+v, new Date().getTime() + 350 ], "InstanceId" : v }
@@ -63,21 +66,21 @@ var numvideos = 5;
                             if (loop) {
                                 window.setInterval(ResetAllVideos, 2 * 60 * 1000);
                             }
-     
+
               }
 
-			  
+
 			   function PauseAllVideos() {
-             
-                             for (v = 20; v < numvideos + 20; v++) {
+
+                            // for (v = 20; v < numvideos + 20; v++) {
                                            post(url,
-                                           { "Mod": "gdo.net.app.Youtube.server", "Func": "pauseVideo", "Params": [""+v, new Date().getTime() + 350 ], "InstanceId" : v }
+                                           { "Mod": "gdo.net.app.Youtube.server", "Func": "pauseVideo", "Params": [""+0, new Date().getTime() + 350 ], "InstanceId" : 0 }
                                            );
-                             }
+                            // }
                              //location.reload();
 
               }
-             
+
               function ResetAllVideos() {
                              for (v = 20; v < numvideos + 20; v++) {
                                            post(url,
@@ -85,55 +88,76 @@ var numvideos = 5;
                                            );
                              }
               }
-			  
-</script>
+
+              function ResetGraph() {
+                                           post(url,
+                                           { "Mod": "gdo.net.app.SigmaGraph.server", "Func": "resetSigmaGraph", "Params": [0], "InstanceId" : 0 }
+                                           );
+              }
+
+              function LoadLabels() {
+                                           post(url,
+                                           { "Mod": "gdo.net.app.SigmaGraph.server", "Func": "triggerNameVertices", "Params": [0,"\"node\"","\"type\"","\"function(x) {var name = x.node.attrs['name']; var type = x.node.attrs['type']; var objid = x.node.attrs['objid']; var objid_lc = new String(objid || \"\").valueOf().toLowerCase(); if (type == \"Moon\" && x.node.attrs['subtype'] == \"Earth\" && x.node.b == 255) {return true;} if (type == \"Moon\") {x.node.size=0; return false;} if (name == \"Makemake\" || name == \"Haumea\" || name == \"Eris\") {x.node.size=1; return false;} if (objid == \"2009-026B\" || objid == \"2006-001A\" || objid == \"1977-084A\" || objid == \"1977-076A\" || objid == \"2001-027A\" || objid == \"1990-037B\" || objid == \"1998-067A\") {return true;} if (name.indexOf(\"Gerasimenko\") >= 0 || name == \"Sirius\" || name == \"Canopus\" || name == \"Rigil Kentaurus\" || name == \"Altair\" || name == \"Deneb\" || name == \"Vega\" || name == \"Proxima Centauri\") {return true;} if (objid_lc.indexOf(\"kepler-186\") >= 0 || objid_lc.indexOf(\"kepler-452\") >= 0 || (objid_lc.indexOf(\"lmc\") >= 0 && type == \"galaxy\") || (objid_lc.indexOf(\"smc\") >= 0 && type == \"galaxy\") || objid_lc.indexOf(\"messier031\") >= 0){x.node.attrs['name'] = objid; return true;} if (type == \"Mainbody\") {return true;} return false;}\"","\"#ff0000\"","\"14\"","\"name\""], "InstanceId" : 0 }
+                                           );
+              }
+
+
+
+    </script>
 </head>
 <body class="w3-light-grey">
+    <!---->
+    <div>
+        <img src='lcars_background.png' height="1266px" width="2880px" usemap="#lcarsmap" />
+        <map name="lcarsmap">
+            <area shape="rect" coords="1392, 865, 1604, 1016" href="javascript:LoadLabels();" title="Labels On" alt="Load Labels">
+            <area shape="rect" coords="1101, 928, 1239, 1018" href="javascript:ResetGraph()" title="Reset" alt="Reset">
+        </map>
+    </div>
+    <!---->
+    <!--
+    <div class="w3-content" style="max-width: 1400px">
 
-<div style="background-image: url('lcars_background.png'); width: 2880px; height: 1266px; background-size: 100%; overflow-x: scroll; white-space:nowrap"/>
- 
-<!--div class="w3-content" style="max-width: 1400px">
- 
-    <header class="w3-container w3-center w3-padding-32">
-        <h1><b>Behaviour Analytics Lab</b>
-        </h1>
-    </header>
+        <header class="w3-container w3-center w3-padding-32">
+            <h1><b>Behaviour Analytics Lab</b>
+            </h1>
+        </header>
 
-    <h2>Give the videos 20 seconds or so to load before touching the buttons!</h2>
- 
-    <div class="w3-row">
- 
-      
-                 <div class="w3-col l6 s12">
-            <h2 onclick="LoadScenario('BA_Final')">Load Scenario</h2>
-        </div>
-                             <div class="w3-col l6 s12">
-         <h2 onclick="PlayAllVideos(false)">Play All Videos</h2>
-        </div>
-		<div class="w3-col l6 s12">
-         <h2 onclick="PauseAllVideos()">Pause All Videos</h2>
-        </div>
-                             <div class="w3-col l6 s12">
-         <h2 onclick="PlayAllVideos(true)">Play All Videos (Loop)</h2>
-        </div>
-		
-		 <div class="w3-col l6 s12">
-         <h2 onclick="">&nbsp;</h2>
-        </div>
-                             <div class="w3-col l6 s12">
-         <h2 onclick="ResetAllVideos()">Reset All Videos</h2>
-        </div>
-                            
-    </div><br>
- 
-</div-->
- 
-<!-- Footer -->
-<!--footer class="w3-container w3-dark-grey w3-padding-32 w3-margin-top">
-<div class="w3-center">
-    <img src="Logos/ImperialCollege.jpg" height="200">
-              </div>
-</footer-->
+        <h2>Give the videos 20 seconds or so to load before touching the buttons!</h2>
+
+        <div class="w3-row">
 
 
-</body></html>
+                     <div class="w3-col l6 s12">
+                <h2 onclick="LoadLabels()">Load Labels</h2>
+            </div>
+                                 <div class="w3-col l6 s12">
+             <h2 onclick="PlayAllVideos(false)">Play All Videos</h2>
+            </div>
+            <div class="w3-col l6 s12">
+             <h2 onclick="PauseAllVideos()">Pause All Videos</h2>
+            </div>
+                                 <div class="w3-col l6 s12">
+             <h2 onclick="PlayAllVideos(true)">Play All Videos (Loop)</h2>
+            </div>
+
+             <div class="w3-col l6 s12">
+             <h2 onclick="">&nbsp;</h2>
+            </div>
+                                 <div class="w3-col l6 s12">
+             <h2 onclick="ResetAllVideos()">Reset All Videos</h2>
+            </div>
+
+        </div><br>
+
+    </div>
+    -->
+    <!-- Footer -->
+    <!--footer class="w3-container w3-dark-grey w3-padding-32 w3-margin-top">
+    <div class="w3-center">
+        <img src="Logos/ImperialCollege.jpg" height="200">
+                  </div>
+    </footer-->
+
+</body>
+</html>
