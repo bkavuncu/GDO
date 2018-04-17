@@ -69,7 +69,7 @@ gdo.net.app["SigmaGraph"].nameVertices = async function(params) {
     }
     if (objAttribute === "node") {
         gdo.sigmaInstance.graph.nodes().forEach(function(node) {
-            node.label = helper(node) ? node.attrs[labelAttr] || "" : "";
+            node.label = helper(node) ? new String(node.attrs[labelAttr]).valueOf() || "" : "";
         });
     } 
 
