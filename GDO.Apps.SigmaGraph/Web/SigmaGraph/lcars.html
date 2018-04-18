@@ -3,10 +3,11 @@
 <head>
     <title>Map of Universe</title>
     <meta charset="UTF-8">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="StyleSheet.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+    <script src="scripts/control-min.js"></script>
     <style>
         body, h1, h2, h3, h4, h5 {
             font-family: "Raleway", sans-serif;
@@ -108,12 +109,13 @@ var numvideos = 5;
 <body class="w3-light-grey">
     <!---->
     <div>
-        <img src='lcars_background.png' height="1688px" width="3824px" style="border-top: 211px solid black; border-bottom: 241px solid black;" usemap="#lcarsmap" />
-        <map name="lcarsmap">
-            <area shape="rect" coords="1848, 1365, 2131, 1569" href="javascript:LoadLabels();" title="Labels On" alt="Load Labels">
-            <area shape="rect" coords="1462, 1450, 1644, 1569" href="javascript:ResetGraph()" title="Reset" alt="Reset">
+	    <canvas id="field_of_view" style="position: absolute; z-index: 20; width: 597px; height: 193px; touch-action: none; background: pink; left: 2844px; top: 1375px;"></canvas>
+		<img src='lcars_background.png' height="1688px" width="3824px" style="position: absolute; border-top: 211px solid black; border-bottom: 261px solid black; border-right: 16px solid black; left: 0px; top: 0px;" usemap="#lcarsmap"/>
+		<map name="lcarsmap">
+          <area shape="rect" coords="1848, 1365, 2131, 1569" href="javascript:LoadLabels();" title="Labels On" alt="Load Labels">
+          <area shape="rect" coords="1462, 1450, 1644, 1569" href="javascript:ResetGraph()" title="Reset" alt="Reset">
         </map>
-    </div>
+	</div>
     <!---->
     <!--
     <div class="w3-content" style="max-width: 1400px">
