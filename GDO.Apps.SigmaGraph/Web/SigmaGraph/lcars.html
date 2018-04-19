@@ -32,6 +32,7 @@
     <script>
         var ip = "146.169.32.119";
         var url = "http://" + ip + "/api/Script/RunMethod";
+		var animate_started = false;
         function LoadScenario() {
             var xmlhttp = new XMLHttpRequest();
             xmlhttp.onreadystatechange = function () {
@@ -59,12 +60,55 @@
             { "Mod": "gdo.net.app.SigmaGraph.server", "Func": "triggerNameVertices", "Params": [0, "\"node\"", "\"type\"", "\"function(x) {var name = x.node.attrs['name']; var type = x.node.attrs['type']; var objid = x.node.attrs['objid']; var objid_lc = new String(objid || \"\").valueOf().toLowerCase(); if (type == \"Moon\" && x.node.attrs['subtype'] == \"Earth\" && x.node.b == 255) {return true;} if (type == \"Moon\") {x.node.size=0; return false;} if (name == \"Makemake\" || name == \"Haumea\" || name == \"Eris\") {x.node.size=1; return false;} if (objid == \"2009-026B\" || objid == \"2006-001A\" || objid == \"1977-084A\" || objid == \"1977-076A\" || objid == \"2001-027A\" || objid == \"1990-037B\" || objid == \"1998-067A\") {return true;} if (name.indexOf(\"Gerasimenko\") >= 0 || name == \"Sirius\" || name == \"Canopus\" || name == \"Rigil Kentaurus\" || name == \"Altair\" || name == \"Deneb\" || name == \"Vega\" || name == \"Proxima Centauri\") {return true;} if (objid_lc.indexOf(\"kepler-186\") >= 0 || objid_lc.indexOf(\"kepler-452\") >= 0 || objid_lc.indexOf(\"sn1572\") >= 0 || objid_lc.indexOf(\"sn1604\") >= 0 || objid_lc.indexOf(\"51 peg\") >= 0 || (objid_lc.indexOf(\"lmc\") >= 0 && type == \"galaxy\") || (objid_lc.indexOf(\"smc\") >= 0 && type == \"galaxy\") || objid_lc.indexOf(\"messier031\") >= 0){x.node.attrs['name'] = objid; return true;} if (type == \"Mainbody\") {return true;} return false;}\"", "\"#ff0000\"", "\"14\"", "\"name\""], "InstanceId": 0 }
             );
         }
+
+		function Animate() {
+			if (!animate_started) {
+				animate_started = true;
+			} else {
+				return;
+			}
+            setInterval(function () { Animate0(); }, 1000);
+            setInterval(function () { Animate1(); }, 3000);
+            setInterval(function () { Animate2(); }, 500);
+            setInterval(function () { Animate3(); }, 500);
+		}
+
+        function Animate0() {
+            var n = parseInt($("#lcars_bg").attr('src').charAt(25), 16) + 1;
+			if (n == 14)
+			{
+				n = 0;
+			}
+            $("#lcars_bg").attr('src', 'images/backgrounds/lcars_' + n.toString(16) + '.png');
+        }
+
+		function Animate1() {
+            var n = Math.floor(Math.random() * 12);
+			$("#canvas1").css('background-image', "url('images/backgrounds/canvas1_" + n.toString(16) + ".png')");
+        }
+
+		function Animate2() {
+            var n = Math.floor(Math.random() * 16);
+			$("#canvas2").css('background-image', "url('images/backgrounds/canvas2_" + n.toString(16) + ".png')");
+        }
+
+		function Animate3() {
+            var n = Math.floor(Math.random() * 12);
+			$("#canvas3").css('background-image', "url('images/backgrounds/canvas3_" + n.toString(16) + ".png')");
+        }
     </script>
 </head>
 <body class="w3-light-grey">
     <div>
         <canvas id="field_of_view" style="position: absolute; z-index: 20; width: 597px; height: 193px; touch-action: none; background: #e0b8e7; left: 2844px; top: 1375px;"></canvas>
-        <img src='lcars_background.png' height="1688px" width="3824px" style="position: absolute; border-top: 211px solid black; border-bottom: 261px solid black; border-right: 16px solid black; left: 0px; top: 0px;" usemap="#lcarsmap" />
+        <canvas id="canvas1" style="position: absolute; z-index: 5; width: 129px; height: 219px; touch-action: none; background-image: url('images/backgrounds/canvas1_0.png'); background-size: 129px 219px; background-position: left top; left: 2259px; top: 1357px; border-bottom: 2px solid black; border-right: 1px solid black"></canvas>
+        <canvas id="canvas2" style="position: absolute; z-index: 5; width: 1505px; height: 78px; touch-action: none; background-image: url('images/backgrounds/canvas2_0.png'); background-size: 1505px 78px; background-position: left top; left: 2251px; top: 1651px; border-right: 2px solid black"></canvas>
+        <canvas id="canvas3" style="position: absolute; z-index: 5; width: 136px; height: 215px; touch-action: none; background-image: url('images/backgrounds/canvas3_0.png'); background-size: 136px 215px; background-position: left top; left: 3604px; top: 1361px; border-bottom: 1px solid black; border-right: 2px solid black"></canvas>
+        <!-- avoiding bouncy images by adding extra 3 canvas elements -->
+        <canvas id="canvas4" style="position: absolute; z-index: 3; width: 129px; height: 219px; touch-action: none; background-image: url('images/backgrounds/canvas1_0.png'); background-size: 129px 219px; background-position: left top; left: 2259px; top: 1357px; border-bottom: 2px solid black; border-right: 1px solid black"></canvas>
+        <canvas id="canvas5" style="position: absolute; z-index: 3; width: 1505px; height: 78px; touch-action: none; background-image: url('images/backgrounds/canvas2_0.png'); background-size: 1505px 78px; background-position: left top; left: 2251px; top: 1651px; border-right: 2px solid black"></canvas>
+        <canvas id="canvas6" style="position: absolute; z-index: 3; width: 136px; height: 215px; touch-action: none; background-image: url('images/backgrounds/canvas3_0.png'); background-size: 136px 215px; background-position: left top; left: 3604px; top: 1361px; border-bottom: 1px solid black; border-right: 2px solid black"></canvas>
+        <img id="lcars_bg" src='images/backgrounds/lcars_0.png' height="1688px" width="3824px" style="position: absolute; border-top: 211px solid black; border-bottom: 261px solid black; border-right: 16px solid black; left: 0px; top: 0px;" usemap="#lcarsmap" />
         <map name="lcarsmap">
             <area shape="rect" coords="1848, 1365, 2131, 1569" href="javascript:LoadLabels();" title="Labels On" alt="Load Labels">
             <area shape="rect" coords="1462, 1365, 1644, 1422" href="javascript:LoadScenario()" title="Load Scenario" alt="Load Scenario">
