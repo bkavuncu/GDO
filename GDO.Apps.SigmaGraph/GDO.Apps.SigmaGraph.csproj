@@ -237,6 +237,12 @@
     <Content Include="Web\SigmaGraph\images\backgrounds\canvas3_b.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Web\SigmaGraph\images\backgrounds\canvas3_c.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Web\SigmaGraph\images\backgrounds\canvas3_d.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Web\SigmaGraph\images\backgrounds\lcars_0.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -279,8 +285,10 @@
     <Content Include="Web\SigmaGraph\images\backgrounds\lcars_d.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Web\SigmaGraph\images\backgrounds\lcars_e.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Web\SigmaGraph\lcars.html" />
-    <Content Include="Web\SigmaGraph\lcars_background.png" />
     <Content Include="Web\SigmaGraph\scripts\control-min.js" />
     <Content Include="Web\SigmaGraph\styles\codeflask.min.css" />
     <Content Include="Scripts\CodeEditor\codeflask.min.js" />

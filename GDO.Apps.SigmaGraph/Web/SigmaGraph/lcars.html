@@ -33,6 +33,7 @@
         var ip = "146.169.32.119";
         var url = "http://" + ip + "/api/Script/RunMethod";
 		var animate_started = false;
+		var show_galaxy = true;
         function LoadScenario() {
             var xmlhttp = new XMLHttpRequest();
             xmlhttp.onreadystatechange = function () {
@@ -47,6 +48,7 @@
             }
             xmlhttp.open("GET", "http://" + ip + "/api/CaveState/Deploy?stateName=MoU", true);
             xmlhttp.send();
+            Animate();
         }
 
         function ResetGraph() {
@@ -74,8 +76,11 @@
 		}
 
         function Animate0() {
+			if (!show_galaxy) {
+				return;
+			}
             var n = parseInt($("#lcars_bg").attr('src').charAt(25), 16) + 1;
-			if (n == 14)
+			if (n >= 14)
 			{
 				n = 0;
 			}
@@ -93,9 +98,23 @@
         }
 
 		function Animate3() {
-            var n = Math.floor(Math.random() * 12);
+            var n = Math.floor(Math.random() * 14);
 			$("#canvas3").css('background-image', "url('images/backgrounds/canvas3_" + n.toString(16) + ".png')");
         }
+
+		function ModeSelect() {
+		    if (show_galaxy) {
+				show_galaxy = false;
+				$("#lcars_bg").attr('src', 'images/backgrounds/lcars_e.png');
+			} else {
+				if (parseInt($("#lcars_bg").attr('src').charAt(25), 16) == 14) {
+					$("#lcars_bg").attr('src', 'images/backgrounds/lcars_d.png');
+				} else {
+					$("#lcars_bg").attr('src', 'images/backgrounds/lcars_0.png');
+					show_galaxy = true;
+				}
+			}
+		}
     </script>
 </head>
 <body class="w3-light-grey">
@@ -108,11 +127,12 @@
         <canvas id="canvas4" style="position: absolute; z-index: 3; width: 129px; height: 219px; touch-action: none; background-image: url('images/backgrounds/canvas1_0.png'); background-size: 129px 219px; background-position: left top; left: 2259px; top: 1357px; border-bottom: 2px solid black; border-right: 1px solid black"></canvas>
         <canvas id="canvas5" style="position: absolute; z-index: 3; width: 1505px; height: 78px; touch-action: none; background-image: url('images/backgrounds/canvas2_0.png'); background-size: 1505px 78px; background-position: left top; left: 2251px; top: 1651px; border-right: 2px solid black"></canvas>
         <canvas id="canvas6" style="position: absolute; z-index: 3; width: 136px; height: 215px; touch-action: none; background-image: url('images/backgrounds/canvas3_0.png'); background-size: 136px 215px; background-position: left top; left: 3604px; top: 1361px; border-bottom: 1px solid black; border-right: 2px solid black"></canvas>
-        <img id="lcars_bg" src='images/backgrounds/lcars_0.png' height="1688px" width="3824px" style="position: absolute; border-top: 211px solid black; border-bottom: 261px solid black; border-right: 16px solid black; left: 0px; top: 0px;" usemap="#lcarsmap" />
+        <img id="lcars_bg" src='images/backgrounds/lcars_d.png' height="1688px" width="3824px" style="position: absolute; border-top: 211px solid black; border-bottom: 261px solid black; border-right: 16px solid black; left: 0px; top: 0px;" usemap="#lcarsmap" />
         <map name="lcarsmap">
             <area shape="rect" coords="1848, 1365, 2131, 1569" href="javascript:LoadLabels();" title="Labels On" alt="Load Labels">
             <area shape="rect" coords="1462, 1365, 1644, 1422" href="javascript:LoadScenario()" title="Load Scenario" alt="Load Scenario">
             <area shape="rect" coords="1462, 1450, 1644, 1569" href="javascript:ResetGraph()" title="Reset" alt="Reset">
+            <area shape="rect" coords="3459, 1419, 3526, 1568" href="javascript:ModeSelect()" title="Mode Select" alt="Mode Select">
         </map>
     </div>
 </body>
