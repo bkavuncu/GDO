@@ -32,8 +32,8 @@
     <script>
         var ip = "146.169.32.119";
         var url = "http://" + ip + "/api/Script/RunMethod";
-		var animate_started = false;
-		var show_galaxy = true;
+        var animate_started = false;
+        var show_galaxy = true;
         function LoadScenario() {
             var xmlhttp = new XMLHttpRequest();
             xmlhttp.onreadystatechange = function () {
@@ -60,90 +60,89 @@
         function LoadLabels() {
             ResetGraph();
             post(url,
-            { "Mod": "gdo.net.app.SigmaGraph.server", "Func": "triggerNameVertices", "Params": [0, "\"node\"", "\"type\"", "\"function(x) {var name = x.node.attrs['name']; var type = x.node.attrs['type']; var objid = x.node.attrs['objid']; var objid_lc = new String(objid || \"\").valueOf().toLowerCase(); if (type == \"moon\" && x.node.attrs['subtype'] == \"Earth\") {return true;} if (type == \"moon\") {x.node.size=0; return false;} if (name == \"Makemake\" || name == \"Haumea\" || name == \"Eris\") {x.node.size=1; return false;} if (objid == \"2009-026B\" || objid == \"2006-001A\" || objid == \"1977-084A\" || objid == \"1977-076A\" || objid == \"2001-027A\" || objid == \"1990-037B\" || objid == \"1998-067A\") {return true;} if (name.indexOf(\"Gerasimenko\") >= 0 || name == \"Sirius\" || name == \"Canopus\" || name == \"Rigil Kentaurus\" || name == \"Altair\" || name == \"Deneb\" || name == \"Vega\" || name == \"Proxima Centauri\" || name == \"Sgr A*\") {return true;} if (objid_lc.indexOf(\"kepler-186\") >= 0 || objid_lc.indexOf(\"kepler-452\") >= 0 || objid_lc.indexOf(\"sn1572\") >= 0 || objid_lc.indexOf(\"sn1604\") >= 0 || objid_lc.indexOf(\"51 peg\") >= 0 || (objid_lc.indexOf(\"lmc\") >= 0 && type == \"galaxy\") || (objid_lc.indexOf(\"smc\") >= 0 && type == \"galaxy\") || objid_lc.indexOf(\"j1120+0641\") >= 0){x.node.attrs['name'] = objid; return true;} if (objid_lc.indexOf(\"messier031\") >= 0) {x.node.attrs['name'] = \"Andromeda\"; return true;} if (type == \"mainbody\" || type == \"Axis\") {return true;} return false;}\"", "\"#ff0000\"", "\"14\"", "\"name\""], "InstanceId": 0 }
+            { "Mod": "gdo.net.app.SigmaGraph.server", "Func": "triggerNameVertices", "Params": [0, "\"node\"", "\"type\"", "\"function(x) {var name = x.node.attrs['name']; var type = x.node.attrs['type']; var objid = x.node.attrs['objid']; var objid_lc = new String(objid || \"\").valueOf().toLowerCase(); if (type == \"moon\" && x.node.attrs['subtype'] == \"Earth\") {return true;} if (type == \"moon\") {x.node.size=0; return false;} if (name == \"Makemake\" || name == \"Haumea\" || name == \"Eris\") {x.node.size=1; return false;} if (objid == \"2009-026B\" || objid == \"2006-001A\" || objid == \"1977-084A\" || objid == \"1977-076A\" || objid == \"2001-027A\" || objid == \"1990-037B\" || objid == \"1998-067A\") {return true;} if (name.indexOf(\"Gerasimenko\") >= 0 || name == \"Sirius\" || name == \"Canopus\" || name == \"Rigil Kentaurus\" || name == \"Altair\" || name == \"Deneb\" || name == \"Vega\" || name == \"Proxima Centauri\") {return true;} if (objid_lc.indexOf(\"kepler-186\") >= 0 || objid_lc.indexOf(\"kepler-452\") >= 0 || objid_lc.indexOf(\"sn1572\") >= 0 || objid_lc.indexOf(\"sn1604\") >= 0 || objid_lc.indexOf(\"51 peg\") >= 0 || (objid_lc.indexOf(\"lmc\") >= 0 && type == \"galaxy\") || (objid_lc.indexOf(\"smc\") >= 0 && type == \"galaxy\") || objid_lc.indexOf(\"j1120+0641\") >= 0){x.node.attrs['name'] = objid; return true;} if (objid_lc.indexOf(\"messier031\") >= 0) {x.node.attrs['name'] = \"Andromeda\"; return true;} if (type == \"mainbody\" || type == \"blackhole\" || type == \"Axis\") {return true;} return false;}\"", "\"#ff0000\"", "\"14\"", "\"name\""], "InstanceId": 0 }
             );
         }
 
         function LoadExoplanetsAndComets() {
             ResetGraph();
             post(url,
-            { "Mod": "gdo.net.app.SigmaGraph.server", "Func": "triggerNameVertices", "Params": [0, "\"node\"", "\"type\"", "\"function(x) {var name = x.node.attrs['name']; var type = x.node.attrs['type']; var objid = x.node.attrs['objid']; var objid_lc = new String(objid || \"\").valueOf().toLowerCase(); if (type == \"moon\" && x.node.attrs['subtype'] == \"Earth\") {return true;} if (type == \"moon\") {x.node.size=0; return false;} if (name == \"Makemake\" || name == \"Haumea\" || name == \"Eris\") {x.node.size=1; return false;} if (objid == \"2009-026B\" || objid == \"2006-001A\" || objid == \"1977-084A\" || objid == \"1977-076A\" || objid == \"2001-027A\" || objid == \"1990-037B\" || objid == \"1998-067A\") {return true;} if (name.indexOf(\"Gerasimenko\") >= 0 || name == \"Sirius\" || name == \"Canopus\" || name == \"Rigil Kentaurus\" || name == \"Altair\" || name == \"Deneb\" || name == \"Vega\" || name == \"Proxima Centauri\" || name == \"Sgr A*\") {return true;} if (objid_lc.indexOf(\"kepler-186\") >= 0 || objid_lc.indexOf(\"kepler-452\") >= 0 || objid_lc.indexOf(\"sn1572\") >= 0 || objid_lc.indexOf(\"sn1604\") >= 0 || objid_lc.indexOf(\"51 peg\") >= 0 || (objid_lc.indexOf(\"lmc\") >= 0 && type == \"galaxy\") || (objid_lc.indexOf(\"smc\") >= 0 && type == \"galaxy\") || objid_lc.indexOf(\"j1120+0641\") >= 0){x.node.attrs['name'] = objid; return true;} if (objid_lc.indexOf(\"messier031\") >= 0) {x.node.attrs['name'] = \"Andromeda\"; return true;} if (type == \"mainbody\" || type == \"Axis\" || type == \"comet\") {return true;} if (type == \"exoplanet\") {x.node.attrs['name'] = objid; return true;} return false;}\"", "\"#ff0000\"", "\"14\"", "\"name\""], "InstanceId": 0 }
+            { "Mod": "gdo.net.app.SigmaGraph.server", "Func": "triggerNameVertices", "Params": [0, "\"node\"", "\"type\"", "\"function(x) {var name = x.node.attrs['name']; var type = x.node.attrs['type']; var objid = x.node.attrs['objid']; var objid_lc = new String(objid || \"\").valueOf().toLowerCase(); if (type == \"moon\" && x.node.attrs['subtype'] == \"Earth\") {return true;} if (type == \"moon\") {x.node.size=0; return false;} if (name == \"Makemake\" || name == \"Haumea\" || name == \"Eris\") {x.node.size=1; return false;} if (objid == \"2009-026B\" || objid == \"2006-001A\" || objid == \"1977-084A\" || objid == \"1977-076A\" || objid == \"2001-027A\" || objid == \"1990-037B\" || objid == \"1998-067A\") {return true;} if (name.indexOf(\"Gerasimenko\") >= 0 || name == \"Sirius\" || name == \"Canopus\" || name == \"Rigil Kentaurus\" || name == \"Altair\" || name == \"Deneb\" || name == \"Vega\" || name == \"Proxima Centauri\") {return true;} if (objid_lc.indexOf(\"kepler-186\") >= 0 || objid_lc.indexOf(\"kepler-452\") >= 0 || objid_lc.indexOf(\"sn1572\") >= 0 || objid_lc.indexOf(\"sn1604\") >= 0 || objid_lc.indexOf(\"51 peg\") >= 0 || (objid_lc.indexOf(\"lmc\") >= 0 && type == \"galaxy\") || (objid_lc.indexOf(\"smc\") >= 0 && type == \"galaxy\") || objid_lc.indexOf(\"j1120+0641\") >= 0){x.node.attrs['name'] = objid; return true;} if (objid_lc.indexOf(\"messier031\") >= 0) {x.node.attrs['name'] = \"Andromeda\"; return true;} if (type == \"mainbody\" || type == \"blackhole\" || type == \"Axis\" || type == \"comet\") {return true;} if (type == \"exoplanet\") {x.node.attrs['name'] = objid; return true;} return false;}\"", "\"#ff0000\"", "\"14\"", "\"name\""], "InstanceId": 0 }
             );
         }
 
         function LoadDateA() {
             ResetGraph();
             post(url,
-            { "Mod": "gdo.net.app.SigmaGraph.server", "Func": "triggerNameVertices", "Params": [0, "\"node\"", "\"type\"", "\"function(x) {var name = x.node.attrs['name']; var type = x.node.attrs['type']; var objid = x.node.attrs['objid']; var objid_lc = new String(objid || \"\").valueOf().toLowerCase(); var ddate = new Date(new String(x.node.attrs['date'] || \"2018-01-01\").valueOf()).getFullYear(); var fdate = 1846; if (ddate == 2018 && type == \"star\" && x.node.attrs['mapp'] < 6) {ddate = 1000;} if (type == \"moon\" && x.node.attrs['subtype'] == \"Earth\") {return true} if (type == \"moon\") {x.node.size=0; return false;} if (name == \"Makemake\" || name == \"Haumea\" || name == \"Eris\") {if (ddate > fdate) {x.node.size=0} else {x.node.size=1}; return false;} if (objid == \"2009-026B\" || objid == \"2006-001A\" || objid == \"1977-084A\" || objid == \"1977-076A\" || objid == \"2001-027A\" || objid == \"1990-037B\" || objid == \"1998-067A\") {if (ddate > fdate) {x.node.size=0; return false;} return true;} if (name.indexOf(\"Gerasimenko\") >= 0 || name == \"Sirius\" || name == \"Canopus\" || name == \"Rigil Kentaurus\" || name == \"Altair\" || name == \"Deneb\" || name == \"Vega\" || name == \"Proxima Centauri\" || name == \"Sgr A*\") {if (ddate > fdate) {x.node.size=0; return false;} return true;} if (objid_lc.indexOf(\"kepler-186\") >= 0 || objid_lc.indexOf(\"kepler-452\") >= 0 || objid_lc.indexOf(\"sn1572\") >= 0 || objid_lc.indexOf(\"sn1604\") >= 0 || objid_lc.indexOf(\"51 peg\") >= 0 || (objid_lc.indexOf(\"lmc\") >= 0 && type == \"galaxy\") || (objid_lc.indexOf(\"smc\") >= 0 && type == \"galaxy\") || objid_lc.indexOf(\"j1120+0641\") >= 0){if (ddate > fdate) {x.node.size=0; return false;} x.node.attrs['name'] = objid; return true;} if (objid_lc.indexOf(\"messier031\") >= 0) {if (ddate > fdate) {x.node.size=0; return false;} x.node.attrs['name'] = \"Andromeda\"; return true;} if (type == \"mainbody\" || type == \"Axis\") {return true;} if (ddate > fdate) {x.node.size=0;} return false;}\"", "\"#ff0000\"", "\"14\"", "\"name\""], "InstanceId": 0 }
+            { "Mod": "gdo.net.app.SigmaGraph.server", "Func": "triggerNameVertices", "Params": [0, "\"node\"", "\"type\"", "\"function(x) {var name = x.node.attrs['name']; var type = x.node.attrs['type']; var objid = x.node.attrs['objid']; var objid_lc = new String(objid || \"\").valueOf().toLowerCase(); var ddate = new Date(new String(x.node.attrs['date'] || \"2018-01-01\").valueOf()).getFullYear(); var fdate = 1846; if (ddate == 2018 && type == \"star\" && x.node.attrs['mapp'] < 6) {ddate = 1000;} if (type == \"moon\" && x.node.attrs['subtype'] == \"Earth\") {return true} if (type == \"moon\") {x.node.size=0; return false;} if (name == \"Makemake\" || name == \"Haumea\" || name == \"Eris\") {if (ddate > fdate) {x.node.size=0} else {x.node.size=1}; return false;} if (objid == \"2009-026B\" || objid == \"2006-001A\" || objid == \"1977-084A\" || objid == \"1977-076A\" || objid == \"2001-027A\" || objid == \"1990-037B\" || objid == \"1998-067A\") {if (ddate > fdate) {x.node.size=0; return false;} return true;} if (name.indexOf(\"Gerasimenko\") >= 0 || name == \"Sirius\" || name == \"Canopus\" || name == \"Rigil Kentaurus\" || name == \"Altair\" || name == \"Deneb\" || name == \"Vega\" || name == \"Proxima Centauri\") {if (ddate > fdate) {x.node.size=0; return false;} return true;} if (objid_lc.indexOf(\"kepler-186\") >= 0 || objid_lc.indexOf(\"kepler-452\") >= 0 || objid_lc.indexOf(\"sn1572\") >= 0 || objid_lc.indexOf(\"sn1604\") >= 0 || objid_lc.indexOf(\"51 peg\") >= 0 || (objid_lc.indexOf(\"lmc\") >= 0 && type == \"galaxy\") || (objid_lc.indexOf(\"smc\") >= 0 && type == \"galaxy\") || objid_lc.indexOf(\"j1120+0641\") >= 0){if (ddate > fdate) {x.node.size=0; return false;} x.node.attrs['name'] = objid; return true;} if (objid_lc.indexOf(\"messier031\") >= 0) {if (ddate > fdate) {x.node.size=0; return false;} x.node.attrs['name'] = \"Andromeda\"; return true;} if (type == \"mainbody\" || type == \"blackhole\"  || type == \"Axis\") {return true;} if (ddate > fdate) {x.node.size=0;} return false;}\"", "\"#ff0000\"", "\"14\"", "\"name\""], "InstanceId": 0 }
             );
         }
 
         function LoadDateB() {
             ResetGraph();
             post(url,
-            { "Mod": "gdo.net.app.SigmaGraph.server", "Func": "triggerNameVertices", "Params": [0, "\"node\"", "\"type\"", "\"function(x) {var name = x.node.attrs['name']; var type = x.node.attrs['type']; var objid = x.node.attrs['objid']; var objid_lc = new String(objid || \"\").valueOf().toLowerCase(); var ddate = new Date(new String(x.node.attrs['date'] || \"2018-01-01\").valueOf()).getFullYear(); var fdate = 1957; if (ddate == 2018 && type == \"star\" && x.node.attrs['mapp'] < 6) {ddate = 1000;} if (type == \"moon\" && x.node.attrs['subtype'] == \"Earth\") {return true} if (type == \"moon\") {x.node.size=0; return false;} if (name == \"Makemake\" || name == \"Haumea\" || name == \"Eris\") {if (ddate > fdate) {x.node.size=0} else {x.node.size=1}; return false;} if (objid == \"2009-026B\" || objid == \"2006-001A\" || objid == \"1977-084A\" || objid == \"1977-076A\" || objid == \"2001-027A\" || objid == \"1990-037B\" || objid == \"1998-067A\") {if (ddate > fdate) {x.node.size=0; return false;} return true;} if (name.indexOf(\"Gerasimenko\") >= 0 || name == \"Sirius\" || name == \"Canopus\" || name == \"Rigil Kentaurus\" || name == \"Altair\" || name == \"Deneb\" || name == \"Vega\" || name == \"Proxima Centauri\" || name == \"Sgr A*\") {if (ddate > fdate) {x.node.size=0; return false;} return true;} if (objid_lc.indexOf(\"kepler-186\") >= 0 || objid_lc.indexOf(\"kepler-452\") >= 0 || objid_lc.indexOf(\"sn1572\") >= 0 || objid_lc.indexOf(\"sn1604\") >= 0 || objid_lc.indexOf(\"51 peg\") >= 0 || (objid_lc.indexOf(\"lmc\") >= 0 && type == \"galaxy\") || (objid_lc.indexOf(\"smc\") >= 0 && type == \"galaxy\") || objid_lc.indexOf(\"j1120+0641\") >= 0){if (ddate > fdate) {x.node.size=0; return false;} x.node.attrs['name'] = objid; return true;} if (objid_lc.indexOf(\"messier031\") >= 0) {if (ddate > fdate) {x.node.size=0; return false;} x.node.attrs['name'] = \"Andromeda\"; return true;} if (type == \"mainbody\" || type == \"Axis\") {return true;} if (ddate > fdate) {x.node.size=0;} return false;}\"", "\"#ff0000\"", "\"14\"", "\"name\""], "InstanceId": 0 }
+            { "Mod": "gdo.net.app.SigmaGraph.server", "Func": "triggerNameVertices", "Params": [0, "\"node\"", "\"type\"", "\"function(x) {var name = x.node.attrs['name']; var type = x.node.attrs['type']; var objid = x.node.attrs['objid']; var objid_lc = new String(objid || \"\").valueOf().toLowerCase(); var ddate = new Date(new String(x.node.attrs['date'] || \"2018-01-01\").valueOf()).getFullYear(); var fdate = 1957; if (ddate == 2018 && type == \"star\" && x.node.attrs['mapp'] < 6) {ddate = 1000;} if (type == \"moon\" && x.node.attrs['subtype'] == \"Earth\") {return true} if (type == \"moon\") {x.node.size=0; return false;} if (name == \"Makemake\" || name == \"Haumea\" || name == \"Eris\") {if (ddate > fdate) {x.node.size=0} else {x.node.size=1}; return false;} if (objid == \"2009-026B\" || objid == \"2006-001A\" || objid == \"1977-084A\" || objid == \"1977-076A\" || objid == \"2001-027A\" || objid == \"1990-037B\" || objid == \"1998-067A\") {if (ddate > fdate) {x.node.size=0; return false;} return true;} if (name.indexOf(\"Gerasimenko\") >= 0 || name == \"Sirius\" || name == \"Canopus\" || name == \"Rigil Kentaurus\" || name == \"Altair\" || name == \"Deneb\" || name == \"Vega\" || name == \"Proxima Centauri\") {if (ddate > fdate) {x.node.size=0; return false;} return true;} if (objid_lc.indexOf(\"kepler-186\") >= 0 || objid_lc.indexOf(\"kepler-452\") >= 0 || objid_lc.indexOf(\"sn1572\") >= 0 || objid_lc.indexOf(\"sn1604\") >= 0 || objid_lc.indexOf(\"51 peg\") >= 0 || (objid_lc.indexOf(\"lmc\") >= 0 && type == \"galaxy\") || (objid_lc.indexOf(\"smc\") >= 0 && type == \"galaxy\") || objid_lc.indexOf(\"j1120+0641\") >= 0){if (ddate > fdate) {x.node.size=0; return false;} x.node.attrs['name'] = objid; return true;} if (objid_lc.indexOf(\"messier031\") >= 0) {if (ddate > fdate) {x.node.size=0; return false;} x.node.attrs['name'] = \"Andromeda\"; return true;} if (type == \"mainbody\" || type == \"blackhole\"  || type == \"Axis\") {return true;} if (ddate > fdate) {x.node.size=0;} return false;}\"", "\"#ff0000\"", "\"14\"", "\"name\""], "InstanceId": 0 }
             );
         }
 
         function LoadDateC() {
             ResetGraph();
             post(url,
-            { "Mod": "gdo.net.app.SigmaGraph.server", "Func": "triggerNameVertices", "Params": [0, "\"node\"", "\"type\"", "\"function(x) {var name = x.node.attrs['name']; var type = x.node.attrs['type']; var objid = x.node.attrs['objid']; var objid_lc = new String(objid || \"\").valueOf().toLowerCase(); var ddate = new Date(new String(x.node.attrs['date'] || \"2018-01-01\").valueOf()).getFullYear(); var fdate = 1990; if (ddate == 2018 && type == \"star\" && x.node.attrs['mapp'] < 6) {ddate = 1000;} if (type == \"moon\" && x.node.attrs['subtype'] == \"Earth\") {return true} if (type == \"moon\") {x.node.size=0; return false;} if (name == \"Makemake\" || name == \"Haumea\" || name == \"Eris\") {if (ddate > fdate) {x.node.size=0} else {x.node.size=1}; return false;} if (objid == \"2009-026B\" || objid == \"2006-001A\" || objid == \"1977-084A\" || objid == \"1977-076A\" || objid == \"2001-027A\" || objid == \"1990-037B\" || objid == \"1998-067A\") {if (ddate > fdate) {x.node.size=0; return false;} return true;} if (name.indexOf(\"Gerasimenko\") >= 0 || name == \"Sirius\" || name == \"Canopus\" || name == \"Rigil Kentaurus\" || name == \"Altair\" || name == \"Deneb\" || name == \"Vega\" || name == \"Proxima Centauri\" || name == \"Sgr A*\") {if (ddate > fdate) {x.node.size=0; return false;} return true;} if (objid_lc.indexOf(\"kepler-186\") >= 0 || objid_lc.indexOf(\"kepler-452\") >= 0 || objid_lc.indexOf(\"sn1572\") >= 0 || objid_lc.indexOf(\"sn1604\") >= 0 || objid_lc.indexOf(\"51 peg\") >= 0 || (objid_lc.indexOf(\"lmc\") >= 0 && type == \"galaxy\") || (objid_lc.indexOf(\"smc\") >= 0 && type == \"galaxy\") || objid_lc.indexOf(\"j1120+0641\") >= 0){if (ddate > fdate) {x.node.size=0; return false;} x.node.attrs['name'] = objid; return true;} if (objid_lc.indexOf(\"messier031\") >= 0) {if (ddate > fdate) {x.node.size=0; return false;} x.node.attrs['name'] = \"Andromeda\"; return true;} if (type == \"mainbody\" || type == \"Axis\") {return true;} if (ddate > fdate) {x.node.size=0;} return false;}\"", "\"#ff0000\"", "\"14\"", "\"name\""], "InstanceId": 0 }
+            { "Mod": "gdo.net.app.SigmaGraph.server", "Func": "triggerNameVertices", "Params": [0, "\"node\"", "\"type\"", "\"function(x) {var name = x.node.attrs['name']; var type = x.node.attrs['type']; var objid = x.node.attrs['objid']; var objid_lc = new String(objid || \"\").valueOf().toLowerCase(); var ddate = new Date(new String(x.node.attrs['date'] || \"2018-01-01\").valueOf()).getFullYear(); var fdate = 1990; if (ddate == 2018 && type == \"star\" && x.node.attrs['mapp'] < 6) {ddate = 1000;} if (type == \"moon\" && x.node.attrs['subtype'] == \"Earth\") {return true} if (type == \"moon\") {x.node.size=0; return false;} if (name == \"Makemake\" || name == \"Haumea\" || name == \"Eris\") {if (ddate > fdate) {x.node.size=0} else {x.node.size=1}; return false;} if (objid == \"2009-026B\" || objid == \"2006-001A\" || objid == \"1977-084A\" || objid == \"1977-076A\" || objid == \"2001-027A\" || objid == \"1990-037B\" || objid == \"1998-067A\") {if (ddate > fdate) {x.node.size=0; return false;} return true;} if (name.indexOf(\"Gerasimenko\") >= 0 || name == \"Sirius\" || name == \"Canopus\" || name == \"Rigil Kentaurus\" || name == \"Altair\" || name == \"Deneb\" || name == \"Vega\" || name == \"Proxima Centauri\") {if (ddate > fdate) {x.node.size=0; return false;} return true;} if (objid_lc.indexOf(\"kepler-186\") >= 0 || objid_lc.indexOf(\"kepler-452\") >= 0 || objid_lc.indexOf(\"sn1572\") >= 0 || objid_lc.indexOf(\"sn1604\") >= 0 || objid_lc.indexOf(\"51 peg\") >= 0 || (objid_lc.indexOf(\"lmc\") >= 0 && type == \"galaxy\") || (objid_lc.indexOf(\"smc\") >= 0 && type == \"galaxy\") || objid_lc.indexOf(\"j1120+0641\") >= 0){if (ddate > fdate) {x.node.size=0; return false;} x.node.attrs['name'] = objid; return true;} if (objid_lc.indexOf(\"messier031\") >= 0) {if (ddate > fdate) {x.node.size=0; return false;} x.node.attrs['name'] = \"Andromeda\"; return true;} if (type == \"mainbody\" || type == \"blackhole\" || type == \"Axis\") {return true;} if (ddate > fdate) {x.node.size=0;} return false;}\"", "\"#ff0000\"", "\"14\"", "\"name\""], "InstanceId": 0 }
             );
         }
 
-		function Animate() {
-			if (!animate_started) {
-				animate_started = true;
-			} else {
-				return;
-			}
+        function Animate() {
+            if (!animate_started) {
+                animate_started = true;
+            } else {
+                return;
+            }
             setInterval(function () { Animate0(); }, 1000);
             setInterval(function () { Animate1(); }, 3000);
             setInterval(function () { Animate2(); }, 500);
             setInterval(function () { Animate3(); }, 500);
-		}
+        }
 
         function Animate0() {
-			if (!show_galaxy) {
-				return;
-			}
+            if (!show_galaxy) {
+                return;
+            }
             var n = parseInt($("#lcars_bg").attr('src').charAt(25), 16) + 1;
-			if (n >= 14)
-			{
-				n = 0;
-			}
+            if (n >= 14) {
+                n = 0;
+            }
             $("#lcars_bg").attr('src', 'images/backgrounds/lcars_' + n.toString(16) + '.png');
         }
 
-		function Animate1() {
+        function Animate1() {
             var n = Math.floor(Math.random() * 12);
-			$("#canvas1").css('background-image', "url('images/backgrounds/canvas1_" + n.toString(16) + ".png')");
+            $("#canvas1").css('background-image', "url('images/backgrounds/canvas1_" + n.toString(16) + ".png')");
         }
 
-		function Animate2() {
+        function Animate2() {
             var n = Math.floor(Math.random() * 16);
-			$("#canvas2").css('background-image', "url('images/backgrounds/canvas2_" + n.toString(16) + ".png')");
+            $("#canvas2").css('background-image', "url('images/backgrounds/canvas2_" + n.toString(16) + ".png')");
         }
 
-		function Animate3() {
+        function Animate3() {
             var n = Math.floor(Math.random() * 14);
-			$("#canvas3").css('background-image', "url('images/backgrounds/canvas3_" + n.toString(16) + ".png')");
+            $("#canvas3").css('background-image', "url('images/backgrounds/canvas3_" + n.toString(16) + ".png')");
         }
 
-		function ModeSelect() {
-		    if (show_galaxy) {
-				show_galaxy = false;
-				$("#lcars_bg").attr('src', 'images/backgrounds/lcars_e.png');
-			} else {
-				if (parseInt($("#lcars_bg").attr('src').charAt(25), 16) == 14) {
-					$("#lcars_bg").attr('src', 'images/backgrounds/lcars_d.png');
-				} else {
-					$("#lcars_bg").attr('src', 'images/backgrounds/lcars_0.png');
-					show_galaxy = true;
-				}
-			}
-		}
+        function ModeSelect() {
+            if (show_galaxy) {
+                show_galaxy = false;
+                $("#lcars_bg").attr('src', 'images/backgrounds/lcars_e.png');
+            } else {
+                if (parseInt($("#lcars_bg").attr('src').charAt(25), 16) == 14) {
+                    $("#lcars_bg").attr('src', 'images/backgrounds/lcars_d.png');
+                } else {
+                    $("#lcars_bg").attr('src', 'images/backgrounds/lcars_0.png');
+                    show_galaxy = true;
+                }
+            }
+        }
     </script>
 </head>
 <body class="w3-light-grey">
