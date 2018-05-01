@@ -28,7 +28,7 @@ namespace GDO.Core {
         public DateTime LastupdateTime { get; set; } = DateTime.Now;
 
         public static bool MayProceed() {
-            return DateTime.Now.Subtract(MonitorSingleton.Instance.LastupdateTime).TotalMinutes > 1.0;
+            return DateTime.Now.Subtract(MonitorSingleton.Instance.LastupdateTime).TotalSeconds > 10.0;
         }
     }
 
@@ -39,22 +39,23 @@ namespace GDO.Core {
             if (!MonitorSingleton.Enabled) return;
 
             if (MonitorSingleton.MayProceed()) {
-                MonitorSingleton.Instance.LastupdateTime = DateTime.Now;
                 if (MonitorSingleton.Instance.Semaphore.Wait(10)) {
+                    MonitorSingleton.Instance.LastupdateTime = DateTime.Now;
                     Log.Info("CaveMonitor - testing state");
 
-                    var deadnodes = Cave.Layout.Nodes.Where(n => !n.Value.IsConnectedToCaveServer).ToList();
-                    var deadscreens = deadnodes.Select(n =>
-                            ((n.Key > 16 && n.Key <= 32) || 
-                             (n.Key > 32 && n.Key <= 64)) ? n.Key - 16 : n.Key)// select only lower screen
-                        .Distinct()
-                        .ToList();
                     var hostname = Dns.GetHostName().ToLower();
-                    Log.Info("CaveMonitor - i found " + deadnodes.Count + " dead nodes");
 
                     if (hostname.Contains("prod")) {// prod/preprod only
+                        var deadnodes = Cave.Layout.Nodes.Where(n => !n.Value.IsConnectedToCaveServer).ToList();
+                        var deadscreens = deadnodes.Select(n =>
+                                ((n.Key > 16 && n.Key <= 32) ||
+                                 (n.Key > 48 && n.Key <= 64)) ? n.Key - 16 : n.Key)// select only lower screen
+                            .Distinct()
+                            .ToList();
+                        Log.Info("CaveMonitor - i found " + deadnodes.Count + " dead nodes");
 
-                        if (deadscreens.Count < 10) {
+                        if (deadscreens.Count > 0 && deadscreens.Count < 10) {
+                            MonitorSingleton.Instance.LastupdateTime = DateTime.Now.AddMinutes(5);
                             // dont do anything if the gdo is off or in debug mode
                             Log.Info("CaveMonitor - about to reset browsers");
                             foreach (var screen in deadscreens) {
@@ -79,7 +80,7 @@ namespace GDO.Core {
                                 }
                             }
                         }
-                        else {
+                        else if (deadscreens.Count >= 10) {
                             Log.Info("CaveMonitor - too many dead browsers i am on strike");
                         }
 

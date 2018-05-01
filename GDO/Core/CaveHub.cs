@@ -378,7 +378,7 @@ namespace GDO.Core
         {
             //lock (Cave.ServerLock) {
                 try {
-                //    CaveMonitor.ScanNodeHealth();
+                    CaveMonitor.ScanNodeHealth();
                     var watch = System.Diagnostics.Stopwatch.StartNew();
 
                     
