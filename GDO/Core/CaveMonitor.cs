@@ -36,7 +36,7 @@ namespace GDO.Core {
         private static ILog Log { get; set; } = LogManager.GetLogger(typeof(CaveMonitor));
 
         public static void ScanNodeHealth() {
-            if (!MonitorSingleton.Enabled) return;
+            //if (!MonitorSingleton.Enabled) return;
 
             if (MonitorSingleton.MayProceed()) {
                 if (MonitorSingleton.Instance.Semaphore.Wait(10)) {
