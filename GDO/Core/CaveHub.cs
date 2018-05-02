@@ -370,11 +370,10 @@ namespace GDO.Core
                 else {
                     Log.Debug("could not find node number "+nodeId);
                 }
-                BroadcastNodeUpdate(nodeId);//todo should we broadcast? 
-
-                // Check for node health
-                CaveMonitor.ScanNodeHealth();
+                BroadcastNodeUpdate(nodeId);//todo should we broadcast?
             }
+            // Check for node health
+            CaveMonitor.ScanNodeHealth();
         }
 
         public void RequestCaveUpdate(int nodeId)
