@@ -25,7 +25,8 @@ namespace GDO.Core {
         private MonitorSingleton() {
         }
 
-        public DateTime LastupdateTime { get; set; } = DateTime.Now;
+        // The recovery mechanism would not kick-in until 5 minutes after reboot.
+        public DateTime LastupdateTime { get; set; } = DateTime.Now.AddMinutes(5);
 
         public static bool MayProceed() {
             return DateTime.Now.Subtract(MonitorSingleton.Instance.LastupdateTime).TotalSeconds > 10.0;
@@ -36,8 +37,6 @@ namespace GDO.Core {
         private static ILog Log { get; set; } = LogManager.GetLogger(typeof(CaveMonitor));
 
         public static void ScanNodeHealth() {
-            //if (!MonitorSingleton.Enabled) return;
-
             if (MonitorSingleton.MayProceed()) {
                 if (MonitorSingleton.Instance.Semaphore.Wait(10)) {
                     MonitorSingleton.Instance.LastupdateTime = DateTime.Now;
@@ -56,29 +55,39 @@ namespace GDO.Core {
                             .ToList();
                         if (deadscreens.Count > 0 && deadscreens.Count < 10) {
                             Log.Info("CaveMonitor - i found " + deadscreens.Count + " dead screens");
-                            MonitorSingleton.Instance.LastupdateTime = DateTime.Now.AddMinutes(5);
-                            // dont do anything if the gdo is off or in debug mode
-                            Log.Info("CaveMonitor - about to reset browsers");
-                            foreach (var screen in deadscreens) {
-                                try {
+                            if (!MonitorSingleton.Enabled) {
+                                // If this flag was not set, try again in 3 minutes. 
+                                // If it was set and still there are node failures,
+                                // it is not a start-up sequence.
+                                MonitorSingleton.Instance.LastupdateTime = DateTime.Now.AddMinutes(3);
+                                MonitorSingleton.Enabled = true;
+                            } else {
+                                MonitorSingleton.Instance.LastupdateTime = DateTime.Now.AddMinutes(5);
+
+                                // dont do anything if the gdo is off or in debug mode
+                                Log.Info("CaveMonitor - about to reset browsers");
+                                foreach (var screen in deadscreens) {
+                                    try {
 
 
-                                    string url =
-                                        "http://dsimanagement.doc.ic.ac.uk/api/WindowsNodes/ReLaunchBrowsers?server=" +
-                                        (hostname.Contains("pre") ? "PreProd" : "Prod") + "&screens=" + screen;
+                                        string url =
+                                            "http://dsimanagement.doc.ic.ac.uk/api/WindowsNodes/ReLaunchBrowsers?server=" +
+                                            (hostname.Contains("pre") ? "PreProd" : "Prod") + "&screens=" + screen;
 
-                                    Log.Info("CaveMonitor - requesting reboot of  " + screen);
-                                    var request = (HttpWebRequest) WebRequest.Create(url);
+                                        Log.Info("CaveMonitor - requesting reboot of  " + screen);
+                                        var request = (HttpWebRequest) WebRequest.Create(url);
 
-                                    var response = (HttpWebResponse) request.GetResponse();
-                                    var responseString = new StreamReader(response.GetResponseStream()).ReadToEnd();
+                                        var response = (HttpWebResponse) request.GetResponse();
+                                        var responseString = new StreamReader(response.GetResponseStream()).ReadToEnd();
 
-                                    Log.Info("CaveMonitor - requesting reboot of  " + screen + " responce " +
-                                             responseString);
+                                        Log.Info("CaveMonitor - requesting reboot of  " + screen + " responce " +
+                                                 responseString);
+                                    }
+                                    catch (Exception e) {
+                                        Log.Info("CaveMonitor Error on relaunching screen " + screen + "error was " + e);
+                                    }
                                 }
-                                catch (Exception e) {
-                                    Log.Info("CaveMonitor Error on relaunching screen " + screen + "error was " + e);
-                                }
+                                MonitorSingleton.Enabled = false;
                             }
                         }
 
