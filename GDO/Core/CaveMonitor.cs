@@ -41,7 +41,9 @@ namespace GDO.Core {
             if (MonitorSingleton.MayProceed()) {
                 if (MonitorSingleton.Instance.Semaphore.Wait(10)) {
                     MonitorSingleton.Instance.LastupdateTime = DateTime.Now;
-                    Log.Info("CaveMonitor - testing state");
+
+                    // Too many comments == lots of disk space, please uncomment only to Debug.
+                    //Log.Info("CaveMonitor - testing state");
 
                     var hostname = Dns.GetHostName().ToLower();
 
@@ -52,9 +54,8 @@ namespace GDO.Core {
                                  (n.Key > 48 && n.Key <= 64)) ? n.Key - 16 : n.Key)// select only lower screen
                             .Distinct()
                             .ToList();
-                        Log.Info("CaveMonitor - i found " + deadnodes.Count + " dead nodes");
-
                         if (deadscreens.Count > 0 && deadscreens.Count < 10) {
+                            Log.Info("CaveMonitor - i found " + deadscreens.Count + " dead screens");
                             MonitorSingleton.Instance.LastupdateTime = DateTime.Now.AddMinutes(5);
                             // dont do anything if the gdo is off or in debug mode
                             Log.Info("CaveMonitor - about to reset browsers");
@@ -80,9 +81,11 @@ namespace GDO.Core {
                                 }
                             }
                         }
-                        else if (deadscreens.Count >= 10) {
-                            Log.Info("CaveMonitor - too many dead browsers i am on strike");
-                        }
+
+                        // Too many comments == lots of disk space, please uncomment only to Debug.
+                        //else if (deadscreens.Count >= 10) {
+                        //    Log.Info("CaveMonitor - too many dead browsers i am on strike");
+                        //}
 
                     }
 

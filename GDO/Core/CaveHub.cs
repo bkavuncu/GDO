@@ -371,6 +371,9 @@ namespace GDO.Core
                     Log.Debug("could not find node number "+nodeId);
                 }
                 BroadcastNodeUpdate(nodeId);//todo should we broadcast? 
+
+                // Check for node health
+                CaveMonitor.ScanNodeHealth();
             }
         }
 
@@ -378,7 +381,6 @@ namespace GDO.Core
         {
             //lock (Cave.ServerLock) {
                 try {
-                    CaveMonitor.ScanNodeHealth();
                     var watch = System.Diagnostics.Stopwatch.StartNew();
 
                     
