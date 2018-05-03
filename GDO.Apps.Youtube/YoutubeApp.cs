@@ -62,7 +62,7 @@ namespace GDO.Apps.Youtube
             {
                 for (int j = 0; j < Section.Rows; j++)
                 {
-                    if (BufferStatus[i, j] < 100)
+                    if (BufferStatus[i, j] < 15)
                     {
                         return false;
                     }
