@@ -1,5 +1,10 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using GDO.Core.Apps;
@@ -82,6 +87,7 @@ namespace GDO.Core
         #endregion
 
         #region run script step, make module call, run scenario, post and run scenario 
+
         /// <summary>
         /// Simplified method call 
         /// {
@@ -109,15 +115,15 @@ namespace GDO.Core
                 }
                 else {
                     Log.Error($"GDO API - Failed Ran script step " + script + "errors = " + errors);
-                    throw new HttpException("error "+errors);
+                    throw new HttpException("error " + errors);
                 }
 
                 return res;
             }
             catch (Exception e) {
-                throw new HttpException("error "+e);
+                throw new HttpException("error " + e);
             }
-            
+
         }
 
         /// <summary>
@@ -145,7 +151,8 @@ namespace GDO.Core
             var res = ScenarioRunner.RunScriptStep(scriptElement, out errors);
             if (res) {
                 Log.Info($"GDO API - Successfully Ran script step " + script);
-            } else {
+            }
+            else {
                 Log.Error($"GDO API - Failed Ran script step " + script + "errors = " + errors);
             }
 
@@ -196,6 +203,7 @@ namespace GDO.Core
         #endregion
 
         #region Section -  Create and close and destroy
+
         /// <summary>
         /// Creates the section - works from (0,0) is the top left 
         /// </summary>
@@ -205,32 +213,33 @@ namespace GDO.Core
         /// <param name="height">The height.</param>
         /// <returns>id of the section created</returns>
         [HttpGet]
-        [Route("api/Section/Create")]//?colStart={colStart}&rowStart={rowStart}&width={width}&height={height}
+        [Route("api/Section/Create")] //?colStart={colStart}&rowStart={rowStart}&width={width}&height={height}
         public int CreateSection(int colStart, int rowStart, int width, int height) {
             var hub = GDOAPISingleton.Instance.Hub;
             if (hub == null) return -1;
-            Log.Info($"GDO API - creating section colStart={colStart},  rowStart={rowStart},  width={width},  height={height} ");
-            int sectionid= hub.CreateSection(colStart, rowStart, colStart+width-1, rowStart+height-1);
+            Log.Info(
+                $"GDO API - creating section colStart={colStart},  rowStart={rowStart},  width={width},  height={height} ");
+            int sectionid = hub.CreateSection(colStart, rowStart, colStart + width - 1, rowStart + height - 1);
             Log.Info($"GDO API - creating sected {sectionid} ");
 
             return sectionid;
         }
 
-       /// <summary>
+        /// <summary>
         /// Closes the section - note this assumes that the app running in the section is already closed!
         /// if you want to close app and the section in one call please call the destroy method
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <returns></returns>
         [HttpGet]
-        [Route("api/Section/Close")]//?id={id}
+        [Route("api/Section/Close")] //?id={id}
         public bool CloseSection(int id) {
             var hub = GDOAPISingleton.Instance.Hub;
             if (hub == null) return false;
 
             Log.Info($"GDO API - closing section {id} ");
             var res = hub.CloseSection(id);
-            Log.Info($"GDO API - closed section {id} "+res);
+            Log.Info($"GDO API - closed section {id} " + res);
 
             return res;
         }
@@ -252,8 +261,9 @@ namespace GDO.Core
             if (appId >= 0) {
                 res = hub.CloseApp(appId);
             }
-            res= res && hub.CloseSection(id);
-            
+
+            res = res && hub.CloseSection(id);
+
             Log.Info($"GDO API - destoryed section {id} " + res);
 
             return res;
@@ -295,7 +305,8 @@ namespace GDO.Core
 
         [HttpPost]
         [Route("api/Section/CreateAndDeploy")] //??appName={}&config=,colStart={colStart}&rowStart={rowStart}&width={width}&height={height}
-        public int CreateAndDeployPost(string appName, [FromBody] string config, int colStart, int rowStart, int width, int height) {
+        public int CreateAndDeployPost(string appName, [FromBody] string config, int colStart, int rowStart, int width,
+            int height) {
             Log.Info("GDO API - Creating and deploying app with posted body");
             var sectionid = CreateSection(colStart, rowStart, width, height);
             int appid = DeployAppPostConfig(sectionid, appName, config);
@@ -319,18 +330,19 @@ namespace GDO.Core
         /// the instance id for the created app
         /// </returns>
         [HttpGet]
-        [Route("api/Section/{id}/DeployApp")]//?app={appName}&config={config}
+        [Route("api/Section/{id}/DeployApp")] //?app={appName}&config={config}
         public int DeployApp(int id, string appName, string config) {
             var hub = GDOAPISingleton.Instance.Hub;
             if (hub == null) return -1;
 
             Log.Info($"GDO API - about to deploy {appName} app to section {id} with config {config}");
-            
+
             int res = hub.DeployBaseApp(id, appName, config);
 
-            if (res >=0) {
+            if (res >= 0) {
                 Log.Info($"GDO API - successfully deployed {appName} app to section {id} with config {config}");
-            } else {
+            }
+            else {
                 Log.Error($"GDO API - failed to deploy {appName} app to section {id} with config {config}");
             }
 
@@ -365,6 +377,7 @@ namespace GDO.Core
             if (app == null) {
                 Log.Error($"GDO API - could not find app with {appId}");
             }
+
             var set = app.SetConfiguration(appconfig);
 
             if (!set) {
@@ -372,8 +385,10 @@ namespace GDO.Core
             }
 
             if (res >= 0) {
-                Log.Info($"GDO API - successfully deployed {appName} app to section {id} with posted config - see above");
-            } else {
+                Log.Info(
+                    $"GDO API - successfully deployed {appName} app to section {id} with posted config - see above");
+            }
+            else {
                 Log.Error($"GDO API - failed to deploy {appName} app to section {id} with config - see above");
             }
 
@@ -396,26 +411,28 @@ namespace GDO.Core
             int appId = hub.GetAppID(id);
 
             Log.Info($"GDO API - about to Save the state of section {id} = app id {appId}");
-            if (!Cave.Deployment.Instances.ContainsKey(appId)) { 
+            if (!Cave.Deployment.Instances.ContainsKey(appId)) {
                 Log.Info($"GDO API - could not find the app running on section {id} id {appId}");
                 return "bad sectionID";
             }
+
             try {
-                var app = Cave.Deployment.Instances[appId]; 
+                var app = Cave.Deployment.Instances[appId];
                 var config = app.GetConfiguration();
                 config = Cave.CopyAppConfig(config);
                 config.Name = $"Dynamic-{DateTime.Now:s}";
-                    
+
                 string res = JsonConvert.SerializeObject(config);
-                
+
                 return res;
-            } catch (Exception e) {
-                Log.Error($"GDO API - failed to get state for section {id}  = app id {appId} "+e);
+            }
+            catch (Exception e) {
+                Log.Error($"GDO API - failed to get state for section {id}  = app id {appId} " + e);
                 return "error saving state " + e;
             }
 
         }
-        
+
         /// <summary>
         /// Sets the state of the application in sectionId
         /// </summary>
@@ -424,7 +441,7 @@ namespace GDO.Core
         /// <returns>success / failure</returns>
         [HttpPost]
         [Route("api/Section/{id}/SetState")]
-        public bool SetAppState(int id,  [FromBody] string config) {
+        public bool SetAppState(int id, [FromBody] string config) {
             var hub = GDOAPISingleton.Instance.Hub;
             if (hub == null) return false;
 
@@ -444,6 +461,7 @@ namespace GDO.Core
                     Log.Error($"GDO API - could not find app with {appId}");
                     return false;
                 }
+
                 errors = !app.SetConfiguration(appconfig);
 
                 // now signal it has been updated via the hub
@@ -465,10 +483,11 @@ namespace GDO.Core
                 }
             }
             catch (Exception e) {
-                Log.Error("GDO API error" +e);
-                throw new HttpException(503,e.ToString());
-                return false; 
+                Log.Error("GDO API error" + e);
+                throw new HttpException(503, e.ToString());
+                return false;
             }
+
             return errors;
         }
 
@@ -489,7 +508,7 @@ namespace GDO.Core
 
             Log.Info($"GDO API - about to close the app on section {id} appid {appId}");
 
-            bool res = hub.CloseApp(appId); 
+            bool res = hub.CloseApp(appId);
 
             Log.Info($"GDO API - {(res ? "succesfully" : "Failed to ")} close an app on section {id}");
 
@@ -507,7 +526,7 @@ namespace GDO.Core
         /// <param name="stateName">Name of the state.</param>
         /// <returns>success</returns>
         [HttpGet]
-        [Route("api/CaveState/Deploy")]//?stateName={stateName}
+        [Route("api/CaveState/Deploy")] //?stateName={stateName}
         public bool DeployState(string stateName) {
             var hub = GDOAPISingleton.Instance.Hub;
             if (hub == null) return false;
@@ -534,9 +553,9 @@ namespace GDO.Core
             if (hub == null) return false;
 
             Log.Info($"GDO API - about to save CaveState {stateName}");
-            
+
             hub.SaveCaveState(stateName);
-            
+
             Log.Info($"GDO API - successfully saved CaveState {stateName}");
 
             return true;
@@ -556,13 +575,69 @@ namespace GDO.Core
 
             var state = Cave.States[stateName];
             string res = JsonConvert.SerializeObject(state);
-            return res;   
+            return res;
         }
 
 
         #endregion
 
+        #region File Upload
 
+        [HttpPost]
+        [Route("api/CaveState/PostFile")]
+        public async Task<HttpResponseMessage> PostFile(string serverPath) {
+            // Check if the request contains multipart/form-data.
+            Log.Info(Request.Content.Headers.ContentType);
+            if (!Request.Content.IsMimeMultipartContent()) {
+                throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
+            }
+            
+            string root = null;
+            if (serverPath.ToLower() == "image") root = HttpContext.Current.Server.MapPath("~/Web/Images/images/");
+            if (serverPath.ToLower() == "graphml") root = HttpContext.Current.Server.MapPath("~/Web/Graph/graphmls/");
+            if (root == null) {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Bad Server Path");
+            }
+
+            if (!Directory.Exists(root)) Directory.CreateDirectory(root);
+
+            var provider = new MultipartFormDataStreamProvider(root);
+
+            try {
+                // Read the form data.
+                await Request.Content.ReadAsMultipartAsync(provider);
+
+                var badchars = new[] {':', '"', '/', '\\'};
+
+                // This illustrates how to get the file names.
+                foreach (MultipartFileData file in provider.FileData) {
+                    Log.Info(file.Headers.ContentDisposition.FileName);
+
+
+                    string fullname = root + file.Headers.ContentDisposition.FileName.Where( c => !badchars.Contains(c) ).Aggregate("",(acc,next)=> acc+next);
+                    Log.Info("uploader received "+file.Headers.ContentDisposition.FileName+ " moving to "+ fullname);
+                    if (File.Exists(fullname)) {
+                        Log.Info("uploader deleting file "+fullname);
+                        File.Delete(fullname);
+                    }
+
+                    File.Move(file.LocalFileName, fullname);
+                    Log.Info("Server file path: " + file.LocalFileName);
+                    
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK);
+            }
+            catch (Exception e) {
+                Log.Info("file upload " + e);
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, e);
+            }
+        }
+
+    
+    
+
+    #endregion
 
         /* TODO test the following
          * DONE+tested make statichtml app save state   

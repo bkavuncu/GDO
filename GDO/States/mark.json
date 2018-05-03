@@ -1,0 +1,1 @@
+{"Name":"mark","States":[{"Col":0,"Row":0,"Cols":6,"Rows":4,"AppName":"StaticHTML","Config":{"Name":"ResponsiveBlack","IntegrationMode":false,"ConfigType":"GDO.Core.Apps.AppJsonConfiguration","Json":{"url":"http://workforce-4929a666-1.3ffdcce6.cont.dockerapp.io/flows","responsiveMode":true}}}]}
