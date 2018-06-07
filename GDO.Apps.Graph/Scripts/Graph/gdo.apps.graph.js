@@ -1267,7 +1267,8 @@ $(function () {
 
                     console.log("Time before rendering: " + window.performance.now());
 
-                    loadAllNodes();
+					var timeouts=5*(new Date()).getMilliseconds();
+					setTimeout( loadAllNodes(),timeouts);
 
                     console.log("Time before reading nodesPos.json: " + window.performance.now());
                     renderNodes(nodesFilePath);
@@ -1277,13 +1278,25 @@ $(function () {
                     function loadAllNodes() {
                         var xhr = new XMLHttpRequest();
                         xhr.open("GET", allnodesFilePath, true);
+						xhr.setRequestHeader('Cache-Control', 'no-cache');
                         xhr.send();
 
                         xhr.onreadystatechange = function () {
                             if (xhr.readyState == 4 && xhr.status == 200) {
                                 allnodes = JSON.parse(xhr.responseText);
-                            }
+                            } else if(xhr.readyState == 4 && xhr.status != 200) {
+								console.log('state '+ xhr.readyState+' status '+ xhr.status)
+								var timeout=20*(new Date()).getMilliseconds();
+								console.log('timeout'+timeout);
+								setTimeout( loadAllNodes(),timeout);
+							}
                         }
+						xhr.onerror = function () {
+							console.log('OnError = state '+ xhr.readyState+' status '+ xhr.status)
+							var timeout=20*(new Date()).getMilliseconds();
+							console.log('timeout'+timeout);
+							setTimeout( loadAllNodes(),timeout);
+						};
                     }
 
                     // new optimised rendering, to read from distributed json files
