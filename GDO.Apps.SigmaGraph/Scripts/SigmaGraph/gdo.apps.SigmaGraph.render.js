@@ -23,7 +23,6 @@ gdo.net.app["SigmaGraph"].renderGraph = async function () {
 
     // Clear the sigma graph
     gdo.sigmaInstance.graph.clear();
-
     // Filter and add the nodes and edges to the graph
     gdo.stopWatch = window.performance.now();
     filesGraphObjects.forEach(handleFileGraphObjects);
@@ -32,8 +31,123 @@ gdo.net.app["SigmaGraph"].renderGraph = async function () {
 
     // Render the new graph
     gdo.stopWatch = window.performance.now();
-    gdo.sigmaInstance.refresh({ skipIndexation: true });
+    // gdo.sigmaInstance.refresh({ skipIndexation: true });
+    gdo.sigmaInstance.refresh();
 
+    gdo.net.app["SigmaGraph"].server.doneRendering(gdo.controlId);
+}
+
+gdo.net.app["SigmaGraph"].nameVertices = async function(params) {
+    var objAttribute = params[0];
+    var attribute = params[1];
+    var textFunc = params[2];
+    var func = eval('('+textFunc+')');
+    var fontColor = params[3];
+    var fontSize = params[4];
+    var labelAttr = params[5];
+
+    function helper(node) {
+        return (node.attrs[attribute] != null && func(isNaN(node.attrs[attribute]) ? node.attrs[attribute] : node.attrs[attribute] - "0"));
+    }
+    if (objAttribute === "node") {
+        gdo.sigmaInstance.graph.nodes().forEach(function(node) {
+            node.label = helper(node) ? node.attrs[labelAttr] || "" : "";
+        });
+    } 
+
+    await gdo.sigmaInstance.settings({drawLabels: true, labelThreshold: 0, defaultLabelColor: fontColor, defaultLabelSize: parseInt(fontSize)});
+
+    // setTimeout(function(){ 
+    gdo.sigmaInstance.refresh();
+    gdo.net.app["SigmaGraph"].server.doneRendering(gdo.controlId);
+    // }, 3000);
+    // gdo.sigmaInstance.refresh({ skipIndexation: true });
+    // gdo.net.app["SigmaGraph"].server.doneRendering(gdo.controlId);
+}
+
+gdo.net.app["SigmaGraph"].colorByFunc = async function(params) {
+    console.log('start color by Func');
+    var objAttribute = params[0];
+    var attribute = params[1];
+    var textFunc = params[2];
+    var colorFunc = eval('('+textFunc+')');
+    
+    console.log(attribute);
+    // don't clear the sigma graph
+    var helper = function(item, attr, func) {
+        if (item.attrs[attr] != null) {
+            item.color = colorFunc(item.attrs[attr]);
+        }
+    }
+
+    if (objAttribute === "node") {
+        // gdo.sigmaInstance.graph.nodes().forEach(node => helper(node, attribute, colorFunc));
+        gdo.sigmaInstance.graph.nodes().forEach(node => {
+            if (node.attrs[attribute] != null) {
+                node.color = colorFunc(node.attrs[attribute]);
+            }
+        });
+    } else if(objAttribute === "edge") {
+        // gdo.sigmaInstance.graph.edges().forEach(edge => helper(edge, attribute, colorFunc));
+        gdo.sigmaInstance.graph.edges().forEach(edge => {
+            if (edge.attrs[attribute] != null) {
+                edge.color = colorFunc(edge.attrs[attribute]);
+            }
+        });
+    }
+    //obj attr
+    gdo.sigmaInstance.refresh({ skipIndexation: true });
+    gdo.net.app["SigmaGraph"].server.doneRendering(gdo.controlId);
+}
+
+gdo.net.app["SigmaGraph"].colorByFilter = async function(params) {
+    var objAttribute = params[0];
+    var attribute = params[1];
+    var textFunc = params[2];
+    var setColor = params[3];
+    var colorFunc = eval('('+textFunc+')');
+    
+    var helper = function(item, color, attr, func) {
+        if (item.attrs[attr] != null && func(item.attrs[attr])) {
+            item.color = color;
+        }
+    }
+    if (objAttribute === "node") {
+        gdo.sigmaInstance.graph.nodes().forEach(node => helper(node, setColor, attribute, colorFunc));
+    } else if (objAttribute === "edge") {
+        gdo.sigmaInstance.graph.edges().forEach(edge => helper(edge, setColor, attribute, colorFunc));
+    }
+
+    gdo.sigmaInstance.refresh({ skipIndexation: true });
+    gdo.net.app["SigmaGraph"].server.doneRendering(gdo.controlId);
+
+}
+
+
+gdo.net.app["SigmaGraph"].filterGraph = async function(attributeList) {
+    var objAttribute = attributeList[0];
+    var attribute = attributeList[1];
+    var textFunc = attributeList[2];
+    var func = eval('('+textFunc+')');
+    gdo.debugFunc = func;
+    console.log(attributeList);
+    var helper = function(node) {
+        return node.attrs[attribute] != null && func(isNaN(node.attrs[attribute]) ? node.attrs[attribute] : node.attrs[attribute] - "0");
+    }
+    
+    var filterFunc = function(node) {
+        console.log(func(isNaN(node.attrs[attribute]) ? node.attrs[attribute] : node.attrs[attribute] - "0"));
+        if(!helper(node)) {
+            (objAttribute == "node") ? gdo.sigmaInstance.graph.dropNode(node.id) : gdo.sigmaInstance.graph.dropEdge(node.id);
+        } 
+    }
+
+    if (objAttribute == "node") {
+        gdo.sigmaInstance.graph.nodes().forEach(filterFunc);
+    } else if (objAttribute == "edge") {
+        gdo.sigmaInstance.graph.edges().forEach(filterFunc);
+    }
+    gdo.sigmaInstance.refresh({ skipIndexation: true });
     gdo.net.app["SigmaGraph"].server.doneRendering(gdo.controlId);
 }
 
@@ -147,7 +261,7 @@ function httpGet(filePath) {
  */
 function convertServerCoordsToSigmaCoords(node) {
     node.x = (node.x - gdo.xCentroid) * gdo.canvasWidthInPx * 1 / (gdo.xWidth / 2);
-    node.y = -(-node.y + gdo.yCentroid) * gdo.canvasHeightInPx * 1 / (gdo.yWidth / 2);
+    node.y = (node.y - gdo.yCentroid) * gdo.canvasHeightInPx * 1 / (gdo.yWidth / 2);
 }
 
 /**

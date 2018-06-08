@@ -184,11 +184,15 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
     //Row 1
 
     //Bing Maps (Aerial)
+
+    // replace below with three new keys.
+    gdo.net.instance[instanceId].bingMapKeys = ['AqJrkrOTlDJUTbioyay25R6bC-LoZaAggCaAGRV19SxySzPpMUpuukTvAiW6ldny', 'AqJrkrOTlDJUTbioyay25R6bC-LoZaAggCaAGRV19SxySzPpMUpuukTvAiW6ldny', 'AqJrkrOTlDJUTbioyay25R6bC-LoZaAggCaAGRV19SxySzPpMUpuukTvAiW6ldny', 'AqJrkrOTlDJUTbioyay25R6bC-LoZaAggCaAGRV19SxySzPpMUpuukTvAiW6ldny'];
+
     gdo.net.instance[instanceId].layers[0] = new ol.layer.Tile({
         preload: Infinity,
         visible: false,
         source: new ol.source.BingMaps({
-            key: 'At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM',
+            key: gdo.net.instance[instanceId].bingMapKeys[gdo.clientId % gdo.net.instance[instanceId].bingMapKeys.length],
             imagerySet: 'Aerial',
             maxZoom: 19
         })
@@ -200,7 +204,7 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
         preload: Infinity,
         visible: false,
         source: new ol.source.BingMaps({
-            key: 'At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM',
+            key: gdo.net.instance[instanceId].bingMapKeys[gdo.clientId % gdo.net.instance[instanceId].bingMapKeys.length],
             imagerySet: 'AerialWithLabels',
             maxZoom: 19
         })
@@ -212,7 +216,7 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
         preload: Infinity,
         visible: false,
         source: new ol.source.BingMaps({
-            key: 'At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM',
+            key: gdo.net.instance[instanceId].bingMapKeys[gdo.clientId % gdo.net.instance[instanceId].bingMapKeys.length],
             imagerySet: 'Road',
             maxZoom: 19
         })
@@ -224,7 +228,7 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
         preload: Infinity,
         visible: false,
         source: new ol.source.BingMaps({
-            key: 'At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM',
+            key: gdo.net.instance[instanceId].bingMapKeys[gdo.clientId % gdo.net.instance[instanceId].bingMapKeys.length],
             imagerySet: 'collinsBart',
             maxZoom: 19
         })
@@ -236,7 +240,7 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
         preload: Infinity,
         visible: false,
         source: new ol.source.BingMaps({
-            key: 'At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM',
+            key: gdo.net.instance[instanceId].bingMapKeys[gdo.clientId % gdo.net.instance[instanceId].bingMapKeys.length],
             imagerySet: 'ordnanceSurvey',
             maxZoom: 19
         })
@@ -492,9 +496,10 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
     //Open Railway Map (Standard)
     gdo.net.instance[instanceId].layers[30] = new ol.layer.Tile({
         visible: false,
-        source: new ol.source.OSM({
+        source: new ol.source.XYZ({
             crossOrigin: null,
-            url: 'http://{a-c}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png'
+            url: 'http://{a-c}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png',
+            tileSize: [512,512]
         })
     });
     gdo.net.instance[instanceId].layers[30].wms = true;
@@ -502,9 +507,10 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
     //Open Railway Map (Speed)
     gdo.net.instance[instanceId].layers[31] = new ol.layer.Tile({
         visible: false,
-        source: new ol.source.OSM({
+        source: new ol.source.XYZ({
             crossOrigin: null,
-            url: 'http://{a-c}.tiles.openrailwaymap.org/maxspeed/{z}/{x}/{y}.png'
+            url: 'http://{a-c}.tiles.openrailwaymap.org/maxspeed/{z}/{x}/{y}.png',
+            tileSize: [512,512]
         })
     });
     gdo.net.instance[instanceId].layers[31].wms = true;
@@ -514,7 +520,7 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
         visible: false,
         source: new ol.source.OSM({
             crossOrigin: null,
-            url: 'http://globalheat.strava.com/tiles/cycling/color1/{z}/{x}/{y}.png?v=6'
+            url: 'http://globalheat.strava.com/tiles/cycling/color1/{z}/{x}/{y}.png?v=19'
         })
     });
     gdo.net.instance[instanceId].layers[32].wms = true;
@@ -524,7 +530,7 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
         visible: false,
         source: new ol.source.OSM({
             crossOrigin: null,
-            url: 'http://globalheat.strava.com/tiles/running/color1/{z}/{x}/{y}.png?v=6'
+            url: 'http://globalheat.strava.com/tiles/running/color1/{z}/{x}/{y}.png?v=19'
         })
     });
     gdo.net.instance[instanceId].layers[33].wms = true;
@@ -534,7 +540,7 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
         visible: false,
         source: new ol.source.OSM({
             crossOrigin: null,
-            url: 'http://globalheat.strava.com/tiles/cycling/color2/{z}/{x}/{y}.png?v=6'
+            url: 'http://globalheat.strava.com/tiles/cycling/color2/{z}/{x}/{y}.png?v=19'
         })
     });
     gdo.net.instance[instanceId].layers[34].wms = true;
@@ -544,7 +550,7 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
         visible: false,
         source: new ol.source.OSM({
             crossOrigin: null,
-            url: 'http://globalheat.strava.com/tiles/running/color2/{z}/{x}/{y}.png?v=6'
+            url: 'http://globalheat.strava.com/tiles/running/color2/{z}/{x}/{y}.png?v=19'
         })
     });
     gdo.net.instance[instanceId].layers[35].wms = true;
@@ -552,9 +558,10 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
     //Strava Bike Heatmap (Orange)
     gdo.net.instance[instanceId].layers[36] = new ol.layer.Tile({
         visible: false,
-        source: new ol.source.OSM({
+        source: new ol.source.XYZ({
             crossOrigin: null,
-            url: 'http://globalheat.strava.com/tiles/cycling/color8/{z}/{x}/{y}.png?v=6'
+            url: 'http://heatmap-external-{a-c}.strava.com/tiles/ride/hot/{z}/{x}/{y}@2.png?v=19',
+            tileSize: [512,512]
         })
     });
     gdo.net.instance[instanceId].layers[36].wms = true;
@@ -562,9 +569,10 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
     //Strava Running Heatmap (Orange)
     gdo.net.instance[instanceId].layers[37] = new ol.layer.Tile({
         visible: false,
-        source: new ol.source.OSM({
+        source: new ol.source.XYZ({
             crossOrigin: null,
-            url: 'http://globalheat.strava.com/tiles/running/color8/{z}/{x}/{y}.png?v=6'
+            url: 'http://heatmap-external-{a-c}.strava.com/tiles/run/hot/{z}/{x}/{y}@2.png?v=19',
+            tileSize: [512,512]
         })
     });
     gdo.net.instance[instanceId].layers[37].wms = true;
@@ -574,7 +582,7 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
         visible: false,
         source: new ol.source.OSM({
             crossOrigin: null,
-            url: 'http://globalheat.strava.com/tiles/cycling/color7/{z}/{x}/{y}.png?v=6'
+            url: 'http://globalheat.strava.com/tiles/cycling/color7/{z}/{x}/{y}.png?v=19'
         })
     });
     gdo.net.instance[instanceId].layers[38].wms = true;
@@ -584,7 +592,7 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
         visible: false,
         source: new ol.source.OSM({
             crossOrigin: null,
-            url: 'http://globalheat.strava.com/tiles/running/color7/{z}/{x}/{y}.png?v=6'
+            url: 'http://globalheat.strava.com/tiles/running/color7/{z}/{x}/{y}.png?v=19'
         })
     });
     gdo.net.instance[instanceId].layers[39].wms = true;
@@ -754,6 +762,87 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
     gdo.net.instance[instanceId].map = map;
     gdo.net.app["BasicMaps"].server.requestLayersVisible(instanceId);
     gdo.net.app["BasicMaps"].server.requestMarkerPosition(instanceId);
+    gdo.net.app["BasicMaps"].fixBingBug(instanceId);
+    //gdo.net.app["BasicMaps"].checkBingStatus(instanceId);		   
+}
+
+gdo.net.app["BasicMaps"].checkBingStatus = function (instanceId) {
+    setTimeout(function () {
+        if (gdo.net.instance[instanceId].layers[0].getSource().getState() == "loading") {
+            gdo.consoleOut('.BasicMaps', 4, 'Bing Maps: ' + gdo.net.instance[instanceId].layers[0].getSource().getState());
+        }else if (gdo.net.instance[instanceId].layers[0].getSource().getState() == "error") {
+            gdo.consoleOut('.BasicMaps', 5, 'Bing Maps: ' + gdo.net.instance[instanceId].layers[0].getSource().getState());
+        } else if (gdo.net.instance[instanceId].layers[0].getSource().getState() == "ready") {
+            gdo.consoleOut('.BasicMaps', 0, 'Bing Maps: ' + gdo.net.instance[instanceId].layers[0].getSource().getState());
+        } else {
+            gdo.consoleOut('.BasicMaps', 1, 'Bing Maps: ' + gdo.net.instance[instanceId].layers[0].getSource().getState());
+        }
+    }, 700);
+}
+
+gdo.net.app["BasicMaps"].fixBingBug = function (instanceId) {
+	
+    setTimeout(function () {
+		    	gdo.consoleOut('.BasicMaps', 4, 'About to Detect Bing Maps Bug');
+				
+				gdo.consoleOut('.BasicMaps', 4, 'About to Detect Bing Maps Bug '+ gdo.net.instance[instanceId].layers[0].getSource().getState());
+        if (gdo.net.instance[instanceId].layers[0].getSource().getState() == "loading" ||
+            gdo.net.instance[instanceId].layers[0].getSource().getState() == "error" 
+            
+            ) {
+				gdo.consoleOut('.BasicMaps', 4, 'Bing Maps Bug Detected');
+                gdo.consoleOut('.BasicMaps', 4, 'Bing Maps Bug Detected - Reloading sources '+
+				gdo.net.instance[instanceId].layers[0].getSource().getState()
+				);
+				
+				//setTimeout(function () {  location.reload();},500);
+					// try the hard reset first as sometimes this first test reports errors but the 2nd does not (ie the layers have now loaded but are still not being rendered)
+                gdo.net.instance[instanceId].layers[0].setSource(new ol.source.BingMaps({
+                    key: 'AqJrkrOTlDJUTbioyay25R6bC-LoZaAggCaAGRV19SxySzPpMUpuukTvAiW6ldny',
+                    imagerySet: 'Aerial',
+                    maxZoom: 19
+                }));
+                gdo.net.instance[instanceId].layers[1].setSource(new ol.source.BingMaps({
+                    key: 'AqJrkrOTlDJUTbioyay25R6bC-LoZaAggCaAGRV19SxySzPpMUpuukTvAiW6ldny',
+                    imagerySet: 'AerialWithLabels',
+                    maxZoom: 19
+                }));
+                gdo.net.instance[instanceId].layers[2].setSource(new ol.source.BingMaps({
+                    key: 'AqJrkrOTlDJUTbioyay25R6bC-LoZaAggCaAGRV19SxySzPpMUpuukTvAiW6ldny',
+                    imagerySet: 'Road',
+                    maxZoom: 19
+                }));
+                gdo.net.instance[instanceId].layers[3].setSource(new ol.source.BingMaps({
+                    key: 'AqJrkrOTlDJUTbioyay25R6bC-LoZaAggCaAGRV19SxySzPpMUpuukTvAiW6ldny',
+                    imagerySet: 'collinsBart',
+                    maxZoom: 19
+                }));
+                gdo.net.instance[instanceId].layers[4].setSource(new ol.source.BingMaps({
+                    key: 'AqJrkrOTlDJUTbioyay25R6bC-LoZaAggCaAGRV19SxySzPpMUpuukTvAiW6ldny',
+                    imagerySet: 'ordnanceSurvey',
+                    maxZoom: 19
+                }));
+				
+				setTimeout(function () {
+	           				gdo.net.instance[instanceId].layers[0].setVisible(true);
+				}
+					,3000);
+            }
+            setTimeout(function () {
+				// david test 
+				//gdo.net.app["BasicMaps"].server.requestLayersVisible(instanceId);
+				//gdo.net.app["BasicMaps"].server.requestMarkerPosition(instanceId);
+				
+                if (gdo.net.instance[instanceId].layers[0].getSource().getState() == "loading" ||
+          			gdo.net.instance[instanceId].layers[0].getSource().getState() == "error" 
+            
+                    ) {
+                    gdo.consoleOut('.BasicMaps', 5, 'Bing Maps Bug Detected - Reloading sources failed reloading page');
+                    location.reload();
+                } 
+            }, 700);
+    }, 350);
+
 }
 
 gdo.net.app["BasicMaps"].calculateLocalCenter = function (topLeft, bottomRight) {
@@ -837,7 +926,11 @@ gdo.net.app["BasicMaps"].uploadMapPosition = function (instanceId) {
     var size = gdo.net.instance[instanceId].map.getSize();
     var width = size[0];
     var height = size[1];
-    gdo.net.app["BasicMaps"].server.uploadMapPosition(instanceId, topLeft, center, bottomRight, gdo.net.instance[instanceId].map.getView().getResolution(), width, height, gdo.net.instance[instanceId].map.getView().getZoom());
+    if (topLeft == null || bottomRight == null) {
+        setTimeout(function () { gdo.net.app["BasicMaps"].uploadMapPosition (instanceId)}, 70);
+    } else {
+        gdo.net.app["BasicMaps"].server.uploadMapPosition(instanceId, topLeft, center, bottomRight, gdo.net.instance[instanceId].map.getView().getResolution(), width, height, gdo.net.instance[instanceId].map.getView().getZoom());
+    }
 }
 
 gdo.net.app["BasicMaps"].changeEvent = function (instanceId) {

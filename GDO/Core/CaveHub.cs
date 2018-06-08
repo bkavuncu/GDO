@@ -370,16 +370,20 @@ namespace GDO.Core
                 else {
                     Log.Debug("could not find node number "+nodeId);
                 }
-                BroadcastNodeUpdate(nodeId);//todo should we broadcast? 
+                BroadcastNodeUpdate(nodeId);//todo should we broadcast?
             }
+            // Check for node health
+            CaveMonitor.ScanNodeHealth();
         }
 
         public void RequestCaveUpdate(int nodeId)
         {
-            lock (Cave.ServerLock)
-            {
-                try
-                {
+            //lock (Cave.ServerLock) {
+                try {
+                    var watch = System.Diagnostics.Stopwatch.StartNew();
+
+                    
+
                     List<string> nodes = new List<string>(Cave.Layout.Nodes.Count);
                     nodes.AddRange(Cave.Layout.Nodes.Select(nodeEntry => GetNodeUpdate(nodeEntry.Value.Id)));
                     List<string> sections = new List<string>(Cave.Deployment.Sections.Count);
@@ -398,13 +402,20 @@ namespace GDO.Core
                     string moduleList = JsonConvert.SerializeObject(Cave.GetModuleList());
                     string appList = JsonConvert.SerializeObject(Cave.GetAppList());
 
+                    watch.Stop();
+                    var elapsedMs = watch.ElapsedMilliseconds;
+                    if (elapsedMs > 100) {
+                        Log.Info("Long time to get "+nodeId+" status" +elapsedMs);
+                        Log.Debug("message data is "+  nodeMap+"|"+ neighbourMap+"|"+ moduleList+"|"+ appList+"|"+ nodes+"|"+ sections+"|"+ modules+"|"+ apps+"|"+ instances+"|"+ states+"|"+ scenarios);
+                    }
+
                     Clients.Caller.receiveCaveUpdate(Cave.Cols, Cave.Rows, Cave.MaintenanceMode, Cave.BlankMode, Cave.DefaultP2PMode, nodeMap, neighbourMap, moduleList, appList, nodes, sections, modules, apps, instances, states, scenarios);
                 }
                 catch (Exception e)
                 {
                     Log.Error("failed to prepare Cave Update ", e);
                 }
-            }
+            //}
         }
 
         public void BroadcastAppConfigurations(int instanceId)
@@ -1001,4 +1012,5 @@ namespace GDO.Core
             return -1;
         }
     }
+
 }

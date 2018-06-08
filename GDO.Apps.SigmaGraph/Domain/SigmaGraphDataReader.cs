@@ -105,7 +105,13 @@ namespace GDO.Apps.SigmaGraph.Domain
 
                 #endregion
 
-                #region rescale nodes
+                #region Fix QuadCentroid (dimensions)
+
+                // Flip nodes across a horizontal axis, because Gephi is inverted
+                foreach (var node in graphinfo.Nodes)
+                {
+                    node.Pos.Y = -node.Pos.Y;
+                }
 
                 float minX = graphinfo.Nodes.Min(n => n.Pos.X);
                 float minY = graphinfo.Nodes.Min(n => n.Pos.Y);
@@ -118,46 +124,9 @@ namespace GDO.Apps.SigmaGraph.Domain
                     Height = maxY - minY
                 };
 
-                // Min-Max normalize X and Y; do not preserve aspect ratio
-                //var xscale = 1 / graphinfo.RectDim.Width;
-                //var yscale = 1 / graphinfo.RectDim.Height;
+                graphinfo.Centroid = new QuadTree.QuadCentroid(maxX - minX, maxY - minY,
+                    (minX + maxX) / 2, (minY + maxY) / 2);
 
-                //foreach (var node in graphinfo.Nodes)
-                //{
-                //    node.Pos.X = (node.Pos.X - minX) * xscale;
-                //    node.Pos.Y = (node.Pos.Y - minY) * yscale;
-                //}
-
-                // Scale X and Y differently; preserve aspect ratio
-                //float xScale;
-                //float yScale;
-                //var xToYRatio = graphinfo.RectDim.Width / graphinfo.RectDim.Height;
-                //if (xToYRatio <= 1)
-                //{
-                //    xScale = xToYRatio * (1 / graphinfo.RectDim.Width);
-                //    yScale = 1 / graphinfo.RectDim.Height;
-                //}
-                //else
-                //{
-                //    xScale = 1 / graphinfo.RectDim.Width;
-                //    yScale = (1 / xToYRatio) * (1 / graphinfo.RectDim.Height);
-                //}
-
-                float xScale = 1 / graphinfo.RectDim.Width;
-                float yScale = 1 / graphinfo.RectDim.Height;
-
-                foreach (var node in graphinfo.Nodes)
-                {
-                    node.Pos.X = (node.Pos.X - minX) * xScale + (1 - xScale * graphinfo.RectDim.Width) / 2;
-                    // Assuming exported from gephi with increasing Y being up
-                    node.Pos.Y = 1 - ((node.Pos.Y - minY) * yScale + (1 - yScale * graphinfo.RectDim.Height) / 2);
-                }
-
-                graphinfo.RectDim = new RectDimension()
-                {
-                    Width = 1,
-                    Height = 1
-                };
                 #endregion
 
                 #region fill Links data structure 

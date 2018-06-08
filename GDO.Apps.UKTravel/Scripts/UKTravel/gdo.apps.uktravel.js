@@ -278,7 +278,7 @@ gdo.net.app["UKTravel"].initMap = function (instanceId, center, resolution, zoom
             visible: false,
             preload: Infinity,
             source: new ol.source.BingMaps({
-                key: 'At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM',
+                key: 'AqJrkrOTlDJUTbioyay25R6bC-LoZaAggCaAGRV19SxySzPpMUpuukTvAiW6ldny',
                 imagerySet: gdo.net.instance[instanceId].styles[i],
                 maxZoom: 19
             })
@@ -288,7 +288,7 @@ gdo.net.app["UKTravel"].initMap = function (instanceId, center, resolution, zoom
         visible: false,
         preload: Infinity,
         source: new ol.source.BingMaps({
-            key: 'At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM',
+            key: 'AqJrkrOTlDJUTbioyay25R6bC-LoZaAggCaAGRV19SxySzPpMUpuukTvAiW6ldny',
             imagerySet: 'Aerial',
             maxZoom: 19
         })

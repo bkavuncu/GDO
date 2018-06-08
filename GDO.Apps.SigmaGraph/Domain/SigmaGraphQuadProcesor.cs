@@ -31,7 +31,8 @@ namespace GDO.Apps.SigmaGraph.Domain {
             }
 
             var factory =
-                new ConcurrentQuadTreeFactory<GraphObject>(new QuadCentroid(graph.RectDim.Width, graph.RectDim.Height),
+                new ConcurrentQuadTreeFactory<GraphObject>(
+                    graph.Centroid,
                     maxbags: 1, maxobjectPerBag: maxobjsPerBag);
 
             // Add the graph objects to the quadtree factory

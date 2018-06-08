@@ -70,13 +70,14 @@ var mapHandler = function (arg) {
 	
 	var loadLayer = function (type, i, j, callback) {
 		//BAI
-		d3.json("http://tile.mapzen.com/mapzen/vector/v1/" + type + "/" + m.zoom + "/" + i + "/" + j + ".json" + "?api_key=mapzen-gGKpBK7", function (error, tile) {
+		//d3.json("http://tile.mapzen.com/mapzen/vector/v1/" + type + "/" + m.zoom + "/" + i + "/" + j + ".json" + "?api_key=mapzen-gGKpBK7", function (error, tile) {
+		d3.json("https://tile.nextzen.org/tilezen/vector/v1/all/" + m.zoom + "/" + i + "/" + j+ ".json" + "?api_key=pOUZpNm8TUON3FTGcBmABw", function (error, tile) {
 	    //d3.json("https://tile.mapzen.com/mapzen/vector/v1/" + type + "/" + m.zoom + "/" + i + "/" + j + ".json", function (error, tile) {
 			if (error) {
 				return console.error(error);
 			};
 			
-			tile.features = tile.features.filter(function (d) {
+			tile[type].features = tile[type].features.filter(function (d) {
 				if (isAbsurd(m.path.bounds(d))) {
 					console.log("Error with : " + type + " -  Bounds incorrects", m.path.bounds(d), "Trying reversed coordinates");
 					d.geometry.coordinates[0].reverse();
@@ -91,7 +92,7 @@ var mapHandler = function (arg) {
 			
 			m.svg.select_("g#" + type)
 				.selectAll_("path")
-				.data(tile.features, function () {return m.ids++; })
+				.data(tile[type].features, function () {return m.ids++; })
 				.enter().append_("path")
 				.attr_("d", m.path)
 				.attr_("class", function (d) {return d.properties.kind; })
