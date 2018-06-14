@@ -153,6 +153,16 @@
             <iframe class="embed-responsive-item" id="app_frame_content" name="app_frame_content" allowtransparency="true" width="100%" height="100%" frameborder="0" style="border:0 none;display:block;width:100%;height:100%;"></iframe>
         </div>-->
         <div id="app_frame" style="border: 0 none; display: block; width: 100%; height: 100vh">
+            <style type="text/css">
+                #drawcanvas
+                {
+                    -ms-touch-action: none; position: absolute; top: 0; left: 0; display: inline-block; margin-right: 10px;
+                }
+            </style>
+            <canvas id="drawcanvas" width="300" height="300"></canvas>
+            <script type="text/javascript" src="http://146.169.32.180:8080/socket.io/socket.io.js"></script>
+            <script type="text/javascript">socket = io('http://146.169.32.180:8080');</script>
+            <script type="text/javascript" src="../Scripts/gdo.drawcanvas.js"></script>
             <iframe id="app_frame_content" name="app_frame_content" allowtransparency="true" width="100%" height="100%" frameborder="0" style="border: 0 none; display: block; width: 100%; height: 100%;"></iframe>
         </div>
         <div id="connection_status" class="img-circle circle" style='position: absolute; top: 50px; right: 50px;width:110px;height:110px; background: #2A9FD6;display: table;'><i id="connection_icon" class='fa  fa-arrow-right fa-3x' style="display: table-cell; color: #ffffff;vertical-align: middle; text-align: center"></i></div>
