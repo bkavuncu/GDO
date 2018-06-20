@@ -50,11 +50,12 @@
                 gdo.drawcanvas.ctx.fillStyle = message.color;
                 gdo.drawcanvas.ctx.font = message.fontSize + 'px Georgia';
                 for (var i = 0; i < message.text.length; i++) {
-                    if (message.text[i].screen == screen) {
+                    if (message.text[i].screen == gdo.clientId) {
                         gdo.drawcanvas.ctx.fillText(message.text[i].string, message.text[i].x, message.text[i].y);
                         break;
                     }
                 }
+            }
         }
     }
 
