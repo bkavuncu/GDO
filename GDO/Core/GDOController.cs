@@ -533,7 +533,7 @@ namespace GDO.Core
 
             Log.Info($"GDO API - about to deploy CaveState {stateName}");
             hub.ClearCave();
-            Thread.Sleep(100);
+            Thread.Sleep(2000);
             hub.RestoreCaveState(stateName);
             Log.Info($"GDO API - successfully deployed CaveState {stateName}");
 
