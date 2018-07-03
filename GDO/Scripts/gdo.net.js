@@ -403,7 +403,7 @@ gdo.net.initPeer = function () {
 
     //gdo.net.peer = new Peer({ host: "dsigdoprod.doc.ic.ac.uk", port: 55555 }); //DSI Server only accessible within VPN own server will replace here
     gdo.net.peer = new Peer({ host: "146.169.32.109", port: 55555 }); //DSI Server only accessible within VPN own server will replace here
-
+    //TODO FIX IP
     gdo.net.peer.on('open', function(peerId) {
         gdo.consoleOut('.NET', 0, 'Connected to PeerServer with Id:' + peerId);
         gdo.net.node[gdo.clientId].peerId = peerId;
