@@ -119,7 +119,9 @@ gdo.management.states.drawStateTable = function () {
             .css({ fontSize: gdo.management.button_font_size * 0.7 })
             .unbind()
             .click(function () {
-                gdo.net.server.removeCaveState($(this).attr('rowname'));
+                if (confirm("Are you sure you want to delete this state?")) {
+                    gdo.net.server.removeCaveState($(this).attr('rowname'));
+                }
             });
             }
         i++;
