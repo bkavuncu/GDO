@@ -1,7 +1,7 @@
 ﻿{
-  "topLeft": [0, -0.154747059683686],
+  "topLeft": [ 0, -0.154747059683686 ],
   "center": [ 0.5, 0.12660342263142657 ],
-  "bottomRight": [1, 0.40795390494653916],
+  "bottomRight": [ 1, 0.40795390494653916 ],
   "zoom": 1,
   "width": 1244,
   "height": 700,
@@ -14,8 +14,8 @@
         "xmlns": "http://schemas.microsoft.com/deepzoom/2008",
         "Url": "http://146.169.32.183/bitcoinimg/Blocks50/",
         "Format": "jpeg",
-        "Overlap": "0",
-        "TileSize": "1024",
+        "Overlap": "1",
+        "TileSize": "254",
         "Size": {
           "Height": 224640,
           "Width": 1111680
