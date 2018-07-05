@@ -109,7 +109,7 @@ namespace GDO.Core.Scenarios {
                 }
 
 
-                var parameters = scriptStep.ParseParams();
+                var parameters = scriptStep.ParseParams(mi.GetParameters());
 
                 var res = mi.Invoke(hub, parameters); // here be dragons! 
 
