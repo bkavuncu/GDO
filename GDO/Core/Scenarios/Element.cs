@@ -11,7 +11,7 @@ namespace GDO.Core.Scenarios
         private static readonly ILog Log = LogManager.GetLogger(typeof(HubCall));
 
         // Splits strings with nested arrays.
-        private static Regex splitter = new Regex("(?:^|,)(\\[(?:[^\\[]+|\\[\\])*\\]|[^,]*)", RegexOptions.Compiled);
+        private static Regex splitter = new Regex("(?:^|,)([\\s]*\\[(?:[^\\[]+|\\[\\])*\\]|[^,]*)", RegexOptions.Compiled);
 
         public string Mod { get; set; }
         public string Func { get; set; }
@@ -73,7 +73,7 @@ namespace GDO.Core.Scenarios
         }
 
         private static object[] ParseParams(IEnumerable<string> ps) {
-            return ps.SelectMany(l => splitter.Matches(l).Cast<Match>().Where(x => !string.IsNullOrEmpty(x.Value)).Select(x => x.Value.TrimStart(',')).ToArray())
+            return ps.SelectMany(l => splitter.Matches(l).Cast<Match>().Where(x => !string.IsNullOrEmpty(x.Value)).Select(x => x.Value.TrimStart(',').Trim()).ToArray())
                 .Select<string, object>(
                     p => ParseParam(p))
                 .ToArray();
@@ -91,7 +91,7 @@ namespace GDO.Core.Scenarios
             if (param.StartsWith("[") && param.EndsWith("]"))
             {
                 param = param.Substring(1, param.Length - 2);
-                var arr = splitter.Matches(param).Cast<Match>().Where(x => !string.IsNullOrEmpty(x.Value)).Select(x => x.Value.TrimStart(',')).ToArray();
+                var arr = splitter.Matches(param).Cast<Match>().Where(x => !string.IsNullOrEmpty(x.Value)).Select(x => x.Value.TrimStart(',').Trim()).ToArray();
                 return ParseParams(arr);
             }
 
