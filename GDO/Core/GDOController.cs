@@ -372,7 +372,7 @@ namespace GDO.Core
             int res = hub.DeployBaseApp(id, appName, appconfig);
 
             // signal config changed
-            int appId = hub.GetAppID(res);
+            int appId = hub.GetAppID(id);
             var app = Cave.Deployment.GetInstancebyID(appId);
             if (app == null) {
                 Log.Error($"GDO API - could not find app with {appId}");
