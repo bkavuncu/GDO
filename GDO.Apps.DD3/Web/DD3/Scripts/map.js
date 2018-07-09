@@ -74,6 +74,7 @@ var mapHandler = function (arg) {
 		d3.json("https://tile.nextzen.org/tilezen/vector/v1/all/" + m.zoom + "/" + i + "/" + j+ ".json" + "?api_key=pOUZpNm8TUON3FTGcBmABw", function (error, tile) {
 	    //d3.json("https://tile.mapzen.com/mapzen/vector/v1/" + type + "/" + m.zoom + "/" + i + "/" + j + ".json", function (error, tile) {
 			if (error) {
+				callback(type, i, j);
 				return console.error(error);
 			};
 			

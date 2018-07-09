@@ -8,6 +8,7 @@
     gdo.drawcanvas.canvas.height = Math.min(document.documentElement.clientHeight, window.innerHeight || 300);
 
     gdo.drawcanvas.ctx.lineCap = gdo.drawcanvas.ctx.lineJoin = 'round';
+    gdo.drawcanvas.ctx.save();
 
     /* Draw on canvas */
     function drawOnCanvas(color, lineWidth, plots) {
@@ -38,12 +39,22 @@
 
     function drawFromStream(message) {
         if (message) {
-            if (message.mode == "cluster" && message.plots && message.plots.length >= 1) {
+            gdo.drawcanvas.ctx.restore();
+            if (message.mode == 'cluster' && message.plots && message.plots.length >= 1) {
                 drawOnCanvas(message.color, message.lineWidth, message.plots);
                 message.plots.splice(message.plots.length - 1, 1);
                 drawFromStream(message); // recursive redraw required in order to ensure the same thickness is obtained as source
             } else if (message.erase && message.erase.length == 0) {
                 gdo.drawcanvas.ctx.clearRect(0, 0, gdo.drawcanvas.canvas.width, gdo.drawcanvas.canvas.height);
+            } else if (message.mode == 'cluster' && message.text && message.text.length >= 1) {
+                gdo.drawcanvas.ctx.fillStyle = message.color;
+                gdo.drawcanvas.ctx.font = message.fontSize + 'px Georgia';
+                for (var i = 0; i < message.text.length; i++) {
+                    if (message.text[i].screen == gdo.clientId) {
+                        gdo.drawcanvas.ctx.fillText(message.text[i].string, message.text[i].x, message.text[i].y);
+                        break;
+                    }
+                }
             }
         }
     }
