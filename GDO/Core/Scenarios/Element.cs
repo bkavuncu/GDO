@@ -2,12 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using log4net;
+using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace GDO.Core.Scenarios
 {
     public class HubCall {
         private static readonly ILog Log = LogManager.GetLogger(typeof(HubCall));
 
+        // Splits strings with nested arrays.
+        private static Regex splitter = new Regex("(?:^|,)([\\s]*\\[(?:[^\\[]+|\\[\\])*\\]|[^,]*)", RegexOptions.Compiled);
 
         public string Mod { get; set; }
         public string Func { get; set; }
@@ -24,12 +28,52 @@ namespace GDO.Core.Scenarios
         /// // todo this needs to be able to deal with more complex  parameter strings e.g.  0,[-74373.2285214765,6719770.2491205567] in the LondonMap scenario 
         /// </summary>
         /// <returns></returns>
-        public object[] ParseParams() {
-            return ParseParams(this.Params);
+        public object[] ParseParams(ParameterInfo[] info) {
+            return FixArrayTypes(ParseParams(this.Params), info);
+        }
+
+        private static object[] FixArrayTypes(object[] parameters, ParameterInfo[] paramInfo)
+        {
+            if (parameters.Length != paramInfo.Length)
+            {
+                return parameters;
+            }
+            var fixedParams = new object[parameters.Length];
+            for (int i = 0; i < parameters.Length; i++)
+            {
+                if (paramInfo[i].ParameterType.IsArray && parameters[i].GetType() == typeof(object[]))
+                {
+                    if (paramInfo[i].ParameterType.GetElementType() == typeof(float))
+                    {
+                        fixedParams[i] = Array.ConvertAll((object[])parameters[i], x => Convert.ToSingle(x));
+                    }
+                    else if (paramInfo[i].ParameterType.GetElementType() == typeof(int))
+                    {
+                        fixedParams[i] = Array.ConvertAll((object[])parameters[i], x => Convert.ToInt32(x));
+                    }
+                    else if (paramInfo[i].ParameterType.GetElementType() == typeof(string))
+                    {
+                        fixedParams[i] = Array.ConvertAll((object[])parameters[i], x => Convert.ToString(x));
+                    }
+                    else if (paramInfo[i].ParameterType.GetElementType() == typeof(bool))
+                    {
+                        fixedParams[i] = Array.ConvertAll((object[])parameters[i], x => Convert.ToBoolean(x));
+                    }
+                    else
+                    {
+                        fixedParams[i] = parameters[i];
+                    }
+                }
+                else
+                {
+                    fixedParams[i] = parameters[i];
+                }
+            }
+            return fixedParams;
         }
 
         private static object[] ParseParams(IEnumerable<string> ps) {
-            return ps.SelectMany(l => l.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries))
+            return ps.SelectMany(l => splitter.Matches(l).Cast<Match>().Where(x => !string.IsNullOrEmpty(x.Value)).Select(x => x.Value.TrimStart(',').Trim()).ToArray())
                 .Select<string, object>(
                     p => ParseParam(p))
                 .ToArray();
@@ -47,7 +91,7 @@ namespace GDO.Core.Scenarios
             if (param.StartsWith("[") && param.EndsWith("]"))
             {
                 param = param.Substring(1, param.Length - 2);
-                var arr = param.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+                var arr = splitter.Matches(param).Cast<Match>().Where(x => !string.IsNullOrEmpty(x.Value)).Select(x => x.Value.TrimStart(',').Trim()).ToArray();
                 return ParseParams(arr);
             }
 

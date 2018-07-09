@@ -67,7 +67,7 @@ namespace GDO.Apps.Graph
                 try
                 {
                     self = this;
-                    this.ControllerId = Context.ConnectionId;
+                    this.ControllerId = Context?.ConnectionId;
 
                     // create GraphApp project and call its function to process graph
                     ga = (GraphApp)Cave.Deployment.Apps["Graph"].Instances[instanceId];
@@ -400,6 +400,11 @@ namespace GDO.Apps.Graph
 
         public void LogTime(string message)
         {
+            if (string.IsNullOrEmpty(ControllerId))
+            {
+                // logging time is not required when invoked via an API.
+                return;
+            }
             try
             {
                 Clients.Client(ControllerId).logTime(message);

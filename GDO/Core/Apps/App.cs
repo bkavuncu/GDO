@@ -80,7 +80,7 @@ namespace GDO.Core.Apps
             instance.Init();
             Instances.TryAdd(instanceId,instance);
             Cave.Deployment.Instances.TryAdd(instanceId,instance);
-            Log.Info("created app "+Name+ " instance "+ config.Name);
+            Log.Info("created " + Name + " app with config " + config.Name + " and instanceId "+ instanceId);
             return instanceId;
         }
 
