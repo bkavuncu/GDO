@@ -188,10 +188,10 @@ namespace GDO.Core
         /// <param name="script">The script.</param>
         /// <returns>errors / status</returns>
         [HttpPost]
-        [Route("api/GDO/Script/RunScript")]
-        public string RunScript(string name, [FromBody] Scenario script) {
+        [Route("api/Script/RunScript")]
+        public string RunScript(string name, [FromBody] string script) {
 
-            var scriptstr = JsonConvert.SerializeObject(script);
+            var scriptstr = JObject.Parse(script);
             Log.Info($"GDO API - about to run posted script {name} {scriptstr}");
 
             var res = ScenarioRunner.RunScript(name, scriptstr);

@@ -122,6 +122,16 @@ namespace GDO.Core.Scenarios
                 return f;
             }
 
+            // Make it possible to pass in base64 encoded parameters as strings - required for DD3
+            try
+            {
+                if ((param.Length % 4 == 0) && Regex.IsMatch(param, @"^[a-zA-Z0-9\+/]*={0,3}$", RegexOptions.None))
+                {
+                    return System.Text.Encoding.Default.GetString((Convert.FromBase64String(param)));
+                }
+            }
+            catch (Exception) { }
+
             throw new FormatException(String.Format("Unable to parse parameter `{0}` try wrapping strings with ' marks", param));
         }
 
