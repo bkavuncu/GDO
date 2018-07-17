@@ -206,7 +206,7 @@ namespace GDO.Apps.Images
                     }*/
                     originImage.Dispose();
                     image.Dispose();
-                    ia.ThumbNailImage = null;
+                    ia.Configuration.ThumbNailImage = null;
                     using (StreamWriter file = new StreamWriter(basePath + config.ImageNameDigit + "\\config.txt"))
                     {
                         file.WriteLine(
@@ -282,7 +282,7 @@ namespace GDO.Apps.Images
                     ia.TileHeight = Convert.ToInt32(lines[6]);
                     ia.TileCols = Convert.ToInt32(lines[7]);
                     ia.TileRows = Convert.ToInt32(lines[8]);
-                    ia.ThumbNailImage = null;
+                    config.ThumbNailImage = null;
                     ia.Tiles = new TilesInfo[ia.TileCols, ia.TileRows];
                     for (int i = 0; i < ia.TileCols; i++)
                     {
@@ -390,43 +390,43 @@ namespace GDO.Apps.Images
                     ImagesApp ia = (ImagesApp)Cave.Deployment.Apps["Images"].Instances[instanceId];
                     var config = ia.Configuration;
 
-                    ia.ThumbNailImage = JsonConvert.DeserializeObject<ThumbNailImageInfo>(imageInfo);
-                    config.Rotate = Convert.ToInt32(ia.ThumbNailImage.imageData.rotate);
-                    double ratio = ia.ImageNaturalWidth/(ia.ThumbNailImage.imageData.width + 0.0);
+                    config.ThumbNailImage = JsonConvert.DeserializeObject<ThumbNailImageInfo>(imageInfo);
+                    config.Rotate = Convert.ToInt32(config.ThumbNailImage.imageData.rotate);
+                    double ratio = ia.ImageNaturalWidth/(config.ThumbNailImage.imageData.width + 0.0);
                     double tl, tt, tw, th;
                     // compute display region info
                     if (config.Rotate == 0)
                     {
-                        tl = ia.ThumbNailImage.cropboxData.left - ia.ThumbNailImage.canvasData.left;
-                        tt = ia.ThumbNailImage.cropboxData.top - ia.ThumbNailImage.canvasData.top;
-                        tw = ia.ThumbNailImage.cropboxData.width;
-                        th = ia.ThumbNailImage.cropboxData.height;
+                        tl = config.ThumbNailImage.cropboxData.left - config.ThumbNailImage.canvasData.left;
+                        tt = config.ThumbNailImage.cropboxData.top - config.ThumbNailImage.canvasData.top;
+                        tw = config.ThumbNailImage.cropboxData.width;
+                        th = config.ThumbNailImage.cropboxData.height;
                     }
                     else if (config.Rotate == 90)
                     {
-                        tl = ia.ThumbNailImage.cropboxData.top - ia.ThumbNailImage.canvasData.top;
-                        tt = ia.ThumbNailImage.canvasData.left + ia.ThumbNailImage.canvasData.width -
-                             ia.ThumbNailImage.cropboxData.left - ia.ThumbNailImage.cropboxData.width;
-                        tw = ia.ThumbNailImage.cropboxData.height;
-                        th = ia.ThumbNailImage.cropboxData.width;
+                        tl = config.ThumbNailImage.cropboxData.top - config.ThumbNailImage.canvasData.top;
+                        tt = config.ThumbNailImage.canvasData.left + config.ThumbNailImage.canvasData.width -
+                             config.ThumbNailImage.cropboxData.left - config.ThumbNailImage.cropboxData.width;
+                        tw = config.ThumbNailImage.cropboxData.height;
+                        th = config.ThumbNailImage.cropboxData.width;
                     }
                     else if (config.Rotate == 180)
                     {
-                        tl = ia.ThumbNailImage.canvasData.left + ia.ThumbNailImage.canvasData.width -
-                             ia.ThumbNailImage.cropboxData.left - ia.ThumbNailImage.cropboxData.width;
-                        tt = ia.ThumbNailImage.canvasData.top + ia.ThumbNailImage.canvasData.height -
-                             ia.ThumbNailImage.cropboxData.top - ia.ThumbNailImage.cropboxData.height;
-                        tw = ia.ThumbNailImage.cropboxData.width;
-                        th = ia.ThumbNailImage.cropboxData.height;
+                        tl = config.ThumbNailImage.canvasData.left + config.ThumbNailImage.canvasData.width -
+                             config.ThumbNailImage.cropboxData.left - config.ThumbNailImage.cropboxData.width;
+                        tt = config.ThumbNailImage.canvasData.top + config.ThumbNailImage.canvasData.height -
+                             config.ThumbNailImage.cropboxData.top - config.ThumbNailImage.cropboxData.height;
+                        tw = config.ThumbNailImage.cropboxData.width;
+                        th = config.ThumbNailImage.cropboxData.height;
                     }
                     else
                     {
                         // ia.Rotate == 270
-                        tl = ia.ThumbNailImage.canvasData.top + ia.ThumbNailImage.canvasData.height -
-                             ia.ThumbNailImage.cropboxData.top - ia.ThumbNailImage.cropboxData.height;
-                        tt = ia.ThumbNailImage.cropboxData.left - ia.ThumbNailImage.canvasData.left;
-                        tw = ia.ThumbNailImage.cropboxData.height;
-                        th = ia.ThumbNailImage.cropboxData.width;
+                        tl = config.ThumbNailImage.canvasData.top + config.ThumbNailImage.canvasData.height -
+                             config.ThumbNailImage.cropboxData.top - config.ThumbNailImage.cropboxData.height;
+                        tt = config.ThumbNailImage.cropboxData.left - config.ThumbNailImage.canvasData.left;
+                        tw = config.ThumbNailImage.cropboxData.height;
+                        th = config.ThumbNailImage.cropboxData.width;
                     }
                     config.DisplayRegion.left = Convert.ToInt32(Math.Floor(ratio*tl));
                     config.DisplayRegion.top = Convert.ToInt32(Math.Floor(ratio*tt));
@@ -588,8 +588,8 @@ namespace GDO.Apps.Images
                 {
                     Clients.Caller.setMessage("Requesting thumbnail image information...");
                     ImagesApp ia = (ImagesApp) Cave.Deployment.Apps["Images"].Instances[instanceId];
-                    Clients.Caller.setThumbNailImageInfo(instanceId, ia.ThumbNailImage != null
-                        ? JsonConvert.SerializeObject(ia.ThumbNailImage)
+                    Clients.Caller.setThumbNailImageInfo(instanceId, ia.Configuration.ThumbNailImage != null
+                        ? JsonConvert.SerializeObject(ia.Configuration.ThumbNailImage)
                         : null);
 
                     Clients.Caller.setMessage("Requested thumbnail image information Success!");
@@ -630,17 +630,18 @@ namespace GDO.Apps.Images
                 try
                 {
                     ImagesApp ia = (ImagesApp)Cave.Deployment.Apps["Images"].Instances[instanceId];
-                    if (ia.ThumbNailImage != null)
+                    var config = ia.Configuration;
+                    if (config.ThumbNailImage != null)
                     {
                         ratio = (ratio < 0) ? ratio = 1 / (1 - ratio) : 1 + ratio;
-                        ratio = ia.ThumbNailImage.imageData.width * ratio / ia.ThumbNailImage.imageData.naturalWidth;
-                        double newWidth = ia.ThumbNailImage.imageData.naturalWidth * ratio;
-                        double newHeight = ia.ThumbNailImage.imageData.naturalHeight * ratio;
-                        ia.ThumbNailImage.canvasData.left -= (newWidth - ia.ThumbNailImage.imageData.width) / 2;
-                        ia.ThumbNailImage.canvasData.top -= (newHeight - ia.ThumbNailImage.imageData.height) / 2;
-                        ia.ThumbNailImage.imageData.width = newWidth;
-                        ia.ThumbNailImage.imageData.height = newHeight;
-                        SetThumbNailImageInfo(instanceId, JsonConvert.SerializeObject(ia.ThumbNailImage));
+                        ratio = config.ThumbNailImage.imageData.width * ratio / config.ThumbNailImage.imageData.naturalWidth;
+                        double newWidth = config.ThumbNailImage.imageData.naturalWidth * ratio;
+                        double newHeight = config.ThumbNailImage.imageData.naturalHeight * ratio;
+                        config.ThumbNailImage.canvasData.left -= (newWidth - config.ThumbNailImage.imageData.width) / 2;
+                        config.ThumbNailImage.canvasData.top -= (newHeight - config.ThumbNailImage.imageData.height) / 2;
+                        config.ThumbNailImage.imageData.width = newWidth;
+                        config.ThumbNailImage.imageData.height = newHeight;
+                        SetThumbNailImageInfo(instanceId, JsonConvert.SerializeObject(config.ThumbNailImage));
                     }
                 }
                 catch (Exception e)
@@ -659,11 +660,12 @@ namespace GDO.Apps.Images
                 try
                 {
                     ImagesApp ia = (ImagesApp)Cave.Deployment.Apps["Images"].Instances[instanceId];
-                    if (ia.ThumbNailImage != null)
+                    var config = ia.Configuration;
+                    if (config.ThumbNailImage != null)
                     {
-                        ia.ThumbNailImage.canvasData.left += x;
-                        ia.ThumbNailImage.canvasData.top += y;
-                        SetThumbNailImageInfo(instanceId, JsonConvert.SerializeObject(ia.ThumbNailImage));
+                        config.ThumbNailImage.canvasData.left += x;
+                        config.ThumbNailImage.canvasData.top += y;
+                        SetThumbNailImageInfo(instanceId, JsonConvert.SerializeObject(config.ThumbNailImage));
                     }
                 }
                 catch (Exception e)
