@@ -19,6 +19,8 @@ namespace GDO.Apps.Images
         public int Rotate;
         public DisplayBlockInfo DisplayBlock;
         public DisplayRegionInfo DisplayRegion;
+        public ThumbNailImageInfo ThumbNailImage;
+
         /// <summary>
         /// The image list filter - filter to only images which contain this image
         /// </summary>
@@ -83,7 +85,6 @@ namespace GDO.Apps.Images
         public ICompositeAppInstance ParentApp { get; set; }
         public int DisplayMode { get; set; }
 
-        public ThumbNailImageInfo ThumbNailImage { get; set; }
         public int TilesNumInEachBlockRow { get; set; }
         public int TilesNumInEachBlockCol { get; set; }
         
@@ -99,7 +100,7 @@ namespace GDO.Apps.Images
         {
             this.DisplayMode = (int)Mode.FIT;
 
-            this.ThumbNailImage = null;
+            this.Configuration.ThumbNailImage = null;
             this.TilesNumInEachBlockRow = 3;
             this.TilesNumInEachBlockCol = 3;
             this.Tiles = null;
@@ -141,7 +142,7 @@ namespace GDO.Apps.Images
             this.TileHeight = Convert.ToInt32(lines[6]);
             this.TileCols = Convert.ToInt32(lines[7]);
             this.TileRows = Convert.ToInt32(lines[8]);
-            this.ThumbNailImage = null;
+            this.Configuration.ThumbNailImage = null;
             this.Tiles = new TilesInfo[this.TileCols, this.TileRows];
             for (int i = 0; i < this.TileCols; i++)
             {
