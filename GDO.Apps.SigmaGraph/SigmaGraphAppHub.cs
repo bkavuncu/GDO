@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net;
 using System.ComponentModel.Composition;
 using System.Linq;
+using GDO.Apps.SigmaGraph.Domain;
 using GDO.Core;
 using GDO.Core.Apps;
 using log4net;
@@ -114,15 +116,26 @@ namespace GDO.Apps.SigmaGraph
             }
 
         }
-        public List<string> GetFilesWithin(int instanceId, double x, double y, double xWidth, double yWidth)
+
+        public static readonly ConcurrentDictionary<int, ConcurrentDictionary<int, ZoomArea>> ScreenFoci = new ConcurrentDictionary<int, ConcurrentDictionary<int, ZoomArea>>();
+
+        public List<string> GetFilesWithin(int instanceId, double x, double y, double xWidth, double yWidth,int clientId)
         {
-            lock (Cave.AppLocks[instanceId])
-            {
-                var ga = (SigmaGraphApp)Cave.Deployment.Apps["SigmaGraph"].Instances[instanceId];
-                IEnumerable<string> filePaths = ga.GetFilesWithin(x, y, xWidth, yWidth)
-                    .Select(filePath => "Web/SigmaGraph/QuadTrees/" + filePath);
-                return filePaths.ToList();
-            }
+            //save screen foci for other uses
+            var fociDict = ScreenFoci.AddOrUpdate(instanceId, new ConcurrentDictionary<int, ZoomArea>(), (i, d) => d);
+            var area = new ZoomArea {Xcenter = x, Ycenter = y, XWidth = xWidth, YWidth = yWidth};
+            fociDict.AddOrUpdate(clientId, area, (i, a) => area);
+            
+            // now get the files within 
+            return GetFilesWithin(instanceId, area);
+        }
+
+        public static List<string> GetFilesWithin(int instanceId, ZoomArea area) {
+
+            var ga = (SigmaGraphApp) Cave.Deployment.Apps["SigmaGraph"].Instances[instanceId];
+            IEnumerable<string> filePaths = ga.GetFilesWithin(area)
+                .Select(filePath => "Web/SigmaGraph/QuadTrees/" + filePath);
+            return filePaths.ToList();
         }
 
         public IEnumerable<string> GetLeafBoxes(int instanceId, double x, double y, double xWidth, double yWidth)

@@ -160,8 +160,8 @@ namespace GDO.Apps.SigmaGraph {
             return BitConverter.ToString(folderNameBytes).Replace("-", "");
         }
 
-        public IEnumerable<string> GetFilesWithin(double x, double y, double xWidth, double yWidth) {
-            return this.CurrentQuadTreeRoot.ReturnMatchingLeaves(x, y, xWidth, yWidth)
+        public IEnumerable<string> GetFilesWithin(ZoomArea area) {
+            return this.CurrentQuadTreeRoot.ReturnMatchingLeaves(area.Xcenter,area.Ycenter,area.XWidth,area.YWidth)
                 .Select(graphNode => this.Configuration.FolderNameDigit + "/" + graphNode.Guid + ".json").ToList();
         }
 

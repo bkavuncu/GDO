@@ -1,6 +1,9 @@
-﻿using System.IO;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Web.Http;
+using GDO.Apps.SigmaGraph.Domain;
 using GDO.Core;
 
 namespace GDO.Apps.SigmaGraph.HTTPServer
@@ -34,6 +37,22 @@ namespace GDO.Apps.SigmaGraph.HTTPServer
                     Thread.Sleep(100);// back off for file locks 
                 }
             }
+        }
+
+        [Route("Web/SigmaGraph/getquads")]
+        public List<string> GetQuads(int appId, int screenid) {//todo is gdo.controlId == appId? 
+
+            ConcurrentDictionary<int, ZoomArea> zoomdict;
+            if (!SigmaGraphAppHub.ScreenFoci.TryGetValue(appId, out zoomdict)) {
+                return new List<string> {"could not find app id " + appId};
+            }
+
+            ZoomArea zoomArea;
+            if (!zoomdict.TryGetValue(screenid, out zoomArea)) {
+                return new List<string> {"could not find zoom area for screen id " + screenid+" make sure it is running"};
+            }
+
+            return SigmaGraphAppHub.GetFilesWithin(appId, zoomArea);            
         }
     }
 }

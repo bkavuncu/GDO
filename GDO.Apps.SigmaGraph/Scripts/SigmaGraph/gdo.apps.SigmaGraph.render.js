@@ -171,7 +171,7 @@ gdo.net.app["SigmaGraph"].hideSpinner = function () {
  */
 async function getFilesWithin() {
     const filePaths = await new Promise((resolve, reject) => {
-        gdo.net.app["SigmaGraph"].server.getFilesWithin(gdo.controlId, gdo.xCentroid, gdo.yCentroid, gdo.xWidth, gdo.yWidth)
+        gdo.net.app["SigmaGraph"].server.getFilesWithin(gdo.controlId, gdo.xCentroid, gdo.yCentroid, gdo.xWidth, gdo.yWidth,gdo.clientId)
             .done(function(filePaths) {
                 resolve(filePaths);
             });

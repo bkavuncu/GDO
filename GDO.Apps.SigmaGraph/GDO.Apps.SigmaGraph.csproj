@@ -234,6 +234,7 @@
     <Compile Include="SigmaGraphAppHub.cs" />
     <Compile Include="Domain\SigmaGraphDataReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Domain\ZoomArea.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
