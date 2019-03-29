@@ -71,7 +71,7 @@ namespace GDO.Core {
 
 
                                         string url =
-                                            "http://dsimanagement.doc.ic.ac.uk/api/WindowsNodes/ReLaunchBrowsers?server=" +
+                                            "http://dsimanagement.dsi.ic.ac.uk/api/WindowsNodes/ReLaunchBrowsers?server=" +
                                             (hostname.Contains("pre") ? "PreProd" : "Prod") + "&screens=" + screen;
 
                                         Log.Info("CaveMonitor - requesting reboot of  " + screen);
