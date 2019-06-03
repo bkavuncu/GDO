@@ -24,6 +24,22 @@ Client 1: http://localhost:8080/Web/DD3/App.html?confId=1&controlId=3&clientId=1
 
 Client 2: http://localhost:8080/Web/DD3/App.html?confId=1&controlId=3&clientId=2&row=1&column=1&numClients=2
 
+--
+
+Control: http://localhost:8080/Web/DD3/Control.html?confId=2&controlId=3&numClients=2 
+
+Client 1: http://localhost:8080/Web/DD3/App.html?confId=2&controlId=3&clientId=1&row=1&column=1&numClients=2 
+
+Client 2: http://localhost:8080/Web/DD3/App.html?confId=2&controlId=3&clientId=2&row=1&column=1&numClients=2
+
+--
+
+Control: http://localhost:8080/Web/DD3/Control.html?confId=3&controlId=3&numClients=2 
+
+Client 1: http://localhost:8080/Web/DD3/App.html?confId=3&controlId=3&clientId=1&row=1&column=1&numClients=2 
+
+Client 2: http://localhost:8080/Web/DD3/App.html?confId=3&controlId=3&clientId=2&row=1&column=1&numClients=2
+
 ## Setup OData
 
 #### Prepare MongoDB
