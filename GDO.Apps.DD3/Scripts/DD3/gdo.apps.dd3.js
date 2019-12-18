@@ -275,9 +275,7 @@ var initDD3App = function () {
         return api;
     };
 
-    //var peerObject = { key: 'q35ylav1jljo47vi', debug: 0 };
-  //  var peerObject = { host: "dsigdoprod.doc.ic.ac.uk", port: 55555 };
-    var peerObject = { host: "dsigdoprod.doc.ic.ac.uk", port: 55555 };//todo fix
+    var peerObject = { host: "dsigdoprod.dsi.ic.ac.uk", port: 55555 }; // Peerjs server 
 
     var dd3 = (function () {
         "use strict";
