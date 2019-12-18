@@ -52,26 +52,6 @@ namespace GDO.Apps.DD3
             this.ConfigurationId = (int)value;
 
             data = new Data(this.Configuration.Name);
-            /*
-            // Test For data request
-
-            var server = "http://wikisensing.org/WikiSensingServiceAPI/DCEWilliamPenneyUpperFloorzYyYFkLwEygj7B0vvQWQ/Node_1/5";
-            String[] toArray = { "sensorRecords" };
-            String[] toObject = { "sensorObject" };
-            String[][] toValues = { new string[] { "12", "value" } };
-            String[][] useNames1 = { new string[] { "useKey"} };
-            String[][] useNames2 = { new string[] { "useString", "Temp" } };
-            String[][] useNames3 = { new string[] { "useObjectField", "12", "fieldName" } };
-
-            System.Diagnostics.Debug.WriteLine(" -- Request of data 0 -- ");
-            webRequest("id", server, toArray, toObject, toValues, null);
-            System.Diagnostics.Debug.WriteLine(" -- Request of data 1 -- ");
-            webRequest("id", server, toArray, toObject, toValues, useNames1);
-            System.Diagnostics.Debug.WriteLine(" -- Request of data 2 -- ");
-            webRequest("id", server, toArray, toObject, toValues, useNames2);
-            System.Diagnostics.Debug.WriteLine(" -- Request of data 3 -- ");
-            webRequest("id", server, toArray, toObject, toValues, useNames3);
-            */
 
             Directory.CreateDirectory(HttpContext.Current.Server.MapPath("~/Web/Images/images/dd3"));
         }
