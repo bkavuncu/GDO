@@ -47,7 +47,8 @@ namespace GDO.Apps.DD3
         {
             return base.OnConnected();
         }
-
+	
+	// exit group when disconnected 
         public override System.Threading.Tasks.Task OnDisconnected(Boolean b)
         {
             if (instances != null)
@@ -167,7 +168,7 @@ namespace GDO.Apps.DD3
             }
             else
             {
-                //Maybe should we make more checks to ensure we always send order to the same node...
+                // send the order to the first node if not broadcasting 
                 instances = Cave.Deployment.Apps["DD3"].Instances;
                 var cid = ((DD3App)instances[instanceId]).getFirstNode();
                 if (cid != null)
