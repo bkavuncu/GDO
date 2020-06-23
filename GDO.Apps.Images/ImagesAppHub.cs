@@ -39,54 +39,19 @@ namespace GDO.Apps.Images
                 try
                 {
                     ImagesApp ia = (ImagesApp) Cave.Deployment.Apps["Images"].Instances[instanceId];
-                    var config = ia.Configuration;
 
-                    config.ImageName = imageName;
-
-                    Clients.Caller.setMessage("Generating random id for the image...");
-                    String basePath = HttpContext.Current.Server.MapPath("~/Web/Images/images/");
-                    String path1 = basePath + config.ImageName;
-                    Random imgDigitGenerator = new Random();
-                    while (Directory.Exists(basePath + config.ImageNameDigit))
-                    {
-                        config.ImageNameDigit = imgDigitGenerator.Next(10000, 99999).ToString();
-                    }
-                    Clients.Caller.setDigitText(instanceId, config.ImageNameDigit);
-                    String path2 = basePath + config.ImageNameDigit + "\\origin.png";
-                    Directory.CreateDirectory(basePath + config.ImageNameDigit);
-                    Image img1 = Image.FromFile(path1);
-                    img1.Save(path2, ImageFormat.Png);
-                    img1.Dispose();
-                    Log.Info("Generated random id " + config.ImageNameDigit + " for a new uploaded image");
-                    //File.Move(path1, path2);
-
-                    // log to index file  
-                    String indexFile = HttpContext.Current.Server.MapPath("~/Web/Images/images/Database.txt");
-                    File.AppendAllLines(indexFile, new[] { config.ImageName + "|" + config.ImageNameDigit});
-
+                    Clients.Caller.setMessage("Processing (re-saving) image");
+                    string digits = ia.ProcessImage(imageName);
+                    Clients.Caller.setDigitText(instanceId, digits);
+                    Clients.Caller.setMessage("Image saved with digits: `" + digits + "`");
 
                     Clients.Caller.setMessage("Loading the image and creating thumbnail...");
-                    //create origin
-                    Image originImage = Image.FromFile(path2);
-                    Image image = originImage;
+                    ia.CreateThumbnail();
 
-                    /* // we don't want to be smart by autorotating
-                    if (originImage.Height > originImage.Width)
-                    {
-                        originImage.RotateFlip(RotateFlipType.Rotate90FlipNone);
-                        image = originImage;
-                    }
-                    else
-                    {
-                        image = originImage;
-                    }*/
-
-                    //create thumbnail
-                    int thumbHeight = 500;
-                    Image thumb = image.GetThumbnailImage(thumbHeight*image.Width/image.Height, thumbHeight, () => false,
-                        IntPtr.Zero);
-                    thumb.Save(basePath + config.ImageNameDigit + "\\thumb.png", ImageFormat.Png);
-                    thumb.Dispose();
+                    // FIXME: remove once refactored
+                    var config = ia.Configuration;
+                    String basePath = HttpContext.Current.Server.MapPath("~/Web/Images/images/");
+                    Image image = Image.FromFile(basePath + config.ImageNameDigit + "\\origin.png");
 
                     ia.ImageNaturalWidth = image.Width;
                     ia.ImageNaturalHeight = image.Height;
@@ -171,14 +136,14 @@ namespace GDO.Apps.Images
                                             ia.TileHeight),
                                         GraphicsUnit.Pixel);
                                     graphics.Dispose();
-                                    path2 = basePath + config.ImageNameDigit + "\\" + "crop" + @"_" + col +
+                                    String path = basePath + config.ImageNameDigit + "\\" + "crop" + @"_" + col +
                                             @"_" + row +
                                             @".png";
                                     ia.Tiles[col, row].left = col*ia.TileWidth;
                                     ia.Tiles[col, row].top = row*ia.TileHeight;
                                     ia.Tiles[col, row].cols = col;
                                     ia.Tiles[col, row].rows = row;
-                                    curTile.Save(path2, ImageFormat.Png);
+                                    curTile.Save(path, ImageFormat.Png);
 
                                     success = 1;
                                 }
@@ -204,7 +169,6 @@ namespace GDO.Apps.Images
                             Clients.Caller.setMessage(ex.Message + ex.StackTrace);
                         }
                     }*/
-                    originImage.Dispose();
                     image.Dispose();
                     ia.Configuration.ThumbNailImage = null;
                     using (StreamWriter file = new StreamWriter(basePath + config.ImageNameDigit + "\\config.txt"))

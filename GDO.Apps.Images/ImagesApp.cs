@@ -10,6 +10,7 @@ using System.Linq;
 using System.Net;
 using log4net;
 using Newtonsoft.Json.Linq;
+using System.Security.Cryptography;
 
 namespace GDO.Apps.Images
 {
@@ -96,6 +97,9 @@ namespace GDO.Apps.Images
         public int TileCols { get; set; } // cols of tiles including those not displayed
         public int TileRows { get; set; } // rows of tiles including those not displayed
 
+        private const string IMAGES_DIR = "~/Web/Images/images/";
+        private static string IMAGES_PATH;
+
         public void Init()
         {
             this.DisplayMode = (int)Mode.FIT;
@@ -116,21 +120,68 @@ namespace GDO.Apps.Images
                 this.Configuration.DisplayRegion = new DisplayRegionInfo();
                 this.Configuration.DisplayBlock = new DisplayBlockInfo(Section.Cols, Section.Rows);
             }
-            String basePath = HttpContext.Current.Server.MapPath("~/Web/Images/images/");
-            if (!Directory.Exists(basePath))
+            IMAGES_PATH = HttpContext.Current.Server.MapPath(IMAGES_DIR);
+            Directory.CreateDirectory(IMAGES_PATH);
+        }
+
+        public static void SaveImage(string filename, HttpPostedFileBase file)
+        {
+            Directory.CreateDirectory(IMAGES_PATH); // This shouldn't be needed
+            var path = IMAGES_PATH + filename;
+            file.SaveAs(path);
+        }
+
+        /// <summary>
+        /// Post-save processing of image
+        /// </summary>
+        /// <param name="imageName"></param>
+        /// <returns>digits</returns>
+        public string ProcessImage(string imageName)
+        {
+            Configuration.ImageName = imageName;
+            Configuration.ImageNameDigit = GenerateImageDigits();
+            Log.Info("Generated id " + Configuration.ImageNameDigit + " for a new uploaded image");
+
+            Directory.CreateDirectory(IMAGES_PATH + Configuration.ImageNameDigit);
+            Image image = Image.FromFile(IMAGES_PATH + imageName);
+            image.Save(IMAGES_PATH + Configuration.ImageNameDigit + "/origin.png", ImageFormat.Png);
+            image.Dispose();
+
+            String indexFile = IMAGES_PATH + "/Database.txt";
+            File.AppendAllLines(indexFile, new[] { Configuration.ImageName + "|" + Configuration.ImageNameDigit });
+
+            return Configuration.ImageNameDigit;
+        }
+
+        private string GenerateImageDigits()
+        {
+            using (var md5 = MD5.Create())
             {
-                Directory.CreateDirectory(basePath);
+                using (var file = File.OpenRead(IMAGES_PATH + Configuration.ImageName))
+                {
+                    var sum = md5.ComputeHash(file);
+                    return BitConverter.ToString(sum).Replace("-", "").ToLowerInvariant();
+                }
+            }
+        }
+
+        public void CreateThumbnail()
+        {
+            int THUMBNAIL_HEIGHT = 500;
+            using (Image image = Image.FromFile(IMAGES_PATH + Configuration.ImageNameDigit + "/origin.png"))
+            {
+                using (Image thumb = image.GetThumbnailImage(THUMBNAIL_HEIGHT * image.Width / image.Height, THUMBNAIL_HEIGHT, () => false, IntPtr.Zero))
+                    thumb.Save(IMAGES_PATH + Configuration.ImageNameDigit + "/thumb.png", ImageFormat.Png);
             }
         }
 
         private void FindImageData(string digits)
         {
-            String basePath = HttpContext.Current.Server.MapPath("~/Web/Images/images/");
-            if (digits == "" || !Directory.Exists(basePath + digits))
+            if (digits == "" || !Directory.Exists(IMAGES_PATH + digits))
             {
                 return;
             }
-            string[] lines = File.ReadAllLines(basePath + this.Configuration.ImageNameDigit + "\\config.txt");
+            string[] lines = File.ReadAllLines(IMAGES_PATH + this.Configuration.ImageNameDigit + "\\config.txt");
             if (lines.Length != 9)
             {
                 return;
@@ -191,9 +242,8 @@ namespace GDO.Apps.Images
                 var filename = Guid.NewGuid() + ".png";
 
                 Log.Info("Images App - downloading image from "+uri);
-                var imagesPath = HttpContext.Current.Server.MapPath("~/Web/Images/images");
-                Directory.CreateDirectory(imagesPath);
-                var savePath = imagesPath + filename;
+                Directory.CreateDirectory(IMAGES_PATH); // This should not be necessary
+                var savePath = IMAGES_PATH + filename;
 
                 //download the image and save as a PNG
                 using (WebClient webClient = new WebClient()) {
